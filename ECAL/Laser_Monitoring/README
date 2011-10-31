@@ -1,0 +1,78 @@
+
+###########################################################
+         CODE FOR MONTH N-TUPLES SUBDIVISION
+###########################################################
+
+1) SkimNtuple_month.cpp ---> Subdivide the 2011 input ntuples according to their runID in different month.
+   
+   To Compile g++ `root-config --libs --cflags` SkimNtuple_month.cpp -o SkimNtuple_month   
+
+   To submit-Run  ./SkimNtuple_month  number InputFile outputFile  (e.g: ./SkimNtuple_month 3   for March 2011)  
+
+    Example :      ./SkimNtuple_month 1 "/gwteraz/users/govoni/ntuples_2011_158851_178888/*.root" "/gwteraz/users/govoni/ntuples_data_month_2011/ntu_data_month_%s2011.root" 
+
+2) FOR SUBMIT JOB IN HERCULES.MIB.INFN.IT
+ 
+   CFG_SkimNtuple.cfg      -----> EXEName ==  Name of the executable file derived from SkimNutuple_month.cpp
+                           -----> MONTHList == Number of different months from 1 to 12
+                           -----> INPUTFile == pat of input ntuples
+                           -----> OUTPUTFile == pat of output ntuples
+                           -----> BASEDir == working directory
+
+   
+   Job_SkimNtuple.pl       ----->  Compilation of the code, the name of the exectable file is EXEName
+                           ----->  Remeber before execution create directory Job_Skim in BASEDir "mkdir Job_Skim "
+                           ----->  Subscribe jobs for each month
+
+   launch jobs:  ./Job_SkimNyuple.pl CFG_SkimNtuple.cfg 
+
+                
+   Check Job status on hercule true:  qstat    
+
+
+#########################################################################
+ LASER AND LED ANALYSIS CODE FOR EE ( based on Martina LaserAnalysis.cpp)
+#########################################################################
+ 
+ Difference from Martina's code: ---> input parameters: argv[1] == number of fed to analyze
+                                                        argv[2] == input file 
+                                                        argv[3] == output file for analyze plot 
+                                                        argv[4] == name of output txt file to save info from step and fluctuation recognition
+                                                        " our base code perform this study only on one chosen variable, in this case mataq_amplitude"
+
+ Compile: "g++ -Wall -o " LaserAnalysisEE " `root-config --glibs --libs --cflags` " LaserAnalysisEE.cpp
+
+ Run:  ./LaserAnalysisEE FEDNum inputFile outputFile outputDumperFile
+ 
+ Example: ./LaserAnalysisEE 601 "/gwteraz/users/govoni/ntuples_data_month_2011/ntu_data_month_Apr2011.root" "/gwteraz/users/govoni/output/EEAnalysis/LaserAnalysisEE601/         
+           LaserEEAnalysis_fed_601_Apr.root" "/gwteraz/users/govoni/output/EEAnalysis/LaserAnalysisEE601/Dumper_output_601Apr_%d.txt"
+
+
+
+###########################################################
+    JOB SUBSCRIPTION IN HERCULES FOR EE AND EB ANALYSIS  
+###########################################################
+
+1) CONFIG FILE TO LAUNCH : CFG_EE.cfg CFG_EB.cfg
+
+   ---> EXEName == Name of the executable file derived from compilation of LaserAnalysisEE.cpp or LaserAnalysisEB.cpp
+   ---> FEDList == List of FED number to analize in the programm
+   ---> MONTHList == String List for month analysis compatible with SkimNtuple.cpp
+   ---> INPUTSAVEPath == pat of input file directory
+   ---> OUTPUTSAVEPath == pat of the output file directory
+   ---> INPUTFile == input files
+   ---> OUTPUTFile == Name of the output root file  
+   ---> BASEDir == working directory
+
+2) Job_Hercules.pl   ----> Automatic compilation of the code, the name of the exectable file is EXEName
+                     ----> Attention: create before launch the directory Jobs in BASEDir through "mkdir Jobs"
+                     ----> If Compilation is good automatic submission on hercules.
+                     ----> Outputs are divided in different directory one of each FED. Inside one of these, there are outputs related
+                           to all 2011 year as root file for plot and txt file for dumper information of Steps.
+                           We obtain different Dumper txt for each month and harness.
+
+                           Example: 
+                                   ls /gwteraz/users/govoni/output/EEAnalysis/LaserAnalysisEE605/Dumper_output_605Apr_5.txt ---> dumper for step and fluctuations ID for FED 605, month
+                                                                                                                                  April 2011 , harness 5
+
+  launch Jobs: ./Job_Hercules.pl CFG_EE.cfg
