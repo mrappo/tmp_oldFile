@@ -38,8 +38,7 @@ class FastCalibratorWeight {
     std::vector<int>     *ele1_recHit_hashedIndex;
     std::vector<int>     *ele1_recHit_ietaORix;
     std::vector<int>     *ele1_recHit_iphiORiy;
-    std::vector<float>   ele1_MaximumEoP;
-
+  
     Float_t         ele1_scERaw;
     Float_t         ele1_scE;
     Float_t         ele1_es;
@@ -57,7 +56,6 @@ class FastCalibratorWeight {
     std::vector<int>     *ele2_recHit_hashedIndex;
     std::vector<int>     *ele2_recHit_iphiORiy;
     std::vector<int>     *ele2_recHit_ietaORix;
-    std::vector<float>   ele2_MaximumEoP;
     
     Float_t         ele2_scERaw;
     Float_t         ele2_scE;

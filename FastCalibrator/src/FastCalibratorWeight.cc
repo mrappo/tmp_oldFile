@@ -235,16 +235,11 @@ void FastCalibratorWeight::BuildEoPeta_ele1(int iLoop, int nentries , int useW, 
   }
  }
  
-  if(iLoop!=0) ele1_MaximumEoP.clear();
-
   for(unsigned int ieta=0 ; ieta < hC_EoP_eta_ele1->Size() ; ieta++)
    {
      hC_EoP_eta_ele1->Normalize(ieta);
    }
 
- // if you want to save the shape of E/p
-// TFile* f1 = new TFile("f1.root","UPDATE");
-// saveEoPeta(f1); 
 
 }
 
@@ -354,8 +349,8 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
    std::vector<float> theScalibration(m_regions, 0.);
    TRandom genRand;
    for ( int iIndex = 0; iIndex < m_regions; iIndex++ )  {
-       theScalibration[iIndex] = genRand.Gaus(1.,0.05);
-//        theScalibration[iIndex] = 1.;
+//        theScalibration[iIndex] = genRand.Gaus(1.,0.05);
+       theScalibration[iIndex] = 1.;
        h_scalib_EB -> Fill ( GetIphiFromHashedIndex(iIndex), GetIetaFromHashedIndex(iIndex), theScalibration[iIndex] );
    }
 
@@ -431,9 +426,6 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
           int eta_seed = GetIetaFromHashedIndex(seed_hashedIndex);
           TH1F* EoPHisto = hC_EoP_eta_ele1->GetHisto(eta_seed+85);
           
-          // discard electrons with bad E/P
-//             if ( fabs(thisE/ele1_tkP - 1) > 0.1 ) skipElectron = true;
-//             if ( fabs(thisE3x3/thisE) < 0.8 ) skipElectron = true;
           if ( thisE/ele1_tkP < EoPHisto->GetXaxis()->GetXmin() || thisE/ele1_tkP > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
           if ( !skipElectron) {
           
