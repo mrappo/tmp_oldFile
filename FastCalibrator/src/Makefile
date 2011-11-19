@@ -48,7 +48,7 @@ LDFLAGS  =  -rdynamic -shared $(ARCHL)
 SONAME	 =  libFastCalib.so
 SOFLAGS  =  -Wl,-soname,$(SONAME)
 
-GLIBS   =  -lm -ldl -rdynamic $(ROOTGLIBS) $(CLHEPLIBS)  -lGenVector -lFoam -lMinuit2 -lTMVA -lMLP -lXMLIO  -lTreePlayer $(NTUPLEPACKAGELIBS)
+GLIBS   =  -lm -ldl -rdynamic $(ROOTGLIBS) $(CLHEPLIBS)  -lGenVector -lFoam -lMinuit -lTMVA -lMLP -lXMLIO  -lTreePlayer $(NTUPLEPACKAGELIBS)
 
 
 #################################################
