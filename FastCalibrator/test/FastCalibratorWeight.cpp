@@ -22,9 +22,13 @@ int main (int argc, char ** argv)
 
   std::string inputFile       = gConfigParser -> readStringOption("Input::inputFile");
   std::string inputTree       = gConfigParser -> readStringOption("Input::inputTree");
+ 
+  bool isMiscalib = gConfigParser -> readBoolOption("Input::isMiscalib");
+  bool isSaveEPDistribution = gConfigParser -> readBoolOption("Input::isSaveEPDistribution");
+
   std::string outputFile      = gConfigParser -> readStringOption("Output::outputFile");
-  std::string outputTxtFile   = gConfigParser -> readStringOption("Output::outputTxtFile");
-  
+  std::string outputFileDistributionEP       = gConfigParser -> readStringOption("Output::outputFileDistributionEP");
+
   int numberOfEvents       = gConfigParser -> readIntOption("Options::numberOfEvents");
   int useZ                 = gConfigParser -> readIntOption("Options::useZ");
   int useW                 = gConfigParser -> readIntOption("Options::useW");
@@ -40,12 +44,37 @@ int main (int argc, char ** argv)
 
   // run in normal mode: full statistics
   if ( splitStat == 0 ) {
-    TFile *f1 = new TFile(outputFile.c_str(),"RECREATE");  
-    FastCalibratorWeight analyzer(albero);
-    analyzer.bookHistos(nLoops);
-    analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops);
-    analyzer.saveHistos(f1);
-    analyzer.printOnTxt(outputTxtFile);
+   
+    TString name ;
+    TString outputTxtFile ;
+    if(isMiscalib == true && useZ == 1 ) name = Form ("%s_Z_miscalib.root",outputFile.c_str());
+    else{
+           if(isMiscalib == false && useZ == 1)name = Form ("%s_Z.root",outputFile.c_str());
+           else{
+                 if(isMiscalib == true && useZ == 0) name = Form ("%s_miscalib.root",outputFile.c_str());
+                 else  name = Form ("%s.root",outputFile.c_str());
+               }
+         }
+     
+    TFile *f1 = new TFile(name,"RECREATE");
+    outputTxtFile = name - ".root" + ".txt";
+    if(isSaveEPDistribution == true)
+    {
+     TFile *f2 = new TFile(outputFileDistributionEP.c_str(), "UPDATE");
+     FastCalibratorWeight analyzer(albero,f2);
+     analyzer.bookHistos(nLoops);
+     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution);
+     analyzer.printOnTxt(outputTxtFile);
+    }
+    else
+    {
+     FastCalibratorWeight analyzer(albero);
+     analyzer.bookHistos(nLoops);
+     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution);
+     analyzer.saveHistos(f1);
+     analyzer.printOnTxt(outputTxtFile);
+    }
+   
   }
 
   // run in even-odd mode: half statistics
@@ -54,19 +83,43 @@ int main (int argc, char ** argv)
     // Prepare the outputs
     std::string evenFile = "Even_" + outputFile;
     std::string oddFile = "Odd_" + outputFile;
-    TFile *f1 = new TFile(evenFile.c_str(),"RECREATE");  
-    TFile *f2 = new TFile(oddFile.c_str(),"RECREATE");  
+    TString name;
+    TString name2;
+    if(isMiscalib == true && useZ == 1 )
+    { name = Form ("%s_Z_miscalib.root",evenFile.c_str());
+      name2 = Form ("%s_Z_miscalib.root",oddFile.c_str());
+    }
+
+    if(isMiscalib == false && useZ == 1)
+    {
+      name = Form ("%s_Z.root",evenFile.c_str());
+      name2 = Form ("%s_Z.root",oddFile.c_str());
+    }
+       
+    if(isMiscalib == true && useZ == 0)
+    { name = Form ("%s_miscalib.root",evenFile.c_str());
+      name2 = Form ("%s_miscalib.root",oddFile.c_str());
+       }
     
+     if(isMiscalib == false && useZ == 0)
+    {
+      name = Form ("%s.root",evenFile.c_str());
+      name2 = Form ("%s.root",oddFile.c_str());
+    }
+
+    TFile *f1 = new TFile(name,"RECREATE");
+    TFile *f2 = new TFile(name2,"RECREATE");
+     
     // Run on odd
     FastCalibratorWeight analyzer_even(albero);
     analyzer_even.bookHistos(nLoops);
-    analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops);
+    analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution);
     analyzer_even.saveHistos(f1);
   
     // Run on even
     FastCalibratorWeight analyzer_odd(albero);
     analyzer_odd.bookHistos(nLoops);
-    analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops);
+    analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution);
     analyzer_odd.saveHistos(f2);
     
   }

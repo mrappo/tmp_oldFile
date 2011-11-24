@@ -9,8 +9,12 @@
 #include <fstream>
 #include <vector>
 
+
+
+
 ///==== Basic Contructor 
-FastCalibratorWeight::FastCalibratorWeight(TTree *tree)
+FastCalibratorWeight::FastCalibratorWeight(TTree *tree,TFile *f2):
+fileEP_p(f2)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -177,7 +181,7 @@ void FastCalibratorWeight::bookHistos(int nLoops)
 
 ///===== Build E/p for electron 1 and 2
 
-void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration)
+void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool isSaveEPDistribution)
 {
   if(iLoop ==0)  
   {
@@ -319,10 +323,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
      hC_EoP_eta_ele->Normalize(ieta);
  }
  
-//      TFile *f1 = new TFile ("Weight_noEP_Z_DATA_miscalib.root","UPDATE");
-//      saveEoPeta(f1);
-
-
+ if(isSaveEPDistribution == true) saveEPDistribution();
 }
 
 
@@ -330,7 +331,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
 ///=========== Loop over the events 
 
 
-void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops)
+void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution)
 {
    if (fChain == 0) return;
    
@@ -363,8 +364,8 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
    std::vector<float> theScalibration(m_regions, 0.);
    TRandom genRand;
    for ( int iIndex = 0; iIndex < m_regions; iIndex++ )  {
-           theScalibration[iIndex] = genRand.Gaus(1.,0.05);
-//            theScalibration[iIndex] = 1.;
+     if(isMiscalib==true) theScalibration[iIndex] = genRand.Gaus(1.,0.05);
+     if(isMiscalib == false) theScalibration[iIndex] = 1.;
       h_scalib_EB -> Fill ( GetIphiFromHashedIndex(iIndex), GetIetaFromHashedIndex(iIndex), theScalibration[iIndex] );
    }
 
@@ -380,7 +381,7 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
     // loop over events
     std::cout << "Number of analyzed events = " << nentries << std::endl;
     
-    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration); ///==== build E/p distribution ele 1 and 2
+    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution); ///==== build E/p distribution ele 1 and 2
  
     Long64_t nbytes = 0, nb = 0;
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -747,17 +748,17 @@ void FastCalibratorWeight::saveHistos(TFile * f1)
   return;
 }
 
-void FastCalibratorWeight::saveEoPeta(TFile * f1)
+void FastCalibratorWeight::saveEPDistribution()
 {
- f1->cd();
- hC_EoP_eta_ele ->Write(*f1);
- f1->Close();
+ fileEP_p->cd();
+ hC_EoP_eta_ele ->Write(*fileEP_p);
+ fileEP_p->Close();
  
 }
 
-void FastCalibratorWeight::printOnTxt(std::string outputTxtFile)
+void FastCalibratorWeight::printOnTxt(TString outputTxtFile)
 {
-  std::ofstream outTxt (outputTxtFile.c_str(),std::ios::out);
+  std::ofstream outTxt (outputTxtFile.Data(),std::ios::out);
 
   outTxt << "---------------------------------------------------------------" << std::endl;
   outTxt << "--- iEta ---- iPhi ------ IC value (mean on phi ring) ---------" << std::endl;

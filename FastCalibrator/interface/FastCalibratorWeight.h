@@ -112,7 +112,7 @@ class FastCalibratorWeight {
     TBranch        *b_ele2_isEEDeeGap;   //!
     TBranch        *b_ele2_isEERingGap;   //!
 
-    FastCalibratorWeight(TTree *tree=0);
+    FastCalibratorWeight(TTree *tree=0, TFile *f2=0);
     virtual ~FastCalibratorWeight();
     virtual void     bookHistos(int);
     virtual void     saveHistos(TFile *f1);
@@ -120,12 +120,12 @@ class FastCalibratorWeight {
     virtual Int_t    GetEntry(Long64_t entry);
     virtual Long64_t LoadTree(Long64_t entry);
     virtual void     Init(TTree *tree);
-    virtual void     Loop(int, int, int, int, int);
+    virtual void     Loop(int, int, int, int, int,bool,bool);
     virtual Bool_t   Notify();
     virtual void     Show(Long64_t entry = -1);
-    virtual void     printOnTxt(std::string outputTxtFile);
-    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>);
-    virtual void     saveEoPeta(TFile *f1);
+    virtual void     printOnTxt(TString outputTxtFile);
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool);
+    virtual void     saveEPDistribution();
 
     hChain     *hC_EoP_eta_ele;
   
@@ -151,6 +151,9 @@ class FastCalibratorWeight {
     
     TGraphErrors *g_ICmeanVsLoop;
     TGraphErrors *g_ICrmsVsLoop;
+
+ private:
+ TFile *fileEP_p;
 
 };
 
