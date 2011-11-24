@@ -2,9 +2,9 @@
 // Macro to produce ECAL single electron calibration plots
 //
 
-void DrawFoldedPlotsEB(     Char_t* infile1 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/WZAnalysis_SingleEle_Run2011AB.root",
-			    Char_t* infile2 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/Even_WZAnalysis_SingleEle_Run2011AB.root",
-			    Char_t* infile3 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/Odd_WZAnalysis_SingleEle_Run2011AB.root",
+void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_noEP/WZJets_TuneZ2_madgraph_tauola_miscalib5.root",
+			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/MC_noEP/Even_WZJets_TuneZ2_madgraph_tauola_miscalib5.root",
+			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/MC_noEP/Odd_WZJets_TuneZ2_madgraph_tauola_miscalib5.root",
 			    int evalStat = 1,
 			    Char_t* fileType = "png", 
 			    Char_t* dirName = ".")
