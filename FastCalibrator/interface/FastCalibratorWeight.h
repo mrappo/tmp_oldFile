@@ -124,13 +124,11 @@ class FastCalibratorWeight {
     virtual Bool_t   Notify();
     virtual void     Show(Long64_t entry = -1);
     virtual void     printOnTxt(std::string outputTxtFile);
-    virtual void     BuildEoPeta_ele1(int,int,int,int,std::vector<float>);
-    virtual void     BuildEoPeta_ele2(int,int,int,int,std::vector<float>); 
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>);
     virtual void     saveEoPeta(TFile *f1);
 
-    hChain     *hC_EoP_eta_ele1;
-    hChain     *hC_EoP_eta_ele2;
-
+    hChain     *hC_EoP_eta_ele;
+  
     hChain     *hC_IntercalibValues;
     hChain     *hC_EoP;
     hChain     *hC_PullFromScalib;

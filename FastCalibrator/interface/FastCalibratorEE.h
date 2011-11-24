@@ -33,10 +33,12 @@ class FastCalibratorEE {
     Int_t           lumiId;
     Int_t           isW;
     Int_t           isZ;
+
     std::vector<float>   *ele1_recHit_E;
     std::vector<int>     *ele1_recHit_hashedIndex;
     std::vector<int>     *ele1_recHit_ietaORix;
     std::vector<int>     *ele1_recHit_iphiORiy;
+
     Float_t         ele1_scERaw;
     Float_t         ele1_scE;
     Float_t         ele1_es;
@@ -50,10 +52,12 @@ class FastCalibratorEE {
     Int_t           ele1_isEBPhiGap;
     Int_t           ele1_isEEDeeGap;
     Int_t           ele1_isEERingGap;
+
     std::vector<float>   *ele2_recHit_E;
     std::vector<int>     *ele2_recHit_hashedIndex;
     std::vector<int>     *ele2_recHit_iphiORiy;
     std::vector<int>     *ele2_recHit_ietaORix;
+
     Float_t         ele2_scERaw;
     Float_t         ele2_scE;
     Float_t         ele2_es;
@@ -118,16 +122,14 @@ class FastCalibratorEE {
     virtual Long64_t LoadTree(Long64_t entry);
     virtual void     Init(TTree *tree);
     virtual void     Loop(int, int, int, int, int);
-    virtual int GetHashedIndexEE(int, int, int);
-    virtual int GetIxFromHashedIndex(int);
-    virtual int GetIyFromHashedIndex(int);
-    virtual int GetZsideFromHashedIndex(int);
+   
     virtual Bool_t   Notify();
     virtual void     Show(Long64_t entry = -1);
     virtual void     printOnTxt(std::string outputTxtFile);
   
 
-    
+    hChain     *hC_EoP_eta_ele;
+   
     // Service histos
     TH1F       *h_scale_hashedIndex_EE;
     TH1F       *h_occupancy_hashedIndex_EE;
