@@ -2,9 +2,9 @@
 // Macro to produce ECAL single electron calibration plots
 //
 
-void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_noEP/WZJets_TuneZ2_madgraph_tauola_miscalib5.root",
-			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/MC_noEP/Even_WZJets_TuneZ2_madgraph_tauola_miscalib5.root",
-			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/MC_noEP/Odd_WZJets_TuneZ2_madgraph_tauola_miscalib5.root",
+void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim/WZAnalysis_SingleEle_Run2011AB-PromptSkim_Z_noEP.root",
+			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/PromptSkim/Even_WZAnalysis_SingleEle_Run2011AB-PromptSkim_Z_noEP.root",
+			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/PromptSkim/Odd_WZAnalysis_SingleEle_Run2011AB-PromptSkim_Z_noEP.root",
 			    int evalStat = 1,
 			    Char_t* fileType = "png", 
 			    Char_t* dirName = ".")
@@ -90,6 +90,8 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_noEP/
   sigma_vs_EtaFold->SetMarkerColor(kBlue+2);
 
   TF1 *fgaus = new TF1("fgaus","gaus",-10,10);
+  TF1 *fgaus2 = new TF1("fgaus2","gaus",-100,100);
+
   int np = 0;
 
   for (int i = 1; i < 86; i++){
@@ -187,13 +189,125 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_noEP/
       residual_vs_EtaFold->SetPointError(i,ex,eresidual);
     }
 
+  ///////////////////////////////////////////////////////////
+
+    TGraphErrors *ic_vs_PhiFold = new TGraphErrors();
+    ic_vs_PhiFold->SetMarkerStyle(20);
+    ic_vs_PhiFold->SetMarkerSize(1);
+    ic_vs_PhiFold->SetMarkerColor(kOrange+2);
+
+    TH1F* hspreadPhiFold[18];
+    int nStep =0;
+    
+    for(int jbin = 1; jbin < hcmap-> GetNbinsX()+1; jbin++){
+    if ((jbin-1)%20 == 0 ) {
+      nStep++;
+      sprintf(hname,"hspread_iphiFolded%02d",nStep);
+      hspreadPhiFold[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
+    }
+   
+    for(int ibin = 1; ibin < hcmap-> GetNbinsY()+1; ibin++){
+      float ic = hcmap->GetBinContent(jbin,ibin);
+    if (ic>0 && ic<2 && ic!=1) {
+      hspreadPhiFold[nStep-1]->Fill(ic);
+      }
+    }
+  }
+  
+   np=0;
+   for(int i=1; i<=18; i++)
+  {
+      float phibin = i;
+      fgaus2->SetParameter(1,hspreadPhiFold[i-1]->GetMean());
+      fgaus2->SetParameter(2,hspreadPhiFold[i-1]->GetRMS());
+      fgaus2->SetRange(hspreadPhiFold[i-1]->GetMean()-5*hspreadPhiFold[i-1]->GetRMS(),hspreadPhiFold[i-1]->GetMean()+5*hspreadPhiFold[i-1]->GetRMS());
+      hspreadPhiFold[i-1]->Fit("fgaus2","QR");
+      ic_vs_PhiFold-> SetPoint(np,phibin,fgaus2->GetParameter(1));
+      ic_vs_PhiFold-> SetPointError(np,0,fgaus2->GetParError(1));
+      np++;
+  
+
+}
+
+  ////////////////////////////////////////////////////////////////////
+
+    TGraphErrors *ic_vs_PhiFold_crack_EBp = new TGraphErrors();
+    ic_vs_PhiFold_crack_EBp->SetMarkerStyle(20);
+    ic_vs_PhiFold_crack_EBp->SetMarkerSize(1);
+    ic_vs_PhiFold_crack_EBp->SetMarkerColor(kRed);
+    
+    TGraphErrors *ic_vs_PhiFold_crack_EBm = new TGraphErrors();
+    ic_vs_PhiFold_crack_EBm->SetMarkerStyle(20);
+    ic_vs_PhiFold_crack_EBm->SetMarkerSize(1);
+    ic_vs_PhiFold_crack_EBm->SetMarkerColor(kBlue);
+
+
+    TH1F* hspreadPhiFold_crack_EBp[20];
+    TH1F* hspreadPhiFold_crack_EBm[20];
+    int nStep =0;
+    
+    for(int jbin = 1; jbin < hcmap-> GetNbinsX()+1; jbin++){
+      if ((jbin-1)<20 ) {
+        nStep++;
+        sprintf(hname,"hspread_iphiFolded_crack_EBp%02d",nStep);
+        hspreadPhiFold_crack_EBp[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
+        sprintf(hname,"hspread_iphiFolded_crack_EBm%02d",nStep);
+        hspreadPhiFold_crack_EBm[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
+
+      }
+   
+    for(int ibin = 1; ibin < hcmap-> GetNbinsY()+1; ibin++){
+     float ic = hcmap->GetBinContent(jbin,ibin);
+     if (ic>0 && ic<2 && ic!=1) {
+       if((jbin-1)<20)
+       {
+          if ((ibin-85)<0 ) hspreadPhiFold_crack_EBm[jbin-1]->Fill(ic);
+          if ((ibin-85)>=0 ) hspreadPhiFold_crack_EBp[jbin-1]->Fill(ic);
+       }
+       else{
+           int kbin = jbin%20 ;
+           if ((ibin-85)<0 ) hspreadPhiFold_crack_EBm[kbin]->Fill(ic);
+           if ((ibin-85)>=0 ) hspreadPhiFold_crack_EBp[kbin]->Fill(ic);
+   
+         }
+      }
+    }
+  }
+
+   np=0;
+   for(int i=1; i<=20; i++)
+  {
+      float phibin = i;
+      fgaus2->SetParameter(1,hspreadPhiFold_crack_EBp[i-1]->GetMean());
+      fgaus2->SetParameter(2,hspreadPhiFold_crack_EBp[i-1]->GetRMS());
+      fgaus2->SetRange(hspreadPhiFold_crack_EBp[i-1]->GetMean()-5*hspreadPhiFold_crack_EBp[i-1]->GetRMS(),hspreadPhiFold_crack_EBp[i-1]->GetMean()+5*hspreadPhiFold_crack_EBp[i-1]->GetRMS());
+      hspreadPhiFold_crack_EBp[i-1]->Fit("fgaus2","QR");
+      ic_vs_PhiFold_crack_EBp-> SetPoint(np,phibin-1,fgaus2->GetParameter(1));
+//       ic_vs_PhiFold_crack-> SetPoint(np,phibin,hspreadPhiFold_crack[i-1]->GetMean()); 
+      ic_vs_PhiFold_crack_EBp-> SetPointError(np,0,fgaus2->GetParError(1));
+      
+      fgaus2->SetParameter(1,hspreadPhiFold_crack_EBm[i-1]->GetMean());
+      fgaus2->SetParameter(2,hspreadPhiFold_crack_EBm[i-1]->GetRMS());
+      fgaus2->SetRange(hspreadPhiFold_crack_EBm[i-1]->GetMean()-5*hspreadPhiFold_crack_EBm[i-1]->GetRMS(),hspreadPhiFold_crack_EBm[i-1]->GetMean()+5*hspreadPhiFold_crack_EBm[i-1]->GetRMS());
+      hspreadPhiFold_crack_EBm[i-1]->Fit("fgaus2","QR");
+      ic_vs_PhiFold_crack_EBm-> SetPoint(np,phibin-1,fgaus2->GetParameter(1));
+//       ic_vs_PhiFold_crack-> SetPoint(np,phibin,hspreadPhiFold_crack[i-1]->GetMean()); 
+      ic_vs_PhiFold_crack_EBm-> SetPointError(np,0,fgaus2->GetParError(1));
+      
+      np++;
+  
+
+}
+
+
+
 }
   //------------------------------------------------------------------------
 
   //-----------------------------------------------------------------
   //--- Draw plots
   //-----------------------------------------------------------------
-  TCanvas *c[2];
+  TCanvas *c[10];
 
   c[0] = new TCanvas("csigmaFold","csigmaFold");
   c[0]->SetGridx();
@@ -222,5 +336,36 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_noEP/
   residual_vs_EtaFold->GetHistogram()->GetYaxis()-> SetTitle("residual spread");
   residual_vs_EtaFold->GetHistogram()->GetXaxis()-> SetTitle("|i#eta|");
   residual_vs_EtaFold->Draw("ap");
+
+
+
+   c[2] = new TCanvas("cphimeanfold","cphimeanfold");
+   c[2]->SetGridx();
+   c[2]->SetGridy();
+   ic_vs_PhiFold->GetHistogram()->GetYaxis()-> SetRangeUser(0.99.,1.01);
+   ic_vs_PhiFold->GetHistogram()->GetXaxis()-> SetRangeUser(0,18);
+   ic_vs_PhiFold->GetHistogram()->GetYaxis()-> SetTitle("mean IC");
+   ic_vs_PhiFold->GetHistogram()->GetXaxis()-> SetTitle("Phi%20");
+   ic_vs_PhiFold->Draw("ap");
+
+   c[3] = new TCanvas("cphimeanfold_crack_EB+","cphimeanfold_crack_EB+");
+   c[3]->SetGridx();
+   c[3]->SetGridy();
+   ic_vs_PhiFold_crack_EBp->SetTitle(" Mean IC EB+");
+   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetRangeUser(0.99.,1.01);
+   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetRangeUser(0,20);
+   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetTitle("mean IC");
+   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetTitle("Phi%20");
+   ic_vs_PhiFold_crack_EBp->Draw("ap");
+
+   c[4] = new TCanvas("cphimeanfold_crack_EB-","cphimeanfold_crackEB-");
+   c[4]->SetGridx();
+   c[4]->SetGridy();
+   ic_vs_PhiFold_crack_EBm->SetTitle(" Mean IC EB-");
+   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetRangeUser(0.99.,1.01);
+   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetRangeUser(0,20);
+   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetTitle("mean IC");
+   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetTitle("Phi%20");
+   ic_vs_PhiFold_crack_EBm->Draw("ap");
 
 }
