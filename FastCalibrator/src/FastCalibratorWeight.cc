@@ -13,8 +13,8 @@
 
 
 ///==== Basic Contructor 
-FastCalibratorWeight::FastCalibratorWeight(TTree *tree,TFile *f2):
-fileEP_p(f2)
+FastCalibratorWeight::FastCalibratorWeight(TTree *tree,TString outEPDistribution):
+outEPDistribution_p(outEPDistribution)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -68,11 +68,13 @@ void FastCalibratorWeight::Init(TTree *tree)
   ele1_recHit_hashedIndex = 0;
   ele1_recHit_iphiORiy = 0;
   ele1_recHit_ietaORix = 0;
+  ele1_recHit_flag = 0;
 
   ele2_recHit_E = 0;
   ele2_recHit_hashedIndex = 0;
   ele2_recHit_iphiORiy = 0;
   ele2_recHit_ietaORix = 0;
+  ele2_recHit_flag = 0;
    // Set branch addresses and branch pointers
   if (!tree) return;
   fChain = tree;
@@ -87,6 +89,7 @@ void FastCalibratorWeight::Init(TTree *tree)
   fChain->SetBranchAddress("ele1_recHit_hashedIndex", &ele1_recHit_hashedIndex, &b_ele1_recHit_hashedIndex);
   fChain->SetBranchAddress("ele1_recHit_ietaORix", &ele1_recHit_ietaORix, &b_ele1_recHit_ietaORix);
   fChain->SetBranchAddress("ele1_recHit_iphiORiy", &ele1_recHit_iphiORiy, &b_ele1_recHit_iphiORiy);
+  fChain->SetBranchAddress("ele1_recHit_flag", &ele1_recHit_flag, &b_ele1_recHit_flag);
 
   fChain->SetBranchAddress("ele1_scERaw", &ele1_scERaw, &b_ele1_scERaw);
   fChain->SetBranchAddress("ele1_scE", &ele1_scE, &b_ele1_scE);
@@ -105,6 +108,8 @@ void FastCalibratorWeight::Init(TTree *tree)
   fChain->SetBranchAddress("ele2_recHit_hashedIndex", &ele2_recHit_hashedIndex, &b_ele2_recHit_hashedIndex);
   fChain->SetBranchAddress("ele2_recHit_iphiORiy", &ele2_recHit_iphiORiy, &b_ele2_recHit_iphiORiy);
   fChain->SetBranchAddress("ele2_recHit_ietaORix", &ele2_recHit_ietaORix, &b_ele2_recHit_ietaORix);
+  fChain->SetBranchAddress("ele2_recHit_flag", &ele2_recHit_flag, &b_ele2_recHit_flag);
+
   
   fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
   fChain->SetBranchAddress("ele2_scE", &ele2_scE, &b_ele2_scE);
@@ -181,7 +186,7 @@ void FastCalibratorWeight::bookHistos(int nLoops)
 
 ///===== Build E/p for electron 1 and 2
 
-void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool isSaveEPDistribution)
+void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool       isSaveEPDistribution, bool isR9selection)
 {
   if(iLoop ==0)  
   {
@@ -220,7 +225,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
 
-            if(ele1_recHit_E -> at(iRecHit) > E_seed)
+            if(ele1_recHit_E -> at(iRecHit) > E_seed &&  ele1_recHit_flag->at(iRecHit) < 4 )
             {
               seed_hashedIndex=ele1_recHit_hashedIndex -> at(iRecHit);
               iseed=iRecHit;
@@ -231,6 +236,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
+            if(ele1_recHit_flag->at(iRecHit) < 4)
             thisE += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
              
      }
@@ -243,7 +249,8 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
          
             if(fabs(ele1_recHit_ietaORix->at(iRecHit)-ele1_recHit_ietaORix->at(iseed))<=1 && 
-               fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1)
+               fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1 && ele1_recHit_flag->at(iRecHit) < 4
+           )
               thisE3x3+=theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
            }
 
@@ -253,7 +260,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
      pSub = 0.; //NOTALEO : test dummy
      pIn = ele1_tkP;
      bool skipElectron = false;
-//      if ( fabs(thisE3x3/thisE) < 0.9) skipElectron = true;
+     if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
      if(!skipElectron)    hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/ele1_tkP);
      
   
@@ -275,7 +282,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
 
-            if(ele2_recHit_E -> at(iRecHit) > E_seed)
+            if(ele2_recHit_E -> at(iRecHit) > E_seed && ele2_recHit_flag->at(iRecHit) < 4)
             {
               seed_hashedIndex=ele2_recHit_hashedIndex -> at(iRecHit);
               iseed=iRecHit;
@@ -286,6 +293,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
+            if (ele2_recHit_flag->at(iRecHit) < 4 )
             thisE += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
              
      }
@@ -298,7 +306,8 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
          
             if(fabs(ele2_recHit_ietaORix->at(iRecHit)-ele2_recHit_ietaORix->at(iseed))<=1 && 
-               fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1)
+               fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1 &&
+               ele2_recHit_flag->at(iRecHit) < 4)
               thisE3x3+=theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
            }
 
@@ -310,7 +319,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
      pIn = ele2_tkP;
  
      bool skipElectron = false;
-//      if ( fabs(thisE3x3/thisE) < 0.9) skipElectron = true;
+     if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
      if(!skipElectron) hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/ele2_tkP);
   
   }
@@ -323,7 +332,12 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
      hC_EoP_eta_ele->Normalize(ieta);
  }
  
- if(isSaveEPDistribution == true) saveEPDistribution();
+ if(isSaveEPDistribution == true) 
+ {
+   TFile *f2 = new TFile(outEPDistribution_p.Data(),"UPDATE");
+   saveEoPeta(f2);
+ }
+   
 }
 
 
@@ -331,7 +345,8 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
 ///=========== Loop over the events 
 
 
-void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution)
+void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution,
+                                bool isEPselection,bool isR9selection)
 {
    if (fChain == 0) return;
    
@@ -381,7 +396,7 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
     // loop over events
     std::cout << "Number of analyzed events = " << nentries << std::endl;
     
-    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution); ///==== build E/p distribution ele 1 and 2
+    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection); ///==== build E/p distribution ele 1 and 2
  
     Long64_t nbytes = 0, nb = 0;
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -417,12 +432,13 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
             // IC obtained from previous Loops
-            if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
+            if (iLoop > 0 ) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
+            if (ele1_recHit_flag->at(iRecHit) < 4)
             thisE += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
 
               
-            if(ele1_recHit_E -> at(iRecHit) > E_seed)
+            if(ele1_recHit_E -> at(iRecHit) > E_seed && ele1_recHit_flag->at(iRecHit)<4)
              {
               E_seed=ele1_recHit_E -> at(iRecHit);
               iseed=iRecHit;
@@ -441,7 +457,8 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
          
             if(fabs(ele1_recHit_ietaORix->at(iRecHit)-ele1_recHit_ietaORix->at(iseed))<=1 && 
-               fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1)
+               fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1 &&
+               ele1_recHit_flag->at(iRecHit) < 4 )
               thisE3x3+=theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
            }
  
@@ -450,17 +467,20 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
 //           pIn = ele1_scE;
           int eta_seed = GetIetaFromHashedIndex(seed_hashedIndex);
           TH1F* EoPHisto = hC_EoP_eta_ele->GetHisto(eta_seed+85);
-//           if ( fabs(thisE/ele1_tkP - 1) > 0.2 ) skipElectron = true;
-//           if ( fabs(thisE3x3/thisE) < 0.9) skipElectron = true;
+          if ( fabs(thisE/ele1_tkP - 1) > 0.3 && isEPselection==true) skipElectron = true;
+          if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
        
           if ( thisE/ele1_tkP < EoPHisto->GetXaxis()->GetXmin() || thisE/ele1_tkP > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
           if ( !skipElectron) {
           
             // Now cycle on the all the recHits and update the numerator and denominator
             for ( unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++ ) {
-  
+            
+              if (ele1_recHit_flag->at(iRecHit) >= 4) continue ;
+           
               int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
               float thisIC = 1.;
+
               if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
   
               // Fill the occupancy map JUST for the first Loop
@@ -522,10 +542,11 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
+            if(ele2_recHit_flag->at(iRecHit) < 4)
             thisE += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
 
               
-            if(ele2_recHit_E -> at(iRecHit) > E_seed)
+            if(ele2_recHit_E -> at(iRecHit) > E_seed && ele2_recHit_flag->at(iRecHit) < 4)
              {
               E_seed=ele2_recHit_E -> at(iRecHit);
               iseed=iRecHit;
@@ -543,14 +564,10 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
 
-            if ( iLoop == 0 ) {
-              h_Occupancy_hashedIndex -> Fill(thisIndex);
-              h_occupancy -> Fill(GetIphiFromHashedIndex(thisIndex), GetIetaFromHashedIndex(thisIndex));
-            }
-
        
            if(fabs(ele2_recHit_ietaORix->at(iRecHit)-ele2_recHit_ietaORix->at(iseed))<=1 && 
-              fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1)
+              fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1 &&
+              ele2_recHit_flag->at(iRecHit) < 4)
              thisE3x3+=theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
              
  
@@ -566,13 +583,15 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
           
           // discard electrons with bad E/P
           if ( thisE/ele2_tkP < EoPHisto->GetXaxis()->GetXmin() || thisE/ele2_tkP > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
-//           if ( fabs(thisE/ele2_tkP - 1) > 0.2 ) skipElectron = true;
-//           if ( fabs(thisE3x3/thisE) < 0.9 ) skipElectron = true;
-    
+          if ( fabs(thisE/ele2_tkP - 1) > 0.3 && isEPselection==true) skipElectron = true;
+          if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
+          
           if ( !skipElectron ) {
           
             // Now cycle on the all the recHits and update the numerator and denominator
             for ( unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {
+
+              if (ele2_recHit_flag->at(iRecHit) >= 4) continue ;
   
               int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
               float thisIC = 1.;
@@ -748,12 +767,11 @@ void FastCalibratorWeight::saveHistos(TFile * f1)
   return;
 }
 
-void FastCalibratorWeight::saveEPDistribution()
+void FastCalibratorWeight::saveEoPeta(TFile * f2)
 {
- fileEP_p->cd();
- hC_EoP_eta_ele ->Write(*fileEP_p);
- fileEP_p->Close();
- 
+ f2->cd();
+ hC_EoP_eta_ele ->Write(*f2);
+ f2->Close(); 
 }
 
 void FastCalibratorWeight::printOnTxt(TString outputTxtFile)
