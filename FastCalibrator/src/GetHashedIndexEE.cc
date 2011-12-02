@@ -1,4 +1,5 @@
 #include "GetHashedIndexEE.h"
+#include "EERings.h"
 
 const int kxf[] =  {
     41,  51,  41,  51,  41,  51,  36,  51,  36,  51,
@@ -72,3 +73,4 @@ int GetZsideFromHashedIndex(int Index)
 {
   return ( Index < kEEhalf ? -1 : 1) ;
 }
+

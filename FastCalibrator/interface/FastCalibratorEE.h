@@ -113,7 +113,8 @@ class FastCalibratorEE {
     TBranch        *b_ele2_isEEDeeGap;   //!
     TBranch        *b_ele2_isEERingGap;   //!
 
-    FastCalibratorEE(TTree *tree=0);
+    
+    FastCalibratorEE(TTree *tree=0, TString outEPDistribution=0);
     virtual ~FastCalibratorEE();
     virtual void     bookHistos(int);
     virtual void     saveHistos(TFile *f1);
@@ -121,41 +122,42 @@ class FastCalibratorEE {
     virtual Int_t    GetEntry(Long64_t entry);
     virtual Long64_t LoadTree(Long64_t entry);
     virtual void     Init(TTree *tree);
-    virtual void     Loop(int, int, int, int, int);
-   
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool);
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool);
     virtual Bool_t   Notify();
     virtual void     Show(Long64_t entry = -1);
-    virtual void     printOnTxt(std::string outputTxtFile);
-  
+    virtual void     printOnTxt(TString outputTxtFile);
+    virtual void     saveEoPeta(TFile * f2);
 
-    hChain     *hC_EoP_eta_ele;
+    hChain     *hC_EoP_ir_ele;
    
     // Service histos
     TH1F       *h_scale_hashedIndex_EE;
     TH1F       *h_occupancy_hashedIndex_EE;
-
+    hChain     *hC_EoP;
+   
     // EE+
     hChain     *hC_IntercalibValues_EEP;
-    hChain     *hC_EoP_EEP;
     hChain     *hC_PullFromScalib_EEP;
     h2Chain    *hC_scale_EEP;
-  
+     
 
     TH2F       *h_occupancy_EEP;
     TH2F       *h_scale_EEP;
-  
+    TH2F       *h_scalib_EEP;
     
     TGraphErrors *g_ICmeanVsLoop_EEP;
     TGraphErrors *g_ICrmsVsLoop_EEP;
 
     // EE-
     hChain     *hC_IntercalibValues_EEM;
-    hChain     *hC_EoP_EEM;
-    TH2F       *h_occupancy_EEM;
-    TH2F       *h_scale_EEM;
     hChain     *hC_PullFromScalib_EEM;
     h2Chain    *hC_scale_EEM;
 
+    TH2F       *h_occupancy_EEM;
+    TH2F       *h_scale_EEM;
+    TH2F       *h_scalib_EEM;
+   
     TGraphErrors *g_ICmeanVsLoop_EEM;
     TGraphErrors *g_ICrmsVsLoop_EEM;
 
@@ -170,6 +172,8 @@ class FastCalibratorEE {
     
     
   private :
+  
+    TString outEPDistribution_p;
 
     // Essential values to get EE geometry
     static const int IX_MIN = 1;
