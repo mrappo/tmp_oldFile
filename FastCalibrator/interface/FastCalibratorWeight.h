@@ -38,6 +38,7 @@ class FastCalibratorWeight {
     std::vector<int>     *ele1_recHit_hashedIndex;
     std::vector<int>     *ele1_recHit_ietaORix;
     std::vector<int>     *ele1_recHit_iphiORiy;
+    std::vector<int>     *ele1_recHit_flag;
   
     Float_t         ele1_scERaw;
     Float_t         ele1_scE;
@@ -52,10 +53,12 @@ class FastCalibratorWeight {
     Int_t           ele1_isEBPhiGap;
     Int_t           ele1_isEEDeeGap;
     Int_t           ele1_isEERingGap;
+
     std::vector<float>   *ele2_recHit_E;
     std::vector<int>     *ele2_recHit_hashedIndex;
     std::vector<int>     *ele2_recHit_iphiORiy;
     std::vector<int>     *ele2_recHit_ietaORix;
+    std::vector<int>     *ele2_recHit_flag;
     
     Float_t         ele2_scERaw;
     Float_t         ele2_scE;
@@ -80,6 +83,8 @@ class FastCalibratorWeight {
     TBranch        *b_ele1_recHit_hashedIndex;
     TBranch        *b_ele1_recHit_iphiORiy;
     TBranch        *b_ele1_recHit_ietaORix;
+    TBranch        *b_ele1_recHit_flag;
+
        //!
     TBranch        *b_ele1_scERaw;   //!
     TBranch        *b_ele1_scE;   //!
@@ -98,6 +103,7 @@ class FastCalibratorWeight {
     TBranch        *b_ele2_recHit_hashedIndex;
     TBranch        *b_ele2_recHit_iphiORiy;
     TBranch        *b_ele2_recHit_ietaORix;   //!
+    TBranch        *b_ele2_recHit_flag;
     TBranch        *b_ele2_scERaw;   //!
     TBranch        *b_ele2_scE;   //!
     TBranch        *b_ele2_es;   //!
@@ -112,7 +118,8 @@ class FastCalibratorWeight {
     TBranch        *b_ele2_isEEDeeGap;   //!
     TBranch        *b_ele2_isEERingGap;   //!
 
-    FastCalibratorWeight(TTree *tree=0, TFile *f2=0);
+   
+    FastCalibratorWeight(TTree *tree=0, TString outEPDistribution=0);
     virtual ~FastCalibratorWeight();
     virtual void     bookHistos(int);
     virtual void     saveHistos(TFile *f1);
@@ -120,12 +127,14 @@ class FastCalibratorWeight {
     virtual Int_t    GetEntry(Long64_t entry);
     virtual Long64_t LoadTree(Long64_t entry);
     virtual void     Init(TTree *tree);
-    virtual void     Loop(int, int, int, int, int,bool,bool);
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool);
     virtual Bool_t   Notify();
     virtual void     Show(Long64_t entry = -1);
     virtual void     printOnTxt(TString outputTxtFile);
-    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool);
-    virtual void     saveEPDistribution();
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool);
+    virtual void     saveEoPeta(TFile * f2);
+    virtual void     AcquireDeadXtal(TString imputDeadXtal);
+    virtual bool     CheckDeadXtal(const int & iEta, const int & iPhi);
 
     hChain     *hC_EoP_eta_ele;
   
@@ -148,12 +157,14 @@ class FastCalibratorWeight {
     std::vector<int>   IphiValues;
     std::vector<float> ICValues;
     std::vector<float> meanICforPhiRingValues;
+    std::vector<int> DeadXtal_HashedIndex;
+
     
     TGraphErrors *g_ICmeanVsLoop;
     TGraphErrors *g_ICrmsVsLoop;
 
  private:
- TFile *fileEP_p;
+ TString outEPDistribution_p;
 
 };
 
