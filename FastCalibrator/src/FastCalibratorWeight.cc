@@ -226,9 +226,6 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
-            bool isDeadXtal = false ;
-            if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-            if(isDeadXtal == true ) continue;
            
             if(ele1_recHit_E -> at(iRecHit) > E_seed &&  ele1_recHit_flag->at(iRecHit) < 4 )
             {
@@ -250,9 +247,6 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
-            bool isDeadXtal = false ;
-            if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-            if(isDeadXtal == true ) continue;
            
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
@@ -290,10 +284,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
-            bool isDeadXtal = false ;
-            if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-            if(isDeadXtal == true ) continue;
-           
+            
             if(ele2_recHit_E -> at(iRecHit) > E_seed && ele2_recHit_flag->at(iRecHit) < 4)
             {
               seed_hashedIndex=ele2_recHit_hashedIndex -> at(iRecHit);
@@ -314,9 +305,6 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
             
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
-            bool isDeadXtal = false ;
-            if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-            if(isDeadXtal == true ) continue;
            
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
@@ -390,14 +378,21 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
    
    //Prepare the calibration blocks
    int eventWeight = 2; //Pres8 prenscription
-
+       
    // build up scalibration map
    std::vector<float> theScalibration(m_regions, 0.);
    TRandom genRand;
    for ( int iIndex = 0; iIndex < m_regions; iIndex++ )  {
-     if(isMiscalib==true) theScalibration[iIndex] = genRand.Gaus(1.,0.05);
-     if(isMiscalib == false) theScalibration[iIndex] = 1.;
-      h_scalib_EB -> Fill ( GetIphiFromHashedIndex(iIndex), GetIetaFromHashedIndex(iIndex), theScalibration[iIndex] );
+
+     bool isDeadXtal = false ;
+     if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(iIndex), GetIphiFromHashedIndex(iIndex));
+     if(isDeadXtal == true ) {theScalibration[iIndex]=0; std::cout<< " No good index " << GetIetaFromHashedIndex(iIndex) << "  "<<GetIphiFromHashedIndex(iIndex)<<std::endl;}
+     else{
+     
+         if(isMiscalib==true) theScalibration[iIndex] = genRand.Gaus(1.,0.05);
+         if(isMiscalib == false) theScalibration[iIndex] = 1.;
+         h_scalib_EB -> Fill ( GetIphiFromHashedIndex(iIndex), GetIetaFromHashedIndex(iIndex), theScalibration[iIndex] );
+     }
    }
 
    /// ----------------- Calibration Loops -----------------------------//
@@ -447,9 +442,6 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
             
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
-            bool isDeadXtal = false ;
-            if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-            if(isDeadXtal == true ) continue;
            
             // IC obtained from previous Loops
             if (iLoop > 0 ) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
@@ -474,9 +466,6 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
      
-            bool isDeadXtal = false ;
-            if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-            if(isDeadXtal == true ) continue;
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
          
@@ -505,10 +494,6 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
            
               int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
               float thisIC = 1.;
-              bool isDeadXtal = false ;
-              if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex),GetIphiFromHashedIndex(thisIndex));
-              if(isDeadXtal == true ) continue;
-           
 
               if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
   
@@ -568,10 +553,6 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
             
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
-            bool isDeadXtal = false ;
-            if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-            if(isDeadXtal == true ) continue;
-           
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
@@ -594,10 +575,6 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
             
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
-            bool isDeadXtal = false ;
-            if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-            if(isDeadXtal == true ) continue;
-           
             // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
 
@@ -632,9 +609,6 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
   
               int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
               float thisIC = 1.;
-              bool isDeadXtal = false ;
-              if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(thisIndex), GetIphiFromHashedIndex(thisIndex));
-              if(isDeadXtal == true ) continue;
            
               if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
   
