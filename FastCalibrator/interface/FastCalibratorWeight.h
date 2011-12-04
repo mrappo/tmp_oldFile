@@ -159,6 +159,8 @@ class FastCalibratorWeight {
     std::vector<float> meanICforPhiRingValues;
     std::vector<int> DeadXtal_HashedIndex;
 
+    TH2F       *h_map_Dead_Channels ;
+
     
     TGraphErrors *g_ICmeanVsLoop;
     TGraphErrors *g_ICrmsVsLoop;

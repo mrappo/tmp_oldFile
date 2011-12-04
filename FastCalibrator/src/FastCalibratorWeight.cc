@@ -170,6 +170,7 @@ void FastCalibratorWeight::bookHistos(int nLoops)
   h_IntercalibValues_test = new TH1F ("h_IntercalibValues_test", "h_IntercalibValues_test", 400, -1, 1);
   h_scale_EB_hashedIndex = new TH1F("h_scale_EB_hashedIndex", "h_scale_EB_hashedIndex", 61201,-0.5,61999.5 );
   h_Init_IntercalibValues = new TH1F("h_Init_IntercalibValues","h_Init_IntercalibValues",2000,0.5,1.5);
+  h_map_Dead_Channels = new TH2F("h_map_Dead_Channels","h_map_Dead_Channels",360,1,361,171,-85,86);
 
   g_ICmeanVsLoop = new TGraphErrors();
   g_ICmeanVsLoop -> SetName("g_ICmeanVsLoop");
@@ -386,7 +387,10 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
 
      bool isDeadXtal = false ;
      if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIetaFromHashedIndex(iIndex), GetIphiFromHashedIndex(iIndex));
-     if(isDeadXtal == true ) {theScalibration[iIndex]=0; std::cout<< " No good index " << GetIetaFromHashedIndex(iIndex) << "  "<<GetIphiFromHashedIndex(iIndex)<<std::endl;}
+     if(isDeadXtal == true ) {
+     theScalibration[iIndex]=0;
+     h_map_Dead_Channels->Fill(GetIphiFromHashedIndex(iIndex),GetIetaFromHashedIndex(iIndex));
+     }
      else{
      
          if(isMiscalib==true) theScalibration[iIndex] = genRand.Gaus(1.,0.05);
@@ -780,6 +784,8 @@ void FastCalibratorWeight::saveHistos(TFile * f1)
   
   g_ICmeanVsLoop -> Write();
   g_ICrmsVsLoop -> Write();
+
+  h_map_Dead_Channels -> Write() ;
 
 
   f1->Close();
