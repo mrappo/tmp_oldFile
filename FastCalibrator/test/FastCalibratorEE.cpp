@@ -21,7 +21,15 @@ int main (int argc, char ** argv)
 
   std::string inputFile       = gConfigParser -> readStringOption("Input::inputFile");
   std::string inputTree       = gConfigParser -> readStringOption("Input::inputTree");
- 
+  std::string inputFileDeadXtal ="NULL" ;
+  try {
+        inputFileDeadXtal = gConfigParser -> readStringOption("Input::inputFileDeadXtal");
+   }
+   catch ( char const* exceptionString ){
+   std::cerr << " exception = " << exceptionString << std::endl;
+
+   }
+  
   bool isMiscalib = gConfigParser -> readBoolOption("Input::isMiscalib");
   bool isSaveEPDistribution = gConfigParser -> readBoolOption("Input::isSaveEPDistribution");
   bool isEPselection = gConfigParser -> readBoolOption("Input::isEPselection");
@@ -71,11 +79,15 @@ int main (int argc, char ** argv)
 
     outputTxtFile = name_tmp + ".txt";
     TString outEPDistribution = "Weight_"+name;
+
+    TString DeadXtal = Form("%s",inputFileDeadXtal.c_str());    
+
     
     if(isSaveEPDistribution == true)
     {
      FastCalibratorEE analyzer(albero,outEPDistribution);
      analyzer.bookHistos(nLoops);
+     analyzer.AcquireDeadXtal(DeadXtal);
      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection);
      analyzer.saveHistos(f1);
      analyzer.printOnTxt(outputTxtFile);
@@ -84,6 +96,7 @@ int main (int argc, char ** argv)
     {
      FastCalibratorEE analyzer(albero);
      analyzer.bookHistos(nLoops);
+     analyzer.AcquireDeadXtal(DeadXtal);  
      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection);
      analyzer.saveHistos(f1);
      analyzer.printOnTxt(outputTxtFile);
@@ -162,16 +175,20 @@ int main (int argc, char ** argv)
 
     TFile *f1 = new TFile(name,"RECREATE");
     TFile *f2 = new TFile(name2,"RECREATE");
+    TString DeadXtal = Form("%s",inputFileDeadXtal.c_str());
+  
      
     // Run on odd
     FastCalibratorEE analyzer_even(albero);
     analyzer_even.bookHistos(nLoops);
+    analyzer_even.AcquireDeadXtal(DeadXtal);
     analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection);
     analyzer_even.saveHistos(f1);
   
     // Run on even
     FastCalibratorEE analyzer_odd(albero);
     analyzer_odd.bookHistos(nLoops);
+    analyzer_even.AcquireDeadXtal(DeadXtal);
     analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection);
     analyzer_odd.saveHistos(f2);
     

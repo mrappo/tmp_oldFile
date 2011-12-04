@@ -38,7 +38,8 @@ class FastCalibratorEE {
     std::vector<int>     *ele1_recHit_hashedIndex;
     std::vector<int>     *ele1_recHit_ietaORix;
     std::vector<int>     *ele1_recHit_iphiORiy;
-
+    std::vector<int>     *ele1_recHit_flag;   
+ 
     Float_t         ele1_scERaw;
     Float_t         ele1_scE;
     Float_t         ele1_es;
@@ -57,6 +58,7 @@ class FastCalibratorEE {
     std::vector<int>     *ele2_recHit_hashedIndex;
     std::vector<int>     *ele2_recHit_iphiORiy;
     std::vector<int>     *ele2_recHit_ietaORix;
+    std::vector<int>     *ele2_recHit_flag;
 
     Float_t         ele2_scERaw;
     Float_t         ele2_scE;
@@ -81,6 +83,7 @@ class FastCalibratorEE {
     TBranch        *b_ele1_recHit_iphiORiy;
     TBranch        *b_ele1_recHit_ietaORix;
     TBranch        *b_ele1_recHit_hashedIndex;   //!
+    TBranch        *b_ele1_recHit_flag;
     TBranch        *b_ele1_scERaw;   //!
     TBranch        *b_ele1_scE;   //!
     TBranch        *b_ele1_es;   //!
@@ -98,7 +101,7 @@ class FastCalibratorEE {
     TBranch        *b_ele2_recHit_hashedIndex;   //!
     TBranch        *b_ele2_recHit_iphiORiy;
     TBranch        *b_ele2_recHit_ietaORix;   //!
-  
+    TBranch        *b_ele2_recHit_flag;
     TBranch        *b_ele2_scERaw;   //!
     TBranch        *b_ele2_scE;   //!
     TBranch        *b_ele2_es;   //!
@@ -128,6 +131,9 @@ class FastCalibratorEE {
     virtual void     Show(Long64_t entry = -1);
     virtual void     printOnTxt(TString outputTxtFile);
     virtual void     saveEoPeta(TFile * f2);
+    virtual void     AcquireDeadXtal(TString imputDeadXtal);
+    virtual bool     CheckDeadXtal(const int & iX, const int & iY, const int & iZ);
+
 
     hChain     *hC_EoP_ir_ele;
    
@@ -157,6 +163,7 @@ class FastCalibratorEE {
     TH2F       *h_occupancy_EEM;
     TH2F       *h_scale_EEM;
     TH2F       *h_scalib_EEM;
+    
    
     TGraphErrors *g_ICmeanVsLoop_EEM;
     TGraphErrors *g_ICrmsVsLoop_EEM;
@@ -168,6 +175,13 @@ class FastCalibratorEE {
     std::vector<int>   IxValues_EEP;
     std::vector<int>   IyValues_EEP;
     std::vector<float> ICValues_EEP;
+
+    std::vector<int> DeadXtal_HashedIndex;
+
+    TH2F       *h_map_Dead_Channels_EEP ;
+    TH2F       *h_map_Dead_Channels_EEM ;
+ 
+
     
     
     
