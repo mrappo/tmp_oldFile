@@ -151,6 +151,7 @@ class FastCalibratorEE {
     TH2F       *h_occupancy_EEP;
     TH2F       *h_scale_EEP;
     TH2F       *h_scalib_EEP;
+    TH2F       *h_scale_meanOnring_EEP;
     
     TGraphErrors *g_ICmeanVsLoop_EEP;
     TGraphErrors *g_ICrmsVsLoop_EEP;
@@ -163,7 +164,7 @@ class FastCalibratorEE {
     TH2F       *h_occupancy_EEM;
     TH2F       *h_scale_EEM;
     TH2F       *h_scalib_EEM;
-    
+    TH2F       *h_scale_meanOnring_EEM;
    
     TGraphErrors *g_ICmeanVsLoop_EEM;
     TGraphErrors *g_ICrmsVsLoop_EEM;
@@ -176,13 +177,19 @@ class FastCalibratorEE {
     std::vector<int>   IyValues_EEP;
     std::vector<float> ICValues_EEP;
 
+    std::vector<float> SumIC_Ring_EEP;
+    std::vector<int> Sumxtal_Ring_EEP;
+    std::vector<float> SumIC_Ring_EEM;
+    std::vector<int> Sumxtal_Ring_EEM;
+ 
+
     std::vector<int> DeadXtal_HashedIndex;
 
     TH2F       *h_map_Dead_Channels_EEP ;
     TH2F       *h_map_Dead_Channels_EEM ;
  
 
-    
+   
     
     
   private :

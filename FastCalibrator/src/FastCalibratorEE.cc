@@ -26,6 +26,13 @@ outEPDistribution_p(outEPDistribution)
     tree = (TTree*)gDirectory->Get("ntu");
 
   }
+   
+
+  SumIC_Ring_EEP.assign(40,0);
+  SumIC_Ring_EEM.assign(40,0);
+  Sumxtal_Ring_EEP.assign(40,0);
+  Sumxtal_Ring_EEM.assign(40,0);
+  
   Init(tree);
 }
 
@@ -165,7 +172,8 @@ void FastCalibratorEE::bookHistos(int nLoops)
   h_occupancy_EEP = new TH2F("h_occupancy_EEP", "h_occupancy_EEP", 100,1, 101, 100, 1, 101 );
   h_scalib_EEP = new TH2F("h_scalib_EEP", "h_scalib_EEP", 100,1, 101, 100, 1, 101);
   h_map_Dead_Channels_EEP = new TH2F("h_map_Dead_Channels_EEP","h_map_Dead_Channels_EEP",100,1,101,100,1,101);
-
+  h_scale_meanOnring_EEP = new TH2F ("h_scale_meanOnring_EEP", "h_scale_meanOnring_EEP",  100,1, 101, 100, 1, 101);
+  
   g_ICmeanVsLoop_EEP = new TGraphErrors();
   g_ICmeanVsLoop_EEP -> SetName("g_ICmeanVsLoop_EEP");
   g_ICmeanVsLoop_EEP -> SetTitle("g_ICmeanVsLoop_EEP");
@@ -185,6 +193,7 @@ void FastCalibratorEE::bookHistos(int nLoops)
   h_occupancy_EEM = new TH2F("h_occupancy_EEM", "h_occupancy_EEM", 100,1, 101, 100, 1, 101 );
   h_scalib_EEM = new TH2F("h_scalib_EEM", "h_scalib_EEM", 100,1, 101, 100, 1, 101);
   h_map_Dead_Channels_EEM = new TH2F("h_map_Dead_Channels_EEM","h_map_Dead_Channels_EEM",100,1,101,100,1,101);
+  h_scale_meanOnring_EEM = new TH2F ("h_scale_meanOnring_EEM", "h_scale_meanOnring_EEM",  100,1, 101, 100, 1, 101);
 
   g_ICmeanVsLoop_EEM = new TGraphErrors();
   g_ICmeanVsLoop_EEM -> SetName("g_ICmeanVsLoop_EEM");
@@ -783,6 +792,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
         }
       
       }
+   
     g_ICmeanVsLoop_EEM -> SetPoint(iLoop, iLoop, auxiliary_IC_EEM.GetMean());
     g_ICmeanVsLoop_EEM -> SetPointError(iLoop, 0.,auxiliary_IC_EEM.GetMeanError());
     
@@ -797,7 +807,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
     
    }// Calibration Loops
       
-   //Fill the histo of IntercalibValues after the loops
+   //Fill the histo of IntercalibValues after the loops at last step
    for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
            
      if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
@@ -808,6 +818,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
        
        int thisIx = GetIxFromHashedIndex(iIndex);
        int thisIy = GetIyFromHashedIndex(iIndex);
+       int thisIz = GetZsideFromHashedIndex(iIndex);
 
        float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
        if ( thisCaliBlock == 0 ) 
@@ -827,12 +838,51 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
              IyValues_EEP.push_back(thisIy);
              ICValues_EEP.push_back(thisIntercalibConstant);
            }
-         
+
+       int thisIr = EERings(thisIx,thisIy,thisIz);
+       if(thisIz >0)
+       {
+        SumIC_Ring_EEP.at(thisIr) = SumIC_Ring_EEP.at(thisIr) + thisIntercalibConstant;
+        Sumxtal_Ring_EEP.at(thisIr) = Sumxtal_Ring_EEP.at(thisIr) + 1;
+       }
+       else{
+              SumIC_Ring_EEM.at(thisIr) = SumIC_Ring_EEM.at(thisIr) + thisIntercalibConstant;
+              Sumxtal_Ring_EEM.at(thisIr) = Sumxtal_Ring_EEM.at(thisIr) + 1;
+           }
+               
        }
 
       
-     }
+   }
+   for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
    
+    if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
+        
+       int thisCaliBlock = -1;
+       if (GetZsideFromHashedIndex(iIndex) < 0) thisCaliBlock = 0;
+       else thisCaliBlock = 1;
+       
+       int thisIx = GetIxFromHashedIndex(iIndex);
+       int thisIy = GetIyFromHashedIndex(iIndex);
+       int thisIz = GetZsideFromHashedIndex(iIndex);
+
+       int thisIr = EERings(thisIx,thisIy,thisIz);
+
+       float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
+     
+       
+       if(thisIz > 0)
+       {
+          if(Sumxtal_Ring_EEP.at(thisIr) != 0 && SumIC_Ring_EEP.at(thisIr)!= 0)
+          h_scale_meanOnring_EEP->Fill(thisIx,thisIy,thisIntercalibConstant/(SumIC_Ring_EEP.at(thisIr)/Sumxtal_Ring_EEP.at(thisIr)));
+       }
+       else{
+            if(Sumxtal_Ring_EEM.at(thisIr) != 0 && SumIC_Ring_EEM.at(thisIr) != 0)
+            h_scale_meanOnring_EEM->Fill(thisIx,thisIy,thisIntercalibConstant/(SumIC_Ring_EEM.at(thisIr)/Sumxtal_Ring_EEM.at(thisIr)));
+           }
+       }
+   }
+    
 }
 
   
@@ -849,7 +899,6 @@ void FastCalibratorEE::saveHistos(TFile * f1)
   
   h_occupancy_EEP->Write();
   h_scale_EEP->Write();
-
   
   h_scale_hashedIndex_EE->Write();
   h_occupancy_hashedIndex_EE->Write();
@@ -857,7 +906,8 @@ void FastCalibratorEE::saveHistos(TFile * f1)
     
   g_ICmeanVsLoop_EEP->Write();
   g_ICrmsVsLoop_EEP->Write();
-
+  h_scale_meanOnring_EEP->Write("h_scale_map_EEP");
+  
   // EE-
   hC_IntercalibValues_EEM-> Write(*f1);
   hC_scale_EEM->Write("",*f1);
@@ -868,6 +918,8 @@ void FastCalibratorEE::saveHistos(TFile * f1)
     
   g_ICmeanVsLoop_EEM->Write();
   g_ICrmsVsLoop_EEM->Write();
+  h_scale_meanOnring_EEM->Write("h_scale_map_EEM");
+  
 
   f1->Close();
 
@@ -891,18 +943,28 @@ void FastCalibratorEE::printOnTxt(TString outputTxtFile)
   outTxt << "---------------------------------------------------------------" << std::endl;
 
   for (unsigned int iIndex = 0; iIndex < ICValues_EEP.size(); iIndex++)
+  {
+    int thisIr = EERings(IxValues_EEP.at(iIndex),IyValues_EEP.at(iIndex),1);
+    if(Sumxtal_Ring_EEP.at(thisIr) == 0 || SumIC_Ring_EEP.at(thisIr) == 0) continue;
+   
     outTxt << "  " << std::fixed << std::setw(4)  << std::right << IxValues_EEP.at(iIndex) 
            << std::fixed << std::setw(10)  << std::right << IyValues_EEP.at(iIndex) 
-           << "          " << (float) ICValues_EEP.at(iIndex) << std::endl;
+           << "          " << (float) ICValues_EEP.at(iIndex)/(SumIC_Ring_EEP.at(thisIr)/Sumxtal_Ring_EEP.at(thisIr))<< std::endl;
+  }
   
   outTxt << "---------------------------------------------------------------" << std::endl;
   outTxt << "--- ix ---- iy ------ IC value  --- EE- -----" << std::endl;
   outTxt << "---------------------------------------------------------------" << std::endl;
 
   for (unsigned int iIndex = 0; iIndex < ICValues_EEM.size(); iIndex++)
+  {
+   int thisIr = EERings(IxValues_EEM.at(iIndex),IyValues_EEM.at(iIndex),-1);
+   if(Sumxtal_Ring_EEM.at(thisIr) == 0 || SumIC_Ring_EEM.at(thisIr) == 0) continue;
+       
     outTxt << "  " << std::fixed << std::setw(4)  << std::right << IxValues_EEM.at(iIndex) 
            << std::fixed << std::setw(10)  << std::right << IyValues_EEM.at(iIndex) 
-           << "          " << (float) ICValues_EEM.at(iIndex) << std::endl;
+           << "          " << (float) ICValues_EEM.at(iIndex)/(SumIC_Ring_EEM.at(thisIr)/Sumxtal_Ring_EEM.at(thisIr)) << std::endl;
+  }
   
 }
 
