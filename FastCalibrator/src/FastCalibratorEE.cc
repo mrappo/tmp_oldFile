@@ -439,7 +439,6 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               
         // Event cut:
         //if ( runId != ilrunchevuoi ) continue;
-  
         // Electron quantities used for the calibration
         float pIn, pSub, FdiEta;
       
@@ -573,17 +572,17 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
             }
              
            // use odd    
-           if ( splitStat == 1 && jentry%2 != 0 ) {
+           if ( splitStat == -1 && jentry%2 != 0 ) {
                   
                 if(thisCaliBlock == 0) {
                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
-                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);}
+                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);}
                 
                 if(thisCaliBlock == 1) {
                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
-                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
+                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
               }
             }
             }
@@ -721,12 +720,12 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
             }
              
            // use odd    
-           if ( splitStat == 1 && jentry%2 != 0 ) {
+           if ( splitStat == -1 && jentry%2 != 0 ) {
                   
                 if(thisCaliBlock == 0) {
                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
-                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);}
+                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);}
                 
                 if(thisCaliBlock == 1) {
                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
@@ -806,7 +805,6 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
     g_ICrmsVsLoop_EEP -> SetPointError(iLoop, 0., auxiliary_IC_EEP . GetRMSError());
     
    }// Calibration Loops
-      
    //Fill the histo of IntercalibValues after the loops at last step
    for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
            
