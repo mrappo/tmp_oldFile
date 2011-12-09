@@ -276,7 +276,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
            if(fabs(ele1_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
          }
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
-     if(!skipElectron)    hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/ele1_tkP);
+     if(!skipElectron)    hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/pIn);
      
   
   }
@@ -343,7 +343,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
            if(fabs(ele2_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
          }
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
-     if(!skipElectron) hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/ele2_tkP);
+     if(!skipElectron) hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/pIn);
   
   }
   
@@ -511,10 +511,10 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
           int eta_seed = GetIetaFromHashedIndex(seed_hashedIndex);
           TH1F* EoPHisto = hC_EoP_eta_ele->GetHisto(eta_seed+85);
           
-          if ( fabs(thisE/ele1_tkP - 1) > 0.3 && isEPselection==true) skipElectron = true;
+          if ( fabs(thisE/pIn  - 1) > 0.3 && isEPselection==true) skipElectron = true;
           if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
        
-          if ( thisE/ele1_tkP < EoPHisto->GetXaxis()->GetXmin() || thisE/ele1_tkP > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
+          if ( thisE/pIn  < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn  > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
           if ( !skipElectron) {
           
             // Now cycle on the all the recHits and update the numerator and denominator
@@ -632,8 +632,8 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
           TH1F* EoPHisto = hC_EoP_eta_ele->GetHisto(eta_seed+85);
           
           // discard electrons with bad E/P
-          if ( thisE/ele2_tkP < EoPHisto->GetXaxis()->GetXmin() || thisE/ele2_tkP > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
-          if ( fabs(thisE/ele2_tkP - 1) > 0.3 && isEPselection==true) skipElectron = true;
+          if ( thisE/pIn  < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn  > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
+          if ( fabs(thisE/pIn  - 1) > 0.3 && isEPselection==true) skipElectron = true;
           if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
           
           if ( !skipElectron ) {

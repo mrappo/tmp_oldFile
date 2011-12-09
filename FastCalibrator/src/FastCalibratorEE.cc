@@ -307,7 +307,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
          }
      
      if(fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
-     if(!skipElectron)    hC_EoP_ir_ele -> Fill(ir_seed,thisE/(ele1_tkP-ele1_es));
+     if(!skipElectron)    hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele1_es));
      
   
   }
@@ -376,7 +376,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
          }
      
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
-     if(!skipElectron) hC_EoP_ir_ele -> Fill(ir_seed,thisE/(ele2_tkP-ele2_es));
+     if(!skipElectron) hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele2_es));
   
   }
   
@@ -541,7 +541,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
        
          if ( fabs(thisE/(ele1_tkP-ele1_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
          if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
-         if ( thisE/(ele1_tkP-ele1_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(ele1_tkP-ele1_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
+         if ( thisE/(pIn-ele1_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele1_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
  
          if ( !skipElectron ) {
                   
@@ -694,9 +694,9 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
  
           TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed);
           
-          if ( fabs(thisE/(ele2_tkP-ele2_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
+          if ( fabs(thisE/(pIn-ele2_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
           if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
-          if ( thisE/(ele2_tkP-ele2_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(ele2_tkP-ele2_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
+          if ( thisE/(pIn-ele2_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele2_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
  
          if ( !skipElectron ) {
                   
