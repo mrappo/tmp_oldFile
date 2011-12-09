@@ -53,6 +53,8 @@ class FastCalibratorEE {
     Int_t           ele1_isEBPhiGap;
     Int_t           ele1_isEEDeeGap;
     Int_t           ele1_isEERingGap;
+    Float_t         ele1_E_true;
+    Float_t         ele1_DR;
 
     std::vector<float>   *ele2_recHit_E;
     std::vector<int>     *ele2_recHit_hashedIndex;
@@ -73,6 +75,9 @@ class FastCalibratorEE {
     Int_t           ele2_isEBPhiGap;
     Int_t           ele2_isEEDeeGap;
     Int_t           ele2_isEERingGap;
+    Float_t         ele2_E_true;
+    Float_t         ele2_DR;
+
 
    // List of branches
     TBranch        *b_runId;   //!
@@ -87,6 +92,8 @@ class FastCalibratorEE {
     TBranch        *b_ele1_scERaw;   //!
     TBranch        *b_ele1_scE;   //!
     TBranch        *b_ele1_es;   //!
+    TBranch        *b_ele1_E_true;   //!
+    TBranch        *b_ele1_DR;   //!
     TBranch        *b_ele1_e3x3;   //!
     TBranch        *b_ele1_tkP;   //!
     TBranch        *b_ele1_fbrem;   //!
@@ -105,6 +112,8 @@ class FastCalibratorEE {
     TBranch        *b_ele2_scERaw;   //!
     TBranch        *b_ele2_scE;   //!
     TBranch        *b_ele2_es;   //!
+    TBranch        *b_ele2_E_true;   //!
+    TBranch        *b_ele2_DR;   //!
     TBranch        *b_ele2_e3x3;   //!
     TBranch        *b_ele2_tkP;   //!
     TBranch        *b_ele2_fbrem;   //!
@@ -125,8 +134,8 @@ class FastCalibratorEE {
     virtual Int_t    GetEntry(Long64_t entry);
     virtual Long64_t LoadTree(Long64_t entry);
     virtual void     Init(TTree *tree);
-    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool);
-    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool);
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool);
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool);
     virtual Bool_t   Notify();
     virtual void     Show(Long64_t entry = -1);
     virtual void     printOnTxt(TString outputTxtFile);

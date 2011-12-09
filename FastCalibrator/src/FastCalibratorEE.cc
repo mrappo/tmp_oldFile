@@ -102,6 +102,9 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchAddress("ele1_EOverP", &ele1_EOverP, &b_ele1_EOverP);
   fChain->SetBranchAddress("ele1_isEB", &ele1_isEB, &b_ele1_isEB);
   fChain->SetBranchAddress("ele1_isEBEEGap", &ele1_isEBEEGap, &b_ele1_isEBEEGap);
+  fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
+  fChain->SetBranchAddress("ele1_DR ", &ele1_DR , &b_ele1_DR);
+
   fChain->SetBranchAddress("ele1_isEBEtaGap", &ele1_isEBEtaGap, &b_ele1_isEBEtaGap);
   fChain->SetBranchAddress("ele1_isEBPhiGap", &ele1_isEBPhiGap, &b_ele1_isEBPhiGap);
   fChain->SetBranchAddress("ele1_isEEDeeGap", &ele1_isEEDeeGap, &b_ele1_isEEDeeGap);
@@ -111,7 +114,7 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchAddress("ele2_recHit_iphiORiy", &ele2_recHit_iphiORiy, &b_ele2_recHit_iphiORiy);
   fChain->SetBranchAddress("ele2_recHit_ietaORix", &ele2_recHit_ietaORix, &b_ele2_recHit_ietaORix);
   fChain->SetBranchAddress("ele2_recHit_flag", &ele2_recHit_flag, &b_ele2_recHit_flag);
- 
+   
   fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
   fChain->SetBranchAddress("ele2_scE", &ele2_scE, &b_ele2_scE);
   fChain->SetBranchAddress("ele2_es", &ele2_es, &b_ele2_es);
@@ -120,6 +123,9 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchAddress("ele2_fbrem", &ele2_fbrem, &b_ele2_fbrem);
   fChain->SetBranchAddress("ele2_EOverP", &ele2_EOverP, &b_ele2_EOverP);
   fChain->SetBranchAddress("ele2_isEB", &ele2_isEB, &b_ele2_isEB);
+  fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
+  fChain->SetBranchAddress("ele2_DR ", &ele2_DR , &b_ele2_DR);
+
   fChain->SetBranchAddress("ele2_isEBEEGap", &ele2_isEBEEGap, &b_ele2_isEBEEGap);
   fChain->SetBranchAddress("ele2_isEBEtaGap", &ele2_isEBEtaGap, &b_ele2_isEBEtaGap);
   fChain->SetBranchAddress("ele2_isEBPhiGap", &ele2_isEBPhiGap, &b_ele2_isEBPhiGap);
@@ -212,7 +218,7 @@ void FastCalibratorEE::bookHistos(int nLoops)
 
 ///===== Build E/p for electron 1 and 2
 
-void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool       isSaveEPDistribution, bool isR9selection)
+void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool       isSaveEPDistribution, bool isR9selection, bool isMCTruth)
 {
   if(iLoop ==0)  
   {
@@ -289,9 +295,18 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
  
      pSub = 0.; //NOTALEO : test dummy
-     pIn = ele1_tkP;
+      
      bool skipElectron = false;
-     if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
+     if(!isMCTruth)  // E/p defalut method
+     {
+      pIn = ele1_tkP;
+     }
+     else{
+           pIn = ele1_E_true;
+           if(fabs(ele1_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+         }
+     
+     if(fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
      if(!skipElectron)    hC_EoP_ir_ele -> Fill(ir_seed,thisE/(ele1_tkP-ele1_es));
      
   
@@ -350,9 +365,16 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
  
      
      pSub = 0.; //NOTALEO : test dummy
-     pIn = ele2_tkP;
- 
      bool skipElectron = false;
+     if(!isMCTruth)  // E/p defalut method
+     {
+      pIn = ele2_tkP;
+     }
+     else{
+           pIn = ele2_E_true;
+           if(fabs(ele2_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+         }
+     
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
      if(!skipElectron) hC_EoP_ir_ele -> Fill(ir_seed,thisE/(ele2_tkP-ele2_es));
   
@@ -377,7 +399,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 
 
 void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution,
-                                bool isEPselection,bool isR9selection)
+                                bool isEPselection,bool isR9selection,bool isMCTruth)
 {
    if (fChain == 0) return;
    
@@ -421,7 +443,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
     std::vector<float> theNumerator_EEM(m_regions+1, 0.);
     std::vector<float> theDenominator_EEM(m_regions+1, 0.);
 
-    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection); ///==== build E/p distribution ele 1 and 2
+    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,isMCTruth); ///==== build E/p distribution ele 1 and 2
     
     // loop over events
     std::cout << "Number of analyzed events = " << nentries << std::endl;
@@ -496,9 +518,16 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               }
             
           pSub = 0.; //NOTALEO : test dummy
+   
+         if(!isMCTruth)  // E/p defalut method
+         {
           pIn = ele1_tkP;
-                
-          // find the zside
+         }
+         else{
+           pIn = ele1_E_true;
+           if(fabs(ele1_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+         }
+        // find the zside
          int thisCaliBlock = -1;
          if (GetZsideFromHashedIndex(ele1_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
          else thisCaliBlock = 1;
@@ -645,8 +674,14 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               }
             
           pSub = 0.; //NOTALEO : test dummy
-          pIn = ele2_tkP;
-                
+          if(!isMCTruth)  // E/p defalut method
+          {
+            pIn = ele2_tkP;
+          }
+          else{
+           pIn = ele2_E_true;
+           if(fabs(ele2_DR)>0.1) skipElectron = true ; // No macthing beetween gen ele and reco ele
+          }
           // find the zside
           int thisCaliBlock = -1;
           if (GetZsideFromHashedIndex(ele2_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
