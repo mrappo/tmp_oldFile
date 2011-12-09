@@ -34,6 +34,7 @@ int main (int argc, char ** argv)
   bool isSaveEPDistribution = gConfigParser -> readBoolOption("Input::isSaveEPDistribution");
   bool isEPselection = gConfigParser -> readBoolOption("Input::isEPselection");
   bool isR9selection = gConfigParser -> readBoolOption("Input::isR9selection");
+  bool isMCTruth = gConfigParser -> readBoolOption("Input::isMCTruth");
 
   std::string outputFile      = gConfigParser -> readStringOption("Output::outputFile");
 

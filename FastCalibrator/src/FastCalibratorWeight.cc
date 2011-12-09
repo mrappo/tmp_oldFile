@@ -92,6 +92,8 @@ void FastCalibratorWeight::Init(TTree *tree)
   fChain->SetBranchAddress("ele1_recHit_ietaORix", &ele1_recHit_ietaORix, &b_ele1_recHit_ietaORix);
   fChain->SetBranchAddress("ele1_recHit_iphiORiy", &ele1_recHit_iphiORiy, &b_ele1_recHit_iphiORiy);
   fChain->SetBranchAddress("ele1_recHit_flag", &ele1_recHit_flag, &b_ele1_recHit_flag);
+  fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
+  fChain->SetBranchAddress("ele1_DR", &ele1_DR, &b_ele1_DR);
 
   fChain->SetBranchAddress("ele1_scERaw", &ele1_scERaw, &b_ele1_scERaw);
   fChain->SetBranchAddress("ele1_scE", &ele1_scE, &b_ele1_scE);
@@ -111,8 +113,9 @@ void FastCalibratorWeight::Init(TTree *tree)
   fChain->SetBranchAddress("ele2_recHit_iphiORiy", &ele2_recHit_iphiORiy, &b_ele2_recHit_iphiORiy);
   fChain->SetBranchAddress("ele2_recHit_ietaORix", &ele2_recHit_ietaORix, &b_ele2_recHit_ietaORix);
   fChain->SetBranchAddress("ele2_recHit_flag", &ele2_recHit_flag, &b_ele2_recHit_flag);
+  fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
+  fChain->SetBranchAddress("ele2_DR", &ele2_DR, &b_ele2_DR);
 
-  
   fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
   fChain->SetBranchAddress("ele2_scE", &ele2_scE, &b_ele2_scE);
   fChain->SetBranchAddress("ele2_es", &ele2_es, &b_ele2_es);
@@ -189,7 +192,7 @@ void FastCalibratorWeight::bookHistos(int nLoops)
 
 ///===== Build E/p for electron 1 and 2
 
-void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool       isSaveEPDistribution, bool isR9selection)
+void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool       isSaveEPDistribution, bool isR9selection, bool isMCTruth)
 {
   if(iLoop ==0)  
   {
@@ -262,8 +265,16 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
      int eta_seed = GetIetaFromHashedIndex(seed_hashedIndex);
   
      pSub = 0.; //NOTALEO : test dummy
-     pIn = ele1_tkP;
      bool skipElectron = false;
+   
+     if(!isMCTruth)  // E/p defalut method
+     {
+      pIn = ele1_tkP;
+     }
+     else{
+           pIn = ele1_E_true;
+           if(fabs(ele1_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+         }
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
      if(!skipElectron)    hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/ele1_tkP);
      
@@ -321,9 +332,16 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
      int eta_seed = GetIetaFromHashedIndex(seed_hashedIndex);
   
      pSub = 0.; //NOTALEO : test dummy
-     pIn = ele2_tkP;
- 
      bool skipElectron = false;
+   
+     if(!isMCTruth)  // E/p defalut method
+     {
+      pIn = ele2_tkP;
+     }
+     else{
+           pIn = ele2_E_true;
+           if(fabs(ele2_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+         }
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
      if(!skipElectron) hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/ele2_tkP);
   
@@ -351,7 +369,7 @@ void FastCalibratorWeight::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
 
 
 void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution,
-                                bool isEPselection,bool isR9selection)
+                                bool isEPselection,bool isR9selection, bool isMCTruth)
 {
    if (fChain == 0) return;
    
@@ -411,7 +429,7 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
     // loop over events
     std::cout << "Number of analyzed events = " << nentries << std::endl;
     
-    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection); ///==== build E/p distribution ele 1 and 2
+    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,isMCTruth); ///==== build E/p distribution ele 1 and 2
  
     Long64_t nbytes = 0, nb = 0;
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -480,8 +498,16 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
            }
  
           pSub = 0.; //NOTALEO : test dummy
-          pIn = ele1_tkP;
-//           pIn = ele1_scE;
+          bool skipElectron = false;
+   
+          if(!isMCTruth)  // E/p defalut method
+          {
+           pIn = ele1_tkP;
+          }
+          else{
+           pIn = ele1_E_true;
+           if(fabs(ele1_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+          }
           int eta_seed = GetIetaFromHashedIndex(seed_hashedIndex);
           TH1F* EoPHisto = hC_EoP_eta_ele->GetHisto(eta_seed+85);
           
@@ -594,8 +620,14 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
          
  
           pSub = 0.; //NOTALEO : test dummy
-          pIn = ele2_tkP;
-//           pIn = ele1_scE;
+          if(!isMCTruth)  // E/p defalut method
+          {
+           pIn = ele2_tkP;
+          }
+          else{
+           pIn = ele2_E_true;
+           if(fabs(ele2_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+          }
           int eta_seed = GetIetaFromHashedIndex(seed_hashedIndex);
           TH1F* EoPHisto = hC_EoP_eta_ele->GetHisto(eta_seed+85);
           
@@ -733,7 +765,7 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
 
        }
        
-       for ( int myPhiIndex = 0; myPhiIndex < totIphi; myPhiIndex++ )
+       for ( int uu = 0; uu < totIphi; uu++ )
          meanICforPhiRingValues.push_back(meanICforPhiRing/totIphi);
 
 

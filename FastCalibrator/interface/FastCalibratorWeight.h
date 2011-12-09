@@ -53,6 +53,8 @@ class FastCalibratorWeight {
     Int_t           ele1_isEBPhiGap;
     Int_t           ele1_isEEDeeGap;
     Int_t           ele1_isEERingGap;
+    Float_t         ele1_E_true;
+    Float_t         ele1_DR;
 
     std::vector<float>   *ele2_recHit_E;
     std::vector<int>     *ele2_recHit_hashedIndex;
@@ -73,6 +75,9 @@ class FastCalibratorWeight {
     Int_t           ele2_isEBPhiGap;
     Int_t           ele2_isEEDeeGap;
     Int_t           ele2_isEERingGap;
+    Float_t         ele2_E_true;
+    Float_t         ele2_DR;
+
 
    // List of branches
     TBranch        *b_runId;   //!
@@ -94,6 +99,9 @@ class FastCalibratorWeight {
     TBranch        *b_ele1_fbrem;   //!
     TBranch        *b_ele1_EOverP;   //!
     TBranch        *b_ele1_isEB;   //!
+    TBranch        *b_ele1_E_true;   //!
+    TBranch        *b_ele1_DR;   //!
+ 
     TBranch        *b_ele1_isEBEEGap;   //!
     TBranch        *b_ele1_isEBEtaGap;   //!
     TBranch        *b_ele1_isEBPhiGap;   //!
@@ -110,6 +118,9 @@ class FastCalibratorWeight {
     TBranch        *b_ele2_e3x3;   //!
     TBranch        *b_ele2_tkP;   //!
     TBranch        *b_ele2_fbrem;   //!
+    TBranch        *b_ele2_E_true;   //!
+    TBranch        *b_ele2_DR;   //!
+ 
     TBranch        *b_ele2_EOverP;   //!
     TBranch        *b_ele2_isEB;   //!
     TBranch        *b_ele2_isEBEEGap;   //!
@@ -127,11 +138,11 @@ class FastCalibratorWeight {
     virtual Int_t    GetEntry(Long64_t entry);
     virtual Long64_t LoadTree(Long64_t entry);
     virtual void     Init(TTree *tree);
-    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool);
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool);
     virtual Bool_t   Notify();
     virtual void     Show(Long64_t entry = -1);
     virtual void     printOnTxt(TString outputTxtFile);
-    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool);
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool);
     virtual void     saveEoPeta(TFile * f2);
     virtual void     AcquireDeadXtal(TString imputDeadXtal);
     virtual bool     CheckDeadXtal(const int & iEta, const int & iPhi);
