@@ -1,16 +1,17 @@
+
 //
 // Macro to produce ECAL single electron calibration plots
 //
 
-void DrawCalibrationPlotsEB( Char_t* infile1 =    "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/WZAnalysis_SingleEle_Run2011AB_miscalib5.root",
-			    Char_t* infile2 = 0,
-			    Char_t* infile3 =0 ,
+void DrawCalibrationPlotsEB( Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_recoFlag/EB/WZAnalysis_SingleElectron_Run2011AB_WElectron-PromptSkim_Z_noEP.root",
+			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/PromptSkim_recoFlag/EB/Even_WZAnalysis_SingleElectron_Run2011AB_WElectron-PromptSkim_Z_noEP.root",
+			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/PromptSkim_recoFlag/EB/Odd_WZAnalysis_SingleElectron_Run2011AB_WElectron-PromptSkim_Z_noEP.root",
 			    int evalStat = 0,
 			    Char_t* fileType = "png", 
 			    Char_t* dirName = ".")
 {
 
-  bool  printPlots = true;
+  bool  printPlots = false;
 
   // by TT
   int nbins = 500;
@@ -54,9 +55,35 @@ void DrawCalibrationPlotsEB( Char_t* infile1 =    "/afs/cern.ch/user/r/rgerosa/s
   cout << "Making calibration plots for: " << infile1 << endl;
   
   TFile *f = new TFile(infile1);
-  TH2F *hcmap = (TH2F*)f->Get("h_scale_map"); 
+  TH2F *h_scale_EB = (TH2F*)f->Get("h_scale_EB");
+  TH2F *hcmap = (TH2F*) h_scale_EB->Clone("hcmap");
+  hcmap -> Reset("ICEMS");
 
+  // Mean over phi 
 
+  for (int iEta = 1 ; iEta < h_scale_EB->GetNbinsY()+1 ; iEta ++)
+  {
+   float SumIC = 0;
+   int numIC = 0;
+   
+   for(int iPhi = 1 ; iPhi < h_scale_EB->GetNbinsX()+1 ; iPhi++)
+   {
+    if( h_scale_EB->GetBinContent(iPhi,iEta) !=0)
+    {
+      SumIC = SumIC + h_scale_EB->GetBinContent(iPhi,iEta);
+      numIC ++ ;
+    }
+   }
+   
+   for (int iPhi = 1; iPhi< h_scale_EB->GetNbinsX()+1  ; iPhi++)
+   {
+    if(numIC!=0 && SumIC!=0)
+    hcmap->SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(SumIC/numIC));
+   }
+  }
+  
+
+  
   //-----------------------------------------------------------------
   //--- Build the precision vs ieta plot starting from the TH2F of IC
   //-----------------------------------------------------------------
@@ -130,10 +157,62 @@ void DrawCalibrationPlotsEB( Char_t* infile1 =    "/afs/cern.ch/user/r/rgerosa/s
   
   
   if (evalStat){
-    TFile *f2 = new TFile(infile2);
-    TFile *f3 = new TFile(infile3);
-    TH2F *hcmap2 = (TH2F*)f2->Get("h_scale_map"); 
-    TH2F *hcmap3 = (TH2F*)f3->Get("h_scale_map"); 
+  TFile *f2 = new TFile(infile2);
+  TH2F *h_scale_EB_2 = (TH2F*)f2->Get("h_scale_EB");
+  TH2F *hcmap2 = (TH2F*) h_scale_EB->Clone("hcmap2");
+  hcmap2 -> Reset("ICEMS");
+
+  // Mean over phi 
+
+  for (int iEta = 1 ; iEta < h_scale_EB_2->GetNbinsY()+1 ; iEta ++)
+  {
+   float SumIC = 0;
+   int numIC = 0;
+   
+   for(int iPhi = 1 ; iPhi < h_scale_EB_2->GetNbinsX()+1 ; iPhi++)
+   {
+    if( h_scale_EB_2->GetBinContent(iPhi,iEta) !=0)
+    {
+      SumIC = SumIC + h_scale_EB_2->GetBinContent(iPhi,iEta);
+      numIC ++ ;
+    }
+   }
+   
+   for (int iPhi = 1; iPhi< h_scale_EB_2->GetNbinsX()+1  ; iPhi++)
+   {
+    if(numIC!=0 && SumIC!=0)
+    hcmap2->SetBinContent(iPhi,iEta,h_scale_EB_2->GetBinContent(iPhi,iEta)/(SumIC/numIC));
+   }
+  }
+ 
+
+  TFile *f3 = new TFile(infile3);
+  TH2F *h_scale_EB_3 = (TH2F*)f3->Get("h_scale_EB");
+  TH2F *hcmap3 = (TH2F*) h_scale_EB->Clone("hcmap3");
+  hcmap3 -> Reset("ICEMS");
+
+  // Mean over phi 
+
+  for (int iEta = 1 ; iEta < h_scale_EB_3->GetNbinsY()+1 ; iEta ++)
+  {
+   float SumIC = 0;
+   int numIC = 0;
+   
+   for(int iPhi = 1 ; iPhi < h_scale_EB_3->GetNbinsX()+1 ; iPhi++)
+   {
+    if( h_scale_EB_3->GetBinContent(iPhi,iEta) !=0)
+    {
+      SumIC = SumIC + h_scale_EB_3->GetBinContent(iPhi,iEta);
+      numIC ++ ;
+    }
+   }
+   
+   for (int iPhi = 1; iPhi< h_scale_EB_3->GetNbinsX()+1  ; iPhi++)
+  {
+    if(numIC!=0 && SumIC!=0)
+    hcmap3->SetBinContent(iPhi,iEta,h_scale_EB_3->GetBinContent(iPhi,iEta)/(SumIC/numIC));
+  }
+  }
 
     TH1F *hstatprecision[171];
     
@@ -233,7 +312,21 @@ void DrawCalibrationPlotsEB( Char_t* infile1 =    "/afs/cern.ch/user/r/rgerosa/s
   hcmap->GetXaxis() ->SetTitle("i#phi");
   hcmap->GetYaxis() ->SetTitle("i#eta");
   hcmap->GetZaxis() ->SetRangeUser(0.9,1.1);
+  
+  c[7] = new TCanvas("cmap2","cmap2");
+  c[7] -> cd();
+  c[7]->SetLeftMargin(0.1); 
+  c[7]->SetRightMargin(0.13); 
+  c[7]->SetGridx();
+  h_scale_EB->GetXaxis()->SetNdivisions(1020);
+  h_scale_EB->GetXaxis() -> SetLabelSize(0.03);
+  h_scale_EB->Draw("COLZ");
+  h_scale_EB->GetXaxis() ->SetTitle("i#phi");
+  h_scale_EB->GetYaxis() ->SetTitle("i#eta");
+  h_scale_EB->GetZaxis() ->SetRangeUser(0.9,1.1);
 
+
+ 
   
   // --- plot 1 : ring precision vs ieta
   c[1] = new TCanvas("csigma","csigma");
@@ -329,6 +422,8 @@ void DrawCalibrationPlotsEB( Char_t* infile1 =    "/afs/cern.ch/user/r/rgerosa/s
   residual_vs_ieta->GetHistogram()->GetYaxis()-> SetTitle("residual spread");
   residual_vs_ieta->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
   residual_vs_ieta->Draw("ap");
+  
+   
   }
  
   //-----------------------------------------------------------------
