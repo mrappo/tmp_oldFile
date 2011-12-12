@@ -190,7 +190,7 @@ int main (int argc, char ** argv)
     // Run on even
     FastCalibratorWeight analyzer_odd(albero);
     analyzer_odd.bookHistos(nLoops);
-    analyzer_even.AcquireDeadXtal(DeadXtal);
+    analyzer_odd.AcquireDeadXtal(DeadXtal);
     analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth);
     analyzer_odd.saveHistos(f2);
     

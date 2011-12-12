@@ -932,6 +932,7 @@ void FastCalibratorEE::saveHistos(TFile * f1)
   
   h_occupancy_EEP->Write();
   h_scale_EEP->Write();
+  h_scalib_EEP->Write();
   
   h_scale_hashedIndex_EE->Write();
   h_occupancy_hashedIndex_EE->Write();
@@ -947,6 +948,8 @@ void FastCalibratorEE::saveHistos(TFile * f1)
   hC_PullFromScalib_EEM->Write(*f1);
   h_occupancy_EEM->Write();
   h_scale_EEM->Write();
+  h_scalib_EEM->Write();
+ 
   h_map_Dead_Channels_EEP->Write();
     
   g_ICmeanVsLoop_EEM->Write();
