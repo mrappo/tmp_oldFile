@@ -1,0 +1,399 @@
+// To compare two sets of IC
+// Input needed: two set of IC (2D maps) 
+{
+  // Set style options
+  gROOT->Reset();
+  gROOT->SetStyle("Plain");
+
+  gStyle->SetPadTickX(1);
+  gStyle->SetPadTickY(1);
+  gStyle->SetOptTitle(0); 
+  gStyle->SetOptStat(1110); 
+  gStyle->SetOptFit(0); 
+  gStyle->SetFitFormat("6.3g"); 
+  gStyle->SetPalette(1); 
+ 
+  gStyle->SetTextFont(42);
+  gStyle->SetTextSize(0.05);
+  gStyle->SetTitleFont(42,"xyz");
+  gStyle->SetTitleSize(0.05);
+  gStyle->SetLabelFont(42,"xyz");
+  gStyle->SetLabelSize(0.05);
+  gROOT->ForceStyle();
+
+  TFile *f1 = TFile::Open("MCtruthIC_EE.root");
+  TFile *f2 = TFile::Open("MCRecoIC_EE.root");
+  
+  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_miscalib_EE.root");
+  
+  TFile *f4 =  TFile::Open("StatPrec_MC_noEP_EE.root");
+  // input coeff
+  TH2F *hcmapMcT_EEP = (TH2F*)f1->Get("h_scale_EEP");
+  TH2F *hcmapMcT_EEM = (TH2F*)f1->Get("h_scale_EEM");
+  TH2F *hcmapMcR_EEP = (TH2F*)f2->Get("h_scale_EEP");
+  TH2F *hcmapMcR_EEM = (TH2F*)f2->Get("h_scale_EEM");
+ 
+  TH2F * hcmap_EEP = (TH2F*)hcmapMcT_EEP->Clone("hcmap_EEP");
+  TH2F * hcmap_EEM = (TH2F*)hcmapMcT_EEM->Clone("hcmap_EEM");
+
+  TH1F * hringdiff_EEP = new TH1F("hringdiff_EEP","difference of ring average EEP",100,-0.1,0.1);
+  TH1F * hringdiff_EEM = new TH1F("hringdiff_EEM","difference of ring average EEM",100,-0.1,0.1);
+  
+  hcmap_EEP->Reset();
+  hcmap_EEM->Reset();
+
+  for (int jbin = 1; jbin < hcmap_EEP-> GetNbinsY(); jbin++){
+    for (int ibin = 1; ibin < hcmap_EEM-> GetNbinsX()+1; ibin++){
+	//hcmap1->SetBinContent(ibin,jbin,1);
+        if(hcmapMcT_EEP->GetBinContent(ibin,jbin)!=0 && hcmapMcR_EEP->GetBinContent(ibin,jbin)!=0)
+	hcmap_EEP->SetBinContent(ibin,jbin,hcmapMcT_EEP->GetBinContent(ibin,jbin)/hcmapMcR_EEP->GetBinContent(ibin,jbin));
+        if(hcmapMcT_EEM->GetBinContent(ibin,jbin)!=0 && hcmapMcR_EEM->GetBinContent(ibin,jbin)!=0)
+	hcmap_EEM->SetBinContent(ibin,jbin,hcmapMcT_EEM->GetBinContent(ibin,jbin)/hcmapMcR_EEM->GetBinContent(ibin,jbin));
+      }
+    }
+
+
+  TH2F * miscalib_map_EEP = (TH2F*) f3 -> Get("h_scalib_EEP");
+  TH2F * miscalib_map_EEM = (TH2F*) f3 -> Get("h_scalib_EEM");
+
+  TH2F *hcL3_EEP = (TH2F*)f3->Get("h_scale_map_EEP");
+  TH2F *hcL3_EEM = (TH2F*)f3->Get("h_scale_map_EEM");
+  
+  
+  TH2F *hcmap2_EEP = (TH2F*)hcL3_EEP ->Clone("hcmap2_EEP");
+  TH2F *hcmap2_EEM = (TH2F*)hcL3_EEM ->Clone("hcmap2_EEM");
+  
+  hcmap2_EEP->Reset();
+  hcmap2_EEM->Reset();
+
+  for (int jbin = 1; jbin < hcmap2_EEP-> GetNbinsY()+1; jbin++){
+    for (int ibin = 1; ibin < hcmap2_EEP-> GetNbinsX()+1; ibin++){
+        if(miscalib_map_EEP->GetBinContent(ibin,jbin)!=0 && hcL3_EEP->GetBinContent(ibin,jbin)!=0)
+	hcmap2_EEP->SetBinContent(ibin,jbin,miscalib_map_EEP->GetBinContent(ibin,jbin)*hcL3_EEP->GetBinContent(ibin,jbin));
+        if(miscalib_map_EEP->GetBinContent(ibin,jbin)!=0 && hcL3_EEP->GetBinContent(ibin,jbin)!=0)
+        hcmap2_EEM->SetBinContent(ibin,jbin,miscalib_map_EEM->GetBinContent(ibin,jbin)*hcL3_EEM->GetBinContent(ibin,jbin));
+
+      }
+    }
+
+  // output histos
+  TH2F * h2_EEP = new TH2F("h2_EEP","h2_EEP",400,0.5,1.5,400,0.5,1.5);
+  TH2F * h2_EEM = new TH2F("h2_EEM","h2_EEM",400,0.5,1.5,400,0.5,1.5);
+
+  TH2F * h2diff_EEP = (TH2F*)hcmap_EEP->Clone("h2diff_EEP");
+  TH2F * h2diff_EEM = (TH2F*)hcmap_EEM->Clone("h2diff_EEM");
+  h2diff_EEP->Reset();
+  h2diff_EEM->Reset();
+
+
+  TH1F *hdiff_EEP = new TH1F("hdiff_EEP", "hdiff_EEP", 400,-0.5,0.5);
+  TH1F *hdiff_EEM = new TH1F("hdiff_EEM", "hdiff_EEM", 400,-0.5,0.5);
+  
+  
+  char hname[100];
+
+  TH1F *hspread_EEP[40];
+  TH1F *hspread_EEM[40];
+
+  // ring geometry for the endcap
+  TH2F *hrings_EEP;
+  TH2F *hrings_EEM;
+
+  hrings_EEP = (TH2F*)hcmap2_EEP->Clone("hringsEEP");
+  hrings_EEM = (TH2F*)hcmap2_EEM->Clone("hringsEEM");
+  hrings_EEP ->Reset();
+  hrings_EEM ->Reset();
+
+  FILE *fRing;
+  fRing = fopen("macros/eerings.dat","r");
+  int x,y,z,ir;
+  while(fscanf(fRing,"(%d,%d,%d) %d \n",&x,&y,&z,&ir) !=EOF ) {
+    if(z>0) hrings_EEP->Fill(x,y,ir); 
+    if(z<0) hrings_EEM->Fill(x,y,ir);
+  }
+
+
+  for (int jbin = 0; jbin < 40; jbin++){
+    sprintf(hname,"hspread_ring_EEP_%02d",jbin);
+    hspread_EEP[jbin]= new TH1F(hname, hname, 50,0.5,1.5);
+    sprintf(hname,"hspread_ring_EEM_%02d",jbin);
+    hspread_EEM[jbin]= new TH1F(hname, hname, 50,0.5,1.5);
+
+  }
+  
+  for (int jbin = 1; jbin < hcmap_EEP-> GetNbinsY()+1; jbin++){
+    for (int ibin = 1; ibin < hcmap_EEP-> GetNbinsX()+1; ibin++){
+      
+      int mybin_EEP = hcmap_EEP -> FindBin(ibin,jbin);
+      int ring_EEP  = hrings_EEP-> GetBinContent(mybin_EEP); 
+   	
+      float c1_EEP = hcmap_EEP->GetBinContent(mybin_EEP);
+      float c2_EEP = hcmap2_EEP->GetBinContent(mybin_EEP);
+   
+      int mybin_EEM = hcmap_EEM -> FindBin(ibin,jbin);
+      int ring_EEM  = hrings_EEM-> GetBinContent(mybin_EEM); 
+   	
+      float c1_EEM = hcmap_EEM->GetBinContent(mybin_EEM);
+      float c2_EEM = hcmap2_EEM->GetBinContent(mybin_EEM);
+   
+       if (c1_EEP!=0 && c2_EEP!=0 ){
+ 	hspread_EEP[ring_EEP]->Fill(c1_EEP/c2_EEP);
+	h2_EEP->Fill(c1_EEP,c2_EEP);
+        h2diff_EEP->SetBinContent(ibin,jbin,c1_EEP/c2_EEP); 
+      }
+      else h2diff_EEP->SetBinContent(ibin,jbin,0);
+
+      if (c1_EEM!=0 && c2_EEM!=0 ){
+        hspread_EEM[ring_EEM]->Fill(c1_EEM/c2_EEM);
+	h2_EEM->Fill(c1_EEM,c2_EEM);
+        h2diff_EEM->SetBinContent(ibin,jbin,c1_EEM/c2_EEM);       
+      }
+      else h2diff_EEM->SetBinContent(ibin,jbin,0);
+    }
+  }
+
+  
+  TGraphErrors *sigma_vs_iring_EEP = new TGraphErrors();
+  sigma_vs_iring_EEP->SetMarkerStyle(20);
+  sigma_vs_iring_EEP->SetMarkerSize(1);
+  sigma_vs_iring_EEP->SetMarkerColor(kBlue+2);
+  
+  TGraphErrors *sigma_vs_iring_EEM = new TGraphErrors();
+  sigma_vs_iring_EEM->SetMarkerStyle(20);
+  sigma_vs_iring_EEM->SetMarkerSize(1);
+  sigma_vs_iring_EEM->SetMarkerColor(kBlue+2);
+  
+  TGraphErrors *rms_vs_iring_EEP = new TGraphErrors();
+  rms_vs_iring_EEP ->SetMarkerStyle(24);
+  rms_vs_iring_EEP ->SetMarkerSize(1);
+  rms_vs_iring_EEP ->SetMarkerColor(kBlue+2); 
+
+  TGraphErrors *rms_vs_iring_EEM = new TGraphErrors();
+  rms_vs_iring_EEM ->SetMarkerStyle(24);
+  rms_vs_iring_EEM ->SetMarkerSize(1);
+  rms_vs_iring_EEM ->SetMarkerColor(kBlue+2);  
+ 
+
+  TGraphErrors *scale_vs_iring_EEP = new TGraphErrors();
+  scale_vs_iring_EEP->SetMarkerStyle(20);
+  scale_vs_iring_EEP->SetMarkerSize(1);
+  scale_vs_iring_EEP->SetMarkerColor(kBlue+2);
+
+  TGraphErrors *scale_vs_iring_EEM = new TGraphErrors();
+  scale_vs_iring_EEM->SetMarkerStyle(20);
+  scale_vs_iring_EEM->SetMarkerSize(1);
+  scale_vs_iring_EEM->SetMarkerColor(kBlue+2);
+
+  TF1 *fgaus_EEP = new TF1("fgaus_EEP","gaus",0.5,1.5);
+  TF1 *fgaus_EEM = new TF1("fgaus_EEM","gaus",0.5,1.5);
+
+  int np_EEP = 0;
+  int np_EEM =0;
+  cout<<"rrrrr "<<  hcmap_EEP-> GetNbinsY()+1<<endl;
+  for (int i = 0; i < 40; i++){
+    //cout<<etaring<<endl;
+ 
+    if ( hspread_EEP[i]->GetEntries() == 0) {sigma_vs_iring_EEP-> SetPoint(np_EEP,i,-100);np_EEP++;continue;}
+    if ( hspread_EEM[i]->GetEntries() == 0) {sigma_vs_iring_EEM-> SetPoint(np_EEM,i,-100);np_EEM++;continue;}
+    
+    hspread_EEP[i]->Fit("fgaus_EEP","Q");
+    hspread_EEM[i]->Fit("fgaus_EEM","Q");
+
+    sigma_vs_iring_EEP-> SetPoint(np_EEP,i,fgaus_EEP->GetParameter(2));
+    sigma_vs_iring_EEP-> SetPointError(np_EEP,0,fgaus_EEP->GetParError(2));
+    rms_vs_iring_EEP  -> SetPoint(np_EEP,i, hspread_EEP[i]->GetRMS());
+    rms_vs_iring_EEP  -> SetPointError(np_EEP,0,hspread_EEP[i]->GetRMSError() );
+    scale_vs_iring_EEP-> SetPoint(np_EEP,i,fgaus_EEP->GetParameter(1));
+    cout<<fgaus_EEP->GetParameter(1)<<endl;
+    scale_vs_iring_EEP-> SetPointError(np_EEP,0,fgaus_EEP->GetParError(1));
+    np_EEP++;  
+    sigma_vs_iring_EEM-> SetPoint(np_EEM,i,fgaus_EEM->GetParameter(2));
+    sigma_vs_iring_EEM-> SetPointError(np_EEM,0,fgaus_EEM->GetParError(2));
+    rms_vs_iring_EEM  -> SetPoint(np_EEM,i, hspread_EEM[i]->GetRMS());
+    rms_vs_iring_EEM  -> SetPointError(np_EEM,0,hspread_EEM[i]->GetRMSError() );
+    scale_vs_iring_EEM-> SetPoint(np_EEM,i,fgaus_EEM->GetParameter(1));
+    scale_vs_iring_EEM-> SetPointError(np_EEM,0,fgaus_EEM->GetParError(1));
+    np_EEM++;
+  }
+  // plot
+
+  TGraphErrors* gr_stat_prec_EEP = (TGraphErrors*) f4->Get("gr_stat_prec_EEP");
+  TGraphErrors* gr_stat_prec_EEM = (TGraphErrors*) f4->Get("gr_stat_prec_EEM");
+ 
+  TCanvas *csigma_EEP = new TCanvas("csigma_EEP","csigma_EEP");
+  csigma_EEP->SetGridx();
+  csigma_EEP->SetGridy();
+  sigma_vs_iring_EEP->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.2);
+  sigma_vs_iring_EEP->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
+  sigma_vs_iring_EEP->GetHistogram()->GetYaxis()-> SetTitle("#sigma");
+  sigma_vs_iring_EEP->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  sigma_vs_iring_EEP->Draw("ap");
+//   rms_vs_ieta->Draw("psame");
+  gr_stat_prec_EEP->Draw("psame");
+  
+  cout<<"aaa P "<<gr_stat_prec_EEP->GetN()<<endl;
+  cout<<"bbb P "<<sigma_vs_iring_EEP->GetN()<<endl;
+ 
+  
+  TCanvas *csigma_EEM = new TCanvas("csigma_EEM","csigma_EEM");
+  csigma_EEM->SetGridx();
+  csigma_EEM->SetGridy();
+  sigma_vs_iring_EEM->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.2);
+  sigma_vs_iring_EEM->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
+  sigma_vs_iring_EEM->GetHistogram()->GetYaxis()-> SetTitle("#sigma");
+  sigma_vs_iring_EEM->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  sigma_vs_iring_EEM->Draw("ap");
+//   rms_vs_ieta->Draw("psame");
+  gr_stat_prec_EEM->Draw("psame");
+ 
+  cout<<"aaa M "<<gr_stat_prec_EEM->GetN()<<endl;
+  cout<<"bbb M "<<sigma_vs_iring_EEM->GetN()<<endl;
+ 
+
+  TGraphErrors* residual_EEP = new TGraphErrors();
+  TGraphErrors* residual_EEM = new TGraphErrors();
+
+  for(int pp=0; pp< gr_stat_prec_EEP->GetN(); pp++){
+    double ring1, ring2,tot, stat, espread, estat,ex,res,eres;
+   
+    sigma_vs_iring_EEP->GetPoint(pp, ring2, tot);
+    espread = sigma_vs_iring_EEP-> GetErrorY(pp);
+
+    gr_stat_prec_EEP->GetPoint(pp,ring1, stat);
+    estat = gr_stat_prec_EEP-> GetErrorY(pp);
+
+    ex = gr_stat_prec_EEP-> GetErrorX(pp);  
+    if(ring1 != ring2){cout<<"error FFF "<<ring1<<"  "<<ring2<<endl;}
+
+    if (tot > stat ){
+	 res = sqrt( tot*tot - stat*stat );
+	 eres = sqrt( pow(tot*espread,2) + pow(stat*estat,2))/res;
+	}
+	else {
+              res  = -sqrt( fabs(tot*tot - stat*stat) );
+	      eres = sqrt( pow(tot*espread,2) + pow(stat*estat,2))/fabs(res);
+
+	}
+
+    residual_EEP.SetPoint(pp,ring1,res);
+    residual_EEP.SetPointError(pp,ex,eres);
+     
+  }
+  
+  for(int pp=0; pp< gr_stat_prec_EEM->GetN(); pp++){
+    double ring1, ring2,tot, stat, espread, estat,ex,res,eres;
+   
+    sigma_vs_iring_EEM->GetPoint(pp, ring2, tot);
+    espread = sigma_vs_iring_EEM-> GetErrorY(pp);
+
+    gr_stat_prec_EEM->GetPoint(pp,ring1, stat);
+    estat = gr_stat_prec_EEM-> GetErrorY(pp);
+
+    ex = gr_stat_prec_EEM-> GetErrorX(pp);  
+    if(ring1 != ring2){cout<<"error FFF "<<ring1<<"  "<<ring2<<endl;}
+
+    if (tot > stat ){
+	 res  = sqrt( tot*tot - stat*stat );
+	 eres = sqrt( pow(tot*espread,2) + pow(stat*estat,2))/res;
+	}
+	else {
+              res  = -sqrt( fabs(tot*tot - stat*stat) );
+	      eres = sqrt( pow(tot*espread,2) + pow(stat*estat,2))/fabs(res);
+
+	}
+
+    residual_EEM.SetPoint(pp,ring1,res);
+    residual_EEM.SetPointError(pp,ex,eres);
+     
+  }
+  
+ TCanvas *cres_EEP = new TCanvas("cres_EEP","cresidual_EEP");
+  cres_EEP->SetGridx();
+  cres_EEP->SetGridy();
+  residual_EEP->GetHistogram()->GetYaxis()-> SetRangeUser(-0.1,0.1);
+  residual_EEP->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
+  residual_EEP-> SetTitle("residual EE+");
+  residual_EEP-> SetTitle("iring");
+  residual_EEP->SetMarkerStyle(20);
+  residual_EEP->SetMarkerSize(1);
+  residual_EEP->SetMarkerColor(kGreen+2); 
+  residual_EEP->Draw("ap");
+  
+  TCanvas *cres_EEM = new TCanvas("cres_EEM","cresidual_EEM");
+  cres_EEM->SetGridx();
+  cres_EEM->SetGridy();
+  residual_EEM->GetHistogram()->GetYaxis()-> SetRangeUser(-0.1,0.1);
+  residual_EEM->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
+ // residual_EEM->GetHistogram()->GetYaxis()-> SetTitle("residual EE-");
+ // residual_EEM->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  residual_EEM ->SetMarkerStyle(20);
+  residual_EEM->SetMarkerSize(1);
+  residual_EEM->SetMarkerColor(kGreen+2); 
+  residual_EEM->Draw("ap");
+
+  TCanvas *cscale_EEP = new TCanvas("cscale_EEP","cscale_EEP");
+  cscale_EEP->SetGridx();
+  cscale_EEP->SetGridy();
+  scale_vs_iring_EEP->GetHistogram()->GetYaxis()-> SetRangeUser(0.9,1.1);
+  scale_vs_iring_EEP->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
+//   scale_vs_iring_EEP->GetHistogram()->GetYaxis()-> SetTitle("c_{1}-c_{2}");
+//   scale_vs_iring_EEP->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  scale_vs_iring_EEP->Draw("ap");
+
+  TCanvas *cscale_EEM = new TCanvas("cscale_EEM","cscale_EEM");
+  cscale_EEM->SetGridx();
+  cscale_EEM->SetGridy();
+  scale_vs_iring_EEM->GetHistogram()->GetYaxis()-> SetRangeUser(0.9,1.1);
+  scale_vs_iring_EEM->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
+//   scale_vs_iring_EEM->GetHistogram()->GetYaxis()-> SetTitle("c_{1}-c_{2}");
+//   scale_vs_iring_EEM;->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  scale_vs_iring_EEM->Draw("ap");
+
+  TCanvas *cmap2_EEP = new TCanvas("cmap2_EEP","cmap2_EEP",500,500);
+  cmap2_EEP->SetGridx();
+  cmap2_EEP->SetGridy();
+  cmap2_EEP -> cd();
+  cmap2_EEP->SetLeftMargin(0.1); 
+  cmap2_EEP->SetRightMargin(0.15); 
+  h2_EEP->GetXaxis()->SetRangeUser(0.85,1.15);
+  h2_EEP->GetYaxis()->SetRangeUser(0.85,1.15);
+  h2_EEP->GetXaxis()->SetTitle("C_{1}");
+  h2_EEP->GetYaxis()->SetTitle("C_{2}");
+  h2_EEP->Draw("colz");
+  
+  TCanvas *cmap2_EEM = new TCanvas("cmap2_EEM","cmap2_EEM",500,500);
+  cmap2_EEM->SetGridx();
+  cmap2_EEM->SetGridy();
+  cmap2_EEM -> cd();
+  cmap2_EEM->SetLeftMargin(0.1); 
+  cmap2_EEM->SetRightMargin(0.15); 
+  h2_EEM->GetXaxis()->SetRangeUser(0.85,1.15);
+  h2_EEM->GetYaxis()->SetRangeUser(0.85,1.15);
+  h2_EEM->GetXaxis()->SetTitle("C_{1}");
+  h2_EEM->GetYaxis()->SetTitle("C_{2}");
+  h2_EEM->Draw("colz");
+
+  
+  TCanvas *cdiff_EEP = new TCanvas("cdiff_EEP","cdiff_EEP",700,500);
+  cdiff_EEP->SetGridx();
+  cdiff_EEP->SetGridy();
+  cdiff_EEP -> cd();
+  cdiff_EEP->SetLeftMargin(0.1); 
+  cdiff_EEP->SetRightMargin(0.15); 
+  h2diff_EEP->GetZaxis()->SetRangeUser(0.5,1.6);
+  h2diff_EEP->GetXaxis()->SetTitle("ix");
+  h2diff_EEP->GetYaxis()->SetTitle("iy");
+  h2diff_EEP->Draw("colz");
+
+  TCanvas *cdiff_EEM = new TCanvas("cdiff_EEM","cdiff_EEM",700,500);
+  cdiff_EEM->SetGridx();
+  cdiff_EEM->SetGridy();
+  cdiff_EEM -> cd();
+  cdiff_EEM->SetLeftMargin(0.1); 
+  cdiff_EEM->SetRightMargin(0.15); 
+  h2diff_EEM->GetZaxis()->SetRangeUser(0.5,1.6);
+  h2diff_EEM->GetXaxis()->SetTitle("ix");
+  h2diff_EEM->GetYaxis()->SetTitle("iy");
+  h2diff_EEM->Draw("colz");
+  
+}
