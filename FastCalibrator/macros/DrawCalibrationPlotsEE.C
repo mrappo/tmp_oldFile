@@ -4,17 +4,29 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
-
-
+#include "TFile.h"
+#include "TStyle.h"
+#include "TH2F.h"
+#include "TH1F.h"
+#include "TGraphErrors.h"
+#include "TCanvas.h"
+#include "TF1.h"
+#include "TROOT.h"
+#include "TLegend.h"
+#include "TPaveStats.h"
 //
-// Macro to produce ECAL single electron calibration plots
-//
-
+// Macro to produce ECAL single electron calibration plots for EE
+// Input Files : MC or Data splistat and no splitstat, MCTruth and MCReco IC maps
+// Output Files :  StatPrec_MC_noEP_EE.root --> stat precision MC usefull for CompareCalibMCTruth_EE.C only MC
+//                 IC_MC_4Correction.root --> Map IC for radial correction only MC
+//                 hcmap_EE.root ---> Map of the original IC normalized only DATA 
+using namespace std;
 
 void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_EE.root",
 			     Char_t* infile2 = "/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/Even_WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_EE.root",
 			     Char_t* infile3 = "/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/Odd_WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_EE.root",
 			     int evalStat = 1,
+                             bool isMC=true,
 			     Char_t* fileType = "png", 
 			     Char_t* dirName = ".")
 {
@@ -100,13 +112,13 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   char htitle[100];
   TH1F *hspread[2][50];
   TH1F* hspreadAll [40];
-  /*TH1F* hspread_MCTruth[2][40];
+//   TH1F* hspread_MCTruth[2][40];
   TH2F* ICComparison [2];
-  ICComparison[0] = (TH2F*) hcmapMcT_EEP->Clone("ICComparison_EEP");
-  ICComparison[1] = (TH2F*) hcmapMcT_EEM->Clone("ICComparison_EEM");
+  ICComparison[0] = (TH2F*) hcmapMcT_EEP->Clone("ICComparison_EEM");
+  ICComparison[1] = (TH2F*) hcmapMcT_EEM->Clone("ICComparison_EEP");
   ICComparison[0]->Reset();
   ICComparison[1]->Reset();
-*/
+
   for (int k = 0; k < 2; k++){
          
     for (int iring = 0; iring < 40 ; iring++){
@@ -114,16 +126,16 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
       {
        sprintf(hname,"hspreadAll_ring%02d",iring);
        hspreadAll[iring] = new TH1F(hname, hname, nbins,0.,2.);
-//        sprintf(hname,"hspreadEEM_MCTruth_ring%02d",iring);
+       sprintf(hname,"hspreadEEM_MCTruth_ring%02d",iring);
 //        hspread_MCTruth[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
-       sprintf(hname,"hspreadEEM_ring%02d",iring);
+//        sprintf(hname,"hspreadEEM_ring%02d",iring);
        hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
 
       }
       else{ 
 	
         sprintf(hname,"hspreadEEP_ring%02d",iring);
-        hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
+         hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
 //         sprintf(hname,"hspreadEEP_MCTruth_ring%02d",iring);
 //         hspread_MCTruth[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
  
@@ -142,14 +154,14 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
 	int ring  = hrings[1]-> GetBinContent(mybin);
 	float ic = hcmap[k]->GetBinContent(mybin);
         float ic2=0;
-//          if(k==0) ic2 = hcmapMcT_EEM->GetBinContent(mybin)/hcmapMcR_EEM->GetBinContent(mybin);
-//          else ic2 = hcmapMcT_EEP->GetBinContent(mybin)/hcmapMcR_EEP->GetBinContent(mybin);
+          if(k==0 && hcmapMcT_EEM->GetBinContent(mybin)!=0 && hcmapMcR_EEM->GetBinContent(mybin)!=0 ) ic2 = hcmapMcT_EEM->GetBinContent(mybin)/hcmapMcR_EEM->GetBinContent(mybin);
+          else if(hcmapMcT_EEP->GetBinContent(mybin)!=0 && hcmapMcR_EEP->GetBinContent(mybin)!=0 ) ic2 = hcmapMcT_EEP->GetBinContent(mybin)/hcmapMcR_EEP->GetBinContent(mybin);
           
-/ 	if ( ic>0 )    {
+ 	if ( ic>0 && ic2>0 )    {
 	  hspread[k][ring]->Fill(ic);
           hspreadAll[ring]->Fill(ic);
 //           hspread_MCTruth[k][ring]->Fill(ic/ic2);
-//           ICComparison[k]->Fill(ix,iy,ic/ic2);
+          ICComparison[k]->Fill(ix,iy,ic/ic2);
 	}
       }
     }
@@ -247,9 +259,98 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
       scale_vs_ring[2]-> SetPointError(np[2],e,fgaus->GetParError(1));
       np[2]++;    
     }
+
+  // Intercalibration constant vs phi
+ 
+ /* TGraphErrors *IC_vs_phi[2];
+  IC_vs_phi[0] = new TGraphErrors();
+  IC_vs_phi[0]->SetMarkerStyle(20);
+  IC_vs_phi[0]->SetMarkerSize(1);
+  IC_vs_phi[0]->SetMarkerColor(kBlue+2);
   
+  IC_vs_phi[1] = new TGraphErrors();
+  IC_vs_phi[1]->SetMarkerStyle(20);
+  IC_vs_phi[1]->SetMarkerSize(1);
+  IC_vs_phi[1]->SetMarkerColor(kBlue+2);
+
+  TH1F* Spread_vs_phi[2][360];
   
+  for (int k = 0; k < 2; k++){
+    for (int iphi = 0; iphi < 360 ; iphi++){
+      if (k==0)
+      {
+       sprintf(hname,"hspread_vs_phi%02d_EEP",iphi);
+       Spread_vs_phi[k][iphi] = new TH1F(hname, hname, nbins,0.,2.);
+
+      }
+      else{ 
+        sprintf(hname,"hspread_vs_ring%02d_EEM",iphi);
+        Spread_vs_phi[k][iphi] = new TH1F(hname, hname, nbins,0.,2.);}
+     } 
+   }
+  
+
+  for (int k = 0; k < 2 ; k++){
+    for (int ix = 1; ix < 101; ix++){
+      for (int iy = 1; iy < 101; iy++){
+	float iphibin;
+        if((atan2(iy-50.,ix-50.)-int(atan2(iy-50.,ix-50.)))*(360./(2.*3.14159)) <0.5) iphibin=floor(180.+atan2(iy-50.,ix-50.)*(360./(2.*3.14159)));
+        else iphibin=ceil(180.+atan2(iy-50.,ix-50.)*(360./(2.*3.14159)));
+       
+        if(iphibin>359) iphibin=359;
+	int mybin = hcmap[k] -> FindBin(ix,iy);
+	float ic = hcmap[k]->GetBinContent(mybin);          
+	if ( ic>0 )    {
+	 Spread_vs_phi[k][iphibin] ->Fill(ic);
+	}
+      }
+    }
+  }
+ 
+ int N[2]={0};
+  for (int k = 0; k < 2 ; k++){
+    for (int iphi = 0; iphi < 360; iphi++){
+      if (Spread_vs_phi[k][iphi]-> GetEntries() == 0) continue;
+      IC_vs_phi[k]-> SetPoint(N[k],iphi,Spread_vs_phi[k][iphi]->GetMean());
+      IC_vs_phi[k]-> SetPointError(N[k],0,Spread_vs_phi[k][iphi]->GetRMS()/sqrt(Spread_vs_phi[k][iphi]->GetEntries()));
+
+      N[k]++;    
+    }
+  }
+  */
   //----------------- Statistical Precision  and Residual --------------------
+
+    TGraphErrors *statprecision_vs_ring[3];
+    statprecision_vs_ring[0]  = new TGraphErrors();
+    statprecision_vs_ring[0]->SetMarkerStyle(20);
+    statprecision_vs_ring[0]->SetMarkerSize(1);
+    statprecision_vs_ring[0]->SetMarkerColor(kRed+2);
+
+    statprecision_vs_ring[1]  = new TGraphErrors();
+    statprecision_vs_ring[1]->SetMarkerStyle(20);
+    statprecision_vs_ring[1]->SetMarkerSize(1);
+    statprecision_vs_ring[1]->SetMarkerColor(kRed+2);
+
+    statprecision_vs_ring[2]  = new TGraphErrors();
+    statprecision_vs_ring[2]->SetMarkerStyle(20);
+    statprecision_vs_ring[2]->SetMarkerSize(1);
+    statprecision_vs_ring[2]->SetMarkerColor(kRed+2);
+    
+    TGraphErrors *residual_vs_ring[3];
+    residual_vs_ring[0] = new TGraphErrors();
+    residual_vs_ring[0]->SetMarkerStyle(20);
+    residual_vs_ring[0]->SetMarkerSize(1);
+    residual_vs_ring[0]->SetMarkerColor(kGreen+2);
+    residual_vs_ring[1] = new TGraphErrors();
+    residual_vs_ring[1]->SetMarkerStyle(20);
+    residual_vs_ring[1]->SetMarkerSize(1);
+    residual_vs_ring[1]->SetMarkerColor(kGreen+2);
+    residual_vs_ring[2] = new TGraphErrors();
+    residual_vs_ring[2]->SetMarkerStyle(20);
+    residual_vs_ring[2]->SetMarkerSize(1);
+    residual_vs_ring[2]->SetMarkerColor(kGreen+2);
+
+  
   if (evalStat){
     
     // acuire file for statistical precision
@@ -308,22 +409,6 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
     }
 
   
-    TGraphErrors *statprecision_vs_ring[3];
-    statprecision_vs_ring[0]  = new TGraphErrors();
-    statprecision_vs_ring[0]->SetMarkerStyle(20);
-    statprecision_vs_ring[0]->SetMarkerSize(1);
-    statprecision_vs_ring[0]->SetMarkerColor(kRed+2);
-
-    statprecision_vs_ring[1]  = new TGraphErrors();
-    statprecision_vs_ring[1]->SetMarkerStyle(20);
-    statprecision_vs_ring[1]->SetMarkerSize(1);
-    statprecision_vs_ring[1]->SetMarkerColor(kRed+2);
-
-    statprecision_vs_ring[2]  = new TGraphErrors();
-    statprecision_vs_ring[2]->SetMarkerStyle(20);
-    statprecision_vs_ring[2]->SetMarkerSize(1);
-    statprecision_vs_ring[2]->SetMarkerColor(kRed+2);
-   
     TCanvas* c44 [120];
 
     int n[3] = {0};
@@ -360,20 +445,6 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
       }
     
      
-    TGraphErrors *residual_vs_ring[3];
-    residual_vs_ring[0] = new TGraphErrors();
-    residual_vs_ring[0]->SetMarkerStyle(20);
-    residual_vs_ring[0]->SetMarkerSize(1);
-    residual_vs_ring[0]->SetMarkerColor(kGreen+2);
-    residual_vs_ring[1] = new TGraphErrors();
-    residual_vs_ring[1]->SetMarkerStyle(20);
-    residual_vs_ring[1]->SetMarkerSize(1);
-    residual_vs_ring[1]->SetMarkerColor(kGreen+2);
-    residual_vs_ring[2] = new TGraphErrors();
-    residual_vs_ring[2]->SetMarkerStyle(20);
-    residual_vs_ring[2]->SetMarkerSize(1);
-    residual_vs_ring[2]->SetMarkerColor(kGreen+2);
-
 //     TGraphErrors *residual_vs_ring_MCTruth[2];
 //     residual_vs_ring_MCTruth[0] = new TGraphErrors();
 //     residual_vs_ring_MCTruth[0]->SetMarkerStyle(20);
@@ -451,9 +522,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
       }
     }
  
-   
-
-  }
+ }
   
   
   //------------------------------------------------------------------------
@@ -464,8 +533,8 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   //-----------------------------------------------------------------
   //--- Draw plots
   //-----------------------------------------------------------------
-  TCanvas *cEEP[10];
-  TCanvas *cEEM[10];
+  TCanvas *cEEP[12];
+  TCanvas *cEEM[12];
 
   // --- plot 0 : map of coefficients 
   cEEP[0] = new TCanvas("cmapEEP","cmapEEP");
@@ -552,41 +621,6 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
     residual_vs_ring[1]->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
     residual_vs_ring[1]->Draw("ap");
  
-    cEEP[7] = new TCanvas("c7P","c7P");
-    hstat[1]->SetLineWidth(2);
-    hstat[1]->SetLineColor(kRed+2);
-    hstat[1]->SetFillColor(kRed+2);
-    hstat[1]->SetFillStyle(3004);
-    hspre[1]->SetLineWidth(2);
-    hspre[1]->SetLineColor(kBlue+2);
-    hspre[1]->SetFillColor(kBlue+2);
-    hspre[1]->SetFillStyle(3005);
-    hspre[1]->GetXaxis()->SetRangeUser(0,0.05);
-    hspre[1]->Draw("");
-    hstat[1]->Draw("sames");
-    gPad->Update();
-
-    TPaveStats *s_stat = (TPaveStats*)(hstat[1]->GetListOfFunctions()->FindObject("stats"));
-    s_stat -> SetX1NDC(0.55); //new x start position
-    s_stat -> SetX2NDC(0.85); //new x end position
-    s_stat -> SetY1NDC(0.750); //new x start position
-    s_stat -> SetY2NDC(0.85); //new x end position
-    s_stat -> SetOptStat(1110);
-    s_stat -> SetTextColor(kRed+2);
-    s_stat -> SetTextSize(0.03);
-    s_stat -> Draw("sames");
- 
-     
-    TPaveStats *s_spre = (TPaveStats*)(hspre[1]->GetListOfFunctions()->FindObject("stats"));
-    s_spre -> SetX1NDC(0.55); //new x start position
-    s_spre -> SetX2NDC(0.85); //new x end position
-    s_spre -> SetY1NDC(0.750); //new x start position
-    s_spre -> SetY2NDC(0.85); //new x end position
-    s_spre -> SetOptStat(1110);
-    s_spre -> SetTextColor(kBlue+2);
-    s_spre -> SetTextSize(0.03);
-    s_spre -> Draw("sames");
- 
     cEEM[5] = new TCanvas("cstatM","cstatM");
     cEEM[5]->SetGridx();
     cEEM[5]->SetGridy();
@@ -605,20 +639,6 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
     residual_vs_ring[0]->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
     residual_vs_ring[0]->Draw("ap");
  
-    cEEM[7] = new TCanvas("c7","c7");
-    hstat[0]->SetLineWidth(2);
-    hstat[0]->SetLineColor(kRed+2);
-    hstat[0]->SetFillColor(kRed+2);
-    hstat[0]->SetFillStyle(3004);
-    hspre[0]->SetLineWidth(2);
-    hspre[0]->SetLineColor(kBlue+2);
-    hspre[0]->SetFillColor(kBlue+2);
-    hspre[0]->SetFillStyle(3005);
-    hspre[0]->GetXaxis()->SetRangeUser(0,0.05);
-    hspre[0]->Draw("");
-    hstat[0]->Draw("sames");
-    gPad->Update();
-
     cEEP[8] = new TCanvas("csigmaFolded","csigmaFolded");
     cEEP[8]->SetGridx();
     cEEP[8]->SetGridy();
@@ -648,20 +668,39 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
 
     // save precision for MC comparison
 
+    if(isMC==true)
+    {
+     TFile * output = new TFile ("StatPrec_MC_noEP_EE.root","RECREATE");
+     output->cd();
+     statprecision_vs_ring[0]->SetName("gr_stat_prec_EEP");
+     statprecision_vs_ring[1]->SetName("gr_stat_prec_EEM");
+     statprecision_vs_ring[2]->SetName("gr_stat_prec");
 
-    TFile * output = new TFile ("StatPrec_MC_noEP_EE.root","RECREATE");
-    output->cd();
-    statprecision_vs_ring[0]->SetName("gr_stat_prec_EEP");
-    statprecision_vs_ring[1]->SetName("gr_stat_prec_EEM");
-    statprecision_vs_ring[2]->SetName("gr_stat_prec");
-
-    statprecision_vs_ring[0]->Write();
-    statprecision_vs_ring[1]->Write();
-    statprecision_vs_ring[2]->Write();
-
+     statprecision_vs_ring[0]->Write();
+     statprecision_vs_ring[1]->Write();
+     statprecision_vs_ring[2]->Write();
+    }
   }
   
- /* TCanvas* canEEP[10], *canEEM[10];
+  /*cEEP[10] = new TCanvas("spread_vs_phi_EEP","spread_vs_phi_EEP");
+  cEEP[10]->SetGridx();
+  cEEP[10]->SetGridy();
+  IC_vs_phi[0]->GetHistogram()->GetYaxis()-> SetRangeUser(0.7,1.3);
+  IC_vs_phi[0]->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
+  IC_vs_phi[0]->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
+  IC_vs_phi[0]->GetHistogram()->GetXaxis()-> SetTitle("i#phi");
+  IC_vs_phi[0]->Draw("ap");
+
+  cEEM[10] = new TCanvas("spread_vs_phi_EEM","spread_vs_phi_EEM");
+  cEEM[10]->SetGridx();
+  cEEM[10]->SetGridy();
+  IC_vs_phi[1]->GetHistogram()->GetYaxis()-> SetRangeUser(0.7,1.3);
+  IC_vs_phi[1]->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
+  IC_vs_phi[1]->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
+  IC_vs_phi[1]->GetHistogram()->GetXaxis()-> SetTitle("i#phi");
+  IC_vs_phi[1]->Draw("ap");
+ */
+  TCanvas* canEEP[10], *canEEM[10];
  
   canEEM[0] = new TCanvas("ICComparison MC EEM","ICComparison MC EEM");
   canEEM[0]->SetGridx();
@@ -670,7 +709,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   ICComparison[0]->Draw("COLZ");
   ICComparison[0]->GetXaxis() ->SetTitle("ix");
   ICComparison[0]->GetYaxis() ->SetTitle("iy");
-  ICComparison[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
+  ICComparison[0]->GetZaxis() ->SetRangeUser(0.85,1.15);
  
   canEEP[0] = new TCanvas("ICComparison MC EEP","ICComparison MC EEP");
   canEEP[0]->SetGridx();
@@ -679,8 +718,17 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   ICComparison[1]->Draw("COLZ");
   ICComparison[1]->GetXaxis() ->SetTitle("ix");
   ICComparison[1]->GetYaxis() ->SetTitle("iy");
-  ICComparison[1]->GetZaxis() ->SetRangeUser(0.8,1.2);
+  ICComparison[1]->GetZaxis() ->SetRangeUser(0.85,1.15);
 
+  if(isMC == true)
+  {
+   TFile* output = new TFile ("IC_MC_4Correction.root","RECREATE");
+   output->cd();
+   ICComparison[0]->Write();
+   ICComparison[1]->Write();
+   output->Close();
+  }
+/*
   canEEM[1] = new TCanvas("csigmaEEM_MCTruth","csigmaEEM_MCTruth");
   canEEM[1]->SetGridx();
   canEEM[1]->SetGridy();
@@ -718,8 +766,9 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   sigma_vs_ring_MCTruth[1]->Draw("ap");
 
  */
-
-   std::ofstream outTxt ("Calibration_Coefficient_EE_fixed_alpha.txt",std::ios::out);
+  if(isMC == false)
+  {
+   std::ofstream outTxt ("Calibration_Coefficient_EE_dinamic_alpha.txt",std::ios::out);
    outTxt << "---------------------------------------------------------------" << std::endl;
    outTxt << "--- ix ---- iy ------iz------- IC value EE (normalized by mean on EE ring) ---------" << std::endl;
    outTxt << "---------------------------------------------------------------" << std::endl;
@@ -727,10 +776,15 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
     {
       for (int iy = 1; iy < hcmap[0] -> GetNbinsY()+1; iy++)
        {
-          if( hcmap[0]->GetBinContent(ix,iy) ! =0)
+          if( hcmap[0]->GetBinContent(ix,iy) <=0) continue;
+          if( hcmap[0]->GetBinContent(ix,iy)>0.4 && hcmap[0]->GetBinContent(ix,iy)<2.)
           outTxt << "  " << std::fixed << std::setw(1) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
            << std::fixed << std::setw(1) << "   " << hcmap[0]->GetYaxis()->GetBinLowEdge(iy) 
             << "          " << -1 <<"     "<< hcmap[0]->GetBinContent(ix,iy) << std::endl;
+          else outTxt << " Warning IC to fix " << std::fixed << std::setw(1) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
+           << std::fixed << std::setw(1) << "   " << hcmap[0]->GetYaxis()->GetBinLowEdge(iy) 
+            << "          " << -1 << "      "<<hcmap[0]->GetBinContent(ix,iy) << std::endl;
+
  
        }
     }
@@ -739,8 +793,12 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
     {
       for (int iy = 1; iy < hcmap[1] -> GetNbinsY()+1; iy++)
        {
-          if( hcmap[1]->GetBinContent(ix,iy) ! =0)
+          if( hcmap[1]->GetBinContent(ix,iy) <=0)continue;
+          if(hcmap[1]->GetBinContent(ix,iy)>0.4 && hcmap[1]->GetBinContent(ix,iy)<2.)
           outTxt << "  " << std::fixed << std::setw(1) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
+           << std::fixed << std::setw(1) << "   " << hcmap[1]->GetYaxis()->GetBinLowEdge(iy) 
+            << "          " << 1 << "      "<<hcmap[1]->GetBinContent(ix,iy) << std::endl;
+          else outTxt << " Warning IC to fix " << std::fixed << std::setw(1) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
            << std::fixed << std::setw(1) << "   " << hcmap[1]->GetYaxis()->GetBinLowEdge(iy) 
             << "          " << 1 << "      "<<hcmap[1]->GetBinContent(ix,iy) << std::endl;
  
@@ -748,22 +806,10 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
     }
 
 
-
-
-
-  //-----------------------------------------------------------------
-  //--- Print plots
-  //-----------------------------------------------------------------
- 
-  if (printPlots){
-
-    //gStyle->SetOptStat(1110);
-    c[0]->Print("IC_map.png",fileType);
-    c[1]->Print("IC_precision_vs_ring.png",fileType);
-    c[2]->Print("IC_scale_vs_ring.png",fileType);
-    c[3]->Print("IC_spread.png",fileType);
-    c[4]->Print("occupancy_map.png",fileType);
-  }
-
-  
+  TFile *output_hcmap = new TFile("hcmap_EE.root","RECREATE");
+  output_hcmap->cd();
+  hcmap[0]->Write();
+  hcmap[1]->Write();
+  output_hcmap->Close();
+ } 
 }
