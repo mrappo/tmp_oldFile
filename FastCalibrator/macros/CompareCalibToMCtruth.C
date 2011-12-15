@@ -1,6 +1,17 @@
-// To compare two sets of IC
+// To compare two sets of IC for EB
 // Input needed: two set of IC (2D maps) 
-{
+#include <iostream>
+#include "TH2F.h"
+#include "TH1F.h"
+#include "TCanvas.h"
+#include "TFile.h"
+#include "TROOT.h"
+#include "TStyle.h"
+#include "TGraphErrors.h"
+#include "TF1.h"
+
+
+void CompareCalibToMCtruth(){
   // Set style options
   gROOT->Reset();
   gROOT->SetStyle("Plain");
@@ -23,15 +34,16 @@
 
   TFile *f1 = TFile::Open("MCtruthIC.root");
   TFile *f2 = TFile::Open("MCRecoIC.root");
-  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_noEP/WZJets_TuneZ2_madgraph_tauola.root");
+  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/noEP_Z/WZAnalysis_SingleEle_WJetsToLNu_Z_noEP.root");
   
-  TFile *f4 =  TFile::Open("StatPrec_MC_scalib05_noEP.root");
+  TFile *f4 =  TFile::Open("StatPrec_MC_noEP.root");
   // input coeff
   TH2F *hcmapMcT = (TH2F*)f1->Get("h_scale_map");
   TH2F *hcmapMcR = (TH2F*)f2->Get("h_scale_map");
  
   TH2F * hcmap1 = (TH2F*)hcmapMcT->Clone("hcmap1");
-  hcmap1->Reset()
+  TH1F * hringdiff = new TH1F("hringdiff","difference of ring average",100,-0.1,0.1);
+  hcmap1->Reset();
     for (int jbin = 1; jbin < hcmap1-> GetNbinsY(); jbin++){
       for (int ibin = 1; ibin < hcmap1-> GetNbinsX()+1; ibin++){
 	//hcmap1->SetBinContent(ibin,jbin,1);
@@ -45,7 +57,7 @@
   TH2F *hcL3 = (TH2F*)f3->Get("h_scale_map");
   
   TH2F *hcmap2 = (TH2F*)hcL3 ->Clone("hcmap2");
-  hcmap2->Reset()
+  hcmap2->Reset();
     for (int jbin = 1; jbin < hcmap2-> GetNbinsY()+1; jbin++){
       for (int ibin = 1; ibin < hcmap2-> GetNbinsX()+1; ibin++){
 	hcmap2->SetBinContent(ibin,jbin,miscalib_map->GetBinContent(ibin,jbin)*hcL3->GetBinContent(ibin,jbin));
@@ -115,6 +127,7 @@
     rms_vs_ieta  -> SetPointError(np,0,hspread[i-1]->GetRMSError() );
     scale_vs_ieta-> SetPoint(np,etaring,fgaus->GetParameter(1));
     scale_vs_ieta-> SetPointError(np,0,fgaus->GetParError(1));
+    if( fabs(etaring) < 20 ){hringdiff->Fill( fgaus->GetParameter(1) );}
     np++;
 
   }
@@ -129,11 +142,11 @@
   sigma_vs_ieta->GetHistogram()->GetYaxis()-> SetTitle("#sigma");
   sigma_vs_ieta->GetHistogram()->GetXaxis()-> SetTitle("ieta");
   sigma_vs_ieta->Draw("ap");
-  //rms_vs_ieta->Draw("psame");
+  rms_vs_ieta->Draw("psame");
   gr_stat_prec->Draw("psame");
   
 
-  TGraph* residual = new TGraph();
+  TGraphErrors* residual = new TGraphErrors();
 
   cout<<"aaa "<<gr_stat_prec->GetN()<<endl;
   cout<<"bbb "<<sigma_vs_ieta->GetN()<<endl;
@@ -145,21 +158,25 @@
     sigma_vs_ieta->GetPoint(pp, eta2, tot);
     if(eta1 != eta2){cout<<"error FFF "<<eta1<<"  "<<eta2<<endl;}
     double res = tot*tot -stat*stat;
+    double errres = 0.1;//r_stat_prec->GetErrorY(pp)*r_stat_prec->GetErrorY(pp)+
     if (res > 0) res = sqrt(res);
-    else res = 0;
-    residual.SetPoint(pp,eta1,res);
+    else res = -sqrt(fabs(res));
+    residual->SetPoint(pp,eta1,res);
+    residual->SetPointError(pp,eta1,errres);
   }
 
  TCanvas *cres = new TCanvas("cres","cresidual");
   cres->SetGridx();
   cres->SetGridy();
-  residual->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.2);
+  residual->GetHistogram()->GetYaxis()-> SetRangeUser(-0.1,0.1);
   residual->GetHistogram()->GetXaxis()-> SetRangeUser(-85,85);
   residual->GetHistogram()->GetYaxis()-> SetTitle("residual");
   residual->GetHistogram()->GetXaxis()-> SetTitle("ieta");
   residual ->SetMarkerStyle(20);
   residual->SetMarkerSize(1);
   residual->SetMarkerColor(kGreen+2); 
+  residual->GetYaxis()->SetTitle("residual");
+  residual->GetXaxis()->SetTitle("i#eta");
   residual->Draw("ap");
 
   TCanvas *cscale = new TCanvas("cscale","cscale");
