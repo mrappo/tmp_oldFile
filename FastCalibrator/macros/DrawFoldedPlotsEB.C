@@ -9,7 +9,16 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include "TH2F.h"
+#include "TFile.h"
+#include "TCanvas.h"
+#include "TROOT.h"
+#include "TStyle.h"
+#include "TF1.h"
+#include "TLegend.h"
+#include "TGraphErrors.h"
 
+/// To Run root -l macros/DrawFoldedPlotsEB.C+
 
 // Check if the crystal is near to a dead one
 
@@ -37,7 +46,7 @@ bool CheckxtalIC (TH2F* h_scale_EB,int iPhi, int iEta )
 
 bool CheckxtalTT (int iPhi, int iEta, std::vector<std::pair<int,int> >& TT_centre )
 {
- for( int k =0; k<TT_centre.size(); k++)
+ for(unsigned int k =0; k<TT_centre.size(); k++)
  {
    if(fabs(iPhi-TT_centre.at(k).second)<5 && fabs(iEta-TT_centre.at(k).first)<5) return false;
 
@@ -208,6 +217,17 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   }
 
   // evaluate statistical precision and residual term
+  
+  TGraphErrors *statprecision_vs_EtaFold = new TGraphErrors();
+  statprecision_vs_EtaFold->SetMarkerStyle(20);
+  statprecision_vs_EtaFold->SetMarkerSize(1);
+  statprecision_vs_EtaFold->SetMarkerColor(kRed+2);
+
+  TGraphErrors *residual_vs_EtaFold = new TGraphErrors();
+  residual_vs_EtaFold->SetMarkerStyle(20);
+  residual_vs_EtaFold->SetMarkerSize(1);
+  residual_vs_EtaFold->SetMarkerColor(kGreen+2);
+
 
   if (evalStat){
   TFile *f2 = new TFile(infile2);
@@ -297,12 +317,6 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
    }
 
     
-    TGraphErrors *statprecision_vs_EtaFold = new TGraphErrors();
-    statprecision_vs_EtaFold->SetMarkerStyle(20);
-    statprecision_vs_EtaFold->SetMarkerSize(1);
-    statprecision_vs_EtaFold->SetMarkerColor(kRed+2);
-
-
     np = 0;
 
     for (int i = 1; i < 86; i++){
@@ -317,12 +331,6 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
       statprecision_vs_EtaFold-> SetPointError(np,e,fgaus->GetParError(2));
       np++;
     }
-
-
-    TGraphErrors *residual_vs_EtaFold = new TGraphErrors();
-    residual_vs_EtaFold->SetMarkerStyle(20);
-    residual_vs_EtaFold->SetMarkerSize(1);
-    residual_vs_EtaFold->SetMarkerColor(kGreen+2);
 
 
     for (int i= 0; i < statprecision_vs_EtaFold-> GetN(); i++){
@@ -415,7 +423,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
 
     TH1F* hspreadPhiFold_crack_EBp[20];
     TH1F* hspreadPhiFold_crack_EBm[20];
-    int nStep =0;
+    nStep =0;
     
     for(int jbin = 1; jbin < hcmap-> GetNbinsX()+1; jbin++){
       if (jbin <= 20) {
@@ -540,7 +548,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
 
    TH1F* hspreadPhiFold_corrected_EBp[20];
    TH1F* hspreadPhiFold_corrected_EBm[20];
-   int nStep =0;
+   nStep =0;
     
     for(int jbin = 1; jbin < hcmap_crackcorrected-> GetNbinsX()+1; jbin++){
       if (jbin <= 20) {
