@@ -23,6 +23,7 @@
 
 using namespace std;
 
+///===== output mcfm sample structure
 struct Sample {
                float Higgs_Mass;
                float Fact_Scale;
@@ -31,6 +32,8 @@ struct Sample {
 
               };
 
+	      
+///===== struct for merge real and virtual xs values	      
 struct Sample_xs {
                
                   float Higgs_Mass;
@@ -76,7 +79,7 @@ struct Sample_xs {
              
              };
 
-
+///======= struct used to search and store min and max value of scale for each mH	     
 struct Sample_Scale {
                       float Higgs_Mass;
                       float Fact_Scale_Max;
@@ -109,6 +112,7 @@ struct Sample_Scale {
 
                    };
 
+///=== struct used to save infos from powheg analysis		   
 struct Sample_powheg {
                        
                        float efficiency;
@@ -120,7 +124,9 @@ struct Sample_powheg {
                        float err_xs_eff_up;
                        float err_xs_eff_down;
                      };
-
+		     
+		  
+// Method to search max value for RS scale
 float GetMaximum_RS(const std::vector<Sample_xs> & Vector_xs_sample, float Higgs_Mass)
 {
    float max=-1.;
@@ -133,7 +139,7 @@ float GetMaximum_RS(const std::vector<Sample_xs> & Vector_xs_sample, float Higgs
    if(max ==-1.) return -1.;
    else return max;
 }   
-
+// Method to search min value for RS scale
 float GetMinimum_RS(const std::vector<Sample_xs> & Vector_xs_sample, float Higgs_Mass)
 {
   float min=100000000.;
@@ -147,7 +153,7 @@ float GetMinimum_RS(const std::vector<Sample_xs> & Vector_xs_sample, float Higgs
   else return min;
 }           
                
-
+// Method to search max value for FS scale
 float GetMaximum_FS(const std::vector<Sample_xs> & Vector_xs_sample, float Higgs_Mass)
 {
   float max=-100.;
@@ -160,7 +166,7 @@ float GetMaximum_FS(const std::vector<Sample_xs> & Vector_xs_sample, float Higgs
   if(max ==-100.) return -1.;
   else return max;
 }  
-
+// Method to search min value for FS scale
 float GetMinimum_FS(const std::vector<Sample_xs> & Vector_xs_sample, float Higgs_Mass)
 {
   float min=100000000.;
@@ -359,7 +365,8 @@ int main (int argc, char** argv)
   " XSec Real -- Err XSec Real ---Err XSec Propagation Real"<<endl;
   cout<<"------------------------------------------------------------------------------------------"<<endl;
   
-
+  ///==== cout for Virtual and real mean cross section and error evaluated from the distribution or through the propagation of
+  ///==== errors. 
  
   for( std::vector<Sample_xs>::iterator itVec =Vector_xs_sample.begin();  itVec !=Vector_xs_sample.end(); ++itVec)
   {
@@ -375,7 +382,8 @@ int main (int argc, char** argv)
   cout<<"Mass -- Fact Scale -- Rin Scale -- XSec -- Err XSec---Err XSec Propagation---"<<endl;
   cout<<"------------------------------------------------------------"<<endl;
   
-
+  ///===== cout of cross section for each Higgs Mass and scale resulting from rela+virt
+  
   std::vector<float> Higgs_Mass_Vect;
 
   for( std::vector<Sample_xs>::iterator itVec =Vector_xs_sample.begin();  itVec !=Vector_xs_sample.end(); ++itVec)
@@ -395,6 +403,8 @@ int main (int argc, char** argv)
    cout<<(*itVec).Higgs_Mass<<"        "<<(*itVec).Fact_Scale<<"      "<<(*itVec).Rin_Scale<<"     "<<(*itVec).xs_value_Run<<"    "<<(*itVec).xs_error_RMS_Run<<"      "<<(*itVec).xs_error_Run<<endl;
   }
 
+  ///=== Save real and virt xs distribution obtained in the RUNS
+  
   TFile *output = new TFile(argv[3],"RECREATE");
   output->cd();
   
@@ -406,7 +416,7 @@ int main (int argc, char** argv)
    
  
 
-  /// Scale study
+  /// Scale search for max and min for each Higgs Mass
 
  std::vector<Sample_Scale> map_Scale;
 
@@ -425,6 +435,7 @@ int main (int argc, char** argv)
       map_Scale.push_back(var);
   }
  
+  ///=== Take the xs value for RS=FS=mH/2 as the estimation of xs total, real and virtual
   
   std::map<float,std::vector<float> > XSec_Scale,XSec_Scale_Virt,XSec_Scale_Real;
 
@@ -433,6 +444,7 @@ int main (int argc, char** argv)
       Sample_Scale var ;
       var.Higgs_Mass = (*itVec).Higgs_Mass;
       std::vector<Sample_Scale>::iterator pos = find (map_Scale.begin(),map_Scale.end(),var);
+      
       if((*pos).Fact_Scale_Max == (*itVec).Fact_Scale && (*pos).Rin_Scale_Max == (*itVec).Rin_Scale) continue;
       if((*pos).Fact_Scale_Min == (*itVec).Fact_Scale && (*pos).Rin_Scale_Min == (*itVec).Rin_Scale) continue;
       if((*pos).Fact_Scale_Max == (*itVec).Fact_Scale && (*pos).Rin_Scale_Min == (*itVec).Rin_Scale) continue;
@@ -457,6 +469,8 @@ int main (int argc, char** argv)
       XSec_Scale_Real[(*itVec).Higgs_Mass].at(0)=(*itVec).XSec_Real->GetMean();
   }
 
+  ///=== Evaluate errors :  -(central_value - bottom_value) + (top_value - central_value)
+  
   for(std::vector<Sample_xs>::iterator itVec =Vector_xs_sample.begin();  itVec !=Vector_xs_sample.end(); ++itVec)
   {   
       Sample_Scale var ;
@@ -473,15 +487,20 @@ int main (int argc, char** argv)
       if(XSec_Scale[(*itVec).Higgs_Mass].at(1)<((*itVec).xs_value_Run-XSec_Scale[(*itVec).Higgs_Mass].at(0))) 
       XSec_Scale[(*itVec).Higgs_Mass].at(1)=(*itVec).xs_value_Run-XSec_Scale[(*itVec).Higgs_Mass].at(0);
        
-      if(XSec_Scale[(*itVec).Higgs_Mass].at(2)>((*itVec).xs_value_Run-XSec_Scale[(*itVec).Higgs_Mass].at(0))) XSec_Scale[(*itVec).Higgs_Mass].at(2)=(*itVec).xs_value_Run-XSec_Scale[(*itVec).Higgs_Mass].at(0);
+      if(XSec_Scale[(*itVec).Higgs_Mass].at(2)>((*itVec).xs_value_Run-XSec_Scale[(*itVec).Higgs_Mass].at(0))) 
+	XSec_Scale[(*itVec).Higgs_Mass].at(2)=(*itVec).xs_value_Run-XSec_Scale[(*itVec).Higgs_Mass].at(0);
             
-      if(XSec_Scale_Virt[(*itVec).Higgs_Mass].at(1)<(*itVec).XSec_Virt->GetMean()-XSec_Scale_Virt[(*itVec).Higgs_Mass].at(0)) XSec_Scale_Virt[(*itVec).Higgs_Mass].at(1)=(*itVec).XSec_Virt->GetMean()-XSec_Scale[(*itVec).Higgs_Mass].at(0);
+      if(XSec_Scale_Virt[(*itVec).Higgs_Mass].at(1)<(*itVec).XSec_Virt->GetMean()-XSec_Scale_Virt[(*itVec).Higgs_Mass].at(0))
+	XSec_Scale_Virt[(*itVec).Higgs_Mass].at(1)=(*itVec).XSec_Virt->GetMean()-XSec_Scale[(*itVec).Higgs_Mass].at(0);
       
-      if(XSec_Scale_Virt[(*itVec).Higgs_Mass].at(2)>(*itVec).XSec_Virt->GetMean()-XSec_Scale_Virt[(*itVec).Higgs_Mass].at(0)) XSec_Scale_Virt[(*itVec).Higgs_Mass].at(2)=(*itVec).XSec_Virt->GetMean()-XSec_Scale_Virt[(*itVec).Higgs_Mass].at(0);
+      if(XSec_Scale_Virt[(*itVec).Higgs_Mass].at(2)>(*itVec).XSec_Virt->GetMean()-XSec_Scale_Virt[(*itVec).Higgs_Mass].at(0))
+	XSec_Scale_Virt[(*itVec).Higgs_Mass].at(2)=(*itVec).XSec_Virt->GetMean()-XSec_Scale_Virt[(*itVec).Higgs_Mass].at(0);
       
-      if(XSec_Scale_Real[(*itVec).Higgs_Mass].at(1)<(*itVec).XSec_Real->GetMean()-XSec_Scale_Real[(*itVec).Higgs_Mass].at(0)) XSec_Scale_Real[(*itVec).Higgs_Mass].at(1)=(*itVec).XSec_Real->GetMean()-XSec_Scale_Real[(*itVec).Higgs_Mass].at(0);
+      if(XSec_Scale_Real[(*itVec).Higgs_Mass].at(1)<(*itVec).XSec_Real->GetMean()-XSec_Scale_Real[(*itVec).Higgs_Mass].at(0))
+	XSec_Scale_Real[(*itVec).Higgs_Mass].at(1)=(*itVec).XSec_Real->GetMean()-XSec_Scale_Real[(*itVec).Higgs_Mass].at(0);
          
-      if(XSec_Scale_Real[(*itVec).Higgs_Mass].at(2)>(*itVec).XSec_Real->GetMean()-XSec_Scale_Real[(*itVec).Higgs_Mass].at(0)) XSec_Scale_Real[(*itVec).Higgs_Mass].at(2)=(*itVec).XSec_Real->GetMean()-XSec_Scale_Real[(*itVec).Higgs_Mass].at(0);
+      if(XSec_Scale_Real[(*itVec).Higgs_Mass].at(2)>(*itVec).XSec_Real->GetMean()-XSec_Scale_Real[(*itVec).Higgs_Mass].at(0))
+	XSec_Scale_Real[(*itVec).Higgs_Mass].at(2)=(*itVec).XSec_Real->GetMean()-XSec_Scale_Real[(*itVec).Higgs_Mass].at(0);
       
   }
          
@@ -505,7 +524,9 @@ int main (int argc, char** argv)
 
 
   int iPoint=0;
-
+  
+  ///========= Final Total values for virtual part + plot
+  
   cout<<"------------------------------------------------------------"<<endl;
   cout<<"-------Scale dependence for each Higgs Mass evaluation Virtual ------"<<endl;
   cout<<"------------------------------------------------------------"<<endl;
@@ -519,6 +540,8 @@ int main (int argc, char** argv)
      iPoint++;
   }
 
+  ///========= Final Total values for real part + plot
+  
   cout<<"------------------------------------------------------------"<<endl;
   cout<<"-------Scale dependence for each Higgs Mass evaluation Real------"<<endl;
   cout<<"------------------------------------------------------------"<<endl;
@@ -534,7 +557,8 @@ int main (int argc, char** argv)
      iPoint++;
   }
 
-
+  ///========= Final Total values virtual + real part + plot
+  
   cout<<"------------------------------------------------------------"<<endl;
   cout<<"-------Scale dependence for each Higgs Mass evaluation------"<<endl;
   cout<<"------------------------------------------------------------"<<endl;
@@ -605,6 +629,7 @@ int main (int argc, char** argv)
    iPoint++;
   }
   
+  ///=== Set Style of final plot
 
   TLegend * leg = new TLegend(0.6,0.7,0.89, 0.89);
   leg->SetFillColor(0);

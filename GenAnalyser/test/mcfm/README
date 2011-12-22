@@ -1,0 +1,47 @@
+###############################################################
+###### mcfm README for H+2Jet WW2L2Nu Analysis ################
+###############################################################
+
+1) Install and makefile ---> they are modified in order to use, if you want LHAPDF on a lxplus
+
+
+2) src/User/gencuts.f
+
+   fortran routine where all the selection that you define in the .DAT file are 
+   implemented. This version in corrected respect to mcfm 6.0 default version in order to
+   apply both the selections defined here + what is written in wbfcuts.f   
+
+3) src/User/wbfcuts.f 
+
+   fortran routine where wbf selection are implemented (Deltajj, Mjj, CJV, Tag jet ID ).
+   If you want to apply these selections you have to insert at top of the runstring the 
+   word wbf in the .DAT file
+
+4) Bin/REAL_TEST/submit.pl  --> perl script used to run mcfm jobs on LSF, it takes information from
+   Bin/REAL_TEST/Global_CFG.cfg --> here you specify which HiggsMass, Factorization and Rinormalization scale (as fraction of HiggsMass)
+                                    Number of mcfm call for each iteration for Real and Virtual part (number of iteration 10 + 10 are set 
+                                    as default in Template.DAT), name of Template .DAT file,  the directory BaseDir where the .DAT file will be
+                                    create (different .DAT for each HiggsMass, Fac and Rin scale, and independent NRun for each combination).  
+
+   Bin/REAL_TEST/Template.DAT ---> is the template .DAT file used for crate the other ones. Inside all the possible final state selections are chosen.
+
+5) Analyis.cxx is a c++ code for Anlayse the results of mcfm and compare them with powheg.
+
+   First of all generate the list of real and virtual samples obtained by mcfm through
+
+  -->ls Virtual/ | grep HWW2jt_virt_mstw8nl_ | grep .dat | tr "w" " " | tr "d" " " | tr "_" " " | awk '{print "echo @w"$7"_"$8"_"$9"_"$10"_"$11"_"$12" "$9" "$10" "$11" "$12"@ >> Virtual.txt"}' | tr "@" "\""  | /bin/sh
+
+  -->ls Real/ | grep HWW2jt_real_mstw8nl_ | grep .dat | tr "w" " " | tr "d" " " | tr "_" " " | awk '{print "echo @w"$7"_"$8"_"$9"_"$10"_"$11"_"$12" "$9" "$10" "$11" "$12"@ >> Real.txt"}' | tr "@" "\""  | /bin/sh
+
+  then compile Analysis.cxx through:
+
+  -->g++ -Wall `root-config --libs --glibs --cflags` -o Analysis Analysis.cxx
+
+  Run the code in this way:
+
+  --> ./Analysis Virtual.txt Real.txt output.root XS_powheg.txt
+
+
+  where Virtual.txt and  Real.txt are the list of mcfm output, XS_powheg.txt is the file with mcfm effective cross section and up/down error
+  output.root is the outputfile for plots and distribution of real and virtual xs for different Higgs Mass and scale.
+
