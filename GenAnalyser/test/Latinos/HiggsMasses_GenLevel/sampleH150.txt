@@ -1,0 +1,178 @@
+# name_sample            xsection        name_human_readable
+#
+#
+# DYToEE_M-20_TuneZ2_7TeV-pythia6                                   0.7363037991     DYee20
+# DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia          0.0571980030     DYeePow20
+# DYToEE_M-10To20_TuneZ2_7TeV-pythia6                          1.6292217438     DYee10-20
+#
+# DYToMuMu_M-20_TuneZ2_7TeV-pythia6                               0.7939666162   DYmumu20
+# DYToMuMu_M-20_CT10_TuneZ2_7TeV-powheg-pythia      0.0623355250   DYmumuPow20
+# DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6                     1.5767956975    DYmumu10-20 
+#
+# DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola           0.0854907913      DYtautauPow20
+# DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola                           1.5713636364      DYtautau10-20
+#
+#
+#
+# DY50toLLMadD6T       0.084017952        DYmad
+#
+#
+#
+#
+# WWJets2LMad                  0.0037693105                        WW
+# GluGluToWWTo4L               0.0013910103                        WW
+#
+# TTJetsMad                    0.0432460989     ttbar
+# TtWFullDR                    0.0096636747     top
+# TbartWFullDR                 0.0097162413     top
+# TtFull                       0.0107482467     top
+# TbartFull                    0.0116462861     top
+# TsFull                       0.0122705994     top
+# TbarsFull                    0.0104362951     top
+# 
+# DYtoElEl                     0.0567686049     DY
+# DYtoMuMu                     0.0565481502     DY
+# DYtoTauTau                   0.0835612165     DY
+# DY10toElEl                   1.6292217438     DY
+# DY10toMuMu                   1.5767956975     DY
+# DY10toTauTau                 1.5713636364     DY
+# 
+# WZFull                       0.0042670488     WZ
+# ZZFull                       0.0018314734     ZZ
+# GluGluZZ2L2L                 0.0000173000     ZZ
+# GluGluZZ4L                   0.0000123014     ZZ
+#
+# WJetsToLNuMad                0.3849171055     W
+# VGamma                       0.1545118876     Vg
+#
+#
+# 
+#ggToH120toWWto2L2Nu          0.0010091551     ggH
+#ggToH130toWWto2L2Nu          0.0018283314     ggH
+#ggToH140toWWto2L2Nu          0.0026134876     ggH
+ggToH150toWWto2L2Nu          0.0031192611     ggH
+#ggToH160toWWto2L2Nu          0.0036198032     ggH
+#ggToH170toWWto2L2Nu          0.0032840815     ggH
+#ggToH180toWWto2L2Nu          0.0026720611     ggH
+#ggToH190toWWto2L2Nu          0.0020133730     ggH
+#ggToH200toWWto2L2Nu          0.0016564690     ggH
+#ggToH210toWWto2L2Nu          0.0029074842     ggH
+#ggToH220toWWto2L2Nu          0.0025985125     ggH
+#ggToH230toWWto2L2Nu          0.0023547595     ggH
+#ggToH250toWWto2L2Nu          0.0010241611     ggH
+#ggToH300toWWto2L2Nu          0.0007100710     ggH
+#ggToH350toWWto2L2Nu          0.0006536898     ggH
+#ggToH400toWWto2L2Nu          0.0005009410     ggH
+#ggToH450toWWto2L2Nu          0.0003200669     ggH
+#ggToH500toWWto2L2Nu          0.0002000491     ggH
+#ggToH550toWWto2L2Nu          0.0001254853     ggH
+#ggToH600toWWto2L2Nu          0.0000791110     ggH
+#
+#ggToH120toWWtoLNuTauNu       0.0010091643     ggH
+#ggToH130toWWtoLNuTauNu       0.0018442773     ggH
+#ggToH140toWWtoLNuTauNu       0.0025956197     ggH
+#ggToH150toWWtoLNuTauNu       0.0031193178     ggHTau
+#ggToH160toWWtoLNuTauNu       0.0035011319     ggH
+#ggToH170toWWtoLNuTauNu       0.0031764791     ggH
+#ggToH180toWWtoLNuTauNu       0.0026719396     ggH
+#ggToH190toWWtoLNuTauNu       0.0019737799     ggH
+#ggToH200toWWtoLNuTauNu       0.0016564841     ggH
+#ggToH210toWWtoLNuTauNu       0.0029074842     ggH
+#ggToH220toWWtoLNuTauNu       0.0025983708     ggH
+#ggToH230toWWtoLNuTauNu       0.0023548023     ggH
+#ggToH250toWWtoLNuTauNu       0.0010137122     ggH
+#ggToH300toWWtoLNuTauNu       0.0007100516     ggH
+#ggToH350toWWtoLNuTauNu       0.0006537136     ggH
+#ggToH400toWWtoLNuTauNu       0.0005009319     ggH
+#ggToH450toWWtoLNuTauNu       0.0003200553     ggH
+#ggToH500toWWtoLNuTauNu       0.0002000418     ggH
+#ggToH550toWWtoLNuTauNu       0.0001254762     ggH
+#ggToH600toWWtoLNuTauNu       0.0000791074     ggH
+#
+#ggToH120toWWto2Tau2Nu        0.0005036730     ggH
+#ggToH130toWWto2Tau2Nu        0.0009848455     ggH
+#ggToH140toWWto2Tau2Nu        0.0013717579     ggH
+#ggToH150toWWto2Tau2Nu        0.0015602269     ggHTau
+#ggToH160toWWto2Tau2Nu        0.0017511001     ggH
+#ggToH170toWWto2Tau2Nu        0.0017227090     ggH
+#ggToH180toWWto2Tau2Nu        0.0013541897     ggH
+#ggToH190toWWto2Tau2Nu        0.0009873086     ggH
+#ggToH200toWWto2Tau2Nu        0.0008688014     ggH
+#ggToH210toWWto2Tau2Nu        0.0007637523     ggH
+#ggToH220toWWto2Tau2Nu        0.0006491617     ggH
+#ggToH230toWWto2Tau2Nu        0.0006186748     ggH
+#ggToH250toWWto2Tau2Nu        0.0005174620     ggH
+#ggToH300toWWto2Tau2Nu        0.0003723506     ggH
+#ggToH350toWWto2Tau2Nu        0.0003273203     ggH
+#ggToH400toWWto2Tau2Nu        0.0002635197     ggH
+#ggToH450toWWto2Tau2Nu        0.0001715166     ggH
+#ggToH500toWWto2Tau2Nu        0.0001071895     ggH
+#ggToH550toWWto2Tau2Nu        0.0000636560     ggH
+#ggToH600toWWto2Tau2Nu        0.0000428766     ggH
+#
+#vbfToH120toWWto2L2Nu         0.0000764791     qqH
+#vbfToH130toWWto2L2Nu         0.0001483693     qqH
+#vbfToH140toWWto2L2Nu         0.0002230781     qqH
+#vbfToH150toWWto2L2Nu         0.0002917482     qqH
+#vbfToH160toWWto2L2Nu         0.0003359096     qqH
+#vbfToH170toWWto2L2Nu         0.0004050701     qqH
+#vbfToH180toWWto2L2Nu         0.0002939399     qqH
+#vbfToH190toWWto2L2Nu         0.0002298619     qqH
+#vbfToH200toWWto2L2Nu         0.0001984308     qqH
+#vbfToH210toWWto2L2Nu         0.0003604588     qqH
+#vbfToH220toWWto2L2Nu         0.0003374914     qqH
+#vbfToH230toWWto2L2Nu         0.0003021148     qqH
+#vbfToH250toWWto2L2Nu         0.0001265270     qqH
+#vbfToH300toWWto2L2Nu         0.0000873839     qqH
+#vbfToH350toWWto2L2Nu         0.0000610556     qqH
+#vbfToH400toWWto2L2Nu         0.0000401398     qqH
+#vbfToH450toWWto2L2Nu         0.0000292107     qqH
+#vbfToH500toWWto2L2Nu         0.0000220554     qqH
+#vbfToH550toWWto2L2Nu         0.0000174782     qqH
+#vbfToH600toWWto2L2Nu         0.0000139747     qqH
+#
+#vbfToH120toWWtoLNuTauNu      0.0000764763     qqH
+#vbfToH130toWWtoLNuTauNu      0.0001483923     qqH
+#vbfToH140toWWtoLNuTauNu      0.0002230598     qqH
+#vbfToH150toWWtoLNuTauNu      0.0002822004     qqH
+#vbfToH160toWWtoLNuTauNu      0.0003359279     qqH
+#vbfToH170toWWtoLNuTauNu      0.0003313941     qqH
+#vbfToH180toWWtoLNuTauNu      0.0002921980     qqH
+#vbfToH190toWWtoLNuTauNu      0.0002284872     qqH
+#vbfToH200toWWtoLNuTauNu      0.0002034265     qqH
+#vbfToH210toWWtoLNuTauNu      0.0003604719     qqH
+#vbfToH220toWWtoLNuTauNu      0.0003295283     qqH
+#vbfToH230toWWtoLNuTauNu      0.0003022633     qqH
+#vbfToH250toWWtoLNuTauNu      0.0001265201     qqH
+#vbfToH300toWWtoLNuTauNu      0.0000873967     qqH
+#vbfToH350toWWtoLNuTauNu      0.0001520378     qqH
+#vbfToH400toWWtoLNuTauNu      0.0000403922     qqH
+#vbfToH450toWWtoLNuTauNu      0.0000292032     qqH
+#vbfToH500toWWtoLNuTauNu      0.0000227661     qqH
+#vbfToH550toWWtoLNuTauNu      0.0000187541     qqH
+#vbfToH600toWWtoLNuTauNu      0.0000138171     qqH
+#
+#vbfToH120toWWto2Tau2Nu       0.0000397705     qqH
+#vbfToH130toWWto2Tau2Nu       0.0000776251     qqH
+#vbfToH140toWWto2Tau2Nu       0.0001110787     qqH
+#vbfToH150toWWto2Tau2Nu       0.0001419808     qqH
+#vbfToH160toWWto2Tau2Nu       0.0001675194     qqH
+#vbfToH170toWWto2Tau2Nu       0.0001785504     qqH
+#vbfToH180toWWto2Tau2Nu       0.0001568966     qqH
+#vbfToH190toWWto2Tau2Nu       0.0001146872     qqH
+#vbfToH200toWWto2Tau2Nu       0.0000983338     qqH
+#vbfToH210toWWto2Tau2Nu       0.0000892126     qqH
+#vbfToH220toWWto2Tau2Nu       0.0000897953     qqH
+#vbfToH230toWWto2Tau2Nu       0.0000746405     qqH
+#vbfToH250toWWto2Tau2Nu       0.0000637035     qqH
+#vbfToH300toWWto2Tau2Nu       0.0000472543     qqH
+#vbfToH350toWWto2Tau2Nu       0.0000309812     qqH
+#vbfToH400toWWto2Tau2Nu       0.0000200624     qqH
+#vbfToH450toWWto2Tau2Nu       0.0000146140     qqH
+#vbfToH500toWWto2Tau2Nu       0.0000111208     qqH
+#vbfToH550toWWto2Tau2Nu       0.0000091388     qqH
+#vbfToH600toWWto2Tau2Nu       0.0000073233     qqH
+#
+#
+#
+#

@@ -1,0 +1,10 @@
+###################################
+#### Cut for Analysis workflow ####
+###################################
+#### Atlas Cut #####
+#l1_pT>25 && l2_pT>15 && q1_pT>25 && q2_pT>25 && !(q3_pT>25 && abs(q3_Eta)<3.2) && abs(q1_Eta)<4.5 && abs(q2_Eta)<4.5 && DEta_qq>3.8 && M_qq>500 && (q1_Eta * q2_Eta) <0
+#### Cms   Cut #####
+l1_pT>20 && l2_pT>10 && q1_pT>30 && q2_pT>30 && CJV_30 == 0 && M_qq>450 && DEta_qq>3.5 && abs(q1_Eta)<4.5 && abs(q2_Eta)<4.5
+#### Analysis selections
+#M_ll>12 && l1_pT>20 && l2_pT>10 && (l2_flavour == 13 || l2_pT>15) && q1_pT>30 && q2_pT>30 && l1_charge * l2_charge == -1 && met>20 && ((!(M_ll<106.1876&&M_ll>76.1876&&l1_flavour==l2_flavour))||(l1_flavour!=l2_flavour)) && M_ll<100 && CJV_30 == 0 && M_qq>450 && DEta_qq>3.5 && DPhi_ll<2.0 && Nleptons_pT10==0 && abs(Z_ll)<0.5 && abs(l1_Z)<0.5 && abs(l2_Z)<0.5
+###
