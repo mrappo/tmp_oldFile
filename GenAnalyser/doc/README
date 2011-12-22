@@ -1,0 +1,61 @@
+
+****************************************************************************
+*********************** Analysis at CMSSW Level ****************************
+****************************************************************************
+
+plugins/SimpleNtupleGen.cc   plugins/SimpleNtupleGen.h python/SimpleNtupleGen_cfi.py  ---> modules for dump genParticles,
+                                                                                           genJets, genMet infos
+
+test/makeMiBiCommonNT_GEN_MC_cfg.py ----> python cfg to run genAnalysis on a given MC sample --> this can be call in a crab cfg in order to
+                                                                                                 run on grid
+
+*******************************************************************************
+*********************** Analysis after CMSSW Level ****************************
+*******************************************************************************
+
+1) interface/Variables_Gen.h src/Variables_Gen.cc --> struct and methods for dump the infos of genparticles from ntuples in
+                                                      order to obtain plain root tree
+
+2) test/Latinos/cfgCreator_MC_Local_Gen.cxx ---> this is a root macro used for create cfg file used in the first analysis in which the ntuples
+                                                infos are reduced into plain root trees.
+ 
+  ->infos are taken from sample_GenLevel.txt where MC samples, xsection and up and down errors are specified together with a short name which identifies
+    the physics sample.
+
+  ->cfg file are created and put in the directory test/Latinos/dir_cfg_skimmed_MC_GenLevel      
+
+  
+  execution: root -l test/Latinos/cfgCreator_MC_Local_Gen.cxx 
+
+3) test/NtupleProducerFromNT_Gen.cpp   ---> plain root tree from ntuples --> selections applied:   
+ 
+   * Jet Cleaning --> we consider all the leptons (e or mu) in the event with pT>5 and eta<2.5 , a jet with pT>15
+                      is good if and only if DR with every lepton is grater than 0.5 otherwise it is put in a blacklist.
+
+   * ele_ID ---> skip electron with eta>2.5 and pT<10
+
+   * mu_ID ----> skip muonsì with eta>2.5 and pT<10
+
+   * After that for each event we require at least 2 jet and 2 lepton ---> VBF topology
+
+   * Save infos --> Tag jets are selected by the rule of maxsumpT,  the other jets are sorted in pT and the infos of the third jet are saved
+                   (CJV variable is calculated), save info for leptons and Met
+
+   * output is a plain root tree + an efficiency tree where are stored XSection value, errors, numberEntries of the original ntupla.
+
+   Run: ls test/Latinos/dir_cfg_skimmed_MC_GenLevel/ | grep NtupleProducerNT | awk '{ print" ./bin/NtupleProducerFromNT_Gen.exe test/Latinos/dir_cfg_skimmed_MC_GenLevel/"$1" \n "}' | /bin/sh
+
+
+4) test/MCGENPlott_Counter.cpp
+
+   Run: ls test/Latinos/HiggsMasses_GenLevel/*.cfg |   tr  "_" " " | tr "/" " " | awk '{print "./bin/MCGENPlott_Counter.exe test/Latinos/HiggsMasses_GenLevel/"$5" \n"}' | /bin/sh
+
+   it takes a cfg file from   test/Latinos/HiggsMasses_GenLevel where for each value of Higgs mass it specifies the sample of signal and background of the 
+                              analysis in the sampleH*.txt file (Attention the info of XS reported in this file is not used).
+                              In the CutH*.txt instead the selection of the analysis are specified for each mass working point.
+
+   this originates as output a table in output/Final_Result.txt with the same configuration that yuo can see at 
+    
+   https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TwoJetContribution
+
+          
