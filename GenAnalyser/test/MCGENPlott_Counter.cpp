@@ -190,7 +190,7 @@ int main(int argc, char** argv)
  
  std::string nameptHWeightSample; 
  try {
-  nameptHWeight = gConfigParser -> readStringOption("Input::nameptHWeightSample");
+  nameptHWeightSample = gConfigParser -> readStringOption("Input::nameptHWeightSample");
  }
  catch (char const* exceptionString){
   std::cerr << " exception = " << exceptionString << std::endl;
@@ -450,8 +450,8 @@ for (int iSample=0; iSample<numberOfSamples; iSample++){
     TString CutExtended;
     if (nameptHWeight != "" && name_samples.at(iSample) == nameptHWeightSample){  ///=== pt Higgs reweight option 
         
-        CutExtended = Form ("(%s) * ptHWeight(ptH)",Cut.Data()); 
-	         
+        CutExtended = Form ("(%s) * ptHWeight(H_pT)",Cut.Data());
+
     }
    else {
          CutExtended = Form ("%s",Cut.Data());  
