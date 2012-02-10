@@ -29,11 +29,15 @@ class FastCalibratorWeight {
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t           fCurrent; //!current Tree number in a TChain
 
-   // Declaration of leaf types
+   ///! Declaration of leaf types
+    
     Int_t           runId;
     Int_t           lumiId;
     Int_t           isW;
     Int_t           isZ;
+    
+   ///! Ele 1 variables
+    
     std::vector<float>   *ele1_recHit_E;
     std::vector<int>     *ele1_recHit_hashedIndex;
     std::vector<int>     *ele1_recHit_ietaORix;
@@ -56,6 +60,8 @@ class FastCalibratorWeight {
     Float_t         ele1_E_true;
     Float_t         ele1_DR;
 
+   ///! Ele 2 variables
+    
     std::vector<float>   *ele2_recHit_E;
     std::vector<int>     *ele2_recHit_hashedIndex;
     std::vector<int>     *ele2_recHit_iphiORiy;
@@ -79,18 +85,18 @@ class FastCalibratorWeight {
     Float_t         ele2_DR;
 
 
-   // List of branches
+   ///! List of input branches from ntu
+    
     TBranch        *b_runId;   //!
     TBranch        *b_lumiId;   //!
     TBranch        *b_isW;   //!
     TBranch        *b_isZ;   //!
+   
     TBranch        *b_ele1_recHit_E;   //!
     TBranch        *b_ele1_recHit_hashedIndex;
     TBranch        *b_ele1_recHit_iphiORiy;
     TBranch        *b_ele1_recHit_ietaORix;
     TBranch        *b_ele1_recHit_flag;
-
-       //!
     TBranch        *b_ele1_scERaw;   //!
     TBranch        *b_ele1_scE;   //!
     TBranch        *b_ele1_es;   //!
@@ -101,12 +107,12 @@ class FastCalibratorWeight {
     TBranch        *b_ele1_isEB;   //!
     TBranch        *b_ele1_E_true;   //!
     TBranch        *b_ele1_DR;   //!
- 
     TBranch        *b_ele1_isEBEEGap;   //!
     TBranch        *b_ele1_isEBEtaGap;   //!
     TBranch        *b_ele1_isEBPhiGap;   //!
     TBranch        *b_ele1_isEEDeeGap;   //!
     TBranch        *b_ele1_isEERingGap;   //!
+
     TBranch        *b_ele2_recHit_E;   //!
     TBranch        *b_ele2_recHit_hashedIndex;
     TBranch        *b_ele2_recHit_iphiORiy;
@@ -129,26 +135,48 @@ class FastCalibratorWeight {
     TBranch        *b_ele2_isEEDeeGap;   //!
     TBranch        *b_ele2_isEERingGap;   //!
 
+   ///! List of class methods
    
     FastCalibratorWeight(TTree *tree=0, TString outEPDistribution=0);
+   
     virtual ~FastCalibratorWeight();
+    
     virtual void     bookHistos(int);
+    
     virtual void     saveHistos(TFile *f1);
+    
     virtual Int_t    Cut(Long64_t entry);
+    
     virtual Int_t    GetEntry(Long64_t entry);
+    
     virtual Long64_t LoadTree(Long64_t entry);
+    
     virtual void     Init(TTree *tree);
+    
     virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool);
+    
     virtual Bool_t   Notify();
+    
     virtual void     Show(Long64_t entry = -1);
-    virtual void     printOnTxt(TString outputTxtFile);
+    
     virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool);
+    
     virtual void     saveEoPeta(TFile * f2);
+    
     virtual void     AcquireDeadXtal(TString imputDeadXtal);
+    
     virtual bool     CheckDeadXtal(const int & iEta, const int & iPhi);
 
+    ///! Output information 
+    
+    std::vector<int>   IetaValues;
+    std::vector<int>   IphiValues;
+    std::vector<float> ICValues;
+    std::vector<float> meanICforPhiRingValues;
+    std::vector<int> DeadXtal_HashedIndex;
+
+    
     hChain     *hC_EoP_eta_ele;
-  
     hChain     *hC_IntercalibValues;
     hChain     *hC_EoP;
     hChain     *hC_PullFromScalib;
@@ -164,19 +192,14 @@ class FastCalibratorWeight {
     TH1F       *h_IntercalibValues_test;
     TH1F       *h_Init_IntercalibValues;
 
-    std::vector<int>   IetaValues;
-    std::vector<int>   IphiValues;
-    std::vector<float> ICValues;
-    std::vector<float> meanICforPhiRingValues;
-    std::vector<int> DeadXtal_HashedIndex;
-
+   
     TH2F       *h_map_Dead_Channels ;
 
-    
     TGraphErrors *g_ICmeanVsLoop;
     TGraphErrors *g_ICrmsVsLoop;
 
  private:
+ 
  TString outEPDistribution_p;
 
 };

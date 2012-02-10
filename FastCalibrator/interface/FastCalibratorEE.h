@@ -28,12 +28,14 @@ class FastCalibratorEE {
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t           fCurrent; //!current Tree number in a TChain
 
-   // Declaration of leaf types
+   ///! Declaration of leaf types
     Int_t           runId;
     Int_t           lumiId;
     Int_t           isW;
     Int_t           isZ;
 
+  ///! Ele1 Variables
+    
     std::vector<float>   *ele1_recHit_E;
     std::vector<int>     *ele1_recHit_hashedIndex;
     std::vector<int>     *ele1_recHit_ietaORix;
@@ -56,6 +58,8 @@ class FastCalibratorEE {
     Float_t         ele1_E_true;
     Float_t         ele1_DR;
 
+  ///! Ele1 Variables
+    
     std::vector<float>   *ele2_recHit_E;
     std::vector<int>     *ele2_recHit_hashedIndex;
     std::vector<int>     *ele2_recHit_iphiORiy;
@@ -79,7 +83,8 @@ class FastCalibratorEE {
     Float_t         ele2_DR;
 
 
-   // List of branches
+   ///!  List of input branches from ntu
+    
     TBranch        *b_runId;   //!
     TBranch        *b_lumiId;   //!
     TBranch        *b_isW;   //!
@@ -104,6 +109,7 @@ class FastCalibratorEE {
     TBranch        *b_ele1_isEBPhiGap;   //!
     TBranch        *b_ele1_isEEDeeGap;   //!
     TBranch        *b_ele1_isEERingGap;   //!
+    
     TBranch        *b_ele2_recHit_E;   //!
     TBranch        *b_ele2_recHit_hashedIndex;   //!
     TBranch        *b_ele2_recHit_iphiORiy;
@@ -125,33 +131,47 @@ class FastCalibratorEE {
     TBranch        *b_ele2_isEEDeeGap;   //!
     TBranch        *b_ele2_isEERingGap;   //!
 
-    
+  ///! Class methods
+  
     FastCalibratorEE(TTree *tree=0, TString outEPDistribution=0);
     virtual ~FastCalibratorEE();
+
     virtual void     bookHistos(int);
+    
     virtual void     saveHistos(TFile *f1);
+    
     virtual Int_t    Cut(Long64_t entry);
+    
     virtual Int_t    GetEntry(Long64_t entry);
+    
     virtual Long64_t LoadTree(Long64_t entry);
+    
     virtual void     Init(TTree *tree);
+    
     virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool);
+    
     virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool);
+    
     virtual Bool_t   Notify();
+    
     virtual void     Show(Long64_t entry = -1);
-    virtual void     printOnTxt(TString outputTxtFile);
+    
     virtual void     saveEoPeta(TFile * f2);
+    
     virtual void     AcquireDeadXtal(TString imputDeadXtal);
+    
     virtual bool     CheckDeadXtal(const int & iX, const int & iY, const int & iZ);
 
-
+  /// Output informations
+  
     hChain     *hC_EoP_ir_ele;
    
-    // Service histos
     TH1F       *h_scale_hashedIndex_EE;
     TH1F       *h_occupancy_hashedIndex_EE;
     hChain     *hC_EoP;
    
-    // EE+
+    /// EE+
+    
     hChain     *hC_IntercalibValues_EEP;
     hChain     *hC_PullFromScalib_EEP;
     h2Chain    *hC_scale_EEP;
@@ -165,7 +185,16 @@ class FastCalibratorEE {
     TGraphErrors *g_ICmeanVsLoop_EEP;
     TGraphErrors *g_ICrmsVsLoop_EEP;
 
-    // EE-
+    std::vector<int>   IxValues_EEP;
+    std::vector<int>   IyValues_EEP;
+    std::vector<float> ICValues_EEP;
+
+    std::vector<float> SumIC_Ring_EEP;
+    std::vector<int> Sumxtal_Ring_EEP;
+    
+    
+    /// EE-
+    
     hChain     *hC_IntercalibValues_EEM;
     hChain     *hC_PullFromScalib_EEM;
     h2Chain    *hC_scale_EEM;
@@ -182,16 +211,11 @@ class FastCalibratorEE {
     std::vector<int>   IyValues_EEM;
     std::vector<float> ICValues_EEM;
 
-    std::vector<int>   IxValues_EEP;
-    std::vector<int>   IyValues_EEP;
-    std::vector<float> ICValues_EEP;
-
-    std::vector<float> SumIC_Ring_EEP;
-    std::vector<int> Sumxtal_Ring_EEP;
     std::vector<float> SumIC_Ring_EEM;
     std::vector<int> Sumxtal_Ring_EEM;
  
-
+   /// Dead Channel infos
+    
     std::vector<int> DeadXtal_HashedIndex;
 
     TH2F       *h_map_Dead_Channels_EEP ;
@@ -205,7 +229,8 @@ class FastCalibratorEE {
   
     TString outEPDistribution_p;
 
-    // Essential values to get EE geometry
+   /// Essential values to get EE geometry
+    
     static const int IX_MIN = 1;
     static const int IY_MIN = 1;
     static const int IX_MAX = 100;
