@@ -12,7 +12,7 @@
 #include <TRandom.h>
 
 
-
+/// Default constructor 
 FastCalibratorEE::FastCalibratorEE(TTree *tree,TString outEPDistribution):
 outEPDistribution_p(outEPDistribution)
 {
@@ -27,7 +27,7 @@ outEPDistribution_p(outEPDistribution)
 
   }
    
-
+  /// Vector for ring normalization IC
   SumIC_Ring_EEP.assign(40,0);
   SumIC_Ring_EEM.assign(40,0);
   Sumxtal_Ring_EEP.assign(40,0);
@@ -36,18 +36,23 @@ outEPDistribution_p(outEPDistribution)
   Init(tree);
 }
 
+/// Deconstructor
+
 FastCalibratorEE::~FastCalibratorEE()
 {
   if (!fChain) return;
   delete fChain->GetCurrentFile();
 }
 
+/// Get Entry Method
 Int_t FastCalibratorEE::GetEntry(Long64_t entry)
 {
 // Read contents of entry.
   if (!fChain) return 0;
   return fChain->GetEntry(entry);
 }
+
+/// Load Tree infos in a chain
 Long64_t FastCalibratorEE::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry
@@ -63,9 +68,11 @@ Long64_t FastCalibratorEE::LoadTree(Long64_t entry)
   return centry;
 }
 
+/// Intialize pointers
 void FastCalibratorEE::Init(TTree *tree)
 {
-   // Set object pointer
+   /// Set object pointer
+
   ele1_recHit_E = 0;
   ele1_recHit_hashedIndex = 0;
   ele1_recHit_iphiORiy = 0;
@@ -77,7 +84,9 @@ void FastCalibratorEE::Init(TTree *tree)
   ele2_recHit_iphiORiy = 0;
   ele2_recHit_ietaORix = 0;
   ele2_recHit_flag =0 ;
-   // Set branch addresses and branch pointers
+  
+  /// Set branch addresses and branch pointers
+  
   if (!tree) return;
   fChain = tree;
   fCurrent = -1;
@@ -87,6 +96,7 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchAddress("lumiId", &lumiId, &b_lumiId);
   fChain->SetBranchAddress("isW", &isW, &b_isW);
   fChain->SetBranchAddress("isZ", &isZ, &b_isZ);
+  
   fChain->SetBranchAddress("ele1_recHit_E", &ele1_recHit_E, &b_ele1_recHit_E);
   fChain->SetBranchAddress("ele1_recHit_hashedIndex", &ele1_recHit_hashedIndex, &b_ele1_recHit_hashedIndex);
   fChain->SetBranchAddress("ele1_recHit_iphiORiy", &ele1_recHit_iphiORiy, &b_ele1_recHit_iphiORiy);
@@ -109,6 +119,7 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchAddress("ele1_isEBPhiGap", &ele1_isEBPhiGap, &b_ele1_isEBPhiGap);
   fChain->SetBranchAddress("ele1_isEEDeeGap", &ele1_isEEDeeGap, &b_ele1_isEEDeeGap);
   fChain->SetBranchAddress("ele1_isEERingGap", &ele1_isEERingGap, &b_ele1_isEERingGap);
+  
   fChain->SetBranchAddress("ele2_recHit_E", &ele2_recHit_E, &b_ele2_recHit_E);
   fChain->SetBranchAddress("ele2_recHit_hashedIndex", &ele2_recHit_hashedIndex, &b_ele2_recHit_hashedIndex);
   fChain->SetBranchAddress("ele2_recHit_iphiORiy", &ele2_recHit_iphiORiy, &b_ele2_recHit_iphiORiy);
@@ -147,11 +158,12 @@ Bool_t FastCalibratorEE::Notify()
 
 void FastCalibratorEE::Show(Long64_t entry)
 {
-// Print contents of entry.
-// If entry is not specified, print current entry
+/// Print contents of entry.
+/// If entry is not specified, print current entry
   if (!fChain) return;
   fChain->Show(entry);
 }
+
 Int_t FastCalibratorEE::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
@@ -160,15 +172,17 @@ Int_t FastCalibratorEE::Cut(Long64_t entry)
   return 1;
 }
 
+//! Declaration of the objects that are save in the output file
+
 void FastCalibratorEE::bookHistos(int nLoops)
 {
 
-  //service histos
+  ///service histos
   h_scale_hashedIndex_EE = new TH1F ("h_scale_hashedIndex_EE","h_scale_hashedIndex_EE", kEEhalf*2, 0, kEEhalf*2 - 1 );
   h_occupancy_hashedIndex_EE = new TH1F ("h_occupancy_hashedIndex_EE","h_occupancy_hashedIndex_EE", kEEhalf*2, 0, kEEhalf*2 - 1 );
   hC_EoP = new hChain ("EoP", "EoP", 500,0.2,3.0, nLoops);
  
-  //EE+
+  ///EE+
 
   hC_IntercalibValues_EEP = new hChain ("IntercalibValues_EEP", "IntercalibValues_EEP", 400,0.2,1.9, nLoops);
   hC_PullFromScalib_EEP = new hChain ("hC_PullFromScalib_EEP", "hC_PullFromScalib_EEP", 2000,-0.5,0.5, nLoops);
@@ -190,7 +204,7 @@ void FastCalibratorEE::bookHistos(int nLoops)
 
  
   
-  //EE-
+  ///EE-
   hC_IntercalibValues_EEM = new hChain ("IntercalibValues_EEM", "IntercalibValues_EEM", 400,0.2,1.9, nLoops);
   hC_PullFromScalib_EEM = new hChain ("hC_PullFromScalib_EEM", "hC_PullFromScalib_EEM", 2000,-0.5,0.5, nLoops);
   hC_scale_EEM = new h2Chain("hC_scale_EEM", "hC_scale_EEM", 100,1, 101, 100, 1, 101, nLoops );
@@ -218,7 +232,8 @@ void FastCalibratorEE::bookHistos(int nLoops)
 
 ///===== Build E/p for electron 1 and 2
 
-void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool       isSaveEPDistribution, bool isR9selection, bool isMCTruth)
+void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,
+				       bool isSaveEPDistribution, bool isR9selection, bool isMCTruth)
 {
   if(iLoop ==0)  
   {
@@ -232,6 +247,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
       }
 
   Long64_t nbytes = 0, nb = 0;
+  /// Loop on ntu entries
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
    
    Long64_t ientry = LoadTree(jentry);
@@ -242,17 +258,17 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 
    float pIn, pSub, FdiEta;
 
-   ///=== electron tight W or Z only Endcaps
+   ///=== electron tight W or Z only Endcap
    if ( ele1_isEB == 0 && (( useW == 1 && isW == 1 ) ||  ( useZ== 1 && isZ == 1 ))) {
 
-    FdiEta = ele1_scE/(ele1_scERaw+ele1_es);
+    FdiEta = ele1_scE/(ele1_scERaw+ele1_es); /// Cluster containment approximation using ps infos
    
     float thisE = 0;
     int   iseed = 0 ;
     int seed_hashedIndex = 0;
     float E_seed = 0;
     float thisE3x3 = 0;
-    // Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
+    /// Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
     for (unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++ ) {
             
             float thisIC = 1.;
@@ -263,15 +279,14 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
             {
               seed_hashedIndex=ele1_recHit_hashedIndex -> at(iRecHit);
               iseed=iRecHit;
-              E_seed=ele1_recHit_E -> at(iRecHit);
+              E_seed=ele1_recHit_E -> at(iRecHit); ///Seed infos
 
             }
     
-            // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
             
             if(ele1_recHit_flag -> at(iRecHit) < 4)
-            thisE += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
+            thisE += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC; /// SC energy
           
      }
 
@@ -279,8 +294,8 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
             
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
-            // IC obtained from previous Loops
-            if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
+
+	    if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
          
             if(fabs(ele1_recHit_ietaORix->at(iRecHit)-ele1_recHit_ietaORix->at(iseed))<=1 && 
                fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1 &&
@@ -292,20 +307,21 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
      int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
      int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-     int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
+     int ir_seed = EERings(ix_seed,iy_seed,iz_seed); /// Seed ring 
  
      pSub = 0.; //NOTALEO : test dummy
       
      bool skipElectron = false;
-     if(!isMCTruth)  // E/p defalut method
+     /// Option for MCTruth analysis
+     if(!isMCTruth)  
      {
       pIn = ele1_tkP;
      }
      else{
            pIn = ele1_E_true;
-           if(fabs(ele1_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+           if(fabs(ele1_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
          }
-     
+     /// R9 selection before E/p distribution
      if(fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
      if(!skipElectron)    hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele1_es));
      
@@ -315,14 +331,14 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
   if ( ele2_isEB == 0 && (( useW == 1 && isW == 1 ) || ( useZ == 1 && isZ == 1 )) ){
 
     FdiEta = ele2_scE/(ele2_scERaw+ele2_es);
-      // Electron energy
+
     float thisE = 0;
     int   iseed = 0 ;
     int seed_hashedIndex = 0;
     float E_seed = 0;
     float thisE3x3 = 0;
   
-    // Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
+    /// Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
     for (unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {
             
             float thisIC = 1.;
@@ -336,10 +352,9 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 
             }
     
-            // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
             
-            if(ele2_recHit_flag -> at(iRecHit) < 4)
+            if(ele2_recHit_flag -> at(iRecHit) < 4) /// Only Good channels
             thisE += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
              
      }
@@ -361,20 +376,21 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
      int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
      int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-     int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
+     int ir_seed = EERings(ix_seed,iy_seed,iz_seed); /// Seed ring
  
      
      pSub = 0.; //NOTALEO : test dummy
      bool skipElectron = false;
-     if(!isMCTruth)  // E/p defalut method
+     /// Option for MCTruth Analysis
+     if(!isMCTruth)  
      {
       pIn = ele2_tkP;
      }
      else{
            pIn = ele2_E_true;
-           if(fabs(ele2_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+           if(fabs(ele2_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
          }
-     
+     /// R9 selection
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
      if(!skipElectron) hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele2_es));
   
@@ -383,11 +399,13 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
   
  }
  
+ /// Normalization E/p distribution
  for(unsigned int ir=0 ; ir < hC_EoP_ir_ele->Size() ; ir++)
  {
      hC_EoP_ir_ele->Normalize(ir);
  }
  
+ /// Save E/p distributions
  if(isSaveEPDistribution == true) 
  {
    TFile *f2 = new TFile(outEPDistribution_p.Data(),"UPDATE");
@@ -397,23 +415,25 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 }
 
 
-
+/// L3 Loop method ----> Calibration Loop function
 void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution,
                                 bool isEPselection,bool isR9selection,bool isMCTruth)
 {
    if (fChain == 0) return;
    
-   // Define the number of crystal you want to calibrate
+   /// Define the number of crystal you want to calibrate
    int m_regions = kEEhalf;
    
    std::cout << "m_regions " << m_regions << std::endl;
   
-     // build up scalibration map
+   /// build up scalibration map
    std::vector<float> theScalibration(m_regions*2, 0.);
    TRandom genRand;
    for ( int iIndex = 0; iIndex < m_regions*2; iIndex++ ){
+   
      bool isDeadXtal = false ;
-     if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),GetZsideFromHashedIndex(iIndex));
+     /// Check if the xtal has to be considered dead or not ---> >Fake dead list given by user
+     if(DeadXtal_HashedIndex.at(0)!=-9999) isDeadXtal = CheckDeadXtal(GetIxFromHashedIndex(iIndex),GetIyFromHashedIndex(iIndex),GetZsideFromHashedIndex(iIndex));
      if(isDeadXtal == true ) {
      theScalibration[iIndex]=0;
     
@@ -423,10 +443,10 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
      }
      else{
      
-         if(isMiscalib==true) theScalibration[iIndex] = genRand.Gaus(1.,0.05);
+         if(isMiscalib==true) theScalibration[iIndex] = genRand.Gaus(1.,0.05); /// Miscalibration fixed at 5%
          if(isMiscalib == false) theScalibration[iIndex] = 1.;
          if(GetZsideFromHashedIndex(iIndex)>0)
-         h_scalib_EEP -> Fill ( GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex), theScalibration[iIndex] );
+         h_scalib_EEP -> Fill ( GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex), theScalibration[iIndex] ); /// scalibration map for EE+ and EE-
          else  h_scalib_EEM-> Fill ( GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex), theScalibration[iIndex] );
 
      }
@@ -435,9 +455,9 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
   
    /// ----------------- Calibration Loops -----------------------------//
    for ( int iLoop = 0; iLoop < nLoops; iLoop++ ) {
-    // loop over events
+ 
     std::cout << "Starting iteration " << iLoop + 1 << std::endl;
-  
+    /// L3 numerator and denominator for EE+ and EE-
     std::vector<float> theNumerator_EEP(m_regions*2+1, 0.);
     std::vector<float> theDenominator_EEP(m_regions*2+1, 0.);
     std::vector<float> theNumerator_EEM(m_regions+1, 0.);
@@ -445,7 +465,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
 
     BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,isMCTruth); ///==== build E/p distribution ele 1 and 2
     
-    // loop over events
+    /// Loop over events
     std::cout << "Number of analyzed events = " << nentries << std::endl;
     
     Long64_t nbytes = 0, nb = 0;
@@ -459,55 +479,50 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
         nb = fChain->GetEntry(jentry);   
         nbytes += nb;
               
-        // Event cut:
-        //if ( runId != ilrunchevuoi ) continue;
-        // Electron quantities used for the calibration
         float pIn, pSub, FdiEta;
       
         std::map<int,double> map;
         bool skipElectron=false;
-        // Only W only Endcap
-        if ( ele1_isEB == 0 && (( useW == 1 && isW == 1 ) || ( useZ == 1 && isZ == 1 )) ) {
+	
+        /// Only tight electron from W and Z, only Endcap
+        
+	if ( ele1_isEB == 0 && (( useW == 1 && isW == 1 ) || ( useZ == 1 && isZ == 1 )) ) {
                   
-          // SCL energy containment correction
+          /// SCL energy containment correction
           FdiEta = ele1_scE/(ele1_scERaw+ele1_es);
-          // Electron energy
-          float thisE = 0;
+         
+	  float thisE = 0;
           float thisE3x3 =0 ;
           int iseed = 0 ;
           int seed_hashedIndex = 0 ;
           float E_seed = 0;
 
-         
-          // Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
+          /// Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
           for (unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++ ) {
             
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
   
-            // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
             
-            if(ele1_recHit_flag -> at(iRecHit) < 4)
+            if(ele1_recHit_flag -> at(iRecHit) < 4) /// Skip bad channel 
             thisE += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
      
             if(ele1_recHit_E -> at(iRecHit) > E_seed && ele1_recHit_flag -> at(iRecHit) < 4 )
              {
               E_seed=ele1_recHit_E -> at(iRecHit);
               iseed=iRecHit;
-              seed_hashedIndex=ele1_recHit_hashedIndex -> at(iRecHit);
+              seed_hashedIndex=ele1_recHit_hashedIndex -> at(iRecHit); /// Seed infos
  
              }
           
           }
           
-          // Cycle on the all the recHits of the Event
           for (unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++ ) {
             
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
     
-            // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
             
             if(fabs(ele1_recHit_ietaORix->at(iRecHit)-ele1_recHit_ietaORix->at(iseed))<=1 && 
@@ -518,30 +533,32 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               }
             
           pSub = 0.; //NOTALEO : test dummy
-   
+         /// MCTruth option 
          if(!isMCTruth)  // E/p defalut method
          {
           pIn = ele1_tkP;
          }
          else{
            pIn = ele1_E_true;
-           if(fabs(ele1_DR)>0.1) skipElectron = true; // No macthing beetween gen ele and reco ele
+           if(fabs(ele1_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
          }
-        // find the zside
-         int thisCaliBlock = -1;
-         if (GetZsideFromHashedIndex(ele1_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
-         else thisCaliBlock = 1;
+        
+        /// find the zside
+        int thisCaliBlock = -1;
+        if (GetZsideFromHashedIndex(ele1_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
+        else thisCaliBlock = 1;
  
-         int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
-         int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
-         int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-         int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
+        int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
+        int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
+        int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
+        int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
       
-         TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed);
-       
-         if ( fabs(thisE/(ele1_tkP-ele1_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
-         if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
-         if ( thisE/(pIn-ele1_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele1_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
+        TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed); /// Take the correct E/p pdf to weight events in the calib procedure
+        
+	///E/p and R9 selection 	
+        if ( fabs(thisE/(ele1_tkP-ele1_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
+        if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
+        if ( thisE/(pIn-ele1_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele1_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
  
          if ( !skipElectron ) {
                   
@@ -554,7 +571,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
          
            if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
   
-               // Fill the occupancy map JUST for the first Loop
+           /// Fill the occupancy map JUST for the first Loop
            if ( iLoop == 0 ) {
                      h_occupancy_hashedIndex_EE -> Fill(thisIndex);
                      if ( GetZsideFromHashedIndex(thisIndex) < 0 )
@@ -563,7 +580,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
                           
              }
 
-            
+            ///Use full statistic
             if ( splitStat == 0) {
              
                 if(thisCaliBlock == 0) {
@@ -584,7 +601,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               }
              
              
-          // use evens    
+          /// use evens    
           if ( splitStat == 1 && jentry%2 == 0 ) {
                   
                 if(thisCaliBlock == 0) {
@@ -600,7 +617,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               }
             }
              
-           // use odd    
+           /// use odd    
            if ( splitStat == -1 && jentry%2 != 0 ) {
                   
                 if(thisCaliBlock == 0) {
@@ -616,32 +633,32 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
             }
             }
           }
-          //Fill EoP
+          ///Fill EoP
            if (thisCaliBlock != -1) hC_EoP -> Fill(iLoop, thisE/(pIn-ele1_es));
         
         }  
          skipElectron = false;     
-        /// Fill the map with the ele (if any) from the second Z leg
-        // Only Z only Barrel
+      
+	/// Medium ele from Z only Endcap
         if ( ele2_isEB == 0 && ( useZ == 1 && isZ == 1 ) ) {
           
-          // SCL energy containment correction
+          /// SCL energy containment correction
           FdiEta = ele2_scE/(ele2_scERaw+ele2_es);
-          // Electron energy
-          float thisE = 0;
+         
+	  float thisE = 0;
           float thisE3x3 =0 ;
           int iseed = 0 ;
           int seed_hashedIndex = 0;
           float E_seed = 0;
 
          
-          // Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
+          /// Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
           for (unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {
             
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
-            // IC obtained from previous Loops
-            if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
+           
+	    if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
             
             if( ele2_recHit_flag -> at(iRecHit) < 4 )
             thisE += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
@@ -657,13 +674,11 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           
           }
           
-          // Cycle on the all the recHits of the Event
           for (unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {
             
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
             
-            // IC obtained from previous Loops
             if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
             
             if(fabs(ele2_recHit_ietaORix->at(iRecHit)-ele2_recHit_ietaORix->at(iseed))<=1 && 
@@ -674,15 +689,16 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               }
             
           pSub = 0.; //NOTALEO : test dummy
-          if(!isMCTruth)  // E/p defalut method
-          {
+          /// Option for MCTruth Analysis
+          if(!isMCTruth)  
+	  {
             pIn = ele2_tkP;
           }
           else{
            pIn = ele2_E_true;
-           if(fabs(ele2_DR)>0.1) skipElectron = true ; // No macthing beetween gen ele and reco ele
+           if(fabs(ele2_DR)>0.1) skipElectron = true ; /// No macthing beetween gen ele and reco ele
           }
-          // find the zside
+          /// find the zside
           int thisCaliBlock = -1;
           if (GetZsideFromHashedIndex(ele2_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
           else thisCaliBlock = 1;
@@ -692,8 +708,8 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
           int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
  
-          TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed);
-          
+          TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed); /// Use correct pdf for reweight events in the L3 procedure
+          /// E/p and R9 selections
           if ( fabs(thisE/(pIn-ele2_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
           if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
           if ( thisE/(pIn-ele2_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele2_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
@@ -709,7 +725,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               
            if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
   
-               // Fill the occupancy map JUST for the first Loop
+           /// Fill the occupancy map JUST for the first Loop
            if ( iLoop == 0 ) {
                      h_occupancy_hashedIndex_EE -> Fill(thisIndex);
                      if ( GetZsideFromHashedIndex(thisIndex) < 0 ) 
@@ -717,7 +733,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
                      else h_occupancy_EEP -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
              }
 
-            
+            /// Use full statistic
             if ( splitStat == 0) {
              
                 if(thisCaliBlock == 0) {
@@ -738,7 +754,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               }
              
              
-          // use evens    
+          /// use evens    
           if ( splitStat == 1 && jentry%2 == 0 ) {
                   
                 if(thisCaliBlock == 0) {
@@ -754,7 +770,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               }
             }
              
-           // use odd    
+           /// use odd    
            if ( splitStat == -1 && jentry%2 != 0 ) {
                   
                 if(thisCaliBlock == 0) {
@@ -775,15 +791,14 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           
         }
    }  
-    // Cycle on the events
+    ///  End Cycle on the events
        
-    //Now solve everything
     std::cout << ">>>>> [L3][endOfLoop] entering..." << std::endl;
   
     TH1F auxiliary_IC_EEM("auxiliary_IC_EEM","auxiliary_IC_EEM",50,0.2,1.9);
     TH1F auxiliary_IC_EEP("auxiliary_IC_EEP","auxiliary_IC_EEP",50,0.2,1.9);
 
-    //Fill the histo of IntercalibValues before the solve
+    ///Fill the histo of IntercalibValues before the solve
     for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
 
       if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
@@ -839,8 +854,10 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
     g_ICrmsVsLoop_EEP -> SetPoint(iLoop, iLoop, auxiliary_IC_EEP . GetRMS());
     g_ICrmsVsLoop_EEP -> SetPointError(iLoop, 0., auxiliary_IC_EEP . GetRMSError());
     
-   }// Calibration Loops
-   //Fill the histo of IntercalibValues after the loops at last step
+   }
+   /// End of Calibration Loops
+   
+   ///Fill the histo of IntercalibValues after the loops at last step
    for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
            
      if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
@@ -851,9 +868,9 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
        
        int thisIx = GetIxFromHashedIndex(iIndex);
        int thisIy = GetIyFromHashedIndex(iIndex);
-       int thisIz = GetZsideFromHashedIndex(iIndex);
+       int thisIz = GetZsideFromHashedIndex(iIndex); /// Ix, Iy and Iz info for each xtal
 
-       float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
+       float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1); /// Final IC value
        if ( thisCaliBlock == 0 ) 
          h_scale_EEM -> Fill (thisIx, thisIy, thisIntercalibConstant);
        else
@@ -861,7 +878,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
 
        if ( thisCaliBlock == 0 )
        {
-            //Vectors
+         ///Vectors for IC Normalization
          IxValues_EEM.push_back(thisIx);
          IyValues_EEM.push_back(thisIy);
          ICValues_EEM.push_back(thisIntercalibConstant);
@@ -872,7 +889,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
              ICValues_EEP.push_back(thisIntercalibConstant);
            }
 
-       int thisIr = EERings(thisIx,thisIy,thisIz);
+       int thisIr = EERings(thisIx,thisIy,thisIz); /// Endcap ring  xtal belongs to
        if(thisIz >0)
        {
         SumIC_Ring_EEP.at(thisIr) = SumIC_Ring_EEP.at(thisIr) + thisIntercalibConstant;
@@ -887,6 +904,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
 
       
    }
+   /// IC Normaliztion trough the mean value of each ring
    for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
    
     if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
@@ -918,13 +936,13 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
     
 }
 
-  
+/// Save in the output  
 void FastCalibratorEE::saveHistos(TFile * f1)
 {
 
   f1->cd();
   
-  // EE+
+  /// EE+
   hC_IntercalibValues_EEP-> Write(*f1);
   hC_PullFromScalib_EEP->Write(*f1);
   hC_EoP->Write(*f1);
@@ -941,8 +959,10 @@ void FastCalibratorEE::saveHistos(TFile * f1)
   g_ICmeanVsLoop_EEP->Write();
   g_ICrmsVsLoop_EEP->Write();
   h_scale_meanOnring_EEP->Write("h_scale_map_EEP");
+  h_map_Dead_Channels_EEP->Write();
+    
   
-  // EE-
+  /// EE-
   hC_IntercalibValues_EEM-> Write(*f1);
   hC_scale_EEM->Write("",*f1);
   hC_PullFromScalib_EEM->Write(*f1);
@@ -950,11 +970,10 @@ void FastCalibratorEE::saveHistos(TFile * f1)
   h_scale_EEM->Write();
   h_scalib_EEM->Write();
  
-  h_map_Dead_Channels_EEP->Write();
-    
   g_ICmeanVsLoop_EEM->Write();
   g_ICrmsVsLoop_EEM->Write();
   h_scale_meanOnring_EEM->Write("h_scale_map_EEM");
+  h_map_Dead_Channels_EEM->Write();
   
 
   f1->Close();
@@ -962,7 +981,7 @@ void FastCalibratorEE::saveHistos(TFile * f1)
   return;
 }
 
-
+/// Save E/p distributions
 void FastCalibratorEE::saveEoPeta(TFile * f2)
 {
  f2->cd();
@@ -970,40 +989,7 @@ void FastCalibratorEE::saveEoPeta(TFile * f2)
  f2->Close(); 
 }
 
-void FastCalibratorEE::printOnTxt(TString outputTxtFile)
-{
-  std::ofstream outTxt (outputTxtFile.Data(),std::ios::out);
-
-  outTxt << "---------------------------------------------------------------" << std::endl;
-  outTxt << "--- ix ---- iy ------ IC value  --- EE+ ------" << std::endl;
-  outTxt << "---------------------------------------------------------------" << std::endl;
-
-  for (unsigned int iIndex = 0; iIndex < ICValues_EEP.size(); iIndex++)
-  {
-    int thisIr = EERings(IxValues_EEP.at(iIndex),IyValues_EEP.at(iIndex),1);
-    if(Sumxtal_Ring_EEP.at(thisIr) == 0 || SumIC_Ring_EEP.at(thisIr) == 0) continue;
-   
-    outTxt << "  " << std::fixed << std::setw(4)  << std::right << IxValues_EEP.at(iIndex) 
-           << std::fixed << std::setw(10)  << std::right << IyValues_EEP.at(iIndex) 
-           << "          " << (float) ICValues_EEP.at(iIndex)/(SumIC_Ring_EEP.at(thisIr)/Sumxtal_Ring_EEP.at(thisIr))<< std::endl;
-  }
-  
-  outTxt << "---------------------------------------------------------------" << std::endl;
-  outTxt << "--- ix ---- iy ------ IC value  --- EE- -----" << std::endl;
-  outTxt << "---------------------------------------------------------------" << std::endl;
-
-  for (unsigned int iIndex = 0; iIndex < ICValues_EEM.size(); iIndex++)
-  {
-   int thisIr = EERings(IxValues_EEM.at(iIndex),IyValues_EEM.at(iIndex),-1);
-   if(Sumxtal_Ring_EEM.at(thisIr) == 0 || SumIC_Ring_EEM.at(thisIr) == 0) continue;
-       
-    outTxt << "  " << std::fixed << std::setw(4)  << std::right << IxValues_EEM.at(iIndex) 
-           << std::fixed << std::setw(10)  << std::right << IyValues_EEM.at(iIndex) 
-           << "          " << (float) ICValues_EEM.at(iIndex)/(SumIC_Ring_EEM.at(thisIr)/Sumxtal_Ring_EEM.at(thisIr)) << std::endl;
-  }
-  
-}
-
+/// Acquire fake Dead Xtal in order to study the effect of IC near them
 void FastCalibratorEE::AcquireDeadXtal(TString inputDeadXtal)
 {
   if(inputDeadXtal!="NULL")
@@ -1013,7 +999,6 @@ void FastCalibratorEE::AcquireDeadXtal(TString inputDeadXtal)
    std::string buffer;
    int iX, iY ,iZ;
   
-
    while(!DeadXtal.eof())
    {
     getline(DeadXtal,buffer);
@@ -1030,7 +1015,7 @@ void FastCalibratorEE::AcquireDeadXtal(TString inputDeadXtal)
       }
 
 }
-
+/// Check if the channel considered is in the list of dead or not
 bool FastCalibratorEE::CheckDeadXtal(const int & iX, const int & iY, const int & iZ)
 {
   int hashed_Index;
