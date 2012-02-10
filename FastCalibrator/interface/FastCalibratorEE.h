@@ -57,6 +57,8 @@ class FastCalibratorEE {
     Int_t           ele1_isEERingGap;
     Float_t         ele1_E_true;
     Float_t         ele1_DR;
+    Float_t         ele1_scE_regression;
+    Float_t         ele1_scERaw_PUcleaned;
 
   ///! Ele1 Variables
     
@@ -81,6 +83,8 @@ class FastCalibratorEE {
     Int_t           ele2_isEERingGap;
     Float_t         ele2_E_true;
     Float_t         ele2_DR;
+    Float_t         ele2_scE_regression;
+    Float_t         ele2_scERaw_PUcleaned;
 
 
    ///!  List of input branches from ntu
@@ -104,6 +108,9 @@ class FastCalibratorEE {
     TBranch        *b_ele1_fbrem;   //!
     TBranch        *b_ele1_EOverP;   //!
     TBranch        *b_ele1_isEB;   //!
+    TBranch        *b_ele1_scE_regression;
+    TBranch        *b_ele1_scERaw_PUcleaned;
+
     TBranch        *b_ele1_isEBEEGap;   //!
     TBranch        *b_ele1_isEBEtaGap;   //!
     TBranch        *b_ele1_isEBPhiGap;   //!
@@ -130,6 +137,8 @@ class FastCalibratorEE {
     TBranch        *b_ele2_isEBPhiGap;   //!
     TBranch        *b_ele2_isEEDeeGap;   //!
     TBranch        *b_ele2_isEERingGap;   //!
+    TBranch        *b_ele2_scE_regression;
+    TBranch        *b_ele2_scERaw_PUcleaned;
 
   ///! Class methods
   
@@ -147,11 +156,10 @@ class FastCalibratorEE {
     virtual Long64_t LoadTree(Long64_t entry);
     
     virtual void     Init(TTree *tree);
-    
-    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool);
-    
-    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool);
-    
+
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool,bool);
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool,bool);
+
     virtual Bool_t   Notify();
     
     virtual void     Show(Long64_t entry = -1);

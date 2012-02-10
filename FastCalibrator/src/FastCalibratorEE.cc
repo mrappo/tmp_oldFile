@@ -114,6 +114,8 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchAddress("ele1_isEBEEGap", &ele1_isEBEEGap, &b_ele1_isEBEEGap);
   fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
   fChain->SetBranchAddress("ele1_DR ", &ele1_DR , &b_ele1_DR);
+  fChain->SetBranchAddress("ele1_scERaw_PUcleaned", &ele1_scERaw_PUcleaned, &b_ele1_scERaw_PUcleaned);
+  fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
 
   fChain->SetBranchAddress("ele1_isEBEtaGap", &ele1_isEBEtaGap, &b_ele1_isEBEtaGap);
   fChain->SetBranchAddress("ele1_isEBPhiGap", &ele1_isEBPhiGap, &b_ele1_isEBPhiGap);
@@ -136,6 +138,8 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchAddress("ele2_isEB", &ele2_isEB, &b_ele2_isEB);
   fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
   fChain->SetBranchAddress("ele2_DR ", &ele2_DR , &b_ele2_DR);
+  fChain->SetBranchAddress("ele2_scERaw_PUcleaned", &ele2_scERaw_PUcleaned, &b_ele2_scERaw_PUcleaned);
+  fChain->SetBranchAddress("ele2_scE_regression", &ele2_scE_regression, &b_ele2_scE_regression);
 
   fChain->SetBranchAddress("ele2_isEBEEGap", &ele2_isEBEEGap, &b_ele2_isEBEEGap);
   fChain->SetBranchAddress("ele2_isEBEtaGap", &ele2_isEBEtaGap, &b_ele2_isEBEtaGap);
@@ -229,11 +233,10 @@ void FastCalibratorEE::bookHistos(int nLoops)
 
 
 
-
 ///===== Build E/p for electron 1 and 2
 
-void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,
-				       bool isSaveEPDistribution, bool isR9selection, bool isMCTruth)
+void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool       isSaveEPDistribution, bool isR9selection, bool isMCTruth,bool isfbrem)
+
 {
   if(iLoop ==0)  
   {
@@ -321,8 +324,9 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
            pIn = ele1_E_true;
            if(fabs(ele1_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
          }
-     /// R9 selection before E/p distribution
+     /// R9, fbrem selection before E/p distribution
      if(fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
+     if(fabs(ele1_fbrem)>0.4 && isfbrem==true) skipElectron =true;
      if(!skipElectron)    hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele1_es));
      
   
@@ -390,8 +394,9 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
            pIn = ele2_E_true;
            if(fabs(ele2_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
          }
-     /// R9 selection
+     /// R9 and fbrem selection
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
+     if ( fabs(ele2_fbrem)>0.4 && isfbrem==true) skipElectron =true;
      if(!skipElectron) hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele2_es));
   
   }
@@ -417,7 +422,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 
 /// L3 Loop method ----> Calibration Loop function
 void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution,
-                                bool isEPselection,bool isR9selection,bool isMCTruth)
+                                bool isEPselection,bool isR9selection,bool isMCTruth,bool isfbrem)
 {
    if (fChain == 0) return;
    
@@ -463,7 +468,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
     std::vector<float> theNumerator_EEM(m_regions+1, 0.);
     std::vector<float> theDenominator_EEM(m_regions+1, 0.);
 
-    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,isMCTruth); ///==== build E/p distribution ele 1 and 2
+    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,isMCTruth,isfbrem); ///==== build E/p distribution ele 1 and 2
     
     /// Loop over events
     std::cout << "Number of analyzed events = " << nentries << std::endl;
@@ -553,12 +558,12 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
         int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
         int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
       
-        TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed); /// Take the correct E/p pdf to weight events in the calib procedure
-        
-	///E/p and R9 selection 	
-        if ( fabs(thisE/(ele1_tkP-ele1_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
-        if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
-        if ( thisE/(pIn-ele1_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele1_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
+         TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed);
+       
+         if ( fabs(thisE/(ele1_tkP-ele1_es) - 1) > 0.7 && isEPselection==true) skipElectron = true; /// Take the correct E/p pdf to weight events in the calib procedure
+         if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true; ///E/p fbrem and R9 selection 
+         if ( fabs(ele1_fbrem)>0.4 && isfbrem==true) skipElectron =true;
+         if ( thisE/(pIn-ele1_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele1_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
  
          if ( !skipElectron ) {
                   
@@ -712,6 +717,8 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           /// E/p and R9 selections
           if ( fabs(thisE/(pIn-ele2_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
           if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
+          if ( fabs(ele2_fbrem)>0.4 && isfbrem==true) skipElectron =true;
+
           if ( thisE/(pIn-ele2_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele2_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
  
          if ( !skipElectron ) {

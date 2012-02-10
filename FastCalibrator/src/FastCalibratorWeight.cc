@@ -101,9 +101,14 @@ void FastCalibratorWeight::Init(TTree *tree)
   fChain->SetBranchAddress("ele1_recHit_flag", &ele1_recHit_flag, &b_ele1_recHit_flag);
   fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
   fChain->SetBranchAddress("ele1_DR", &ele1_DR, &b_ele1_DR);
+//   fChain->SetBranchAddress("ele1_charge", &ele1_charge, &b_ele1_charge);
 
   fChain->SetBranchAddress("ele1_scERaw", &ele1_scERaw, &b_ele1_scERaw);
   fChain->SetBranchAddress("ele1_scE", &ele1_scE, &b_ele1_scE);
+  fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
+  fChain->SetBranchAddress("ele1_scERaw_PUcleaned", &ele1_scERaw_PUcleaned, &b_ele1_scERaw_PUcleaned);
+
+
   fChain->SetBranchAddress("ele1_es", &ele1_es, &b_ele1_es);
   fChain->SetBranchAddress("ele1_e3x3", &ele1_e3x3, &b_ele1_e3x3);
   fChain->SetBranchAddress("ele1_tkP", &ele1_tkP, &b_ele1_tkP);
@@ -123,10 +128,14 @@ void FastCalibratorWeight::Init(TTree *tree)
   fChain->SetBranchAddress("ele2_recHit_flag", &ele2_recHit_flag, &b_ele2_recHit_flag);
   fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
   fChain->SetBranchAddress("ele2_DR", &ele2_DR, &b_ele2_DR);
+//   fChain->SetBranchAddress("ele2_charge", &ele2_charge, &b_ele2_charge);
 
   fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
   fChain->SetBranchAddress("ele2_scE", &ele2_scE, &b_ele2_scE);
   fChain->SetBranchAddress("ele2_es", &ele2_es, &b_ele2_es);
+  fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
+  fChain->SetBranchAddress("ele1_scERaw_PUcleaned", &ele1_scERaw_PUcleaned, &b_ele1_scERaw_PUcleaned);
+
   fChain->SetBranchAddress("ele2_e3x3", &ele2_e3x3, &b_ele2_e3x3);
   fChain->SetBranchAddress("ele2_tkP", &ele2_tkP, &b_ele2_tkP);
   fChain->SetBranchAddress("ele2_fbrem", &ele2_fbrem, &b_ele2_fbrem);
@@ -568,9 +577,7 @@ void FastCalibratorWeight::Loop(int nentries, int useZ, int useW, int splitStat,
 	  /// Basic selection on E/p or R9 if you want to apply
           if ( fabs(thisE/pIn  - 1) > 0.3 && isEPselection==true) skipElectron = true;
           if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
-       
           if ( thisE/pIn  < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn  > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
-         
 	  if ( !skipElectron) {
           
             /// Now cycle on the all the recHits and update the numerator and denominator

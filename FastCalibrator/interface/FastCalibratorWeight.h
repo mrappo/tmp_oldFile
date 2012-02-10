@@ -59,6 +59,10 @@ class FastCalibratorWeight {
     Int_t           ele1_isEERingGap;
     Float_t         ele1_E_true;
     Float_t         ele1_DR;
+    Float_t         ele1_scE_regression;
+    Float_t         ele1_scERaw_PUcleaned;
+ 
+//     Float_t         ele1_charge;
 
    ///! Ele 2 variables
     
@@ -83,7 +87,10 @@ class FastCalibratorWeight {
     Int_t           ele2_isEERingGap;
     Float_t         ele2_E_true;
     Float_t         ele2_DR;
+    Float_t         ele2_scE_regression;
+    Float_t         ele2_scERaw_PUcleaned;
 
+//     Float_t         ele2_charge;
 
    ///! List of input branches from ntu
     
@@ -97,6 +104,9 @@ class FastCalibratorWeight {
     TBranch        *b_ele1_recHit_iphiORiy;
     TBranch        *b_ele1_recHit_ietaORix;
     TBranch        *b_ele1_recHit_flag;
+    TBranch        *b_ele1_scERaw_PUcleaned;
+    TBranch        *b_ele1_scE_regression;
+
     TBranch        *b_ele1_scERaw;   //!
     TBranch        *b_ele1_scE;   //!
     TBranch        *b_ele1_es;   //!
@@ -107,6 +117,8 @@ class FastCalibratorWeight {
     TBranch        *b_ele1_isEB;   //!
     TBranch        *b_ele1_E_true;   //!
     TBranch        *b_ele1_DR;   //!
+    TBranch        *b_ele1_charge;   //!
+ 
     TBranch        *b_ele1_isEBEEGap;   //!
     TBranch        *b_ele1_isEBEtaGap;   //!
     TBranch        *b_ele1_isEBPhiGap;   //!
@@ -126,7 +138,11 @@ class FastCalibratorWeight {
     TBranch        *b_ele2_fbrem;   //!
     TBranch        *b_ele2_E_true;   //!
     TBranch        *b_ele2_DR;   //!
+    TBranch        *b_ele2_charge;   //!
  
+    TBranch        *b_ele2_scERaw_PUcleaned;
+    TBranch        *b_ele2_scE_regression;
+
     TBranch        *b_ele2_EOverP;   //!
     TBranch        *b_ele2_isEB;   //!
     TBranch        *b_ele2_isEBEEGap;   //!
