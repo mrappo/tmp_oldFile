@@ -64,18 +64,8 @@ hChain::Fill (int i, double val)
   }
 
 
-//FC --------------------------------------------------------
+//RG --------------------------------------------------------   
 
-void 
-hChain::FillWeight (int i, double val, double weight) 
-  {
-    m_histos.at (i)->Fill (val, weight) ;
-//    m_ntuples.at (i)->Fill (val) ;
-    return ;
-  }
-  
-  
-//PG --------------------------------------------------------   
 
 
 void 
@@ -255,4 +245,25 @@ hChain::Scale (int index, double factor)
   m_histos.at (index)->Scale (factor) ;
 }
 
+//RG -----------------------------------------------------
+int
+hChain::GetEffectiveEntries(int index)
+{
 
+  return m_histos.at(index)->GetEffectiveEntries();
+}
+
+//RG -----------------------------------------------------
+void
+hChain::Reset()
+{
+ for(unsigned int index=0; index<m_histos.size(); index++)
+   m_histos.at(index)->Delete();
+}
+
+//RG -------------------------------------------------------
+TH1F*
+hChain::GetHisto(int index)
+{
+  return m_histos.at(index);
+}

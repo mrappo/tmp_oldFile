@@ -66,6 +66,18 @@ h2Chain::Fill (int i, double valx, double valy)
 
 
 void 
+h2Chain::Fill (int i, double valx, double valy, double weight) 
+  {
+    m_histos.at (i)->Fill (valx, valy, weight) ;
+    return ;
+  }
+
+
+
+//PG --------------------------------------------------------   
+
+
+void 
 h2Chain::Print (bool isLog, int rebinx, int rebiny) 
   {  
     TCanvas c1 ;
@@ -120,9 +132,11 @@ h2Chain::PrintEach ()
 
 
 void 
-h2Chain::Write (TFile & outputFile)
+h2Chain::Write (const std::string& dirName, TFile & outputFile)
   {
     outputFile.cd () ;
+    outputFile.mkdir(dirName.c_str());
+    outputFile.cd(dirName.c_str());
     for (unsigned int i=0 ; i<m_histos.size () ; ++i)
       m_histos.at (i)->Write () ;
     return ;
