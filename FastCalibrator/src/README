@@ -3,7 +3,7 @@ Summary of all the classes in FastCalibratot/src package:
 ----------------------------------------------------------
 
 1) interface/GetHashedIndexEB.h   src/GetHashedIndexEB.cc
-    
+
    Functions to convert the hashed index of a xtal in EB in iEta and iPhi coordinates and
    to get the hashed index from iPhi, iEta and zside
 
