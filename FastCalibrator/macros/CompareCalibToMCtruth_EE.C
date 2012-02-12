@@ -1,6 +1,16 @@
 // To compare two sets of IC
 // Input needed: two set of IC (2D maps) 
-{
+#include <iostream>
+#include "TH2F.h"
+#include "TH1F.h"
+#include "TCanvas.h"
+#include "TFile.h"
+#include "TROOT.h"
+#include "TStyle.h"
+#include "TGraphErrors.h"
+#include "TF1.h"
+
+void CompareCalibToMCtruth_EE() {
   // Set style options
   gROOT->Reset();
   gROOT->SetStyle("Plain");
@@ -24,9 +34,9 @@
   TFile *f1 = TFile::Open("MCtruthIC_EE.root");
   TFile *f2 = TFile::Open("MCRecoIC_EE.root");
   
-  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_miscalib_EE.root");
+  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_R9_EE.root");
   
-  TFile *f4 =  TFile::Open("StatPrec_MC_noEP_EE.root");
+  TFile *f4 =  TFile::Open("StatPrec_MC_R9_EE.root");
   // input coeff
   TH2F *hcmapMcT_EEP = (TH2F*)f1->Get("h_scale_EEP");
   TH2F *hcmapMcT_EEM = (TH2F*)f1->Get("h_scale_EEM");
@@ -94,6 +104,7 @@
 
   TH1F *hspread_EEP[40];
   TH1F *hspread_EEM[40];
+  TH1F *hspread_All[40];
 
   // ring geometry for the endcap
   TH2F *hrings_EEP;
@@ -118,7 +129,9 @@
     hspread_EEP[jbin]= new TH1F(hname, hname, 50,0.5,1.5);
     sprintf(hname,"hspread_ring_EEM_%02d",jbin);
     hspread_EEM[jbin]= new TH1F(hname, hname, 50,0.5,1.5);
-
+    sprintf(hname,"hspread_ring_All_%02d",jbin);
+    hspread_All[jbin]= new TH1F(hname, hname, 50,0.5,1.5);
+    
   }
   
   for (int jbin = 1; jbin < hcmap_EEP-> GetNbinsY()+1; jbin++){
@@ -138,6 +151,8 @@
    
        if (c1_EEP!=0 && c2_EEP!=0 ){
  	hspread_EEP[ring_EEP]->Fill(c1_EEP/c2_EEP);
+        hspread_All[ring_EEP]->Fill(c1_EEP/c2_EEP);
+        
 	h2_EEP->Fill(c1_EEP,c2_EEP);
         h2diff_EEP->SetBinContent(ibin,jbin,c1_EEP/c2_EEP); 
       }
@@ -145,6 +160,8 @@
 
       if (c1_EEM!=0 && c2_EEM!=0 ){
         hspread_EEM[ring_EEM]->Fill(c1_EEM/c2_EEM);
+        hspread_All[ring_EEM]->Fill(c1_EEM/c2_EEM);
+        
 	h2_EEM->Fill(c1_EEM,c2_EEM);
         h2diff_EEM->SetBinContent(ibin,jbin,c1_EEM/c2_EEM);       
       }
@@ -162,6 +179,12 @@
   sigma_vs_iring_EEM->SetMarkerStyle(20);
   sigma_vs_iring_EEM->SetMarkerSize(1);
   sigma_vs_iring_EEM->SetMarkerColor(kBlue+2);
+
+  TGraphErrors *sigma_vs_iring_All = new TGraphErrors();
+  sigma_vs_iring_All->SetMarkerStyle(20);
+  sigma_vs_iring_All->SetMarkerSize(1);
+  sigma_vs_iring_All->SetMarkerColor(kBlue+2);
+  
   
   TGraphErrors *rms_vs_iring_EEP = new TGraphErrors();
   rms_vs_iring_EEP ->SetMarkerStyle(24);
@@ -172,6 +195,11 @@
   rms_vs_iring_EEM ->SetMarkerStyle(24);
   rms_vs_iring_EEM ->SetMarkerSize(1);
   rms_vs_iring_EEM ->SetMarkerColor(kBlue+2);  
+ 
+  TGraphErrors *rms_vs_iring_All = new TGraphErrors();
+  rms_vs_iring_All ->SetMarkerStyle(24);
+  rms_vs_iring_All ->SetMarkerSize(1);
+  rms_vs_iring_All ->SetMarkerColor(kBlue+2);  
  
 
   TGraphErrors *scale_vs_iring_EEP = new TGraphErrors();
@@ -184,20 +212,30 @@
   scale_vs_iring_EEM->SetMarkerSize(1);
   scale_vs_iring_EEM->SetMarkerColor(kBlue+2);
 
+  TGraphErrors *scale_vs_iring_All = new TGraphErrors();
+  scale_vs_iring_All->SetMarkerStyle(20);
+  scale_vs_iring_All->SetMarkerSize(1);
+  scale_vs_iring_All->SetMarkerColor(kBlue+2);
+
   TF1 *fgaus_EEP = new TF1("fgaus_EEP","gaus",0.5,1.5);
   TF1 *fgaus_EEM = new TF1("fgaus_EEM","gaus",0.5,1.5);
+  TF1 *fgaus_All = new TF1("fgaus_All","gaus",0.5,1.5);
+
 
   int np_EEP = 0;
-  int np_EEM =0;
+  int np_EEM = 0;
+  int np_All = 0;
   cout<<"rrrrr "<<  hcmap_EEP-> GetNbinsY()+1<<endl;
   for (int i = 0; i < 40; i++){
     //cout<<etaring<<endl;
  
     if ( hspread_EEP[i]->GetEntries() == 0) {sigma_vs_iring_EEP-> SetPoint(np_EEP,i,-100);np_EEP++;continue;}
     if ( hspread_EEM[i]->GetEntries() == 0) {sigma_vs_iring_EEM-> SetPoint(np_EEM,i,-100);np_EEM++;continue;}
+    if ( hspread_All[i]->GetEntries() == 0) {sigma_vs_iring_All-> SetPoint(np_All,i,-100);np_All++;continue;}
     
     hspread_EEP[i]->Fit("fgaus_EEP","Q");
     hspread_EEM[i]->Fit("fgaus_EEM","Q");
+    hspread_All[i]->Fit("fgaus_All","Q");
 
     sigma_vs_iring_EEP-> SetPoint(np_EEP,i,fgaus_EEP->GetParameter(2));
     sigma_vs_iring_EEP-> SetPointError(np_EEP,0,fgaus_EEP->GetParError(2));
@@ -214,11 +252,20 @@
     scale_vs_iring_EEM-> SetPoint(np_EEM,i,fgaus_EEM->GetParameter(1));
     scale_vs_iring_EEM-> SetPointError(np_EEM,0,fgaus_EEM->GetParError(1));
     np_EEM++;
+    sigma_vs_iring_All-> SetPoint(np_All,i,fgaus_All->GetParameter(2));
+    sigma_vs_iring_All-> SetPointError(np_All,0,fgaus_All->GetParError(2));
+    rms_vs_iring_All  -> SetPoint(np_All,i, hspread_All[i]->GetRMS());
+    rms_vs_iring_All  -> SetPointError(np_All,0,hspread_All[i]->GetRMSError() );
+    scale_vs_iring_All-> SetPoint(np_All,i,fgaus_All->GetParameter(1));
+    scale_vs_iring_All-> SetPointError(np_All,0,fgaus_All->GetParError(1));
+    np_All++;
+
   }
   // plot
 
   TGraphErrors* gr_stat_prec_EEP = (TGraphErrors*) f4->Get("gr_stat_prec_EEP");
   TGraphErrors* gr_stat_prec_EEM = (TGraphErrors*) f4->Get("gr_stat_prec_EEM");
+  TGraphErrors* gr_stat_prec_All = (TGraphErrors*) f4->Get("gr_stat_prec");
  
   TCanvas *csigma_EEP = new TCanvas("csigma_EEP","csigma_EEP");
   csigma_EEP->SetGridx();
@@ -246,12 +293,27 @@
 //   rms_vs_ieta->Draw("psame");
   gr_stat_prec_EEM->Draw("psame");
  
+
+  TCanvas *csigma_All= new TCanvas("csigma_All","csigma_Folded");
+  csigma_All->SetGridx();
+  csigma_All->SetGridy();
+  sigma_vs_iring_All->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.2);
+  sigma_vs_iring_All->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
+  sigma_vs_iring_All->GetHistogram()->GetYaxis()-> SetTitle("#sigma");
+  sigma_vs_iring_All->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  sigma_vs_iring_All->Draw("ap");
+//   rms_vs_ieta->Draw("psame");
+ 
+  gr_stat_prec->Draw("psame");
+ 
   cout<<"aaa M "<<gr_stat_prec_EEM->GetN()<<endl;
   cout<<"bbb M "<<sigma_vs_iring_EEM->GetN()<<endl;
  
 
   TGraphErrors* residual_EEP = new TGraphErrors();
   TGraphErrors* residual_EEM = new TGraphErrors();
+  TGraphErrors* residual_All = new TGraphErrors();
+
 
   for(int pp=0; pp< gr_stat_prec_EEP->GetN(); pp++){
     double ring1, ring2,tot, stat, espread, estat,ex,res,eres;
@@ -275,8 +337,8 @@
 
 	}
 
-    residual_EEP.SetPoint(pp,ring1,res);
-    residual_EEP.SetPointError(pp,ex,eres);
+    residual_EEP->SetPoint(pp,ring1,res);
+    residual_EEP->SetPointError(pp,ex,eres);
      
   }
   
@@ -302,11 +364,40 @@
 
 	}
 
-    residual_EEM.SetPoint(pp,ring1,res);
-    residual_EEM.SetPointError(pp,ex,eres);
+    residual_EEM->SetPoint(pp,ring1,res);
+    residual_EEM->SetPointError(pp,ex,eres);
      
   }
   
+   for(int pp=0; pp< gr_stat_prec->GetN(); pp++){
+    double ring1, ring2,tot, stat, espread, estat,ex,res,eres;
+   
+    sigma_vs_iring_All->GetPoint(pp, ring2, tot);
+    espread = sigma_vs_iring_All-> GetErrorY(pp);
+
+    gr_stat_prec->GetPoint(pp,ring1, stat);
+    estat = gr_stat_prec-> GetErrorY(pp);
+
+    ex = gr_stat_prec-> GetErrorX(pp);  
+    if(ring1 != ring2){cout<<"error FFF "<<ring1<<"  "<<ring2<<endl;}
+
+    if (tot > stat ){
+	 res  = sqrt( tot*tot - stat*stat );
+	 eres = sqrt( pow(tot*espread,2) + pow(stat*estat,2))/res;
+	}
+	else {
+              res  = -sqrt( fabs(tot*tot - stat*stat) );
+	      eres = sqrt( pow(tot*espread,2) + pow(stat*estat,2))/fabs(res);
+
+	}
+
+    residual_All->SetPoint(pp,ring1,res);
+    residual_All->SetPointError(pp,ex,eres);
+     
+  }
+
+
+
  TCanvas *cres_EEP = new TCanvas("cres_EEP","cresidual_EEP");
   cres_EEP->SetGridx();
   cres_EEP->SetGridy();
@@ -330,6 +421,19 @@
   residual_EEM->SetMarkerSize(1);
   residual_EEM->SetMarkerColor(kGreen+2); 
   residual_EEM->Draw("ap");
+
+  TCanvas *cres_All = new TCanvas("cres_All","cresidual_Folded");
+  cres_All->SetGridx();
+  cres_All->SetGridy();
+  residual_All->GetHistogram()->GetYaxis()-> SetRangeUser(-0.1,0.1);
+  residual_All->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
+  residual_All->GetYaxis()->SetTitle("residual EE Folded");
+  residual_All->GetXaxis()->SetTitle("iring");
+  residual_All->SetMarkerStyle(20);
+  residual_All->SetMarkerSize(1);
+  residual_All->SetMarkerColor(kGreen+2); 
+  residual_All->Draw("ap");
+
 
   TCanvas *cscale_EEP = new TCanvas("cscale_EEP","cscale_EEP");
   cscale_EEP->SetGridx();

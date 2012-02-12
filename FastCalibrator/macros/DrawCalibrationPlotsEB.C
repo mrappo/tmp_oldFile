@@ -3,9 +3,9 @@
 // Macro to produce ECAL single electron calibration plots
 //
 
-void DrawCalibrationPlotsEB( Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_recoFlag/EB/WZAnalysis_SingleElectron_Run2011AB_WElectron-PromptSkim_Z_noEP.root",
-			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/PromptSkim_recoFlag/EB/Even_WZAnalysis_SingleElectron_Run2011AB_WElectron-PromptSkim_Z_noEP.root",
-			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/PromptSkim_recoFlag/EB/Odd_WZAnalysis_SingleElectron_Run2011AB_WElectron-PromptSkim_Z_noEP.root",
+void DrawCalibrationPlotsEB( Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EB/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
+			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EB/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
+			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EB/Odd_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
 			    int evalStat = 0,
 			    Char_t* fileType = "png", 
 			    Char_t* dirName = ".")

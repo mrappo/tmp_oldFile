@@ -3,11 +3,11 @@
 //
 
 void DrawResidualPlotsEB(
-			    Char_t* infile1 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/WZAnalysis_SingleEle_Run2011AB.root",
-			    Char_t* infile2 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/Even_WZAnalysis_SingleEle_Run2011AB.root",
-			    Char_t* infile3 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/Odd_WZAnalysis_SingleEle_Run2011AB.root",
-                            int evalStat = 0,
-                            int inputLoops = 1,
+			    Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim/WZAnalysis_SingleEle_Run2011AB-PromptSkim_Z_noEP.root",
+			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/PromptSkim/Odd_WZAnalysis_SingleEle_Run2011AB-PromptSkim_Z_noEP.root",
+			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/PromptSkim/Even_WZAnalysis_SingleEle_Run2011AB-PromptSkim_Z_noEP.root",
+                            int evalStat = 1,
+                            int inputLoops = 25,
                             Char_t* fileType = "png", 
                             Char_t* dirName = ".")
 {

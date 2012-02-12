@@ -16,7 +16,7 @@
 //
 
 
-void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_recoFlag/EE/dinamic_alpha/WZAnalysis_SingleElectron_Run2011AB_WElectron-PromptSkim_dinamic_alpha_Z_noEP_EE.root",
+void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
 			     Char_t* fileType = "png", 
 			     Char_t* dirName = ".")
 {
@@ -33,7 +33,7 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   gStyle->SetPadTickX(1);
   gStyle->SetPadTickY(1);
   gStyle->SetOptTitle(0); 
-  gStyle->SetOptStat(1110); 
+  gStyle->SetOptStat(0); 
   gStyle->SetOptFit(0); 
   gStyle->SetFitFormat("6.3g"); 
   gStyle->SetPalette(1); 
@@ -59,7 +59,7 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   
   // imput file with full statistic normlized to the mean in a ring
 
-  TFile *f = new TFile(infile1);
+  TFile *f = new TFile(infile1,"UPDATE");
   TH2F *hcmap[2];
   hcmap[0] = (TH2F*)f->Get("h_scale_map_EEM");
   hcmap[1] = (TH2F*)f->Get("h_scale_map_EEP");
@@ -69,8 +69,11 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   TH2F *hrings[2];
   hrings[0] = (TH2F*)hcmap[0]->Clone("hringsEEM");
   hrings[1] = (TH2F*)hcmap[1]->Clone("hringsEEP");
-  hrings[0] ->Reset();
-  hrings[1] ->Reset();
+  hrings[0] ->Reset("IMCES");
+  hrings[1] ->Reset("IMCES");
+  hrings[0] ->ResetStats();
+  hrings[1] ->ResetStats();
+
 
   FILE *fRing;
   fRing = fopen("macros/eerings.dat","r");
@@ -87,7 +90,9 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
             }
      }   
 
-  std::vector< std::pair <float,float> > phi_line_EEM;
+   // noEp Selections
+
+/*  std::vector< std::pair <float,float> > phi_line_EEM;
   phi_line_EEM.push_back(std::pair<float,float> (16.,1.025));
   phi_line_EEM.push_back(std::pair<float,float> (59.5,1.047));
   phi_line_EEM.push_back(std::pair<float,float> (71.5,1.028));
@@ -119,13 +124,50 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   phi_line_EEP.push_back(std::pair<float,float> (297.,1.043));
   phi_line_EEP.push_back(std::pair<float,float> (314.,1.024));
   phi_line_EEP.push_back(std::pair<float,float> (357.,1.055));
-  
+*/
+ // R9 Selections
+
+  std::vector< std::pair <float,float> > phi_line_EEM;
+  phi_line_EEM.push_back(std::pair<float,float> (16.,1.02244));
+  phi_line_EEM.push_back(std::pair<float,float> (59.5, 1.03235));
+  phi_line_EEM.push_back(std::pair<float,float> (71.5,1.02545));
+  phi_line_EEM.push_back(std::pair<float,float> (86.,1.04242));
+  phi_line_EEM.push_back(std::pair<float,float> (103.,1.02082));
+  phi_line_EEM.push_back(std::pair<float,float> (122.5,1.01224));
+  phi_line_EEM.push_back(std::pair<float,float> (145.5, 1.01207));
+  phi_line_EEM.push_back(std::pair<float,float> (164.,1.02766));
+  phi_line_EEM.push_back(std::pair<float,float> (183.5,1.03397));
+  phi_line_EEM.push_back(std::pair<float,float> (203.5,1.01597));
+  phi_line_EEM.push_back(std::pair<float,float> (240.,1.03305));
+  phi_line_EEM.push_back(std::pair<float,float> (296.5,1.02419));
+  phi_line_EEM.push_back(std::pair<float,float> (315.5,1.02211));
+  phi_line_EEM.push_back(std::pair<float,float> (356.,1.03243));
+
+  std::vector<std::pair <float,float> > phi_line_EEP;
+  phi_line_EEP.push_back(std::pair<float,float> (16.5,1.02514));
+  phi_line_EEP.push_back(std::pair<float,float> (60.,1.02929));
+  phi_line_EEP.push_back(std::pair<float,float> (72.,1.01563));
+  phi_line_EEP.push_back(std::pair<float,float> (85.5,1.02029));
+  phi_line_EEP.push_back(std::pair<float,float> (103.,1.02159));
+  phi_line_EEP.push_back(std::pair<float,float> (122.5,1.02598));
+  phi_line_EEP.push_back(std::pair<float,float> (135.,1.0163));
+  phi_line_EEP.push_back(std::pair<float,float> (145.,1.03654));
+  phi_line_EEP.push_back(std::pair<float,float> (163.,1.02249));
+  phi_line_EEP.push_back(std::pair<float,float> (184.,1.04225));
+  phi_line_EEP.push_back(std::pair<float,float> (240.,1.03254));
+  phi_line_EEP.push_back(std::pair<float,float> (276.,1.01565));
+  phi_line_EEP.push_back(std::pair<float,float> (297.,1.03486));
+  phi_line_EEP.push_back(std::pair<float,float> (314.,1.01318));
+  phi_line_EEP.push_back(std::pair<float,float> (357.,1.03728));
 
   TH2F *hcmap_corrected[2];
   hcmap_corrected[0] = (TH2F*)hcmap[0]->Clone("h_scale_map_EEM");
   hcmap_corrected[1] = (TH2F*)hcmap[1]->Clone("h_scale_map_EEP");
   hcmap_corrected[0] ->Reset("ICMES");
   hcmap_corrected[1] ->Reset("ICMES");
+  hcmap_corrected[0] ->ResetStats();
+  hcmap_corrected[1] ->ResetStats();
+
 
    for(int k=0 ; k<2 ; k++)
    { 
@@ -243,6 +285,10 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   hcmap_corrected[0]->GetYaxis() ->SetTitle("iy");
   hcmap_corrected[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
  
-  
+  f->cd();
+  hcmap_corrected[0]->Write("h_scale_map_corrected_EEM");
+  hcmap_corrected[1]->Write("h_scale_map_corrected_EEP");
+ 
+
 
 }

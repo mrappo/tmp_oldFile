@@ -53,7 +53,7 @@ bool CheckxtalTT (int ix, int iy, int ir, std::vector<std::pair<int,int> >& TT_c
 
 
 
-void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_recoFlag/EE/dinamic_alpha/WZAnalysis_SingleElectron_Run2011AB_WElectron-PromptSkim_dinamic_alpha_Z_noEP_EE.root",
+void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
 			  Char_t* fileType = "png", 
 			  Char_t* dirName = ".")
 {
@@ -110,12 +110,18 @@ void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim
   
  hcmap_EE[0] -> Reset("ICEMS");
  hcmap_EE[1] -> Reset("ICEMS");
+ hcmap_EE[0] -> ResetStats();
+ hcmap_EE[1] -> ResetStats();
+ 
  
  TH2F *hrings[2];
  hrings[0] = (TH2F*)h_scale_EE[0]->Clone("hringsEEM");
  hrings[1] = (TH2F*)h_scale_EE[1]->Clone("hringsEEP");
- hrings[0] ->Reset();
- hrings[1] ->Reset();
+ hrings[0] ->Reset("ICMES");
+ hrings[1] ->Reset("ICMES");
+ hrings[0] ->ResetStats();
+ hrings[1] ->ResetStats();
+
 
   FILE *fRing;
   fRing = fopen("macros/eerings.dat","r");
@@ -139,7 +145,7 @@ void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim
  
      for(int iy = 0; iy < h_scale_EE[k]->GetNbinsY()+1 ; iy++ ){
            
-       int ir = hrings[k]->GetBinContent(ix,iy);
+       ir = hrings[k]->GetBinContent(ix,iy);
        
        bool isGood = CheckxtalIC(h_scale_EE[k],ix,iy,ir);
        bool isGoodTT;
@@ -167,11 +173,11 @@ void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim
  
      for(int iy = 0; iy < h_scale_EE[k]->GetNbinsY()+1 ; iy++ ){
 
-       int ir = hrings[k]->GetBinContent(ix,iy);
+       ir = hrings[k]->GetBinContent(ix,iy);
       
        if(k!=0)
        {
-          if(ir>33){
+          if(ir>33){  
                       hcmap_EE[k]->Fill(ix,iy,0.);
                       continue;
                     }
@@ -205,7 +211,7 @@ void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim
   h_scale_EE[1]->Draw("COLZ");
   h_scale_EE[1]->GetXaxis() ->SetTitle("ix");
   h_scale_EE[1]->GetYaxis() ->SetTitle("iy");
-  h_scale_EE[1]->GetZaxis() ->SetRangeUser(0.8,1.2);
+  h_scale_EE[1]->GetZaxis() ->SetRangeUser(0.5,2.);
 
   cEEM[0] = new TCanvas("cEEM","cmapEEM not normalized");
   cEEM[0] -> cd();
@@ -218,7 +224,7 @@ void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim
   h_scale_EE[0]->Draw("COLZ");
   h_scale_EE[0]->GetXaxis() ->SetTitle("ix");
   h_scale_EE[0]->GetYaxis() ->SetTitle("iy");
-  h_scale_EE[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
+  h_scale_EE[0]->GetZaxis() ->SetRangeUser(0.5,2.);
   
   cEEP[1] = new TCanvas("cmapEEP Normalized","cmapEEP Normalized");
   cEEP[1] -> cd();
@@ -246,38 +252,10 @@ void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim
   hcmap_EE[0]->GetYaxis() ->SetTitle("iy");
   hcmap_EE[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
  
-  TH2F* h_scale_map_EE[2];
-  h_scale_map_EE[1] = (TH2F*)f->Get("h_scale_map_EEP");
-  h_scale_map_EE[0] = (TH2F*)f->Get("h_scale_map_EEM");
-  
-  cEEP[2] = new TCanvas("cmapEEP Normalized original ","cmapEEP Normalized original");
-  cEEP[2] -> cd();
-  cEEP[2]->SetLeftMargin(0.1); 
-  cEEP[2]->SetRightMargin(0.13); 
-  cEEP[2]->SetGridx();
-  cEEP[2]->SetGridy();
-  //  hcmap[1]->GetXaxis()->SetNdivisions(1020);
-  h_scale_map_EE[1]->GetXaxis() -> SetLabelSize(0.03);
-  h_scale_map_EE[1]->Draw("COLZ");
-  h_scale_map_EE[1]->GetXaxis() ->SetTitle("ix");
-  h_scale_map_EE[1]->GetYaxis() ->SetTitle("iy");
-  h_scale_map_EE[1]->GetZaxis() ->SetRangeUser(0.8,1.2);
-
-  cEEM[2] = new TCanvas("cmapEEM Normalized original","cmapEEM Normalized original ");
-  cEEM[2] -> cd();
-  cEEM[2]->SetLeftMargin(0.1); 
-  cEEM[2]->SetRightMargin(0.13); 
-  cEEM[2]->SetGridx();
-  cEEM[2]->SetGridy();
-  //hcmap[0]->GetXaxis()->SetNdivisions(1020);
-  h_scale_map_EE[0]->GetXaxis() -> SetLabelSize(0.03);
-  h_scale_map_EE[0]->Draw("COLZ");
-  h_scale_map_EE[0]->GetXaxis() ->SetTitle("ix");
-  h_scale_map_EE[0]->GetYaxis() ->SetTitle("iy");
-  h_scale_map_EE[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
 
    f->cd();
    hcmap_EE[0]->Write("h_scale_map_EEM");
    hcmap_EE[1]->Write("h_scale_map_EEP");
+  
 
  }

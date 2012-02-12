@@ -4,10 +4,10 @@
 
 
 void DrawPrecisionPlotsEB(
-			    Char_t* infile2 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/Odd_WZAnalysis_SingleEle_Run2011AB.root",
-			    Char_t* infile3 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/Even_WZAnalysis_SingleEle_Run2011AB.root",
+			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/R9_Z/Even_WZAnalysis_SingleEle_WJetsToLNu_Z_R9.root ",
+			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/R9_Z/Odd_WZAnalysis_SingleEle_WJetsToLNu_Z_R9.root",
 			    int evalStat = 1,
-                            int inputLoops = 30,
+                            int inputLoops = 25,
 			    Char_t* fileType = "png", 
 			    Char_t* dirName = ".")
 {
@@ -50,10 +50,10 @@ void DrawPrecisionPlotsEB(
   char hname[100];
   char htitle[100];
   TF1 *fgaus = new TF1("fgaus","gaus",-10,10);
-  TF1 *pol0_0 = new TF1("pol0_0","pol0",0,20);
-  TF1 *pol0_1 = new TF1("pol0_1","pol0",20,40);
-  TF1 *pol0_2 = new TF1("pol0_2","pol0",40,60);
-  TF1 *pol0_3 = new TF1("pol0_3","pol0",60,85);
+  TF1 *pol0_0 = new TF1("pol0_0","pol1",0,20);
+  TF1 *pol0_1 = new TF1("pol0_1","pol1",20,40);
+  TF1 *pol0_2 = new TF1("pol0_2","pol1",40,60);
+  TF1 *pol0_3 = new TF1("pol0_3","pol1",60,85);
 
   if (evalStat){
     
@@ -203,15 +203,15 @@ void DrawPrecisionPlotsEB(
        statprecision_vs_ieta[iLoop]->Fit("pol0_2","QR");
        statprecision_vs_ieta[iLoop]->Fit("pol0_3","QR");
 
-       statprecision_vs_loop[0]->SetPoint(ipoint,iLoop+1,pol0_0->GetParameter(0));
-       statprecision_vs_loop[0]->SetPointError(ipoint,0.5,pol0_0->GetParError(0));
-       statprecision_vs_loop[1]->SetPoint(ipoint,iLoop+1,pol0_1->GetParameter(0));
-       statprecision_vs_loop[1]->SetPointError(ipoint,0.5,pol0_1->GetParError(0));
-       statprecision_vs_loop[2]->SetPoint(ipoint,iLoop+1,pol0_2->GetParameter(0));
-       statprecision_vs_loop[2]->SetPointError(ipoint,0.5,pol0_2->GetParError(0));
-       statprecision_vs_loop[3]->SetPoint(ipoint,iLoop+1,pol0_3->GetParameter(0));
-       statprecision_vs_loop[3]->SetPointError(ipoint,0.5,pol0_3->GetParError(0));
-       ipoint++;
+        statprecision_vs_loop[0]->SetPoint(ipoint,iLoop+1,pol0_0->GetParameter(0)+pol0_0->GetParameter(1)*10);
+       statprecision_vs_loop[0]->SetPointError(ipoint,0.5,sqrt(pol0_0->GetParError(0)*pol0_0->GetParError(0)+pol0_0->GetParError(1)*pol0_0->GetParError(1)));
+       statprecision_vs_loop[1]->SetPoint(ipoint,iLoop+1,pol0_1->GetParameter(0)+pol0_1->GetParameter(1)*30);
+       statprecision_vs_loop[1]->SetPointError(ipoint,0.5,sqrt(pol0_1->GetParError(0)*pol0_1->GetParError(0)+pol0_1->GetParError(1)*pol0_1->GetParError(1)));
+       statprecision_vs_loop[2]->SetPoint(ipoint,iLoop+1,pol0_2->GetParameter(0)+pol0_2->GetParameter(1)*50);
+       statprecision_vs_loop[2]->SetPointError(ipoint,0.5,sqrt(pol0_0->GetParError(0)*pol0_2->GetParError(0)+pol0_2->GetParError(1)*pol0_2->GetParError(1)));
+       statprecision_vs_loop[3]->SetPoint(ipoint,iLoop+1,pol0_3->GetParameter(0)+pol0_3->GetParameter(1)*72.5);
+       statprecision_vs_loop[3]->SetPointError(ipoint,0.5,sqrt(pol0_3->GetParError(0)*pol0_3->GetParError(0)+pol0_3->GetParError(1)*pol0_3->GetParError(1)));
+      ipoint++;
 
       }
       
@@ -270,7 +270,8 @@ void DrawPrecisionPlotsEB(
   //-----------------------------------------------------------------
   TCanvas *c[nLoops];
   TCanvas *c2[4];
- 
+  //TFile * out = new TFile ("StatPrec_MC_noEP.root","RECREATE");
+  TFile * out = new TFile ("StatPrec.root","RECREATE");
   // --- plot 5 : statistical precision vs ieta
   if (evalStat){
     
@@ -285,6 +286,13 @@ void DrawPrecisionPlotsEB(
       statprecision_vs_ieta[iLoop]->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
       if ( modality == "SM" ) statprecision_vs_ieta[iLoop]->GetHistogram()->GetXaxis()-> SetTitle("iSM");
       statprecision_vs_ieta[iLoop]->Draw("ap");
+      if(iLoop == nLoops -1)
+      {
+       out->cd();
+       statprecision_vs_ieta[iLoop]->SetName("gr_stat_prec");
+       statprecision_vs_ieta[iLoop]->Write();
+      }
+       
     }
 
 
@@ -298,8 +306,8 @@ void DrawPrecisionPlotsEB(
       c2[ietaregion]->SetGridy();
       statprecision_vs_loop[ietaregion]->GetHistogram()->GetYaxis()-> SetRangeUser(0.,0.04);
       statprecision_vs_loop[ietaregion]->GetHistogram()->GetXaxis()-> SetRangeUser(0,nLoops+1);
-      statprecision_vs_loop[ietaregion]->GetHistogram()->GetYaxis()-> SetTitle("#sigma((c_{P}-c_{D})/(c_{P}+c_{D}))");
-      statprecision_vs_loop[ietaregion]->GetHistogram()->GetXaxis()-> SetTitle("# iteration");
+      statprecision_vs_loop[ietaregion]->GetHistogram()->GetYaxis()-> SetTitle("Statistical precision");
+      statprecision_vs_loop[ietaregion]->GetHistogram()->GetXaxis()-> SetTitle("n#circ iteration");
       statprecision_vs_loop[ietaregion]->Draw("ap");
     }
   }

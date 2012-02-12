@@ -39,16 +39,16 @@ CLHEPLIBS     =  $(shell clhep-config --libs)
 ARCHL = -m64
 
 CXX  =  c++
-CXXFLAGS  =  -Wall -O -fPIC -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS) -L/opt/exp_soft/cms/mylib_sl5/
+CXXFLAGS  =  -Wall -O -fPIC -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) -L/opt/exp_soft/cms/mylib_sl5/
 CPP  =  c++
-CPPFLAGS  = -Wall $(ARCHL) -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS) -L/opt/exp_soft/cms/mylib_sl5/
+CPPFLAGS  = -Wall $(ARCHL) -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) -L/opt/exp_soft/cms/mylib_sl5/
 
 LD       =  c++
 LDFLAGS  =  -rdynamic -shared $(ARCHL)
 SONAME	 =  libFastCalib.so
 SOFLAGS  =  -Wl,-soname,$(SONAME)
 
-GLIBS   =  -lm -ldl -rdynamic $(ROOTGLIBS) $(CLHEPLIBS)  -lGenVector -lFoam -lMinuit -lTMVA -lMLP -lXMLIO  -lTreePlayer $(NTUPLEPACKAGELIBS)
+GLIBS   =  -lm -ldl -rdynamic $(ROOTGLIBS) -lGenVector -lFoam -lMinuit -lTMVA -lMLP -lXMLIO  -lTreePlayer $(NTUPLEPACKAGELIBS)
 
 
 #################################################

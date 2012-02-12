@@ -12,7 +12,7 @@
 #include "TFile.h"
 #include "TCanvas.h"
 //
-// Macro to produce correction taking MC and MCTruth to apply on data
+// Macro to produce correction taking MC and MCTruth to apply on data for phi structure due to the tracker
 //
 
 
@@ -34,6 +34,7 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   gStyle->SetPadTickY(1);
   gStyle->SetOptTitle(0); 
   gStyle->SetOptStat(1110); 
+ 
   gStyle->SetOptFit(0); 
   gStyle->SetFitFormat("6.3g"); 
   gStyle->SetPalette(1); 
@@ -69,8 +70,11 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   TH2F *hrings[2];
   hrings[0] = (TH2F*)hcmap[0]->Clone("hringsEEM");
   hrings[1] = (TH2F*)hcmap[0]->Clone("hringsEEP");
-  hrings[0] ->Reset();
-  hrings[1] ->Reset();
+  hrings[0] ->Reset("ICMES");
+  hrings[1] ->Reset("ICEMS");
+  hrings[0] ->ResetStats();
+  hrings[1] ->ResetStats();
+
 
   FILE *fRing;
   fRing = fopen("macros/eerings.dat","r");
@@ -131,6 +135,9 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   TH2F *Bad_EEM = (TH2F*)  hcmap[1]->Clone("Bad_EEM");
   Bad_EEP->Reset();
   Bad_EEM->Reset();
+  Bad_EEP->ResetStats();
+  Bad_EEM->ResetStats();
+
 
   for(int k=0 ; k<2 ; k++)
   { 
@@ -217,6 +224,8 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   hcmap_corrected[1] = (TH2F*)hcmap[1]->Clone("h_scale_map_EEP");
   hcmap_corrected[0] ->Reset("ICMES");
   hcmap_corrected[1] ->Reset("ICMES");
+  hcmap_corrected[0] ->ResetStats();
+  hcmap_corrected[1] ->ResetStats();
 
    for(int k=0 ; k<2 ; k++)
    { 

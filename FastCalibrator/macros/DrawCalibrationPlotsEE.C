@@ -19,14 +19,14 @@
 // Input Files : MC or Data splistat and no splitstat, MCTruth and MCReco IC maps
 // Output Files :  StatPrec_MC_noEP_EE.root --> stat precision MC usefull for CompareCalibMCTruth_EE.C only MC
 //                 IC_MC_4Correction.root --> Map IC for radial correction only MC
-//                 hcmap_EE.root ---> Map of the original IC normalized only DATA 
+//                  
 using namespace std;
 
-void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_EE.root",
-			     Char_t* infile2 = "/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/Even_WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_EE.root",
-			     Char_t* infile3 = "/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/Odd_WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_EE.root",
+void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
+			     Char_t* infile2 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
+			     Char_t* infile3 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/Odd_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
 			     int evalStat = 1,
-                             bool isMC=true,
+                             bool isMC=false,
 			     Char_t* fileType = "png", 
 			     Char_t* dirName = ".")
 {
@@ -34,6 +34,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   bool  printPlots = false;
 
   // by xtal
+
   int nbins = 250;
 
   // Set style options
@@ -43,7 +44,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   gStyle->SetPadTickX(1);
   gStyle->SetPadTickY(1);
   gStyle->SetOptTitle(0); 
-  gStyle->SetOptStat(1110); 
+  gStyle->SetOptStat(11110); 
   gStyle->SetOptFit(0); 
   gStyle->SetFitFormat("6.3g"); 
   gStyle->SetPalette(1); 
@@ -84,8 +85,10 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   TH2F *hrings[2];
   hrings[0] = (TH2F*)hcmap[0]->Clone("hringsEEM");
   hrings[1] = (TH2F*)hcmap[0]->Clone("hringsEEP");
-  hrings[0] ->Reset();
-  hrings[1] ->Reset();
+  hrings[0] ->Reset("ICMES");
+  hrings[1] ->Reset("ICMES");
+  hrings[0] ->ResetStats();
+  hrings[1] ->ResetStats();
 
   FILE *fRing;
   fRing = fopen("macros/eerings.dat","r");
@@ -116,8 +119,11 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   TH2F* ICComparison [2];
   ICComparison[0] = (TH2F*) hcmapMcT_EEP->Clone("ICComparison_EEM");
   ICComparison[1] = (TH2F*) hcmapMcT_EEM->Clone("ICComparison_EEP");
-  ICComparison[0]->Reset();
-  ICComparison[1]->Reset();
+  ICComparison[0]->Reset("ICMES");
+  ICComparison[1]->Reset("ICMES");
+  ICComparison[0]->ResetStats();
+  ICComparison[1]->ResetStats();
+
 
   for (int k = 0; k < 2; k++){
          
@@ -420,8 +426,8 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
 	fgaus->SetParameter(2,hstatprecision[k][iring]->GetRMS());
 	fgaus->SetRange(-5*hstatprecision[k][iring]->GetRMS(),5*hstatprecision[k][iring]->GetRMS());
 	TString name = Form("ff%d_%d",iring,k);
-//         c44[iring+50*k] = new TCanvas (name,name);
-//         c44[iring+50*k]->Draw();
+//          c44[iring+50*k] = new TCanvas (name,name);
+//          c44[iring+50*k]->Draw();
         hstatprecision[k][iring]->Fit("fgaus","QR");
        
 	statprecision_vs_ring[k]-> SetPoint(n[k],iring,fgaus->GetParameter(2));
@@ -701,27 +707,27 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   IC_vs_phi[1]->Draw("ap");
  */
   TCanvas* canEEP[10], *canEEM[10];
- 
-  canEEM[0] = new TCanvas("ICComparison MC EEM","ICComparison MC EEM");
-  canEEM[0]->SetGridx();
-  canEEM[0]->SetGridy();
-  ICComparison[0]->GetXaxis() -> SetLabelSize(0.03);
-  ICComparison[0]->Draw("COLZ");
-  ICComparison[0]->GetXaxis() ->SetTitle("ix");
-  ICComparison[0]->GetYaxis() ->SetTitle("iy");
-  ICComparison[0]->GetZaxis() ->SetRangeUser(0.85,1.15);
- 
-  canEEP[0] = new TCanvas("ICComparison MC EEP","ICComparison MC EEP");
-  canEEP[0]->SetGridx();
-  canEEP[0]->SetGridy();
-  ICComparison[1]->GetXaxis() -> SetLabelSize(0.03);
-  ICComparison[1]->Draw("COLZ");
-  ICComparison[1]->GetXaxis() ->SetTitle("ix");
-  ICComparison[1]->GetYaxis() ->SetTitle("iy");
-  ICComparison[1]->GetZaxis() ->SetRangeUser(0.85,1.15);
-
   if(isMC == true)
   {
+ 
+   canEEM[0] = new TCanvas("ICComparison MC EEM","ICComparison MC EEM");
+   canEEM[0]->SetGridx();
+   canEEM[0]->SetGridy();
+   ICComparison[0]->GetXaxis() -> SetLabelSize(0.03);
+   ICComparison[0]->Draw("COLZ");
+   ICComparison[0]->GetXaxis() ->SetTitle("ix");
+   ICComparison[0]->GetYaxis() ->SetTitle("iy");
+   ICComparison[0]->GetZaxis() ->SetRangeUser(0.85,1.15);
+ 
+   canEEP[0] = new TCanvas("ICComparison MC EEP","ICComparison MC EEP");
+   canEEP[0]->SetGridx();
+   canEEP[0]->SetGridy();
+   ICComparison[1]->GetXaxis() -> SetLabelSize(0.03);
+   ICComparison[1]->Draw("COLZ");
+   ICComparison[1]->GetXaxis() ->SetTitle("ix");
+   ICComparison[1]->GetYaxis() ->SetTitle("iy");
+   ICComparison[1]->GetZaxis() ->SetRangeUser(0.85,1.15);
+
    TFile* output = new TFile ("IC_MC_4Correction.root","RECREATE");
    output->cd();
    ICComparison[0]->Write();
@@ -766,6 +772,19 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
   sigma_vs_ring_MCTruth[1]->Draw("ap");
 
  */
+
+  TFile *exisistingEE = new TFile ("existingEE.root","READ");
+  TH2F* exmap = (TH2F*) exisistingEE->Get("endcap");
+
+  TH2F* warning_Map_EEP = (TH2F*) exmap->Clone("warning_Map_EEP");
+  warning_Map_EEP->Reset("ICMES");
+  warning_Map_EEP->Reset();
+
+  TH2F* warning_Map_EEM = (TH2F*) exmap->Clone("warning_Map_EEM");
+  warning_Map_EEM->Reset("ICMES");
+  warning_Map_EEM->Reset();
+
+
   if(isMC == false)
   {
    std::ofstream outTxt ("Calibration_Coefficient_EE_dinamic_alpha.txt",std::ios::out);
@@ -776,15 +795,17 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
     {
       for (int iy = 1; iy < hcmap[0] -> GetNbinsY()+1; iy++)
        {
-          if( hcmap[0]->GetBinContent(ix,iy) <=0) continue;
-          if( hcmap[0]->GetBinContent(ix,iy)>0.4 && hcmap[0]->GetBinContent(ix,iy)<2.)
+          if( exmap->GetBinContent(ix,iy) !=1) continue;
+          if( (hcmap[0]->GetBinContent(ix,iy)>0.4 && hcmap[0]->GetBinContent(ix,iy)<2.)|| hcmap[0]->GetBinContent(ix,iy)==0 )
           outTxt << "  " << std::fixed << std::setw(1) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
            << std::fixed << std::setw(1) << "   " << hcmap[0]->GetYaxis()->GetBinLowEdge(iy) 
             << "          " << -1 <<"     "<< hcmap[0]->GetBinContent(ix,iy) << std::endl;
-          else outTxt << " Warning IC to fix " << std::fixed << std::setw(1) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
-           << std::fixed << std::setw(1) << "   " << hcmap[0]->GetYaxis()->GetBinLowEdge(iy) 
-            << "          " << -1 << "      "<<hcmap[0]->GetBinContent(ix,iy) << std::endl;
-
+          else{
+                outTxt << std::fixed << std::setw(1) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
+                << std::fixed << std::setw(1) << "   " << hcmap[0]->GetYaxis()->GetBinLowEdge(iy) 
+                << "          " << -1 << "      "<<0. << std::endl;
+                warning_Map_EEM->Fill(ix,iy);
+              }
  
        }
     }
@@ -793,23 +814,41 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJet
     {
       for (int iy = 1; iy < hcmap[1] -> GetNbinsY()+1; iy++)
        {
-          if( hcmap[1]->GetBinContent(ix,iy) <=0)continue;
-          if(hcmap[1]->GetBinContent(ix,iy)>0.4 && hcmap[1]->GetBinContent(ix,iy)<2.)
+          if( exmap->GetBinContent(ix,iy) !=1) continue;
+          if((hcmap[1]->GetBinContent(ix,iy)>0.4 && hcmap[1]->GetBinContent(ix,iy)<2.)|| hcmap[1]->GetBinContent(ix,iy)==0)
           outTxt << "  " << std::fixed << std::setw(1) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
            << std::fixed << std::setw(1) << "   " << hcmap[1]->GetYaxis()->GetBinLowEdge(iy) 
             << "          " << 1 << "      "<<hcmap[1]->GetBinContent(ix,iy) << std::endl;
-          else outTxt << " Warning IC to fix " << std::fixed << std::setw(1) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
-           << std::fixed << std::setw(1) << "   " << hcmap[1]->GetYaxis()->GetBinLowEdge(iy) 
-            << "          " << 1 << "      "<<hcmap[1]->GetBinContent(ix,iy) << std::endl;
- 
+          else{
+               outTxt << std::fixed << std::setw(1) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
+               << std::fixed << std::setw(1) << "   " << hcmap[1]->GetYaxis()->GetBinLowEdge(iy) 
+               << "          " << 1 << "      "<<0. << std::endl;
+               warning_Map_EEP->Fill(ix,iy);
+              }
        }
     }
+ }
 
 
-  TFile *output_hcmap = new TFile("hcmap_EE.root","RECREATE");
-  output_hcmap->cd();
-  hcmap[0]->Write();
-  hcmap[1]->Write();
-  output_hcmap->Close();
- } 
+  canEEP[1] = new TCanvas("Warning_EEP","Warning_EEP");
+  canEEP[1]->SetGridx();
+  canEEP[1]->SetGridy();
+  warning_Map_EEP->GetXaxis() -> SetLabelSize(0.03);
+  warning_Map_EEP->Draw("COLZ");
+  warning_Map_EEP->GetXaxis() ->SetTitle("ix");
+  warning_Map_EEP->GetYaxis() ->SetTitle("iy");
+  warning_Map_EEP->GetZaxis() ->SetRangeUser(0.85,1.15);
+
+  canEEM[1] = new TCanvas("Warning_EEM","Warning_EEM");
+  canEEM[1]->SetGridx();
+  canEEM[1]->SetGridy();
+  warning_Map_EEM->GetXaxis() -> SetLabelSize(0.03);
+  warning_Map_EEM->Draw("COLZ");
+  warning_Map_EEM->GetXaxis() ->SetTitle("ix");
+  warning_Map_EEM->GetYaxis() ->SetTitle("iy");
+  warning_Map_EEM->GetZaxis() ->SetRangeUser(0.85,1.15);
+
+
+
 }
+
