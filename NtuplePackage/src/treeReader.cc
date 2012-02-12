@@ -34,6 +34,15 @@ m_verbosity (verbosity)
    m_tree->SetBranchAddress (bre->GetName (), &m_3Vvectors[bre->GetName ()]) ;
   }
   
+  if (bname.find ("vector<ROOT::Math::PositionVector3D<ROOT::Math::Cartesian3D<double>,ROOT::Math::DefaultCoordinateSystemTag> >") != std::string::npos)
+  {
+   if (m_verbosity)
+     std::cout << "3PV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
+   std::vector<ROOT::Math::XYZPoint> * dummy = new std::vector<ROOT::Math::XYZPoint> ;
+   m_3PVvectors[bre->GetName ()] = dummy ;
+   m_tree->SetBranchAddress (bre->GetName (), &m_3PVvectors[bre->GetName ()]) ;
+  }
+  
   if (bname.find ("vector<int>") != std::string::npos)
   {
    if (m_verbosity)
@@ -41,6 +50,15 @@ m_verbosity (verbosity)
    std::vector<int> * dummy = new std::vector<int> ;
    m_Ivectors[bre->GetName ()] = dummy ;
    m_tree->SetBranchAddress (bre->GetName (), &m_Ivectors[bre->GetName ()]) ;
+  }
+
+  if (bname.find ("vector<string>") != std::string::npos)
+  {
+   if (m_verbosity)
+     std::cout << "SV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
+   std::vector<std::string> * dummy = new std::vector<std::string> ;
+   m_Svectors[bre->GetName ()] = dummy ;
+   m_tree->SetBranchAddress (bre->GetName (), &m_Svectors[bre->GetName ()]) ;
   }
   
   if (bname.find ("vector<float>") != std::string::npos)
@@ -61,27 +79,9 @@ m_verbosity (verbosity)
    m_tree->SetBranchAddress (bre->GetName (), &m_Dvectors[bre->GetName ()]) ;
   }
   
-  if (bname.find ("vector<string>") != std::string::npos)
-  {
-   if (m_verbosity)
-     std::cout << "SV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-   std::vector<std::string> * dummy = new std::vector<std::string> ;
-   m_Svectors[bre->GetName ()] = dummy ;
-   m_tree->SetBranchAddress (bre->GetName (), &m_Svectors[bre->GetName ()]) ;
-  }
-  
-  if (bname.find ("TClonesArray") != std::string::npos)
-  {
-   if (m_verbosity)
-      std::cout << "DV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-   TClonesArray * dummy = new TClonesArray;
-   m_TClonesArray[bre->GetName ()] = dummy ;
-   m_tree->SetBranchAddress (bre->GetName (), &m_TClonesArray[bre->GetName ()]) ;
-  }
-
  } //PG loop over branches
  
- std::cout << " --> " << (m_3Vvectors.size () + m_4Vvectors.size () + m_Fvectors.size () + m_Dvectors.size () + m_Ivectors.size () + m_TClonesArray.size() ) << " branches read\n" ;
+ std::cout << " --> " << (m_3Vvectors.size () + m_4Vvectors.size () + m_Fvectors.size () + m_Dvectors.size () + m_Ivectors.size ()) << " branches read\n" ;
  
 }
 
@@ -105,6 +105,11 @@ treeReader::~treeReader ()
  {
   delete iMap->second ;
  } 
+
+ for (std::map <std::string, std::vector<std::string> * >::const_iterator iMap = m_Svectors.begin () ; iMap != m_Svectors.end () ; ++iMap)
+ {
+  delete iMap->second ;
+ } 
  
  for (std::map <std::string, std::vector<ROOT::Math::XYZTVector> * >::const_iterator iMap = m_4Vvectors.begin () ; iMap != m_4Vvectors.end () ;  ++iMap)
  {
@@ -114,62 +119,64 @@ treeReader::~treeReader ()
  for (std::map <std::string, std::vector<ROOT::Math::XYZVector> * >::const_iterator iMap = m_3Vvectors.begin () ; iMap != m_3Vvectors.end (); ++iMap)
  {
   delete iMap->second ;
- }
- 
- for (std::map <std::string, std::vector<std::string> * >::const_iterator iMap = m_Svectors.begin () ; iMap != m_Svectors.end () ; ++iMap)
- {
-  delete iMap->second ;
  } 
- 
- for( std::map<std::string, TClonesArray* >::const_iterator   iMap  = m_TClonesArray.begin () ; iMap  != m_TClonesArray.end() ; ++iMap)
-   {
-     delete iMap->second ;
-   }
 } 
 
 
-std::vector<double>* treeReader::GetDouble(const std::string &name){
- std::map<std::string,std::vector<double> * >::const_iterator                 it_D  = m_Dvectors.find(name);
- if (it_D  != m_Dvectors.end()  ) return m_Dvectors[name];
- else return new std::vector<double>;
+
+
+std::vector<ROOT::Math::XYZVector>* treeReader::Get3V(const std::string &name)
+{
+  std::map<std::string,std::vector<ROOT::Math::XYZVector> * >::const_iterator it_3V = m_3Vvectors.find(name);
+  if( it_3V != m_3Vvectors.end() ) return m_3Vvectors[name];
+  else return new std::vector<ROOT::Math::XYZVector>;
 }
 
-std::vector<float>* treeReader::GetFloat(const std::string &name){
- std::map<std::string,std::vector<float> * >::const_iterator           it_F  = m_Fvectors.find(name);
- if (it_F  != m_Fvectors.end()  ) return m_Fvectors[name];
- else return new std::vector<float>;
+std::vector<ROOT::Math::XYZPoint>* treeReader::Get3PV(const std::string &name)
+{
+  std::map<std::string,std::vector<ROOT::Math::XYZPoint> * >::const_iterator it_3PV = m_3PVvectors.find(name);
+  if( it_3PV != m_3PVvectors.end() ) return m_3PVvectors[name];
+  else return new std::vector<ROOT::Math::XYZPoint>;
 }
 
-std::vector<int>* treeReader::GetInt(const std::string &name){
- std::map<std::string,std::vector<int> * >::const_iterator             it_I  = m_Ivectors.find(name);
- if (it_I  != m_Ivectors.end()  ) return m_Ivectors[name];
- else return new std::vector<int>;
+std::vector<ROOT::Math::XYZTVector>* treeReader::Get4V(const std::string &name)
+{
+  std::map<std::string,std::vector<ROOT::Math::XYZTVector> * >::const_iterator it_4V = m_4Vvectors.find(name);
+  if( it_4V != m_4Vvectors.end() ) return m_4Vvectors[name];
+  else return new std::vector<ROOT::Math::XYZTVector>;
 }
 
-std::vector<ROOT::Math::XYZVector>* treeReader::Get3V(const std::string &name){
- std::map<std::string,std::vector<ROOT::Math::XYZVector> * >::const_iterator    it_3V  = m_3Vvectors.find(name);
- if (it_3V  != m_3Vvectors.end()  ) return m_3Vvectors[name];
- else return new std::vector<ROOT::Math::XYZVector>;
+std::vector<double>* treeReader::GetDouble(const std::string &name)
+{
+  std::map<std::string,std::vector<double> * >::const_iterator it_D = m_Dvectors.find(name);
+  if( it_D != m_Dvectors.end() ) return m_Dvectors[name];
+  else return new std::vector<double>;
 }
 
-std::vector<ROOT::Math::XYZTVector>* treeReader::Get4V(const std::string &name){
- std::map<std::string,std::vector<ROOT::Math::XYZTVector> * >::const_iterator   it_4V  = m_4Vvectors.find(name);
- if (it_4V  != m_4Vvectors.end()  ) return m_4Vvectors[name];
- else return new std::vector<ROOT::Math::XYZTVector>;
+std::vector<float>* treeReader::GetFloat(const std::string &name)
+{
+  std::map<std::string,std::vector<float> * >::const_iterator it_F = m_Fvectors.find(name);
+  if( it_F != m_Fvectors.end() ) return m_Fvectors[name];
+  else return new std::vector<float>;
 }
 
-TClonesArray* treeReader::GetTClonesArray(const std::string &name){
- std::map<std::string, TClonesArray* >::const_iterator   it_Tca  = m_TClonesArray.find(name);
- if (it_Tca  != m_TClonesArray.end()  ) return m_TClonesArray[name];
- else return new TClonesArray;
+std::vector<int>* treeReader::GetInt(const std::string &name)
+{
+  std::map<std::string,std::vector<int> * >::const_iterator it_I = m_Ivectors.find(name);
+  if( it_I != m_Ivectors.end() ) return m_Ivectors[name];
+  else return new std::vector<int>;
 }
 
-std::vector<std::string>* treeReader::GetString(const std::string &name){
- std::map<std::string,std::vector<std::string> * >::const_iterator             it_S  = m_Svectors.find(name);
- if (it_S  != m_Svectors.end()  ) return m_Svectors[name];
- else return new std::vector<std::string>;
+std::vector<long long int>* treeReader::GetLongLongInt(const std::string &name)
+{
+  std::map<std::string,std::vector<long long int> * >::const_iterator it_LLI = m_LLIvectors.find(name);
+  if( it_LLI != m_LLIvectors.end() ) return m_LLIvectors[name];
+  else return new std::vector<long long int>;
 }
 
-
-
-
+std::vector<std::string>* treeReader::GetString(const std::string &name)
+{
+  std::map<std::string,std::vector<std::string> * >::const_iterator it_S = m_Svectors.find(name);
+  if( it_S != m_Svectors.end() ) return m_Svectors[name];
+  else return new std::vector<std::string>;
+}

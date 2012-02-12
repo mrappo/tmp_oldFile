@@ -3,7 +3,7 @@
 // A class representing a (continued) line in the configuration
 // file, that is a pair of an option name and a (list of) value(s) 
 //
-// last change : $Date: 2010/02/08 13:40:32 $
+// last change : $Date: 2011/02/15 11:45:41 $
 // by          : $Author: abenagli $
 //
 

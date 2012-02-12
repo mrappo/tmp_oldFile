@@ -3,6 +3,7 @@
 
 #include "treeReader.h"
 #include "hFactory.h"
+#include "ntpleUtils.h"
 
 #include <iostream>
 #include <vector>
@@ -28,49 +29,48 @@ class stdHisto
   
   // add histograms
   void Add1(const std::string& histoName,
-            const int& nStep);
+            const int& nStep,
+            const bool& doZeppPlots = false);
   
   void Add2(const std::string& histoName,
-            const int& nStep);
-
-  void Add1Float(const std::string& histoName,
-           const int& nStep,
-	   int nbins,
-	   double min,
-	   double max);
-
+            const int& nStep,
+            const bool& doZeppPlots = false);
+  
   // fill histograms
   void Fill1(const std::string& histoName,
              const std::string& branchName,
              const int& nStep,
-             std::vector<int>* selectionIt = NULL);
+             std::vector<int>* selectionIt = NULL,
+             const float* eta1_tag = NULL,
+             const float* eta2_tag = NULL);
   
   void Fill1(const std::vector<ROOT::Math::XYZTVector>& vet,
              const std::string& histoName,
-             const int& step);
+             const int& step,
+             const float* eta1_tag = NULL,
+             const float* eta2_tag = NULL);
   
   void Fill1(const ROOT::Math::XYZTVector& p,
              const std::string& histoName,
-             const int& step);
+             const int& step,
+             const float* eta1_tag = NULL,
+             const float* eta2_tag = NULL);
   
   void Fill2(const std::string& histoName,
              const std::string& branchName,
              const int& nStep,
-             const int& it1, const int& it2);
+             const int& it1, const int& it2,
+             const float* eta1_tag = NULL,
+             const float* eta2_tag = NULL);
   
   void Fill2(const ROOT::Math::XYZTVector& v1,
              const ROOT::Math::XYZTVector& v2, 
              const std::string& histoName,
-             const int& step);
+             const int& step,
+             const float* eta1_tag = NULL,
+             const float* eta2_tag = NULL);
   
-  void Fill1Float(const std::string& histoName,
-             const std::string& branchName,
-             const int& nStep,
-             std::vector<int>* selectionIt = NULL);
   
-  void Fill1Float(const std::string& histoName,
-             const double& value,
-             const int& nStep);
   
  private:
   

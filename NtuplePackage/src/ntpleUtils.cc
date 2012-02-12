@@ -1,6 +1,15 @@
 #include "ntpleUtils.h"
 
 
+bool maggiore(double i, double j)
+{
+  return( i>j );
+}
+
+
+
+
+
 
 std::map<int, int> GetTotalEvents(const std::string& histoName, const std::string& inputFileList)
 {
@@ -19,18 +28,113 @@ std::map<int, int> GetTotalEvents(const std::string& histoName, const std::strin
     inFile >> buffer;
     if(!inFile.good()) break;
 
-    TFile* f = new TFile(buffer.c_str(), "READ");
-    TH1F* histo = (TH1F*)(f -> Get(histoName.c_str()));
+    TFile* f = TFile::Open(buffer.c_str());
+    TH1F* histo = NULL;
+    f -> GetObject(histoName.c_str(), histo);
+    if(histo == NULL)
+    {
+      std::cout << ">>>ntpleUtils::Error in getting object " << histoName << std::endl;
+      exit(-1);
+    }
+    
     
     for(int bin = 1; bin <= histo -> GetNbinsX(); ++bin)
       totalEvents[bin] += int(histo -> GetBinContent(bin));
     
     f -> Close();
-    
     delete f;
   }
 
   return totalEvents;
+}
+
+//  ------------------------------------------------------------
+
+
+
+TH1F* GetTotalHisto(const std::string& histoName, const std::string& inputFileList)
+{
+  std::ifstream inFile(inputFileList.c_str());
+  std::string buffer;
+  TH1F* totalHisto = NULL;
+  
+  if(!inFile.is_open())
+  {
+    std::cerr << ">>>ntpleUtils::GetTotalHisto::can't open file " << inputFileList << " for input" << std::endl;
+    return totalHisto;
+  }
+  
+  bool isFirstFile = true;
+  while(1)
+  {
+    inFile >> buffer;
+    if(!inFile.good()) break;
+    
+    //std::cout << "ntpleUtils::GetTotalHisto::getting histogram " << histoName << " from file " << buffer << std::endl;
+    TFile* f = TFile::Open(buffer.c_str());
+    TH1F* histo = NULL;
+    f -> GetObject(histoName.c_str(), histo);
+    if(histo == NULL)
+    {
+      std::cout << ">>>ntpleUtils::GetTotalHisto::Error in getting object " << histoName << std::endl;
+      exit(-1);
+    }
+    
+    if( isFirstFile )
+      totalHisto = (TH1F*)(histo->Clone());
+    else
+      totalHisto -> Add(histo);
+    
+    if( !isFirstFile )
+    {
+      f -> Close();
+      delete f;
+      isFirstFile = false;
+    }
+  }
+
+  return totalHisto;
+}
+
+//  ------------------------------------------------------------
+
+
+
+std::map<int, std::string> GetBinLabels(const std::string& histoName, const std::string& inputFileList)
+{
+  std::ifstream inFile(inputFileList.c_str());
+  std::string buffer;
+  std::map<int, std::string> binLabels;
+  
+  if(!inFile.is_open())
+  {
+    std::cerr << "** ERROR: Can't open '" << inputFileList << "' for input" << std::endl;
+    return binLabels;
+  }
+  
+  while(1)
+  {
+    inFile >> buffer;
+    if(!inFile.good()) break;
+
+    TFile* f = TFile::Open(buffer.c_str());
+    TH1F* histo = NULL;
+    f -> GetObject(histoName.c_str(), histo);
+    if(histo == NULL)
+    {
+      std::cout << ">>>ntpleUtils::Error in getting object " << histoName << std::endl;
+      exit(-1);
+    }
+    
+    
+    for(int bin = 1; bin <= histo -> GetNbinsX(); ++bin)
+      binLabels[bin] = std::string(histo -> GetXaxis() -> GetBinLabel(bin));
+    
+    f -> Close();
+    delete f;
+  }
+
+  return binLabels;
 }
 
 //  ------------------------------------------------------------
@@ -52,18 +156,7 @@ bool FillChain(TChain& chain, const std::string& inputFileList)
     inFile >> buffer;
     if(!inFile.good()) break;
     chain.Add(buffer.c_str());
-  }
-
-  return true;
-}
-
-//  ------------------------------------------------------------
-
-
-bool FillVectorChain(TChain& chain, const std::vector<std::string>& inputFileVector)
-{
-  for (std::vector<std::string>::const_iterator iFile = inputFileVector.begin(); iFile<inputFileVector.end(); iFile++){
-   chain.Add((*iFile).c_str());
+    //std::cout << ">>> ntupleUtils::FillChain - treeName = " << chain.GetName() << " from file " << buffer << std::endl;
   }
 
   return true;
@@ -85,7 +178,7 @@ int parseConfigFile (const TString& config)
      return -1;
   }
   
-  gConfigParser -> print();
+  //gConfigParser -> print();
   
   return 0 ;
 }
@@ -94,6 +187,181 @@ int parseConfigFile (const TString& config)
 
 
 
+
+
+double PURescaleFactor(const double& nPU_MC, const int& PUScale)
+{
+  if(nPU_MC < 0.)
+    return 1.;
+  
+  else if(nPU_MC > 34.)
+    return 0.;
+  
+  else
+  {
+    double distrPU_MC[] = {
+      1.45346E-01, // 0
+      6.42802E-02, // 1
+      6.95255E-02, // 2
+      6.96747E-02, // 3
+      6.92955E-02, // 4
+      6.84997E-02, // 5
+      6.69528E-02, // 6
+      6.45515E-02, // 7
+      6.09865E-02, // 8
+      5.63323E-02, // 9
+      5.07322E-02, // 10
+      4.44681E-02, // 11
+      3.79205E-02, // 12
+      3.15131E-02, // 13
+      2.54220E-02, // 14
+      2.00184E-02, // 15
+      1.53776E-02, // 16
+      1.15387E-02, // 17
+      8.47608E-03, // 18
+      6.08715E-03, // 19
+      4.28255E-03, // 20
+      2.97185E-03, // 21
+      2.01918E-03, // 22
+      1.34490E-03, // 23
+      8.81587E-04, // 24
+      5.69954E-04, // 25
+      3.61493E-04, // 26
+      2.28692E-04, // 27
+      1.40791E-04, // 28
+      8.44606E-05, // 29
+      5.10204E-05, // 30
+      3.07802E-05, // 31
+      1.81401E-05, // 32
+      1.00201E-05, // 33
+      5.80004E-06  // 34
+    };
+    
+    double distrPU_DATA[] = {
+      0.005929510, // 0
+      0.025542751, // 1
+      0.059146766, // 2
+      0.097015992, // 3
+      0.126287282, // 4
+      0.138848349, // 5
+      0.134116739, // 6
+      0.116909698, // 7
+      0.093739837, // 8
+      0.070092745, // 9
+      0.049362671, // 10
+      0.032974087, // 11
+      0.020997589, // 12
+      0.012791663, // 13
+      0.007474022, // 14
+      0.004196492, // 15
+      0.002267743, // 16
+      0.001181017, // 17
+      0.000593481, // 18
+      0.000288109, // 19
+      0.000135272, // 20
+      0.000061498, // 21
+      0.000027102, // 22
+      0.000011591, // 23
+      0.000004816, // 24
+      0.000001946, // 25
+      0.000000766, // 26
+      0.000000294, // 27
+      0.000000110, // 28
+      0.000000040, // 29
+      0.000000014, // 30
+      0.000000005, // 31
+      0.000000002, // 32
+      0.000000001, // 33
+      0.000000000  // 34
+    };
+    
+    double distrPUUp_DATA[] = {
+      0.005101119, // 0
+      0.019616973, // 1
+      0.042805932, // 2
+      0.069807865, // 3
+      0.094571814, // 4
+      0.111901835, // 5
+      0.118791863, // 6
+      0.115053281, // 7
+      0.102318265, // 8
+      0.085773677, // 9
+      0.068378009, // 10
+      0.052039150, // 11
+      0.037905060, // 12
+      0.026473492, // 13
+      0.017752707, // 14
+      0.011679462, // 15
+      0.007506310, // 16
+      0.004667611, // 17
+      0.002804991, // 18
+      0.001627845, // 19
+      0.000911964, // 20
+      0.000493186, // 21
+      0.000267179, // 22
+      0.000144413, // 23
+      0.000075308, // 24
+      0.000037894, // 25
+      0.000018410, // 26
+      0.000008643, // 27
+      0.000003925, // 28
+      0.000001801, // 29
+      0.000000853, // 30
+      0.000000387, // 31
+      0.000000169, // 32
+      0.000000071, // 33
+      0.000000029  // 34
+    };
+    
+    double distrPUDown_DATA[] = {
+      0.007079117, // 0
+      0.038273200, // 1
+      0.088145092, // 2
+      0.136151433, // 3
+      0.162401646, // 4
+      0.160292029, // 5
+      0.135059550, // 6
+      0.101830974, // 7
+      0.070044674, // 8
+      0.044358157, // 9
+      0.025943806, // 10
+      0.014429441, // 11
+      0.007645309, // 12
+      0.003811724, // 13
+      0.001780658, // 14
+      0.000772949, // 15
+      0.000325344, // 16
+      0.000135433, // 17
+      0.000053307, // 18
+      0.000019696, // 19
+      0.000006740, // 20
+      0.000002223, // 21
+      0.000000765, // 22
+      0.000000250, // 23
+      0.000000077, // 24
+      0.000000021, // 25
+      0.000000006, // 26
+      0.000000002, // 27
+      0.000000001, // 28
+      0.000000000, // 29
+      0.000000000, // 30
+      0.000000000, // 31
+      0.000000000, // 32
+      0.000000000, // 33
+      0.000000000  // 34
+    };
+    
+    
+    if( PUScale == 1 )
+      return 1. * distrPUUp_DATA[int(nPU_MC)] / distrPU_MC[int(nPU_MC)];
+    
+    else if( PUScale == -1 )
+      return 1. * distrPUDown_DATA[int(nPU_MC)] / distrPU_MC[int(nPU_MC)];
+    
+    else
+      return 1. * distrPU_DATA[int(nPU_MC)] / distrPU_MC[int(nPU_MC)];
+  }
+}
 
 
 
@@ -128,203 +396,12 @@ double deltaR(const double& eta1, const double& phi1,
 
 
 
-int getCJV(std::vector<ROOT::Math::XYZTVector>& jets,
-	      int q1,
-	      int q2,
-	      const double& EtMin,
-	      const std::vector<int>* blacklist){
- 
- int CJV = 0;
- double etaMin = jets.at(q1).Eta();
- double etaMax = jets.at(q2).Eta();
- 
- if (etaMax < etaMin) std::swap(etaMin,etaMax);
- 
- for(unsigned int i = 0; i < jets.size(); ++i)
- {
-  if (i==q1 || i==q2) continue;
-  if (jets.at(i).Et() < EtMin) continue;
-  
-  bool skipJet = false;
-  if(blacklist){
-   for(unsigned int kk = 0; kk < blacklist -> size(); ++kk) {
-    if(blacklist -> at(kk) == static_cast<int>(i)) skipJet = true;
-   }
-  }
-  
-  if (skipJet) continue;
-   
-  if(jets.at(i).Eta() > etaMax || jets.at(i).Eta() < etaMin) continue;
-  
-  CJV++;
- } 
- 
- return CJV;
- 
-}
-
-
-//  ------------------------------------------------------------
-
-
-int getJV(std::vector<ROOT::Math::XYZTVector>& jets,
-	      const double& EtMin,
-	      const std::vector<int>* blacklist){
- 
- int JV = 0;
-  
- for(unsigned int i = 0; i < jets.size(); ++i)
- {
-  if (jets.at(i).Et() < EtMin) continue;
-  
-  bool skipJet = false;
-  if(blacklist){
-   for(unsigned int kk = 0; kk < blacklist -> size(); ++kk) {
-    if(blacklist -> at(kk) == static_cast<int>(i)) skipJet = true;
-   }
-  }
-  
-  if (skipJet) continue;
-  JV++;  
- } 
- 
- return JV;
- 
-}
-
-
-//  ------------------------------------------------------------
-
-/** Electron isolation / ID */
-
-bool IsEleIsolatedID( treeReader& reader,const std::vector<double>& BarrelSelections, const std::vector<double>& EndCapSelections, int iEle){
- 
- bool skipEle = false;
- 
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && reader.GetFloat("electrons_tkIsoR03")->at(iEle)/reader.Get4V("electrons")->at(iEle).pt() > BarrelSelections.at(0)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && reader.GetFloat("electrons_emIsoR03")->at(iEle)/reader.Get4V("electrons")->at(iEle).pt() > BarrelSelections.at(1)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && (reader.GetFloat("electrons_hadIsoR03_depth1")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth2")->at(iEle))/reader.Get4V("electrons")->at(iEle).pt() > BarrelSelections.at(2)) skipEle = true;      
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && (reader.GetFloat("electrons_tkIsoR03")->at(iEle) + reader.GetFloat("electrons_emIsoR03")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth1")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth2")->at(iEle))/reader.Get4V("electrons")->at(iEle).pt() > BarrelSelections.at(3)) skipEle = true;
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && reader.GetFloat("electrons_hOverE")->at(iEle) > BarrelSelections.at(4)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) &&  fabs(reader.GetFloat("electrons_sigmaIetaIeta")->at(iEle)) > BarrelSelections.at(5)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) &&  fabs(reader.GetFloat("electrons_deltaPhiIn")->at(iEle)) > BarrelSelections.at(6)) skipEle = true;
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) &&  fabs(reader.GetFloat("electrons_deltaEtaIn")->at(iEle)) > BarrelSelections.at(7)) skipEle = true;
- 
- 
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && reader.GetFloat("electrons_tkIsoR03")->at(iEle)/reader.Get4V("electrons")->at(iEle).pt() > EndCapSelections.at(0)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && reader.GetFloat("electrons_emIsoR03")->at(iEle)/reader.Get4V("electrons")->at(iEle).pt() > EndCapSelections.at(1)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && (reader.GetFloat("electrons_hadIsoR03_depth1")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth2")->at(iEle))/reader.Get4V("electrons")->at(iEle).pt() > EndCapSelections.at(2)) skipEle = true;      
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && (reader.GetFloat("electrons_tkIsoR03")->at(iEle) + reader.GetFloat("electrons_emIsoR03")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth1")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth2")->at(iEle))/reader.Get4V("electrons")->at(iEle).pt() > EndCapSelections.at(3)) skipEle = true;
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && reader.GetFloat("electrons_hOverE")->at(iEle) > EndCapSelections.at(4)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && fabs(reader.GetFloat("electrons_sigmaIetaIeta")->at(iEle)) > EndCapSelections.at(5)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && fabs(reader.GetFloat("electrons_deltaPhiIn")->at(iEle)) > EndCapSelections.at(6)) skipEle = true;
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && fabs(reader.GetFloat("electrons_deltaEtaIn")->at(iEle)) > EndCapSelections.at(7)) skipEle = true;
- 
- return (!skipEle);
- 
-}
-
-/** Electron isolation / ID 
- * with PU correction 
- */
-
-bool IsEleIsolatedIDPUCorrected( treeReader& reader,const std::vector<double>& BarrelSelections, const std::vector<double>& EndCapSelections, int iEle){
- 
- bool skipEle = false;
- 
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && reader.GetFloat("electrons_tkIsoR03")->at(iEle)/reader.Get4V("electrons")->at(iEle).pt() > BarrelSelections.at(0)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && reader.GetFloat("electrons_emIsoR03")->at(iEle)/reader.Get4V("electrons")->at(iEle).pt() > BarrelSelections.at(1)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && (reader.GetFloat("electrons_hadIsoR03_depth1")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth2")->at(iEle))/reader.Get4V("electrons")->at(iEle).pt() > BarrelSelections.at(2)) skipEle = true;      
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && (reader.GetFloat("electrons_tkIsoR03")->at(iEle) + reader.GetFloat("electrons_emIsoR03")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth1")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth2")->at(iEle) - reader.GetFloat("rho_isolation")->at(0) * 0.3 * 0.3 * reader.GetFloat("PV_normalizedChi2")->size())/reader.Get4V("electrons")->at(iEle).pt() > BarrelSelections.at(3)) skipEle = true;
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) && reader.GetFloat("electrons_hOverE")->at(iEle) > BarrelSelections.at(4)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) &&  fabs(reader.GetFloat("electrons_sigmaIetaIeta")->at(iEle)) > BarrelSelections.at(5)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) &&  fabs(reader.GetFloat("electrons_deltaPhiIn")->at(iEle)) > BarrelSelections.at(6)) skipEle = true;
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) < 1.5) &&  fabs(reader.GetFloat("electrons_deltaEtaIn")->at(iEle)) > BarrelSelections.at(7)) skipEle = true;
- 
- 
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && reader.GetFloat("electrons_tkIsoR03")->at(iEle)/reader.Get4V("electrons")->at(iEle).pt() > EndCapSelections.at(0)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && reader.GetFloat("electrons_emIsoR03")->at(iEle)/reader.Get4V("electrons")->at(iEle).pt() > EndCapSelections.at(1)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && (reader.GetFloat("electrons_hadIsoR03_depth1")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth2")->at(iEle))/reader.Get4V("electrons")->at(iEle).pt() > EndCapSelections.at(2)) skipEle = true;      
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && (reader.GetFloat("electrons_tkIsoR03")->at(iEle) + reader.GetFloat("electrons_emIsoR03")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth1")->at(iEle) + reader.GetFloat("electrons_hadIsoR03_depth2")->at(iEle) - reader.GetFloat("rho_isolation")->at(0) * 0.3 * 0.3 * reader.GetFloat("PV_normalizedChi2")->size())/reader.Get4V("electrons")->at(iEle).pt() > EndCapSelections.at(3)) skipEle = true;
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && reader.GetFloat("electrons_hOverE")->at(iEle) > EndCapSelections.at(4)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && fabs(reader.GetFloat("electrons_sigmaIetaIeta")->at(iEle)) > EndCapSelections.at(5)) skipEle = true;    
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && fabs(reader.GetFloat("electrons_deltaPhiIn")->at(iEle)) > EndCapSelections.at(6)) skipEle = true;
- if ((fabs(reader.Get4V("electrons")->at(iEle).Eta()) > 1.5) && fabs(reader.GetFloat("electrons_deltaEtaIn")->at(iEle)) > EndCapSelections.at(7)) skipEle = true;
- 
- return (!skipEle);
- 
-}
-
-
-//  ------------------------------------------------------------
-
-/** Muon isolation / ID */
-
-bool IsMuIsolatedID( treeReader& reader,const std::vector<double>& Selections, int iMu){
- 
- bool skipMu = false;
- 
- if ( (reader.GetFloat("muons_tkIsoR03")->at(iMu) + reader.GetFloat("muons_emIsoR03")->at(iMu) + reader.GetFloat("muons_hadIsoR03")->at(iMu)) / reader.Get4V("muons")->at(iMu).pt() > Selections.at(0) ) skipMu = true;
- if (reader.GetFloat("muons_normalizedChi2")->at(iMu) >= Selections.at(1) )           skipMu = true;
- if (reader.GetInt("muons_numberOfValidMuonHits")->at(iMu) <=  Selections.at(3)  )     skipMu = true;
- if (reader.GetInt("muons_tracker")->at(iMu) != Selections.at(4)  )     skipMu = true;
- if (reader.GetInt("muons_standalone")->at(iMu) != Selections.at(5)  )     skipMu = true;
- if (reader.GetInt("muons_global")->at(iMu) != Selections.at(6)  )     skipMu = true;
- //  if (reader.GetInt("muons_goodMuon")->at(iMu) == Selections.at(7)  )     skipMu = true;
-  
- return (!skipMu);
-}
-
-//  ------------------------------------------------------------
-
-int getZepp(std::vector<ROOT::Math::XYZTVector>& jets,
-	  int q1,
-	  int q2,
-	  const double& EtMin,
-	  const double& zeppMax, 
-	  const std::vector<int>* blacklist){
- 
- int nJet = 0;
- 
- double etaMin = jets.at(q1).Eta();
- double etaMax = jets.at(q2).Eta();
-
- if (etaMax < etaMin) std::swap(etaMin,etaMax);
-
- double etaMean = (etaMax + etaMin) / 2.;
- double dEta = (etaMax - etaMin);
- 
- 
- for(unsigned int i = 0; i < jets.size(); ++i)
- {
-  if (i==q1 || i==q2) continue;
-  if (jets.at(i).Et() < EtMin) continue;
-  
-  bool skipJet = false;
-  if(blacklist){
-   for(unsigned int kk = 0; kk < blacklist -> size(); ++kk) {
-    if(blacklist -> at(kk) == static_cast<int>(i)) skipJet = true;
-   }
-  }
-  
-  if (fabs((jets.at(i).Eta() - etaMean) / dEta) > zeppMax) continue;
-  
-  if (skipJet) continue;
-  nJet++;  
- } 
- 
- return nJet;
- 
-}
-
-
-//  ------------------------------------------------------------
 
 
 
 double SelectJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
                   const std::string& method,
-                  const double& etMin,
+                  const double& ptMin,
                   const std::vector<int>* blacklist)
 {
   // initialize vector with result
@@ -352,7 +429,7 @@ double SelectJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jet
   // loop over 1st jet
   for(unsigned int i = 0; i < jets.size(); ++i)
   {
-    if(jets.at(i).Et() < etMin) continue;
+    if(jets.at(i).pt() < ptMin) continue;
     
     bool skipJet1 = false;
     if(blacklist)
@@ -365,7 +442,7 @@ double SelectJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jet
     // loop over 2nd jet
     for(unsigned int j = i+1; j < jets.size(); ++j)
     {
-      if(jets.at(j).Et() < etMin) continue;
+      if(jets.at(j).pt() < ptMin) continue;
       
       bool skipJet2 = false;
       if(blacklist)
@@ -455,6 +532,153 @@ double SelectJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jet
 
 //  ------------------------------------------------------------
 
+double SelectJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
+                  const std::string& method,
+                  const double& ptMin,
+                  const double& DetaMin,
+                  const double& DetaMax,
+                  const std::vector<int>* blacklist)
+{
+  // initialize vector with result
+  it.clear();
+  it.push_back(-1);
+  it.push_back(-1);
+  
+  
+  
+  // initialize the selection variable
+  double maxDeta = -999999.;
+  double tempDeta = 0.;
+  
+  double maxMJJ = -999999.;
+  double tempMJJ = 0.;
+  
+  double maxPt = -999999.;
+  double tempPt = 0.;
+  
+  double maxSumPt = -999999.;
+  double tempSumPt = 0.;
+  
+  
+  
+  // loop over 1st jet
+  for(unsigned int i = 0; i < jets.size(); ++i)
+  {
+    if(jets.at(i).pt() < ptMin) continue;
+    
+    bool skipJet1 = false;
+    if(blacklist)
+      for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
+        if(blacklist -> at(kk) == static_cast<int>(i)) skipJet1 = true;
+    if(skipJet1) continue;
+    
+    
+    
+    // loop over 2nd jet
+    for(unsigned int j = i+1; j < jets.size(); ++j)
+    {
+      if(jets.at(j).pt() < ptMin) continue;
+      
+      bool skipJet2 = false;
+      if(blacklist)
+        for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
+          if(blacklist -> at(kk) == static_cast<int>(j)) skipJet2 = true;
+      if(skipJet2) continue;
+      
+      
+      
+      // -------------------------------------
+      // select jets with different techniques
+      // -------------------------------------
+      
+      if(method == "maxDeta")
+      {
+        tempDeta = deltaEta(jets.at(i).Eta(), jets.at(j).Eta());
+        if( (tempDeta > maxDeta) && 
+            (tempDeta > DetaMin) &&
+            (tempDeta < DetaMax) )
+        {
+          maxDeta = tempDeta;
+          
+    	    it.at(0) = i;
+	        it.at(1) = j;
+        }
+      }
+      
+      // -------------------------------------
+      
+      if(method == "maxMJJ")
+      {
+        tempMJJ = (jets.at(i) + jets.at(j)).mass();
+        tempDeta = deltaEta(jets.at(i).Eta(), jets.at(j).Eta());
+        
+        if( (tempMJJ > maxMJJ) &&
+            (tempDeta > DetaMin) &&
+            (tempDeta < DetaMax) )
+        {
+          maxMJJ = tempMJJ;
+          
+    	    it.at(0) = i;
+	        it.at(1) = j;
+        }
+      }
+      
+      // -------------------------------------
+      else if(method == "maxPt")
+      {
+        tempPt = sqrt( (jets.at(i) + jets.at(j)).perp2() );
+        tempDeta = deltaEta(jets.at(i).Eta(), jets.at(j).Eta());
+        if( (tempPt > maxPt) &&
+            (tempDeta > DetaMin) &&
+            (tempDeta < DetaMax) )
+        {
+          maxPt = tempPt;
+          
+	        it.at(0) = i;
+	        it.at(1) = j;
+        }
+      }
+      
+      // -------------------------------------
+      
+      else if(method == "maxSumPt")
+      {
+        tempSumPt = sqrt(jets.at(i).perp2()) + sqrt(jets.at(j).perp2());
+        tempDeta = deltaEta(jets.at(i).Eta(), jets.at(j).Eta());
+        if( (tempSumPt > maxSumPt) &&
+            (tempDeta > DetaMin) &&
+            (tempDeta < DetaMax) )
+        {
+          maxSumPt = tempSumPt;
+          
+   	      it.at(0) = i;
+	        it.at(1) = j;
+        }
+      }
+      
+      // -------------------------------------
+      
+      
+      
+    } // loop over 2nd jet
+  } // loop over 1st jet
+  
+  
+  
+  if(method == "maxMJJ")
+    return maxMJJ;
+  
+  else if(method == "maxPt")
+    return maxPt;
+  
+  else if(method == "maxSumPt")
+    return maxSumPt;
+  
+  else return -1.;
+}
+
+//  ------------------------------------------------------------
+
 int SelectLepton(std::vector<ROOT::Math::XYZTVector>& leptons,
                  const std::string& method,
                  const double& ptMin,
@@ -481,7 +705,6 @@ int SelectLepton(std::vector<ROOT::Math::XYZTVector>& leptons,
       for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
         if(blacklist -> at(kk) == static_cast<int>(i)) skipLep = true;
     if(skipLep) continue;
-    
     
     
     // -------------------------------------
@@ -516,70 +739,480 @@ int SelectLepton(std::vector<ROOT::Math::XYZTVector>& leptons,
 //  ------------------------------------------------------------
 
 
-/** select single object */
-int SelectObject(const std::vector<ROOT::Math::XYZTVector>& objects, const std::string& method,  const double& ptMin,  const std::vector<int>* blacklist ){
- // initialize variable with result
- int it = -1;
- // initialize the selection variable
- double maxPt = -999999.;
- double tempPt = 0.;
- 
- // loop over objects
- for(unsigned int i = 0; i < objects.size(); ++i)
- {
-  if( objects.at(i).Pt() < ptMin ) continue;
-  
-  //~~~~ check blacklist ~~~~
-  bool skipObj = false;
-  if(blacklist)
-   for(unsigned int kk = 0; kk < blacklist -> size(); ++kk){
-    if(blacklist -> at(kk) == static_cast<int>(i)) skipObj = true;
-   }
-   if(skipObj) continue;
 
-  //~~~~ use method ~~~~
-    if(method == "maxPt"){
-     tempPt = objects.at(i).Pt();
-     if(tempPt > maxPt) {
-      maxPt = tempPt;
-      it = i;
-     }
+
+
+
+double SelectTagJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
+                     const std::string& method,
+                     const double& ptMin,
+                     const double& DetaMIN,
+                     const double& mjjMIN,
+                     const std::vector<int>* blacklist)
+{
+  // initialize vector with result
+  it.clear();
+  it.push_back(-1);
+  it.push_back(-1);
+  
+  
+  
+  // initialize the selection variable
+  double maxMjj = -999999.;
+  double maxDeta = -999999.;
+  double maxSumPt = -999999.;
+  double tempMjj = 0.;
+  double tempDeta = 0.; 
+  double tempSumPt = 0.;
+  double prodEta = 0.;
+  
+  
+  
+  // loop over 1st jet
+  for(unsigned int i = 0; i < jets.size(); ++i)
+  {
+    if(jets.at(i).pt() < ptMin) continue;
+    
+    bool skipJet1 = false;
+    if(blacklist)
+      for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
+        if(blacklist -> at(kk) == static_cast<int>(i)) skipJet1 = true;
+    if(skipJet1) continue;
+    
+    
+    
+    // loop over 2nd jet
+    for(unsigned int j = i+1; j < jets.size(); ++j)
+    {
+      if(jets.at(j).pt() < ptMin) continue;
+      
+      bool skipJet2 = false;
+      if(blacklist)
+        for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
+          if(blacklist -> at(kk) == static_cast<int>(j)) skipJet2 = true;
+      if(skipJet2) continue;
+      
+      
+      
+      // -------------------------------------
+      // select jets with different techniques
+      // -------------------------------------
+      
+      tempMjj = (jets.at(i) + jets.at(j)).mass();
+      tempDeta = deltaEta(jets.at(i).eta(), jets.at(j).eta());
+      tempSumPt = jets.at(i).pt() + jets.at(j).pt();  
+      prodEta = jets.at(i).eta() * jets.at(j).eta(); 
+      
+      if(method == "maxMjj")
+      {
+        if( (tempMjj > maxMjj) && 
+            (tempDeta > DetaMIN) &&
+            (tempMjj > mjjMIN) )
+        {
+          maxMjj = tempMjj;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      if(method == "maxMjjEtaOpposite")
+      {
+        if( (tempMjj > maxMjj) && 
+            (tempDeta > DetaMIN) &&
+            (tempMjj > mjjMIN) && 
+            (prodEta < 0.) )
+        {
+          maxMjj = tempMjj;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      if(method == "maxDeta")
+      {
+        if( (tempDeta > maxDeta) && 
+            (tempDeta > DetaMIN) &&
+            (tempMjj > mjjMIN) )
+        {
+          maxDeta = tempDeta;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      if(method == "maxDetaEtaOpposite")
+      {
+        if( (tempDeta > maxDeta) && 
+            (tempDeta > DetaMIN) &&
+            (tempMjj > mjjMIN) && 
+            (prodEta < 0.) )
+        {
+          maxDeta = tempDeta;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      if(method == "maxSumPt")
+      {
+        if( (tempSumPt > maxSumPt) && 
+            (tempDeta > DetaMIN) &&
+            (tempMjj > mjjMIN) )
+        {
+          maxSumPt = tempSumPt;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      if(method == "maxSumPtEtaOpposite")
+      {
+        if( (tempSumPt > maxSumPt) && 
+            (tempDeta > DetaMIN) &&
+            (tempMjj > mjjMIN) && 
+            (prodEta < 0.) )
+        {
+          maxSumPt = tempSumPt;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      
+      
+    } // loop over 2nd jet
+  } // loop over 1st jet
+  
+  
+  
+  return maxMjj;
+}
+
+
+
+
+
+
+double SelectTagJet(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
+                    const double& ptMin,
+                    const double& etaMin,
+                    const std::vector<int>* blacklist)
+{
+  // initialize vector with result
+  it.clear();
+  it.push_back(-1);
+  it.push_back(-1);
+  
+  
+  
+  // initialize the selection variable
+  double maxAbsEta = -999999.;
+  double tempAbsEta = 0.;
+  
+  
+  // loop over jets
+  for(unsigned int i = 0; i < jets.size(); ++i)
+  {
+    if(jets.at(i).pt() < ptMin) continue;
+    if(fabs(jets.at(i).eta()) < etaMin) continue;
+    
+    bool skipJet1 = false;
+    if(blacklist)
+      for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
+        if(blacklist -> at(kk) == static_cast<int>(i)) skipJet1 = true;
+    if(skipJet1) continue;
+    
+    
+    
+    // -------------------------------------
+    // select jets with different techniques
+    // -------------------------------------
+    
+    tempAbsEta = fabs(jets.at(i).eta());
+    if( tempAbsEta > maxAbsEta )
+    {
+      maxAbsEta = tempAbsEta;
+      
+      it.at(0) = i;
     }
- // -------------------------------------
- } // loop over objects
- 
- if(method == "maxPt"){
-  return it;
- }
- else {
-  return -1;
- }
-}
-
-//  ------------------------------------------------------------
-
-
-int getNumberPTThreshold (const std::vector<ROOT::Math::XYZTVector>& objects, const double& ptMin,  const std::vector<int>* blacklist ){
- // initialize variable with result
- int number = 0;
- // loop over objects
- for(unsigned int i = 0; i < objects.size(); ++i){
-  if( objects.at(i).Pt() < ptMin ) continue;
-  //~~~~ check blacklist ~~~~
-  bool skipObj = false;
-  if(blacklist)
-   for(unsigned int kk = 0; kk < blacklist -> size(); ++kk){
-    if(blacklist -> at(kk) == static_cast<int>(i)) skipObj = true;
-   }
-   if(skipObj) continue;
-   
-   number++;
- } // loop over objects
+      
+      
+      
+  } // loop over jets
   
- return number;  
+  
+  
+  return maxAbsEta;
 }
 
-//  ------------------------------------------------------------
+
+
+
+
+
+double Select4Jets(std::vector<int>& it_W, std::vector<int>& it_tag, 
+                   std::vector<ROOT::Math::XYZTVector>& jets,
+                   const std::string& method,
+                   const double& ptMin,
+                   const double& etaMAX,
+                   const double& DetaMAX,
+                   const double& mjjMAX)
+{
+  // initialize vector with result
+  it_W.clear();
+  it_tag.clear();
+  it_W.push_back(-1);
+  it_W.push_back(-1);
+  it_tag.push_back(-1);
+  it_tag.push_back(-1);
+  
+  ROOT::Math::XYZTVector jet1_W;
+  ROOT::Math::XYZTVector jet2_W;
+  ROOT::Math::XYZTVector jet1_tag;
+  ROOT::Math::XYZTVector jet2_tag;
+  
+  
+  
+  // initialize the selection variable
+  double tempDeta = 0.;
+  double minDeta = 999999999999.; 
+  double tempDeta_W = 0.; 
+  double tempMjj_W = 0.; 
+  double tempDeta_tag = 0.; 
+  double tempMjj_tag = 0.; 
+  
+  
+  
+  // loop over 1st jet
+  for(unsigned int i = 0; i < jets.size(); ++i)
+  {
+    if(jets.at(i).pt() < ptMin) continue;
+    if(fabs(jets.at(i).eta()) > etaMAX) continue;
+    
+    
+    // loop over 2nd jet
+    for(unsigned int j = i+1; j < jets.size(); ++j)
+    {
+      if(jets.at(j).pt() < ptMin) continue;
+      if(fabs(jets.at(j).eta()) > etaMAX) continue;      
+      
+      
+      jet1_W = jets.at(i);
+      jet2_W = jets.at(j);
+      tempDeta_W = deltaEta(jet1_W.eta(), jet2_W.eta());
+      tempMjj_W = (jet1_W + jet2_W).mass();
+      
+      tempDeta = (tempDeta_W / 2.5);
+      
+      //std::cout << "1st jet: " << i << "   et = " << jet1_W.pt() << "   eta = " << jet1_W.eta() << std::endl;
+      //std::cout << "2nd jet: " << j << "   et = " << jet2_W.pt() << "   eta = " << jet2_W.eta() << std::endl;
+      //std::cout << "mJJ = " << (jet1_W+jet2_W).mass() << "   Deta = " << deltaEta(jet1_W.eta(),jet2_W.eta()) << std::endl; 
+      bool isTagJetFound = false;
+      
+      
+      // loop over 3rd jet
+      for(unsigned int k = 0; k < jets.size(); ++k)
+      {
+        if(k == i) continue;
+        if(k == j) continue;
+        if(jets.at(k).pt() < ptMin) continue;
+        
+        
+        // loop over 4th jet
+        for(unsigned int l = k+1; l < jets.size(); ++l)
+        {
+          if(l == i) continue;
+          if(l == j) continue;          
+          if(jets.at(l).pt() < ptMin) continue;
+          
+          
+          jet1_tag = jets.at(k);
+          jet2_tag = jets.at(l);
+          tempDeta_tag = deltaEta(jet1_tag.eta(), jet2_tag.eta());          
+          tempMjj_tag = (jet1_tag + jet2_tag).mass();
+          
+          tempDeta += 1. / (tempMjj_tag / 80.399);
+	  
+          //std::cout << "3rd jet: " << k << "   et = " << jet1_tag.pt() << "   eta = " << jet1_tag.eta() << std::endl;
+          //std::cout << "4th jet: " << l << "   et = " << jet2_tag.pt() << "   eta = " << jet2_tag.eta() << std::endl;
+          //std::cout << "mJJ = " << (jet1_tag+jet2_tag).mass() << "   Deta = " << deltaEta(jet1_tag.eta(),jet2_tag.eta()) << std::endl;           
+
+          if(method == "minDeta")
+          {
+            if( (tempDeta < minDeta) &&
+                (tempDeta_W < DetaMAX) &&
+                (tempMjj_W < mjjMAX) )
+            {
+              minDeta = tempDeta;
+	      //std::cout << "trovati W e tag con " << minDeta << std::endl; 
+              it_W.at(0) = i;
+              it_W.at(1) = j;
+              it_tag.at(0) = k;
+              it_tag.at(1) = l;
+              
+              isTagJetFound = true;
+            }
+          }
+          
+        }
+      }
+      
+      
+      
+      if( (method == "minDeta") && (isTagJetFound == false ) )
+      {
+        if( (tempDeta < minDeta) &&
+            (tempDeta_W < DetaMAX) &&
+            (tempMjj_W < mjjMAX) )
+        {
+          minDeta = tempDeta;
+          //std::cout << "trovato W con " << minDeta << std::endl; 
+          it_W.at(0) = i;
+          it_W.at(1) = j;
+          it_tag.at(0) = -1;
+          it_tag.at(1) = -1;
+        }
+      }
+      
+    } // loop over 2nd jet
+  } // loop over 1st jet
+  
+  
+  
+  return minDeta;
+}
+
+
+
+
+
+
+
+double SelectWJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
+                   const std::string& method,
+                   const double& ptMin,
+                   const double& etaMAX,
+                   const double& DetaMAX,
+                   const double& mjjMAX,
+                   const std::vector<int>* blacklist)
+{
+  // initialize vector with result
+  it.clear();
+  it.push_back(-1);
+  it.push_back(-1);
+  
+  
+  
+  // initialize the selection variable
+  double minDeta = 999999.;
+  double maxSumPt = -999999.;
+  double minDMjj = 999999.;
+  double tempSumPt = 0.;
+  double tempMjj = 0.;
+  double tempDMjj = 0.;
+  double tempDeta = 0.; 
+  
+  
+  
+  // loop over 1st jet
+  for(unsigned int i = 0; i < jets.size(); ++i)
+  {
+    if(jets.at(i).pt() < ptMin) continue;
+    if(fabs(jets.at(i).eta()) > etaMAX) continue;
+    
+    bool skipJet1 = false;
+    if(blacklist)
+      for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
+        if(blacklist -> at(kk) == static_cast<int>(i)) skipJet1 = true;
+    if(skipJet1) continue;
+    
+    
+    
+    // loop over 2nd jet
+    for(unsigned int j = i+1; j < jets.size(); ++j)
+    {
+      if(jets.at(j).pt() < ptMin) continue;
+      if(fabs(jets.at(j).eta()) > etaMAX) continue;      
+
+      bool skipJet2 = false;
+      if(blacklist)
+        for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
+          if(blacklist -> at(kk) == static_cast<int>(j)) skipJet2 = true;
+      if(skipJet2) continue;
+      
+      
+      
+      // -------------------------------------
+      // select jets with different techniques
+      // -------------------------------------
+      tempSumPt = jets.at(i).pt() + jets.at(j).pt();
+      tempDeta = deltaEta(jets.at(i).Eta(), jets.at(j).Eta());
+      tempMjj = (jets.at(i) + jets.at(j)).mass();
+      tempDMjj = fabs((jets.at(i) + jets.at(j)).mass() - 80.399);
+      
+      if(method == "maxSumPt")
+      {
+        if( (tempSumPt > maxSumPt) &&
+            (tempDeta < DetaMAX) &&
+            (tempMjj < mjjMAX) )
+        {
+          maxSumPt = tempSumPt;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      if(method == "minDeta")
+      {  
+        if( (tempDeta < minDeta) &&
+            (tempDeta < DetaMAX) &&
+            (tempMjj < mjjMAX) )
+        {
+          minDeta = tempDeta;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      if(method == "minDMjj")
+      {  
+        if( (tempDMjj < minDMjj) &&
+            (tempDeta < DetaMAX) &&
+            (tempMjj < mjjMAX) )
+        {
+          minDMjj = tempDMjj;
+          
+          it.at(0) = i;
+          it.at(1) = j;
+        }
+      }
+      
+      
+      
+    } // loop over 2nd jet
+  } // loop over 1st jet
+  
+  
+  
+  return maxSumPt;
+}
+
+
+
+
+
+
+
+
+
 
 
 int Build4JetCombinations(std::vector<std::vector<int> >& combinations, const int& nJets)
@@ -633,901 +1266,46 @@ void Print4JetCombination(const std::vector<int>& combination)
 
 
 
-int Build2JetCombinations(std::vector<std::vector<int> >& combinations, const int& nJets)
+
+
+
+
+void Print4V(const ROOT::Math::XYZTVector& p)
 {
- combinations.clear();
- 
- std::vector<int> vi;
- for(int i = 0; i < nJets; ++i)
-  vi.push_back(i);
- 
- std::vector<int> buffer;
- buffer.push_back(0);
- buffer.push_back(1);
- 
- combinations.push_back(buffer);
- 
- std::vector<int> oldCombination = buffer;
- while( next_permutation(vi.begin(), vi.end()) )      
- {
-  if(vi.at(0) < vi.at(1))
-  {
-   buffer.at(0) = vi.at(0);
-   buffer.at(1) = vi.at(1);
-
-   if(buffer == oldCombination) continue;
-   
-   combinations.push_back(buffer);
-   oldCombination = buffer;
-  }  
- }
- 
- return combinations.size();
+  std::cout << std::fixed << std::setprecision(2)
+            << "(E,px,py,pz) = " 
+            << "(" << std::setw(8) << p.energy() 
+            << "," << std::setw(8) << p.px()
+            << "," << std::setw(8) << p.py()
+            << "," << std::setw(8) << p.pz()
+            << ")" 
+            << "\tpt = " 
+            << std::setw(7) << p.pt()
+            << "\teta = " 
+            << std::setw(6) << p.eta()
+            << "\tphi = " 
+            << std::setw(5) << p.phi()
+            << std::endl;
 }
 
 
 
-//  ------------------------------------------------------------
 
-///==== 4 objects combinations builder ====
-int Build4ObjectsCombinations(std::vector<std::vector<int> >& combinations, const int& nObj, const std::vector<int>* whiteList)
+
+
+bool GetElectronFlag(const std::string& flag)
 {
- combinations.clear();
- 
- std::vector<int> vi;
- 
- if(whiteList != NULL) {
-  for(int i = 0; i < nObj; ++i) {
-   if (whiteList -> at(i) == 1){
-    vi.push_back(i);
-   }
-  }
- }
- 
- if (vi.size() < 4) {
-  return -1;
- }
- 
- std::vector<int> buffer;
- buffer.push_back(vi.at(0));
- buffer.push_back(vi.at(1));
- buffer.push_back(vi.at(2));
- buffer.push_back(vi.at(3));
- 
- combinations.push_back(buffer);
- 
- std::vector<int> oldCombination = buffer;
- while( next_permutation(vi.begin(), vi.end()) )      
- {
-  if( (vi.at(0) < vi.at(1)) && (vi.at(2) < vi.at(3)) )
-  {
-   buffer.at(0) = vi.at(0);
-   buffer.at(1) = vi.at(1);
-   buffer.at(2) = vi.at(2);
-   buffer.at(3) = vi.at(3);                  
-   
-   if(buffer == oldCombination) continue;
-   
-   combinations.push_back(buffer);
-   oldCombination = buffer;
-  }  
- }
- 
- return combinations.size();
+  //std::cout << "flag = " << flag << std::endl;
+  std::stringstream ss(flag);
+  
+  if( flag == "0" ) return true;
+  else return false; 
 }
 
-//  ------------------------------------------------------------
-
-
-double SelectResonance(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& objects,
-		       const double& mass,
-		       const double& ptMin,
-		       const std::vector<int>* blacklist){
- // initialize vector with result
- it.clear();
- it.push_back(-1);
- it.push_back(-1);
- 
- double minDMass = 999999.;
- double tempDMass = 0;
- 
- // loop over 1st object
- for(unsigned int i = 0; i < objects.size(); ++i){
-  
-  if(objects.at(i).Pt() < ptMin) continue;
-  
-  bool skipObj1 = false;
-  if(blacklist)
-   for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
-    if(blacklist -> at(kk) == static_cast<int>(i)) skipObj1 = true;
-    if(skipObj1) continue;
-    
-    // loop over 2nd object
-    for(unsigned int j = i+1; j < objects.size(); ++j)
-    {
-     if(objects.at(j).Pt() < ptMin) continue;
-     
-     bool skipObj2 = false;
-     if(blacklist)
-      for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
-       if(blacklist -> at(kk) == static_cast<int>(j)) skipObj2 = true;
-       if(skipObj2) continue;
-       
-       tempDMass = fabs((objects.at(i) + objects.at(j)).mass() - mass);
-      if(tempDMass < minDMass)
-      {
-       minDMass = tempDMass;
-       it.at(0) = i;
-       it.at(1) = j;
-      }
-    } // loop over 2nd object
- } // loop over 1st object
- return minDMass;
-}
-//  ------------------------------------------------------------
-
-
-double SelectResonanceOppositeCharge(std::vector<int>& it,
-		       std::vector<ROOT::Math::XYZTVector>& objects,
-		       std::vector<float>& charge,	     
-		       const double& mass,
-		       const double& ptMin,
-		       const std::vector<int>* blacklist){
- // initialize vector with result
- it.clear();
- it.push_back(-1);
- it.push_back(-1);
- 
- double minDMass = 999999.;
- double tempDMass = 0;
- 
- // loop over 1st object
- for(unsigned int i = 0; i < objects.size(); ++i){
-  if(objects.at(i).Pt() < ptMin) continue;
-  double charge1 = charge.at(i);
-  
-  bool skipObj1 = false;
-  if(blacklist)
-   for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
-    if(blacklist -> at(kk) == static_cast<int>(i)) skipObj1 = true;
-    if(skipObj1) continue;
-    
-    // loop over 2nd object
-    for(unsigned int j = i+1; j < objects.size(); ++j)
-    {
-     if(objects.at(j).Pt() < ptMin) continue;
-     double charge2 = charge.at(j);     
-     if(charge1 * charge2 > 0) continue;
-     
-     bool skipObj2 = false;
-     
-     if(blacklist)
-      for(unsigned int kk = 0; kk < blacklist -> size(); ++kk)
-       if(blacklist -> at(kk) == static_cast<int>(j)) skipObj2 = true;
-       if(skipObj2) continue;
-       
-       tempDMass = fabs((objects.at(i) + objects.at(j)).mass() - mass);
-      if(tempDMass < minDMass)
-      {
-       minDMass = tempDMass;
-       it.at(0) = i;
-       it.at(1) = j;
-      }
-    } // loop over 2nd object
- } // loop over 1st object
- return minDMass;
-}
-//  ------------------------------------------------------------
-
-
-
-// -------------------------------------------------------------
-
-
-TH1D * smartProfileX (TH2F * strip, double width){
-  TProfile * stripProfile = strip->ProfileX () ;
-
-  // (from FitSlices of TH2.h)
-
-  double xmin = stripProfile->GetXaxis ()->GetXmin () ;
-  double xmax = stripProfile->GetXaxis ()->GetXmax () ;
-  int profileBins = stripProfile->GetNbinsX () ;
-
-  std::string name = strip->GetName () ;
-  name += "_smart_X" ; 
-  TH1D * prof = new TH1D(name.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
-   
-  int cut = 0 ; // minimum number of entries per fitted bin
-  int nbins = strip->GetXaxis ()->GetNbins () ;
-  int binmin = 1 ;
-  int ngroup = 1 ; // bins per step
-  int binmax = nbins ;
-
-  // loop over the strip bins
-  for (int bin=binmin ; bin<=binmax ; bin += ngroup) 
-    {
-      TH1D *hpy = strip->ProjectionY ("_temp",bin,bin+ngroup-1,"e") ;
-      if (hpy == 0) continue ;
-      int nentries = Int_t (hpy->GetEntries ()) ;
-      if (nentries == 0 || nentries < cut) {delete hpy ; continue ;} 
- 
-      Int_t biny = bin + ngroup/2 ;
-      
-      hpy->GetXaxis ()->SetRangeUser ( hpy->GetMean () - width * hpy->GetRMS (), hpy->GetMean () + width * hpy->GetRMS ()) ;         
-      prof->Fill (strip->GetXaxis ()->GetBinCenter (biny), hpy->GetMean ()) ;       
-      prof->SetBinError (biny,hpy->GetRMS()) ;
-      
-      delete hpy ;
-    } // loop over the bins
-
-  delete stripProfile ;
-  return prof ;
-}
-
-
-// -------------------------------------------------------------
-
-TH1D * smartGausProfileX (TH2F * strip, double width){
-  TProfile * stripProfile = strip->ProfileX () ;
-
-  // (from FitSlices of TH2.h)
-
-  double xmin = stripProfile->GetXaxis ()->GetXmin () ;
-  double xmax = stripProfile->GetXaxis ()->GetXmax () ;
-  int profileBins = stripProfile->GetNbinsX () ;
-
-  std::string name = strip->GetName () ;
-  name += "_smartGaus_X" ; 
-  TH1D * prof = new TH1D(name.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
-   
-  int cut = 0 ; // minimum number of entries per fitted bin
-  int nbins = strip->GetXaxis ()->GetNbins () ;
-  int binmin = 1 ;
-  int ngroup = 1 ; // bins per step
-  int binmax = nbins ;
-
-  // loop over the strip bins
-  for (int bin=binmin ; bin<=binmax ; bin += ngroup) 
-    {
-      TH1D *hpy = strip->ProjectionY ("_temp",bin,bin+ngroup-1,"e") ;
-      if (hpy == 0) continue ;
-      int nentries = Int_t (hpy->GetEntries ()) ;
-      if (nentries == 0 || nentries < cut) {delete hpy ; continue ;} 
- 
-      Int_t biny = bin + ngroup/2 ;
-
-      TF1 * gaussian = new TF1 ("gaussian","gaus", hpy->GetMean () - width * hpy->GetRMS (), hpy->GetMean () + width * hpy->GetRMS ()) ; 
-      gaussian->SetParameter (1,hpy->GetMean ()) ;
-      gaussian->SetParameter (2,hpy->GetRMS ()) ;
-      hpy->Fit ("gaussian","RQL") ;           
-
-//       hpy->GetXaxis ()->SetRangeUser ( hpy->GetMean () - width * hpy->GetRMS (), hpy->GetMean () + width * hpy->GetRMS ()) ;         
-      prof->Fill (strip->GetXaxis ()->GetBinCenter (biny), gaussian->GetParameter (1)) ;       
-      prof->SetBinError (biny,gaussian->GetParameter (2)) ;
-      
-      delete gaussian ;
-      delete hpy ;
-    } // loop over the bins
-
-  delete stripProfile ;
-  return prof ;
-}
-
-
-// -------------------------------------------------------------
-
-
-TH1D * smartProfileY (TH2F * strip, double width){
- TProfile * stripProfile = strip->ProfileY () ;
- 
- // (from FitSlices of TH2.h)
- 
- double xmin = stripProfile->GetXaxis ()->GetXmin () ;
- double xmax = stripProfile->GetXaxis ()->GetXmax () ;
- int profileBins = stripProfile->GetNbinsX () ;
- 
- std::string name = strip->GetName () ;
- name += "_smart_Y" ; 
- TH1D * prof = new TH1D(name.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
- 
- int cut = 0 ; // minimum number of entries per fitted bin
- int nbins = strip->GetYaxis ()->GetNbins () ;
- int binmin = 1 ;
- int ngroup = 1 ; // bins per step
- int binmax = nbins ;
- 
- // loop over the strip bins
- for (int bin=binmin ; bin<=binmax ; bin += ngroup) 
- {
-  TH1D *hpx = strip->ProjectionX ("_temp",bin,bin+ngroup-1,"e") ;
-  if (hpx == 0) continue ;
-  int nentries = Int_t (hpx->GetEntries ()) ;
-  if (nentries == 0 || nentries < cut) {delete hpx ; continue ;} 
-  
-  Int_t biny = bin + ngroup/2 ;
-  
-  hpx->GetXaxis ()->SetRangeUser ( hpx->GetMean () - width * hpx->GetRMS (), hpx->GetMean () + width * hpx->GetRMS ()) ;         
-  prof->Fill (strip->GetYaxis ()->GetBinCenter (biny), hpx->GetMean ()) ;       
-  prof->SetBinError (biny,hpx->GetRMS()) ;
-  
-  delete hpx ;
- } // loop over the bins
- 
- delete stripProfile ;
- return prof ;
-}
-
-
-// -------------------------------------------------------------
-
-TH1D * smartGausProfileY (TH2F * strip, double width){
- TProfile * stripProfile = strip->ProfileY () ;
- 
- // (from FitSlices of TH2.h)
- 
- double xmin = stripProfile->GetXaxis ()->GetXmin () ;
- double xmax = stripProfile->GetXaxis ()->GetXmax () ;
- int profileBins = stripProfile->GetNbinsX () ;
- 
- std::string name = strip->GetName () ;
- name += "_smartGaus_Y" ; 
- TH1D * prof = new TH1D(name.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
- 
- int cut = 0 ; // minimum number of entries per fitted bin
- int nbins = strip->GetYaxis ()->GetNbins () ;
- int binmin = 1 ;
- int ngroup = 1 ; // bins per step
- int binmax = nbins ;
- 
- // loop over the strip bins
- for (int bin=binmin ; bin<=binmax ; bin += ngroup) 
- {
-  TH1D *hpx = strip->ProjectionX ("_temp",bin,bin+ngroup-1,"e") ;
-  if (hpx == 0) continue ;
-  int nentries = Int_t (hpx->GetEntries ()) ;
-  if (nentries == 0 || nentries < cut) {delete hpx ; continue ;} 
-  
-  Int_t biny = bin + ngroup/2 ;
-  
-  TF1 * gaussian = new TF1 ("gaussian","gaus", hpx->GetMean () - width * hpx->GetRMS (), hpx->GetMean () + width * hpx->GetRMS ()) ; 
-  gaussian->SetParameter (1,hpx->GetMean ()) ;
-  gaussian->SetParameter (2,hpx->GetRMS ()) ;
-  hpx->Fit ("gaussian","RQL") ;           
-  
-  //       hpy->GetXaxis ()->SetRangeUser ( hpy->GetMean () - width * hpy->GetRMS (), hpy->GetMean () + width * hpy->GetRMS ()) ;         
-  prof->Fill (strip->GetYaxis ()->GetBinCenter (biny), gaussian->GetParameter (1)) ;       
-  prof->SetBinError (biny,gaussian->GetParameter (2)) ;
-  
-  delete gaussian ;
-  delete hpx ;
- } // loop over the bins
- 
- delete stripProfile ;
- return prof ;
-}
-
-// -------------------------------------------------------------
-
-
-TH1F* FC1D(TH1F* h, double CL){
- ///==== AM Get Neyman Intervals ====
- std::vector<int> flags; 
- std::vector<int> flagsNo; 
- std::multimap<double,int > values;
- for(int bin = 1; bin <= h->GetNbinsX(); bin++){
-  values.insert(std::pair<double, int>(h->GetBinContent(bin), bin));
- }
- 
- double allIntegral = h->Integral(1, h->GetNbinsX()); 
- double tempIntegral = 0;
- 
- for (std::multimap<double,int>::iterator iMap = values.begin(); iMap!= values.end(); iMap++){
-  tempIntegral += iMap->first;
-  if (tempIntegral > allIntegral*(1-CL)) flags.push_back(iMap->second);
-  else flagsNo.push_back(iMap->second);
- }
- 
- TH1F* clone = (TH1F*)(h->Clone()); 
- for (int iFlag = 0; iFlag<flags.size(); iFlag++ ){
-  clone -> SetBinContent(flags.at(iFlag), h->GetBinContent(flags.at(iFlag)));
- }
- for (int iFlag = 0; iFlag<flagsNo.size(); iFlag++ ){
-  clone -> SetBinContent(flagsNo.at(iFlag), 0);
- } 
- return clone;
-}
-
-
-TH2F* FC2D(TH2F* h, double CL){
- ///---- same as before but 2D ----
- std::vector<int> flags; 
- std::vector<int> flagsNo; 
- std::multimap<double,int > values;
- 
- for (int iBinX = 1; iBinX <= h->GetXaxis()->GetNbins(); iBinX++){
-  for (int iBinY = 1; iBinY <= h->GetYaxis()->GetNbins(); iBinY++){
-   int bin = h->GetBin(iBinX,iBinY);
-   values.insert(std::pair<double, int>(h->GetBinContent(iBinX,iBinY),bin));
-  }
- }
- 
- double allIntegral = h->Integral(1, h->GetNbinsX(),1, h->GetNbinsY()); 
- double tempIntegral = 0;
- for (std::multimap<double,int>::iterator iMap = values.begin(); iMap!= values.end(); iMap++){
-  tempIntegral += iMap->first;
-  if (tempIntegral > allIntegral*(1-CL)) flags.push_back(iMap->second);
-  else flagsNo.push_back(iMap->second);
- }
- 
- TH2F* clone = (TH2F*)(h->Clone()); 
- for (int iFlag = 0; iFlag<flags.size(); iFlag++ ){
-  clone -> SetBinContent(flags.at(iFlag), 1);
- }
- for (int iFlag = 0; iFlag<flagsNo.size(); iFlag++ ){
-  clone -> SetBinContent(flagsNo.at(iFlag), 0);
- } 
- return clone;
-}
-
-// -------------------------------------------------------------
-
-std::vector<double> getSigmaBands_FeldmanCousins (const TH1 & histo)
+bool GetElectronSeverityLevel(const std::string& severityLevel)
 {
- ///==== AM Get Neyman Intervals, MPV, +/- 1 sigma ====
- 
- int StepY = 1000;
- 
- std::vector<double> result (5, 0.) ;
- 
- double maxY = histo.GetMaximum();
- int totBins = histo.GetNbinsX();
- int iBinCenter = histo.GetMaximumBin();
- int iBinMin = iBinCenter;
- int iBinMax = iBinMin;
- int iBinMin_cycle = iBinCenter;
- int iBinMax_cycle = iBinMin_cycle;
- double totalEntries = histo.GetEffectiveEntries();
- double integral = histo.GetBinContent(iBinCenter);
- double area = integral / totalEntries;
- double DeltaY = maxY / StepY;
- double PositionY = maxY;
- 
- double ValueSx = maxY;
- double ValueDx = maxY;
- 
- bool doContinue68 = true; 
- int increasePerformance = 0;
- 
- if (totalEntries != 0) { ///==== if 0 entries return 0,0,0,0,0
-  while (doContinue68 && PositionY>0){ /// && PositionY>0 test for infinite-loop stop
-   PositionY = PositionY - DeltaY; 
-   ///==== look left ====
-   for (int iBinSx = (iBinCenter-iBinMin_cycle); iBinSx < iBinCenter; iBinSx++){
-    ValueSx = histo.GetBinContent(iBinCenter-iBinSx);
-    if (ValueSx <= PositionY) {
-     iBinMin = iBinCenter-iBinSx;
-     break;
-    }
-    else {
-     if (iBinSx == (iBinCenter-1)){
-      iBinMin = iBinSx;
-     }
-    }
-   }
-   ///==== look right ====
-   for (int iBinDx = (iBinMax_cycle-iBinCenter); iBinDx <= (totBins - iBinCenter); iBinDx++){
-    ValueDx = histo.GetBinContent(iBinCenter+iBinDx);
-    if (ValueDx <= PositionY) {
-     iBinMax = iBinCenter+iBinDx;
-     break;
-    }
-    else {
-     if (iBinDx == ((totBins - iBinCenter)-1)){
-      iBinMax = iBinDx;
-     }
-    }
-   }
-   
-   integral = histo.Integral(iBinMin,iBinMax);
-   area = integral / totalEntries;
-//    std::cerr << " area 68[" << iBinMin << ":" << iBinCenter << ":" << iBinMax << "] [" << PositionY << ":" << maxY << "] = " << area << " = " << integral << " / " << totalEntries << std::endl;
-   if (area > 0.68) {
-    if (increasePerformance == 0){
-     increasePerformance = 1;
-     PositionY = PositionY + DeltaY;
-     DeltaY  = DeltaY / 10.;
-    }
-    else {
-     doContinue68 = false;
-    }
-   }
-   else {
-    iBinMin_cycle = iBinMin;
-    iBinMax_cycle = iBinMax;
-   }
-  }
+  //std::cout << "severityLevel = " << severityLevel << std::endl;
   
-  ///=== 68% and mean ===
-  result.at(1) = histo.GetBinCenter(iBinMin);
-  result.at(2) = histo.GetBinCenter(iBinCenter);
-  result.at(3) = histo.GetBinCenter(iBinMax);
-  ///====================
-  
-  
-  bool doContinue95 = true; 
-  increasePerformance = 0;
-  
-  while (doContinue95 && PositionY>0){ /// && PositionY>0 test for infinite-loop stop
-   PositionY = PositionY - DeltaY;
-   ///==== look left ====
-   for (int iBinSx = (iBinCenter-iBinMin_cycle); iBinSx < iBinCenter; iBinSx++){
-    ValueSx = histo.GetBinContent(iBinCenter-iBinSx);
-//     std::cerr << " ValueSx[" << iBinSx << "] = " << ValueSx << " " ;
-    if (ValueSx <= PositionY) {
-//      std::cerr << "found SX " << std::endl;
-     iBinMin = iBinCenter-iBinSx;
-     break;
-    }
-    else {
-     if (iBinSx == (iBinCenter-1)){
-      iBinMin = iBinSx;
-     }
-    }
-   }
-   ///==== look right ====
-   for (int iBinDx = (iBinMax_cycle-iBinCenter); iBinDx <= (totBins - iBinCenter); iBinDx++){
-    ValueDx = histo.GetBinContent(iBinCenter+iBinDx);
-//     std::cerr << " ValueDx[" << iBinDx << "] = " << ValueDx << " " ;
-    if (ValueDx <= PositionY) {
-//      std::cerr << "found DX " << std::endl;
-     iBinMax = iBinCenter+iBinDx;
-     break;
-    }
-    else {
-     if (iBinDx == ((totBins - iBinCenter)-1)){
-      iBinMax = iBinDx;
-     }
-    }
-   }
-   
-   integral = histo.Integral(iBinMin,iBinMax);
-   area = integral / totalEntries;
-//    std::cerr << " area 95[" << iBinMin << ":" << iBinCenter << ":" << iBinMax << "] [" << PositionY << ":" << maxY << "] = " << area << " = " << integral << " / " << totalEntries << "    SX : " << iBinCenter-iBinMin_cycle << " : " << iBinCenter << " DX : " << (iBinMax_cycle-iBinCenter) << " : " << (totBins - iBinCenter) << std::endl;
-   if (area > 0.95) {
-    if (increasePerformance == 0){
-     increasePerformance = 1;
-     PositionY = PositionY + DeltaY;
-     DeltaY  = DeltaY / 10.;
-    }
-    else {
-     doContinue95 = false;
-    }
-   }
-   else {
-    iBinMin_cycle = iBinMin;
-    iBinMax_cycle = iBinMax;
-   }
-  }
-  
-  ///=== 95% ===
-  result.at(0) = histo.GetBinCenter(iBinMin);
-  result.at(4) = histo.GetBinCenter(iBinMax);
-  ///===========
- }
- 
- return result ;
+  if( severityLevel == "0" ) return true;
+  else return false; 
 }
-
-
-
-// -------------------------------------------------------------
-
-
-std::vector<TH1D*> smartGausProfileY_FeldmanCousins (TH2F * strip, double width){
- TProfile * stripProfile = strip->ProfileY () ;
- 
- double xmin = stripProfile->GetXaxis ()->GetXmin () ;
- double xmax = stripProfile->GetXaxis ()->GetXmax () ;
- int profileBins = stripProfile->GetNbinsX () ;
- 
- std::string nameLow = strip->GetName () ;
- nameLow += "_smartGaus_FeldmanCousins_Low_Y" ; 
- TH1D * prof_Low = new TH1D(nameLow.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
-
- std::string nameMean = strip->GetName () ;
- nameMean += "_smartGaus_FeldmanCousins_Mean_Y" ; 
- TH1D * prof_Mean = new TH1D(nameMean.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
- 
- std::string nameHigh = strip->GetName () ;
- nameHigh += "_smartGaus_FeldmanCousins_High_Y" ; 
- TH1D * prof_High = new TH1D(nameHigh.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
- 
- int cut = 0 ; // minimum number of entries per fitted bin
- int nbins = strip->GetYaxis ()->GetNbins () ;
- int binmin = 1 ;
- int ngroup = 1 ; // bins per step
- int binmax = nbins ;
- 
- // loop over the strip bins
- for (int bin=binmin ; bin<=binmax ; bin += ngroup) 
- {
-  TH1D *hpx = strip->ProjectionX ("_temp",bin,bin+ngroup-1,"e") ;
-  if (hpx == 0) continue ;
-  int nentries = Int_t (hpx->GetEntries ()) ;
-  if (nentries == 0 || nentries < cut) {delete hpx ; continue ;} 
-  
-  Int_t biny = bin + ngroup/2 ;
-  
-  std::vector<double> band = getSigmaBands_FeldmanCousins(*hpx);
-
-  prof_Low->Fill (strip->GetYaxis ()->GetBinCenter (biny), band.at(1)) ;       
-  prof_Mean->Fill (strip->GetYaxis ()->GetBinCenter (biny), band.at(2)) ;       
-  prof_High->Fill (strip->GetYaxis ()->GetBinCenter (biny), band.at(3)) ;       
-  
-  delete hpx ;
- } // loop over the bins
- 
- delete stripProfile ;
- 
- std::vector<TH1D*> result;
- result.push_back(prof_Low);
- result.push_back(prof_Mean);
- result.push_back(prof_High);
- 
- return result ;
-}
-
-
-// -------------------------------------------------------------
-
-
-
-std::vector<TH1D*> smartProfileX_FeldmanCousins (TH2F * strip, double width){
- TProfile * stripProfile = strip->ProfileX () ;
- 
- // (from FitSlices of TH2.h)
- 
- double xmin = stripProfile->GetXaxis ()->GetXmin () ;
- double xmax = stripProfile->GetXaxis ()->GetXmax () ;
- int profileBins = stripProfile->GetNbinsX () ;
- 
- std::string nameLow = strip->GetName () ;
- nameLow += "_smartGaus_FeldmanCousins_Low_X" ; 
- TH1D * prof_Low = new TH1D(nameLow.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
- 
- std::string nameMean = strip->GetName () ;
- nameMean += "_smartGaus_FeldmanCousins_Mean_X" ; 
- TH1D * prof_Mean = new TH1D(nameMean.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
- 
- std::string nameHigh = strip->GetName () ;
- nameHigh += "_smartGaus_FeldmanCousins_High_X" ; 
- TH1D * prof_High = new TH1D(nameHigh.c_str (),strip->GetTitle (),profileBins,xmin,xmax) ;
- 
- int cut = 0 ; // minimum number of entries per fitted bin
- int nbins = strip->GetXaxis ()->GetNbins () ;
- int binmin = 1 ;
- int ngroup = 1 ; // bins per step
- int binmax = nbins ;
- 
- // loop over the strip bins
- for (int bin=binmin ; bin<=binmax ; bin += ngroup) 
- {
-  TH1D *hpy = strip->ProjectionY ("_temp",bin,bin+ngroup-1,"e") ;
-  if (hpy == 0) continue ;
-  int nentries = Int_t (hpy->GetEntries ()) ;
-  if (nentries == 0 || nentries < cut) {delete hpy ; continue ;} 
-  
-  Int_t biny = bin + ngroup/2 ;
-  
-  std::vector<double> band = getSigmaBands_FeldmanCousins(*hpy);
-  
-  prof_Low->Fill (strip->GetXaxis ()->GetBinCenter (biny), band.at(1)) ;       
-  prof_Mean->Fill (strip->GetXaxis ()->GetBinCenter (biny), band.at(2)) ;       
-  prof_High->Fill (strip->GetXaxis ()->GetBinCenter (biny), band.at(3)) ;       
-  
-  delete hpy ;
- } // loop over the bins
- 
- delete stripProfile ;
-
- std::vector<TH1D*> result;
- result.push_back(prof_Low);
- result.push_back(prof_Mean);
- result.push_back(prof_High);
- 
- return result ;
-}
-
-
-// -------------------------------------------------------------
-
-
-
-/**
-get the points on the definition set of a TH1F such that the region contains 68% of the area
-and the tails contain the same 15.8%
-*/
-std::pair<double, double> getLimit_sameTails::operator() (const TH1D & histo) 
-{
- double threshold = histo.GetEntries () * 0.158655 ;
- 
- int entries1s_low = 0;
- double banda1s_low = 0.;
- 
- // left tail
- for (int bandaBin = 1 ; bandaBin <= histo.GetNbinsX () ; ++bandaBin)
- {
-  entries1s_low += histo.GetBinContent (bandaBin) ;
-  if ( entries1s_low >= threshold)
-  {
-   banda1s_low = histo.GetBinCenter (bandaBin) ;
-   break ;
-  }
- } // left tail
- 
- int entries1s_high = 0;
- double banda1s_high = 0.;
- 
- // right tail
- for (int bandaBin = histo.GetNbinsX () ; bandaBin > 0 ; --bandaBin)
- {
-  entries1s_high += histo.GetBinContent (bandaBin) ;
-  if ( entries1s_high >= threshold)
-  {
-   banda1s_high = histo.GetBinCenter (bandaBin) ;
-   break ;
-  }
- } // right tail
- return std::pair<double, double> (banda1s_low, banda1s_high) ;  
-}
-
-
-// -------------------------------------------------------------
-
-
-/**
-get the points on the definition set of a TH1F such that the region contains 68% of the area
-and the size of the region is minimal (Neyman intervals - Feldman Cousins)
-*/
-
-std::pair<double, double> getLimit_FC::operator() (const TH1D & histo) 
-{
- std::vector<double> band = getSigmaBands_FeldmanCousins (histo);
- return std::pair<double, double> (band.at(1), band.at(3)) ;  
-}
-
-
-// -------------------------------------------------------------
-
-/**
-build a TGraphError starting from a TH1F
-*/
-TGraphErrors buildGEfromH (const TH1D & histo) 
-{
- TVectorF xV(histo.GetNbinsX());
- TVectorF yV(histo.GetNbinsX());
- TVectorF errxV(histo.GetNbinsX());
- TVectorF erryV(histo.GetNbinsX());
- for (int iBin = 0; iBin<histo.GetNbinsX(); iBin++){
-  xV[iBin] = histo.GetBinCenter(iBin);
-  yV[iBin] = histo.GetBinContent(iBin);
-  errxV[iBin] = histo.GetBinWidth(iBin);
-  erryV[iBin] = histo.GetBinError(iBin);
- }  
- TGraphErrors g (xV, yV, errxV, erryV) ;
- return g ;
-}
-
-
-
-// -------------------------------------------------------------
-
-
-/** Read JSON File 
-*/
-
-std::map<int, std::vector<std::pair<int, int> > >
- readJSONFile(const std::string& inFileName)
-{
-  std::ifstream inFile(inFileName.c_str(), std::ios::in);
-  
-  std::string line;
-  while(!inFile.eof())
-  {
-    std::string buffer;
-    inFile >> buffer;
-    line += buffer;
-  }
-  
-  
-  
-  // define map with result
-  std::map<int, std::vector<std::pair<int, int> > > jsonMap;
-    
-  
-  
-  // loop on JSON file
-  for(std::string::const_iterator it = line.begin(); it < line.end(); ++it)
-  {
-    // find run number
-    if( (*(it) == '"') && (*(it+7) == '"') )   
-    {
-      std::string run(it+1, it+7);
-      //std::cout << "found run " << run << std::endl;
-      
-      
-      
-      // find lumi sections
-      std::vector<std::pair<int, int> > lumisections;
-      for(std::string::const_iterator it2 = it+10; it2 < line.end(); ++it2)
-      {
-        if( (*(it2) == ']') && (*(it2-1) == ']') ) break;
-        if( *(it2) != '[' ) continue;
-        
-        std::string::const_iterator it_beg = it2;
-        std::string::const_iterator it_mid;
-        std::string::const_iterator it_end;
-        
-        for(std::string::const_iterator it3 = it_beg; it3 < line.end(); ++it3)
-        {
-          if( *(it3) == ',' ) it_mid = it3;
-          if( *(it3) == ']' )
-          {
-            it_end = it3;
-            break;
-          }
-        }
-            
-            
-            
-        std::string lumi_beg(it_beg+1, it_mid);
-        std::string lumi_end(it_mid+1, it_end);
-        //std::cout << "[" << lumi_beg;
-        //std::cout << ",";
-        //std::cout << lumi_end << "]" << std::endl;
-        
-	std::pair<int, int> tempLS(atoi(lumi_beg.c_str()), atoi(lumi_end.c_str()));
-        lumisections.push_back(tempLS);
-        
-        it2 = it_end;
-      }
-      
-      
-      jsonMap[atoi(run.c_str())] = lumisections;
-    } // find run number
-    
-  } // loop on JSON file
-  
-  
-  
-  return jsonMap;
-}
-
-
-
-
-
-
-bool AcceptEventByRunAndLumiSection(const int& runId, const int& lumiId,
-                                    std::map<int, std::vector<std::pair<int, int> > >& jsonMap)
-{
-  // select by runId
-  if( jsonMap.find(runId) == jsonMap.end() ) return false;
-  
-  
-  
-  // select by lumiId
-  std::vector<std::pair<int, int> > lumisections = jsonMap[runId];
-  
-  int skipEvent = true;
-  for(unsigned int i = 0; i < lumisections.size(); ++i)
-    if( (lumiId >= lumisections.at(i).first) &&
-        (lumiId <= lumisections.at(i).second) )
-      skipEvent = false;
-  
-  if( skipEvent == true ) return false;
-  
-  
-  return true;
-}
-

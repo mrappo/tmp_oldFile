@@ -10,7 +10,7 @@ void setTDRStyle()
   tdrStyle->SetCanvasBorderMode(0);
   tdrStyle->SetCanvasColor(kWhite);
   tdrStyle->SetCanvasDefH(600); //Height of canvas
-  tdrStyle->SetCanvasDefW(600); //Width of canvas
+  tdrStyle->SetCanvasDefW(800); //Width of canvas
   tdrStyle->SetCanvasDefX(0);   //POsition on screen
   tdrStyle->SetCanvasDefY(0);
 
@@ -44,7 +44,7 @@ void setTDRStyle()
 
   tdrStyle->SetEndErrorSize(2);
   //  tdrStyle->SetErrorMarker(20);
-  tdrStyle->SetErrorX(0.);
+  //tdrStyle->SetErrorX(0.);
 
   tdrStyle->SetMarkerStyle(20);
 
@@ -79,7 +79,7 @@ void setTDRStyle()
   tdrStyle->SetPadTopMargin(0.05);
   tdrStyle->SetPadBottomMargin(0.13);
   tdrStyle->SetPadLeftMargin(0.13);
-  tdrStyle->SetPadRightMargin(0.05);
+  tdrStyle->SetPadRightMargin(0.25);
 
   // For the Global title:
   tdrStyle->SetOptTitle(0);
@@ -98,18 +98,18 @@ void setTDRStyle()
   // For the axis titles:
   tdrStyle->SetTitleColor(1, "XYZ");
   tdrStyle->SetTitleFont(42, "XYZ");
-  tdrStyle->SetTitleSize(0.06, "XYZ");
+  tdrStyle->SetTitleSize(0.04, "XYZ");
   // tdrStyle->SetTitleXSize(Float_t size = 0.02); // Another way to set the size?
   // tdrStyle->SetTitleYSize(Float_t size = 0.02);
-  tdrStyle->SetTitleXOffset(0.9);
-  tdrStyle->SetTitleYOffset(1.05);
+  tdrStyle->SetTitleXOffset(1.25);
+  tdrStyle->SetTitleYOffset(1.50);
   // tdrStyle->SetTitleOffset(1.1, "Y"); // Another way to set the Offset
 
   // For the axis labels:
   tdrStyle->SetLabelColor(1, "XYZ");
   tdrStyle->SetLabelFont(42, "XYZ");
   tdrStyle->SetLabelOffset(0.007, "XYZ");
-  tdrStyle->SetLabelSize(0.05, "XYZ");
+  tdrStyle->SetLabelSize(0.03, "XYZ");
 
   // For the axis:
   tdrStyle->SetAxisColor(1, "XYZ");

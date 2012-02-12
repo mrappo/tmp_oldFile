@@ -6,7 +6,7 @@
  * file, that is a pair of an option name and a (list of) value(s) 
  *  
  *
- * $Date: 2010/02/08 13:40:07 $
+ * $Date: 2011/02/15 11:45:48 $
  * $Author: abenagli $
  *
  * The class ConfigFileLine is used by the config_parser during

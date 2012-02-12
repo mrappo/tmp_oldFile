@@ -6,7 +6,6 @@
 #include <functional>
 #include "hChain.h"
 #include "h2Chain.h"
-#include "TString.h"
 
 class h2Factory
 {
@@ -14,14 +13,14 @@ class h2Factory
     h2Factory (std::string fileName = "no", bool print = true) ;
     ~h2Factory () ;
 
-    void add_h2 (TString baseName, TString baseTitle, 
+    void add_h2 (std::string baseName, std::string baseTitle, 
                  int nbinsx, double minx, double maxx,
                  int nbinsy, double miny, double maxy, int NUM) ;
 
     template <class UnaryFunction>
     void applyToAll (UnaryFunction function) 
       {
-        for (std::map <TString, h2Chain *>::iterator mapIt = m_H2content.begin () ;
+        for (std::map <std::string, h2Chain *>::iterator mapIt = m_H2content.begin () ;
              mapIt != m_H2content.end () ;
              ++mapIt)
           {
@@ -29,15 +28,15 @@ class h2Factory
           }
       }
 
-    void Fill (const TString & name, int i, double valx, double valy) ;
-    h2Chain * operator[] (const TString& name) ;
+    void Fill (const std::string & name, int i, double valx, double valy) ;
+    h2Chain * operator[] (const std::string& name) ;
     void Print (int isLog = 0, int rebin = 1) ;
 
   private :
   
     std::string m_fileName ;
     bool m_print ;
-    std::map <TString, h2Chain *> m_H2content ;
+    std::map <std::string, h2Chain *> m_H2content ;
 
 } ;
 

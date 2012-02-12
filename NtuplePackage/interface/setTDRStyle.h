@@ -1,6 +1,8 @@
 #ifndef setTDRStyle_h
 #define setTDRStyle_h
 
+#include <vector>
+
 #include "TStyle.h"
 #include "TColor.h"
 

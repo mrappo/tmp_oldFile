@@ -4,27 +4,28 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <map>
 #include <cmath>
 #include <algorithm>
-#include "functional"
-#include <utility>
-
-
-#include "treeReader.h"
-
+#include <iomanip>
 
 #include "TFile.h"
 #include "TH1F.h"
-#include "TGraphErrors.h"
-#include "TH2F.h"
-#include "TProfile.h"
-#include "TF1.h"
 #include "TChain.h"
 #include "TVector3.h"
+#include "Math/Vector3D.h"
 #include "Math/Vector4D.h"
+#include "Math/Boost.h"
 #include "ConfigParser.h"
-#include "TVectorF.h"
+
+
+
+
+
+
+bool maggiore(double i, double j);
+
 
 
 
@@ -32,18 +33,22 @@
 
 /** get the number of events from a list of files */
 std::map<int, int> GetTotalEvents(const std::string& histoName, const std::string& inputFileList);
+TH1F* GetTotalHisto(const std::string& histoName, const std::string& inputFileList);
+std::map<int, std::string> GetBinLabels(const std::string& histoName, const std::string& inputFileList);
 
 /** fill a chain from a list of files */
 bool FillChain(TChain& chain, const std::string& inputFileList);
-
-/** fill a chain from a vector of files */
-bool FillVectorChain(TChain& chain, const std::vector<std::string>& inputFileVector) ;
 
 /** get the parameters from a congiguration file */
 int parseConfigFile (const TString& config) ;
 
 
 
+
+
+
+/** compute the PU rescale factor */
+double PURescaleFactor(const double& nPU_MC, const int& PUScale = 0);
 
 
 
@@ -158,42 +163,21 @@ int GetMatching(const std::vector<T1>& collection1, //---- RECO
 
 
 
-/** Electron isolation / ID */
-bool IsEleIsolatedID( treeReader& reader,const std::vector<double>& BarrelSelections, const std::vector<double>& EndCapSelections, int iEle);
-bool IsEleIsolatedIDPUCorrected( treeReader& reader,const std::vector<double>& BarrelSelections, const std::vector<double>& EndCapSelections, int iEle);
- 
-/** Muon isolation  / ID */
-bool IsMuIsolatedID( treeReader& reader,const std::vector<double>& Selections, int iMu);
 
 
 
-/** Zeppenfeld Jet Veto */
-int getZepp(std::vector<ROOT::Math::XYZTVector>& jets,
-	   int q1,
-	   int q2,
-	   const double& EtMin,
-	   const double& zeppMax,
-	   const std::vector<int>* blacklist = 0);
-	   
-
-/** Central Jet Veto */
-int getCJV(std::vector<ROOT::Math::XYZTVector>& jets,
-	      int q1,
-	      int q2,
-	      const double& EtMin,
-	      const std::vector<int>* blacklist = 0);
-
-
-/** Jet Veto */
-int getJV(std::vector<ROOT::Math::XYZTVector>& jets,
-	      const double& EtMin,
-	      const std::vector<int>* blacklist = 0);
-
-	      
 /** select jet pairs */
 double SelectJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
                   const std::string& method,
-                  const double& etMin,
+                  const double& ptMin,
+                  const std::vector<int>* blacklist = 0);
+
+/** select jet pairs with Deta cut*/
+double SelectJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
+                  const std::string& method,
+                  const double& ptMin,
+                  const double& DetaMin,
+                  const double& DetaMax,
                   const std::vector<int>* blacklist = 0);
 
 /** select leptons */
@@ -202,179 +186,53 @@ int SelectLepton(std::vector<ROOT::Math::XYZTVector>& leptons,
                  const double& ptMin,
                  const std::vector<int>* blacklist = 0);
 
-/** select single object */
-int SelectObject(const std::vector<ROOT::Math::XYZTVector>& objects,
-                 const std::string& method,
-                 const double& ptMin,
-                 const std::vector<int>* blacklist = 0);
+/** select tag jet */
+double SelectTagJet(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
+                     const double& ptMin,
+                     const double& etaMIN,
+                     const std::vector<int>* blacklist = 0);
 
+/** select tag jets */
+double SelectTagJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
+                     const std::string& method,
+                     const double& ptMin,
+                     const double& DetaMIN,
+                     const double& mjjMIN,                     
+                     const std::vector<int>* blacklist = 0);
 
-/** select pair of objects with a given invariant mass*/
-double SelectResonance(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& objects,
-		       const double& mass,
-		       const double& ptMin,
-		       const std::vector<int>* blacklist = 0);
- 
+/** select W jets */
+double SelectWJets(std::vector<int>& it, std::vector<ROOT::Math::XYZTVector>& jets,
+                   const std::string& method,
+                   const double& ptMin,
+                   const double& etaMAX,
+                   const double& DetaMAX,
+                   const double& mjjMAX,                     
+                   const std::vector<int>* blacklist = 0);
 
-/** select pair of objects with a given invariant mass and opposite charge*/
-double SelectResonanceOppositeCharge(std::vector<int>& it,
-		       std::vector<ROOT::Math::XYZTVector>& objects,
-		       std::vector<float>& charge,	     
-		       const double& mass,
-		       const double& ptMin,
-		       const std::vector<int>* blacklist = 0);
+/** select 4 jets */
+double Select4Jets(std::vector<int>& it_W, std::vector<int>& it_tag,
+                   std::vector<ROOT::Math::XYZTVector>& jets,
+                   const std::string& method,
+                   const double& ptMin,
+                   const double& etaMAX,
+                   const double& DetaMAX,
+                   const double& mjjMAX);
 
-/** get the number of objects with pT > threshold*/
-int getNumberPTThreshold (const std::vector<ROOT::Math::XYZTVector>& objects, const double& ptMin,  const std::vector<int>* blacklist = 0);
- 
 /** build combinations of n jets */
 int Build4JetCombinations(std::vector<std::vector<int> >& comb, const int& nJets);
 
-/** build combinations of n jets */
+/** print combinations of n jets */
 void Print4JetCombination(const std::vector<int>& combination);
 
-/** build combinations (2 jets) of n jets */
-int Build2JetCombinations(std::vector<std::vector<int> >& comb, const int& nJets);
-
-/** 4 objects combinations builder */
-int Build4ObjectsCombinations(
-                              std::vector<std::vector<int> >& combinations, 
-			      const int& nObj,
-			      const std::vector<int>* whiteList = 0);
-
-/** smart profiling by double averaging */
-TH1D * smartProfileX (TH2F * strip, double width) ; 
-
-/** smart profiling by fixing gaussian parameters and
-range from a first averaging */
-TH1D * smartGausProfileX (TH2F * strip, double width) ; 
-
-/** smart profiling by double averaging */
-TH1D * smartProfileY (TH2F * strip, double width) ; 
-
-/** smart profiling by fixing gaussian parameters and
-range from a first averaging */
-TH1D * smartGausProfileY (TH2F * strip, double width) ; 
-
-/** 68% and 95% bands using Neyman intervals 
- * and Feldman-Cousins principle */
-TH1F* FC1D(TH1F* h, double CL = 0.68) ;
-TH2F* FC2D(TH2F* h, double CL = 0.68) ;
-
-/** 68% and 95% bands using Neyman intervals 
-and Feldman-Cousins principle */
-std::vector<double> getSigmaBands_FeldmanCousins (const TH1 & histo) ;
- 
-/** smart profiling Y using Neyman intervals 
-and Feldman-Cousins principle */
-std::vector<TH1D*> smartGausProfileY_FeldmanCousins (TH2F * strip, double width);
-  
-/** smart profiling X using Neyman intervals 
-and Feldman-Cousins principle */
-std::vector<TH1D*> smartGausProfileX_FeldmanCousins (TH2F * strip, double width);
-
-/**
-define a band in the histogram such that for any slice at fixed x-bin 
-from the histogram in the Y a minimal and maximal points are determined
-by the funcional getLimit
-*/
-template <class T> std::vector<std::vector<double> > //PG three vectors: x axis, lower line, upper line
-getBand_integrY (TH2F & histo2D, T getLimit)
-{
- int cut = 0 ; // minimum number of entries per fitted bin
- int nbins = histo2D.GetXaxis ()->GetNbins () ;
- int binmin = 1 ;
- int ngroup = 1 ; // bins per step
- int binmax = nbins ;
- 
- std::vector<double> dummy ;
- std::vector<std::vector<double> > out (3, dummy) ;
- 
- // loop over the 2D histo bins
- for (int bin=binmin ; bin <= binmax ; bin += ngroup) 
- {
-  TH1D * h1_dummy = histo2D.ProjectionY ("_temp", bin, bin + ngroup - 1 , "e") ;
-  if (h1_dummy == 0) continue ;
-  int nentries = Int_t (h1_dummy->GetEntries ()) ;
-  if (nentries == 0 || nentries < cut) {delete h1_dummy ; continue ;}   
-  std::pair<double, double> limits = getLimit (*h1_dummy) ;
-  out.at (0).push_back (histo2D.GetXaxis ()->GetBinCenter (bin+0.5)) ;
-  out.at (1).push_back (limits.first) ;
-  out.at (2).push_back (limits.second) ;
-  delete h1_dummy ;
- } // loop over the bins
- return out ;
-}
 
 
-/**
-define a band in the histogram such that for any slice at fixed y-bin 
-from the histogram in the X a minimal and maximal points are determined
-by the funcional getLimit
-*/
-template <class T> std::vector<std::vector<double> > //PG three vectors: x axis, lower line, upper line
-getBand_integrX (TH2F & histo2D, T getLimit)
-{
- int cut = 0 ; // minimum number of entries per fitted bin
- int nbins = histo2D.GetYaxis ()->GetNbins () ;
- int binmin = 1 ;
- int ngroup = 1 ; // bins per step
- int binmax = nbins ;
- 
- std::vector<double> dummy ;
- std::vector<std::vector<double> > out (3, dummy) ;
- 
- // loop over the 2D histo bins
- for (int bin=binmin ; bin <= binmax ; bin += ngroup) 
- {
-  TH1D * h1_dummy = histo2D.ProjectionX ("_temp", bin, bin + ngroup - 1 , "e") ;
-  if (h1_dummy == 0) continue ;
-  int nentries = Int_t (h1_dummy->GetEntries ()) ;
-  if (nentries == 0 || nentries < cut) {delete h1_dummy ; continue ;}   
-  std::pair<double, double> limits = getLimit (*h1_dummy) ;
-  out.at (0).push_back (histo2D.GetYaxis ()->GetBinCenter (bin+0.5)) ;
-  out.at (1).push_back (limits.first) ;
-  out.at (2).push_back (limits.second) ;
-  delete h1_dummy ;
- } // loop over the bins
- return out ;
-}
+/** print 4-vector */
+void Print4V(const ROOT::Math::XYZTVector& p);
 
 
 
-/**
-get the points on the definition set of a TH1F such that the region contains 68% of the area
-and the tails contain the same 15.8%
-*/
-struct getLimit_sameTails : public std::unary_function <const TH1D &, std::pair<double, double> > {
- std::pair<double, double> operator() (const TH1D & histo);
-};
-
-/**
-get the points on the definition set of a TH1F such that the region contains 68% of the area
-and the size of the region is minimal (Neyman intervals - Feldman Cousins)
-*/
-struct getLimit_FC : public std::unary_function <const TH1D &, std::pair<double, double> > {
- std::pair<double, double> operator() (const TH1D & histo);
-};
-
-
-/**
-build a TGraphError starting from a TH1F
-*/
-TGraphErrors buildGEfromH (const TH1D & histo) ;
-
-
-/** Read JSON File 
-*/
-
-std::map<int, std::vector<std::pair<int, int> > >
- readJSONFile(const std::string& inFileName);
-
-bool AcceptEventByRunAndLumiSection(const int& runId, const int& lumiId,
-                                    std::map<int, std::vector<std::pair<int, int> > >& jsonMap);
-
-
-
+/** get electorn flag/severity level */
+bool GetElectronFlag(const std::string& flag);
+bool GetElectronSeverityLevel(const std::string& SeverityLevel);
 
 #endif
