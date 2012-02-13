@@ -1,7 +1,8 @@
-//
-// Macro for Normalize IC EB for mean on a eta ring + skipping dead channels and TT
-// Folded Plots for Spread IC, Statistical Precision and spread
-// Correct IC near cracks and produce txt IC values
+
+/// Macro for Normalize IC EB by the mean on a eta ring + skipping xtal near dead channels and TT
+/// in the normalization procedure
+/// Folded Plots for Spread IC, Statistical Precision and spread
+/// Correct IC near cracks and produce txt IC values
 
 #include <vector>
 #include <utility>
@@ -20,7 +21,7 @@
 
 /// To Run root -l macros/DrawFoldedPlotsEB.C+
 
-// Check if the crystal is near to a dead one
+/// Check if the crystal is near to a dead one
 
 bool CheckxtalIC (TH2F* h_scale_EB,int iPhi, int iEta )
 {
@@ -41,8 +42,7 @@ bool CheckxtalIC (TH2F* h_scale_EB,int iPhi, int iEta )
 
 }
 
-// Check if the crystal is near to a dead TT
-
+/// Check if the crystal is near to a dead TT
 
 bool CheckxtalTT (int iPhi, int iEta, std::vector<std::pair<int,int> >& TT_centre )
 {
@@ -103,7 +103,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   }
   cout << "Making calibration plots for: " << infile1 << endl;
 
- // map for dead TT centre
+ /// map for dead TT centre
 
  std::vector< std::pair<int,int> > TT_centre ;
  
@@ -128,16 +128,17 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
  TT_centre.push_back(std::pair<int,int> (-68,303));
  TT_centre.push_back(std::pair<int,int> (-43,328));
  
-  //  Input file with full statistic
+  ///  Input file with full statistic
  
   TFile *f = new TFile(infile1);
   TH2F *h_scale_EB = (TH2F*)f->Get("h_scale_EB");
   TH2F *hcmap = (TH2F*) h_scale_EB->Clone("hcmap");
+  
   hcmap -> Reset("ICEMS");
   hcmap -> ResetStats();
   
 
-  // Mean over phi corrected skipping dead channel 
+  /// Mean over phi corrected skipping dead channel 
 
   for (int iEta = 1 ; iEta < h_scale_EB->GetNbinsY()+1; iEta ++)
   {
@@ -156,16 +157,17 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
      }
 
    }
+
    for (int iPhi = 1; iPhi< h_scale_EB->GetNbinsX()+1  ; iPhi++)
-  { 
+   { 
     if(numIC!=0 && SumIC!=0)
     hcmap->SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(SumIC/numIC));
-  }
+   }
   }
   
-  //-----------------------------------------------------------------
-  //--- Build the precision vs ieta plot starting from the TH2F of IC
-  //-----------------------------------------------------------------
+  ///-----------------------------------------------------------------
+  ///--- Build the precision vs ieta plot starting from the TH2F of IC
+  ///-----------------------------------------------------------------
   
 
   TH1F *hspreadEtaFold[85];
@@ -176,6 +178,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   int ringGroupSize = 1;
   int nStep = 0;
 
+  /// Spread histos folding EB+ and EB-
   for (int jbin = 1; jbin < hcmap-> GetNbinsY()+1; jbin++){
    if (jbin < 86 && (jbin-1)%ringGroupSize == 0 ) {
       nStep++;
@@ -194,7 +197,8 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
       }
     }
   }
-
+  
+  /// Total spred Graph through Gaussian fit
   TGraphErrors *sigma_vs_EtaFold = new TGraphErrors();
   sigma_vs_EtaFold->SetMarkerStyle(20);
   sigma_vs_EtaFold->SetMarkerSize(1);
@@ -218,7 +222,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
     np++;
   }
 
-  // evaluate statistical precision and residual term
+  /// evaluate statistical precision and residual term
   
   TGraphErrors *statprecision_vs_EtaFold = new TGraphErrors();
   statprecision_vs_EtaFold->SetMarkerStyle(20);
@@ -232,13 +236,14 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
 
 
   if (evalStat){
+
   TFile *f2 = new TFile(infile2);
   TH2F *h_scale_EB_2 = (TH2F*)f2->Get("h_scale_EB");
   TH2F *hcmap2 = (TH2F*) h_scale_EB->Clone("hcmap2");
   hcmap2 -> Reset("ICEMS");
   hcmap2 -> ResetStats();
 
-  // Mean over phi  skipping dead channels
+  /// Mean over phi  skipping dead channels
 
   for (int iEta = 1 ; iEta < h_scale_EB_2->GetNbinsY()+1 ; iEta ++)
   {
@@ -258,10 +263,10 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
    }
    
    for (int iPhi = 1; iPhi< h_scale_EB_2->GetNbinsX()+1  ; iPhi++)
-  {
+   {
     if(numIC!=0 && SumIC!=0)
     hcmap2->SetBinContent(iPhi,iEta,h_scale_EB_2->GetBinContent(iPhi,iEta)/(SumIC/numIC));
-  }
+   }
   }
  
   
@@ -272,7 +277,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   hcmap3 -> ResetStats();
   
 
-  // Mean over phi skipping dead channel 
+  /// Mean over phi skipping dead channel 
 
   for (int iEta = 1 ; iEta < h_scale_EB_3->GetNbinsY()+1 ; iEta ++)
   {
@@ -292,16 +297,17 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
    }
    
    for (int iPhi = 1; iPhi< h_scale_EB_3->GetNbinsX()+1  ; iPhi++)
-  {
+   {
     if(numIC!=0 && SumIC!=0)
     hcmap3->SetBinContent(iPhi,iEta,h_scale_EB_3->GetBinContent(iPhi,iEta)/(SumIC/numIC));
+   }
   }
- }
-  
-    TH1F *hstatprecisionEtaFold[85];
 
-    nStep = 0;
-    for (int jbin = 1; jbin < hcmap-> GetNbinsY()+1; jbin++){
+  /// spread histos for statistical precision folding EB+ on EB-
+  TH1F *hstatprecisionEtaFold[85];
+
+  nStep = 0;
+  for (int jbin = 1; jbin < hcmap-> GetNbinsY()+1; jbin++){
     if (jbin < 86 && (jbin-1)%ringGroupSize == 0 ) {
        nStep++;
        sprintf(hname,"hstatprecision_ringGroup_ietaFolded%02d",nStep);
@@ -321,10 +327,9 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
      }
    }
 
-    
-    np = 0;
-
-    for (int i = 1; i < 86; i++){
+   np = 0;
+   /// statical spread
+   for (int i = 1; i < 86; i++){
       float etaring = hcmap2->GetYaxis()->GetBinCenter((ringGroupSize*i + ringGroupSize*(i-1))/2 + 1);
       float e     = 0.5*ringGroupSize;
       fgaus->SetParameter(1,1);
@@ -336,9 +341,9 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
       statprecision_vs_EtaFold-> SetPointError(np,e,fgaus->GetParError(2));
       np++;
     }
-
-
-    for (int i= 0; i < statprecision_vs_EtaFold-> GetN(); i++){
+  
+   /// reasidual spread
+   for (int i= 0; i < statprecision_vs_EtaFold-> GetN(); i++){
       double spread, espread;
       double stat, estat;
       double residual, eresidual;
@@ -361,48 +366,9 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
     }
   }
 
-  ///////////////////////////////////////////////////////////
-
-   /* TGraphErrors *ic_vs_PhiFold = new TGraphErrors();
-    ic_vs_PhiFold->SetMarkerStyle(20);
-    ic_vs_PhiFold->SetMarkerSize(1);
-    ic_vs_PhiFold->SetMarkerColor(kOrange+2);
-
-    TH1F* hspreadPhiFold[18];
-    int nStep =0;
-    
-    for(int jbin = 1; jbin < hcmap-> GetNbinsX()+1; jbin++){
-    if ((jbin-1)%20 == 0 ) {
-      nStep++;
-      sprintf(hname,"hspread_iphiFolded%02d",nStep);
-      hspreadPhiFold[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
-    }
-   
-    for(int ibin = 1; ibin < hcmap-> GetNbinsY()+1; ibin++){
-      float ic = hcmap->GetBinContent(jbin,ibin);
-    if (ic>0 && ic<2 && ic!=1) {
-      hspreadPhiFold[nStep-1]->Fill(ic);
-      }
-    }
-  }
-  
-   np=0;
-   for(int i=1; i<=18; i++)
-  {
-      float phibin = i;
-      fgaus2->SetParameter(1,hspreadPhiFold[i-1]->GetMean());
-      fgaus2->SetParameter(2,hspreadPhiFold[i-1]->GetRMS());
-      fgaus2->SetRange(hspreadPhiFold[i-1]->GetMean()-5*hspreadPhiFold[i-1]->GetRMS(),hspreadPhiFold[i-1]->GetMean()+5*hspreadPhiFold[i-1]->GetRMS());
-      hspreadPhiFold[i-1]->Fit("fgaus2","QR");
-      ic_vs_PhiFold-> SetPoint(np,phibin,fgaus2->GetParameter(1));
-      ic_vs_PhiFold-> SetPointError(np,0,fgaus2->GetParError(1));
-      np++;
-  
-
-}*/
-
-  ////////////////////////////////////////////////////////////////////
-  //Plot Folded %20 Phi for mean IC Normalized value and spread 
+  //////////////////////////////////////////////////////////////////
+  ///Plot Folded %20 Phi for mean IC Normalized value and spread 
+  //////////////////////////////////////////////////////////////////
 
     TGraphErrors *ic_vs_PhiFold_crack_EBp = new TGraphErrors();
     ic_vs_PhiFold_crack_EBp->SetMarkerStyle(20);
@@ -449,8 +415,6 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
      if (ic>0 && ic<2 && isGood && isGoodTT ) {
        if(jbin <= 20)
        {
-//           if (ibin >= 66 && ibin <= 80)  hspreadPhiFold_crack_EBm[jbin-1]->Fill(ic); //ieta from 5 to 20 included
-//           if (ibin >= 91 && ibin <= 105) hspreadPhiFold_crack_EBp[jbin-1]->Fill(ic);
 
           if (ibin <= 85) hspreadPhiFold_crack_EBm[jbin-1]->Fill(ic); //from 1 to 85 included
           if (ibin >= 87) hspreadPhiFold_crack_EBp[jbin-1]->Fill(ic); //from 86 to 170 included
@@ -458,10 +422,6 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
        else
        {
           int kbin = (jbin-1)%20 ;
-//           cout << jbin << "   " << kbin << endl;
-
-//          if (ibin >= 66 && ibin <= 80) hspreadPhiFold_crack_EBm[kbin]->Fill(ic);
-//          if (ibin >= 91 && ibin <= 105) hspreadPhiFold_crack_EBp[kbin]->Fill(ic);
 
           if (ibin <= 85) hspreadPhiFold_crack_EBm[kbin]->Fill(ic);
           if (ibin >= 87) hspreadPhiFold_crack_EBp[kbin]->Fill(ic);
@@ -471,6 +431,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   }
 
    np=0;
+   /// Fit in each iphi%20 region (if you want you can use the mean of the distribution)
    for(int i=1; i<=20; i++)
    {
       fgaus2->SetParameter(1,hspreadPhiFold_crack_EBp[i-1]->GetMean());
@@ -502,10 +463,10 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
       
       np++;
    }
-  //------------------------------------------------------------------------
-  //-----------------------------------------------------------------
-  //--- Draw plots
-  //-----------------------------------------------------------------
+  ///------------------------------------------------------------------------
+  ///-----------------------------------------------------------------
+  ///--- Draw plots
+  ///-----------------------------------------------------------------
   TCanvas *c[20];
   
   c[0] = new TCanvas("csigmaFold","csigmaFold");
@@ -536,56 +497,45 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   residual_vs_EtaFold->GetHistogram()->GetXaxis()-> SetTitle("|i#eta|");
   residual_vs_EtaFold->Draw("ap");
 
-
-
-/*   c[2] = new TCanvas("cphimeanfold","cphimeanfold");
-   c[2]->SetGridx();
-   c[2]->SetGridy();
-   ic_vs_PhiFold->GetHistogram()->GetYaxis()-> SetRangeUser(0.99.,1.01);
-   ic_vs_PhiFold->GetHistogram()->GetXaxis()-> SetRangeUser(0,18);
-   ic_vs_PhiFold->GetHistogram()->GetYaxis()-> SetTitle("mean IC");
-   ic_vs_PhiFold->GetHistogram()->GetXaxis()-> SetTitle("Phi%20");
-   ic_vs_PhiFold->Draw("ap");
-*/ 
-   TLegend * legg1 = new TLegend(0.75,0.75,0.89, 0.89);
+  TLegend * legg1 = new TLegend(0.75,0.75,0.89, 0.89);
   
-   c[3] = new TCanvas("cphimeanfold_crack_EB+","cphimeanfold_crack_EB+");
-   c[3]->SetGridx();
-   c[3]->SetGridy();
-   legg1->AddEntry(ic_vs_PhiFold_crack_EBp,"EB+","LP");
-   legg1->SetFillColor(0);
+  c[3] = new TCanvas("cphimeanfold_crack_EB+","cphimeanfold_crack_EB+");
+  c[3]->SetGridx();
+  c[3]->SetGridy();
+  legg1->AddEntry(ic_vs_PhiFold_crack_EBp,"EB+","LP");
+  legg1->SetFillColor(0);
  
-   ic_vs_PhiFold_crack_EBp->GetHistogram()->SetTitle(" Mean IC EB+");
-   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetRangeUser(0.98,1.02);
-   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
-   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
-   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
-   ic_vs_PhiFold_crack_EBp->GetHistogram()->SetTitle("EB+");
-   ic_vs_PhiFold_crack_EBp->Draw("ap");
-   legg1->Draw("same");
+  ic_vs_PhiFold_crack_EBp->GetHistogram()->SetTitle(" Mean IC EB+");
+  ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetRangeUser(0.98,1.02);
+  ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
+  ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
+  ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
+  ic_vs_PhiFold_crack_EBp->GetHistogram()->SetTitle("EB+");
+  ic_vs_PhiFold_crack_EBp->Draw("ap");
+  legg1->Draw("same");
   
+  c[4] = new TCanvas("cphimeanfold_crack_EB-","cphimeanfold_crackEB-");
+  c[4]->cd();
+  c[4]->SetGridx();
+  c[4]->SetGridy();
   
-   c[4] = new TCanvas("cphimeanfold_crack_EB-","cphimeanfold_crackEB-");
-   c[4]->cd();
-   c[4]->SetGridx();
-   c[4]->SetGridy();
-  
-   ic_vs_PhiFold_crack_EBm->GetHistogram()->SetTitle(" Mean IC EB-");
-   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetRangeUser(0.98,1.02);
-   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
-   ic_vs_PhiFold_crack_EBm->GetHistogram()->SetTitle("EB-");
-   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
-   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
-   ic_vs_PhiFold_crack_EBm->Draw("ap");
+  ic_vs_PhiFold_crack_EBm->GetHistogram()->SetTitle(" Mean IC EB-");
+  ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetRangeUser(0.98,1.02);
+  ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
+  ic_vs_PhiFold_crack_EBm->GetHistogram()->SetTitle("EB-");
+  ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
+  ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
+  ic_vs_PhiFold_crack_EBm->Draw("ap");
    
-   TGraphErrors *ic_vs_PhiFold_crack_EBm_reflect = new TGraphErrors();
-   ic_vs_PhiFold_crack_EBm_reflect->SetMarkerStyle(20);
-   ic_vs_PhiFold_crack_EBm_reflect->SetMarkerSize(1);
-   ic_vs_PhiFold_crack_EBm_reflect->SetMarkerColor(kBlue);
-
-   int k=ic_vs_PhiFold_crack_EBm->GetN()-1;
-   for(int iPoint=0; iPoint<ic_vs_PhiFold_crack_EBp->GetN(); iPoint++)
-   { 
+  TGraphErrors *ic_vs_PhiFold_crack_EBm_reflect = new TGraphErrors();
+  ic_vs_PhiFold_crack_EBm_reflect->SetMarkerStyle(20);
+  ic_vs_PhiFold_crack_EBm_reflect->SetMarkerSize(1);
+  ic_vs_PhiFold_crack_EBm_reflect->SetMarkerColor(kBlue);
+  
+  /// Reflect EB+ over EB- iphi%20 plot
+  int k=ic_vs_PhiFold_crack_EBm->GetN()-1;
+  for(int iPoint=0; iPoint<ic_vs_PhiFold_crack_EBp->GetN(); iPoint++)
+  { 
      double ix, iy;
      ic_vs_PhiFold_crack_EBm->GetPoint(k,ix,iy);
      double ex = ic_vs_PhiFold_crack_EBm ->GetErrorX(k);
@@ -594,7 +544,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
      ic_vs_PhiFold_crack_EBm_reflect->SetPointError(iPoint,ex,ey);
      
      k--;
-   }
+  }
 
    c[12] = new TCanvas("cphimeanfold_crack_EB_ref","cphimeanfold_crackEB_ref");
    c[12]->cd();
@@ -632,7 +582,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
    spread_ic_vs_PhiFold_crack_EBm->Draw("ap");
    
   
-   
+  /// IC Correction 
   TF1 *pol0_EBp = new TF1("pol0_EBp","pol0",4,16);
   TF1 *pol0_EBm = new TF1("pol0_EBm","pol0",4,16);
   pol0_EBp->SetLineColor(kWhite);
@@ -645,7 +595,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   hcmap_crackcorrected->Reset("ICMES");
   hcmap_crackcorrected->ResetStats();
 
-
+  /// crack corrected map
   for(int ibin =1 ; ibin <hcmap->GetNbinsX()+1 ; ibin++)
   {
     for(int jbin =1; jbin <hcmap->GetNbinsY()+1 ; jbin++)
@@ -810,7 +760,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
    ic_vs_PhiFold_corrected_EBm->Draw("ap");
 
   
-   // Dump IC in a txt file
+   /// Dump IC in a txt file
    std::ofstream outTxt ("Calibration_Coefficient_EB_static_alpha_crackCorrected.txt",std::ios::out);
    outTxt << "---------------------------------------------------------------" << std::endl;
    outTxt << "--- iPhi ---- iEta ------ IC value (mean on phi ring + crack effect correction) ---------" << std::endl;
