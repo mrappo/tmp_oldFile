@@ -1,5 +1,5 @@
-// To compare two sets of IC
-// Input needed: two set of IC (2D maps) 
+/// Macros for compare calibration result obtained on MC with
+/// the original configuration for EE Input: IC 2D map after L3 calib 
 #include <iostream>
 #include "TH2F.h"
 #include "TH1F.h"
@@ -30,14 +30,17 @@ void CompareCalibToMCtruth_EE() {
   gStyle->SetLabelFont(42,"xyz");
   gStyle->SetLabelSize(0.05);
   gROOT->ForceStyle();
-
+  
+  /// Reco and truth map for MC IC EE
   TFile *f1 = TFile::Open("MCtruthIC_EE.root");
   TFile *f2 = TFile::Open("MCRecoIC_EE.root");
   
-  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_R9_EE.root");
+  /// L3 result MC endcap
+  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_miscalib_EE.root");
   
+  /// Statistical Precision map 
   TFile *f4 =  TFile::Open("StatPrec_MC_R9_EE.root");
-  // input coeff
+  /// input coeff map for EEP and EEM
   TH2F *hcmapMcT_EEP = (TH2F*)f1->Get("h_scale_EEP");
   TH2F *hcmapMcT_EEM = (TH2F*)f1->Get("h_scale_EEM");
   TH2F *hcmapMcR_EEP = (TH2F*)f2->Get("h_scale_EEP");
@@ -54,7 +57,7 @@ void CompareCalibToMCtruth_EE() {
 
   for (int jbin = 1; jbin < hcmap_EEP-> GetNbinsY(); jbin++){
     for (int ibin = 1; ibin < hcmap_EEM-> GetNbinsX()+1; ibin++){
-	//hcmap1->SetBinContent(ibin,jbin,1);
+	
         if(hcmapMcT_EEP->GetBinContent(ibin,jbin)!=0 && hcmapMcR_EEP->GetBinContent(ibin,jbin)!=0)
 	hcmap_EEP->SetBinContent(ibin,jbin,hcmapMcT_EEP->GetBinContent(ibin,jbin)/hcmapMcR_EEP->GetBinContent(ibin,jbin));
         if(hcmapMcT_EEM->GetBinContent(ibin,jbin)!=0 && hcmapMcR_EEM->GetBinContent(ibin,jbin)!=0)
@@ -62,7 +65,7 @@ void CompareCalibToMCtruth_EE() {
       }
     }
 
-
+  /// Scalib and L3 map for EE+ and EE-
   TH2F * miscalib_map_EEP = (TH2F*) f3 -> Get("h_scalib_EEP");
   TH2F * miscalib_map_EEM = (TH2F*) f3 -> Get("h_scalib_EEM");
 
@@ -86,7 +89,7 @@ void CompareCalibToMCtruth_EE() {
       }
     }
 
-  // output histos
+  /// output histos
   TH2F * h2_EEP = new TH2F("h2_EEP","h2_EEP",400,0.5,1.5,400,0.5,1.5);
   TH2F * h2_EEM = new TH2F("h2_EEM","h2_EEM",400,0.5,1.5,400,0.5,1.5);
 
@@ -106,7 +109,7 @@ void CompareCalibToMCtruth_EE() {
   TH1F *hspread_EEM[40];
   TH1F *hspread_All[40];
 
-  // ring geometry for the endcap
+  /// ring geometry for the endcap
   TH2F *hrings_EEP;
   TH2F *hrings_EEM;
 
@@ -123,7 +126,7 @@ void CompareCalibToMCtruth_EE() {
     if(z<0) hrings_EEM->Fill(x,y,ir);
   }
 
-
+  /// spread IC histos
   for (int jbin = 0; jbin < 40; jbin++){
     sprintf(hname,"hspread_ring_EEP_%02d",jbin);
     hspread_EEP[jbin]= new TH1F(hname, hname, 50,0.5,1.5);
@@ -150,6 +153,7 @@ void CompareCalibToMCtruth_EE() {
       float c2_EEM = hcmap2_EEM->GetBinContent(mybin_EEM);
    
        if (c1_EEP!=0 && c2_EEP!=0 ){
+        ///Ratio betweem IC and not the difference
  	hspread_EEP[ring_EEP]->Fill(c1_EEP/c2_EEP);
         hspread_All[ring_EEP]->Fill(c1_EEP/c2_EEP);
         
@@ -169,7 +173,7 @@ void CompareCalibToMCtruth_EE() {
     }
   }
 
-  
+  /// TGraphErrors for final plot
   TGraphErrors *sigma_vs_iring_EEP = new TGraphErrors();
   sigma_vs_iring_EEP->SetMarkerStyle(20);
   sigma_vs_iring_EEP->SetMarkerSize(1);
@@ -216,19 +220,16 @@ void CompareCalibToMCtruth_EE() {
   scale_vs_iring_All->SetMarkerStyle(20);
   scale_vs_iring_All->SetMarkerSize(1);
   scale_vs_iring_All->SetMarkerColor(kBlue+2);
-
+  /// Gauss function for fit
   TF1 *fgaus_EEP = new TF1("fgaus_EEP","gaus",0.5,1.5);
   TF1 *fgaus_EEM = new TF1("fgaus_EEM","gaus",0.5,1.5);
   TF1 *fgaus_All = new TF1("fgaus_All","gaus",0.5,1.5);
 
-
   int np_EEP = 0;
   int np_EEM = 0;
   int np_All = 0;
-  cout<<"rrrrr "<<  hcmap_EEP-> GetNbinsY()+1<<endl;
   for (int i = 0; i < 40; i++){
-    //cout<<etaring<<endl;
- 
+
     if ( hspread_EEP[i]->GetEntries() == 0) {sigma_vs_iring_EEP-> SetPoint(np_EEP,i,-100);np_EEP++;continue;}
     if ( hspread_EEM[i]->GetEntries() == 0) {sigma_vs_iring_EEM-> SetPoint(np_EEM,i,-100);np_EEM++;continue;}
     if ( hspread_All[i]->GetEntries() == 0) {sigma_vs_iring_All-> SetPoint(np_All,i,-100);np_All++;continue;}
@@ -259,14 +260,15 @@ void CompareCalibToMCtruth_EE() {
     scale_vs_iring_All-> SetPoint(np_All,i,fgaus_All->GetParameter(1));
     scale_vs_iring_All-> SetPointError(np_All,0,fgaus_All->GetParError(1));
     np_All++;
-
+    /// EEP EEM and Folded Plots EEP+EEM
   }
-  // plot
-
+ 
+  /// For from statistical precision analysis
   TGraphErrors* gr_stat_prec_EEP = (TGraphErrors*) f4->Get("gr_stat_prec_EEP");
   TGraphErrors* gr_stat_prec_EEM = (TGraphErrors*) f4->Get("gr_stat_prec_EEM");
   TGraphErrors* gr_stat_prec_All = (TGraphErrors*) f4->Get("gr_stat_prec");
  
+  /// Final Plot 
   TCanvas *csigma_EEP = new TCanvas("csigma_EEP","csigma_EEP");
   csigma_EEP->SetGridx();
   csigma_EEP->SetGridy();
@@ -277,11 +279,7 @@ void CompareCalibToMCtruth_EE() {
   sigma_vs_iring_EEP->Draw("ap");
 //   rms_vs_ieta->Draw("psame");
   gr_stat_prec_EEP->Draw("psame");
-  
-  cout<<"aaa P "<<gr_stat_prec_EEP->GetN()<<endl;
-  cout<<"bbb P "<<sigma_vs_iring_EEP->GetN()<<endl;
- 
-  
+    
   TCanvas *csigma_EEM = new TCanvas("csigma_EEM","csigma_EEM");
   csigma_EEM->SetGridx();
   csigma_EEM->SetGridy();
@@ -304,12 +302,9 @@ void CompareCalibToMCtruth_EE() {
   sigma_vs_iring_All->Draw("ap");
 //   rms_vs_ieta->Draw("psame");
  
-  gr_stat_prec->Draw("psame");
+  gr_stat_prec_All->Draw("psame");
  
-  cout<<"aaa M "<<gr_stat_prec_EEM->GetN()<<endl;
-  cout<<"bbb M "<<sigma_vs_iring_EEM->GetN()<<endl;
- 
-
+  /// Residual Plot
   TGraphErrors* residual_EEP = new TGraphErrors();
   TGraphErrors* residual_EEM = new TGraphErrors();
   TGraphErrors* residual_All = new TGraphErrors();
@@ -369,16 +364,16 @@ void CompareCalibToMCtruth_EE() {
      
   }
   
-   for(int pp=0; pp< gr_stat_prec->GetN(); pp++){
+   for(int pp=0; pp< gr_stat_prec_All->GetN(); pp++){
     double ring1, ring2,tot, stat, espread, estat,ex,res,eres;
    
     sigma_vs_iring_All->GetPoint(pp, ring2, tot);
     espread = sigma_vs_iring_All-> GetErrorY(pp);
 
-    gr_stat_prec->GetPoint(pp,ring1, stat);
-    estat = gr_stat_prec-> GetErrorY(pp);
+    gr_stat_prec_All->GetPoint(pp,ring1, stat);
+    estat = gr_stat_prec_All-> GetErrorY(pp);
 
-    ex = gr_stat_prec-> GetErrorX(pp);  
+    ex = gr_stat_prec_All-> GetErrorX(pp);  
     if(ring1 != ring2){cout<<"error FFF "<<ring1<<"  "<<ring2<<endl;}
 
     if (tot > stat ){
@@ -396,8 +391,7 @@ void CompareCalibToMCtruth_EE() {
      
   }
 
-
-
+ ///Final Plot
  TCanvas *cres_EEP = new TCanvas("cres_EEP","cresidual_EEP");
   cres_EEP->SetGridx();
   cres_EEP->SetGridy();
@@ -415,8 +409,8 @@ void CompareCalibToMCtruth_EE() {
   cres_EEM->SetGridy();
   residual_EEM->GetHistogram()->GetYaxis()-> SetRangeUser(-0.1,0.1);
   residual_EEM->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
- // residual_EEM->GetHistogram()->GetYaxis()-> SetTitle("residual EE-");
- // residual_EEM->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  residual_EEM->GetHistogram()->GetYaxis()-> SetTitle("residual EE-");
+  residual_EEM->GetHistogram()->GetXaxis()-> SetTitle("iring");
   residual_EEM ->SetMarkerStyle(20);
   residual_EEM->SetMarkerSize(1);
   residual_EEM->SetMarkerColor(kGreen+2); 
@@ -440,8 +434,8 @@ void CompareCalibToMCtruth_EE() {
   cscale_EEP->SetGridy();
   scale_vs_iring_EEP->GetHistogram()->GetYaxis()-> SetRangeUser(0.9,1.1);
   scale_vs_iring_EEP->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
-//   scale_vs_iring_EEP->GetHistogram()->GetYaxis()-> SetTitle("c_{1}-c_{2}");
-//   scale_vs_iring_EEP->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  scale_vs_iring_EEP->GetHistogram()->GetYaxis()-> SetTitle("c_{1}-c_{2}");
+  scale_vs_iring_EEP->GetHistogram()->GetXaxis()-> SetTitle("iring");
   scale_vs_iring_EEP->Draw("ap");
 
   TCanvas *cscale_EEM = new TCanvas("cscale_EEM","cscale_EEM");
@@ -449,8 +443,8 @@ void CompareCalibToMCtruth_EE() {
   cscale_EEM->SetGridy();
   scale_vs_iring_EEM->GetHistogram()->GetYaxis()-> SetRangeUser(0.9,1.1);
   scale_vs_iring_EEM->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
-//   scale_vs_iring_EEM->GetHistogram()->GetYaxis()-> SetTitle("c_{1}-c_{2}");
-//   scale_vs_iring_EEM;->GetHistogram()->GetXaxis()-> SetTitle("iring");
+  scale_vs_iring_EEM->GetHistogram()->GetYaxis()-> SetTitle("c_{1}-c_{2}"); 
+  scale_vs_iring_EEM->GetHistogram()->GetXaxis()-> SetTitle("iring");
   scale_vs_iring_EEM->Draw("ap");
 
   TCanvas *cmap2_EEP = new TCanvas("cmap2_EEP","cmap2_EEP",500,500);
