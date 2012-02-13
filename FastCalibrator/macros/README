@@ -1,0 +1,76 @@
+#####################################
+-- Macros for EB Calibration --------
+#####################################
+
+1) macros/DrawPrecisionPlot.C  
+   
+   Input : -> 2 File for Even and Odd L3 output for a defined data sample
+           -> evalStat = 1 for statistical precision analysis
+           -> inputLoops = number of L3 loops
+
+   Run : root -l macros/DrawPrecisionPlot.C
+
+   Output: -> Plots = stat precision in eta ring no Folded, convergence Plots in 4 eta region 
+              evaluate through linear fit
+           -> StatPrec.root = has to be used in the comparision with miscalibrated MC in CompareCalibToMCTruth.C
+
+2) macros/CompareCalibToMCTruth.C
+
+   Input : -> 2 File for IC map Truth and RECO for MC production used
+           -> Output L3 MC miscalibrated
+           -> Precision Plot for the same MC analysis without miscalibration
+   
+   Run : root -l macros/CompareCalibToMCTruth.C+
+
+   Output : Plot obtained taking into account this equation IC_Truth = IC_RECO * IC_L3 * Scalib_Map
+            -> Residual spread IC_L3*Scalib_Map and IC_Truth/IC_RECO 
+            -> Statistical Precision with and without miscalibration
+
+3) macros/DrawFoldedPlotsEB.C
+
+   Input : -> 3 File for Even, Odd and full calibration output for a given data sample
+           -> evalstat = 1 in order to evaluate stat sprecision
+
+   Run : root -l macros/DrawFoldedPlotsEB.C+
+
+   Output :  -> IC are Normalized with the mean IC of each eta ring skipping dead channels (IC=0) and TT (map defined in the code)
+             -> Spread, stat spread and residual spread of the IC by means of gaussian fits in eta ring folding EB+ on EB-
+             -> Study of IC mean value and spread vs iphi%20 after Normalization ---> in order to
+                study crack effect on <IC> and apply a correction
+             -> IC Correction: <IC>(iphi,ieta) = IC(iphi,ieta)*(IC(iphi%20)/<IC(iphi%20)>) -> correction is applied
+                between iphi(0,4) for EB+ and iphi(16,20) for EB-
+             -> hcmap and hcmap_crack_corrected are the output map
+             -> Spread, stat spread and residual spread are re-evaluated for crack corrected map
+             
+             -> Dump IC Crack Corrected in a output file .txt (iphi , ieta , IC )
+ 
+
+##########################################
+----- Macros for EE Calibration ----------
+########################################## 
+
+1) macros/CompareCalibToMCTruth_EE.C
+ 
+   Input : -> 2 File for IC map Truth and RECO for MC production used EE
+           -> Output L3 MC miscalibrated EE
+           -> Precision Plot for the same MC analysis without miscalibration
+   
+   Run : root -l macros/CompareCalibToMCTruth.C+
+
+   Output : Plot obtained taking into account this equation IC_Truth = IC_RECO * IC_L3 * Scalib_Map
+            -> Residual spread IC_L3*Scalib_Map and IC_Truth/IC_RECO 
+            -> Statistical Precision with and without miscalibration
+
+2) macros/Normalize_IC_EE.cxx
+
+   Input : -> File output of FastCalibratorEE.cpp 
+
+   Run   : -> root -l macros/Normalize_IC_EE.cxx+
+
+   Output :  Macro to Normalize DATA/MC IC Coefficient along one ring skipping xtal near dead channels and TT EE
+             Input File Scale Map of a data sample  an this is saved in the same file updating the old scale_map 
+             The ring structure of EE is built using macros/eerings.dat from ix and iy variable of each xtal
+
+
+
+
