@@ -1,5 +1,6 @@
-// To compare two sets of IC for EB
-// Input needed: two set of IC (2D maps) 
+/// Macros for compare calibration result obtained on MC with
+/// the original configuration for EB Input: IC 2D map after L3 calib
+
 #include <iostream>
 #include "TH2F.h"
 #include "TH1F.h"
@@ -32,23 +33,24 @@ void CompareCalibToMCtruth(){
   gStyle->SetLabelSize(0.05);
   gROOT->ForceStyle();
 
+  /// Input File MCTruth IC Map , RECO IC map, MC IC set after calibration (Usually set with miscalibration 5%)
+  /// and StatPrecision IC coefficient obtained from DrawFoldedEB.C
   TFile *f1 = TFile::Open("MCtruthIC.root");
   TFile *f2 = TFile::Open("MCRecoIC.root");
-  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/noEP_Z/WZAnalysis_SingleEle_WJetsToLNu_Z_noEP.root");
+  TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/noEP_Z/WZAnalysis_SingleEle_WJetsToLNu_Z_noEP_miscalib.root");
   
-  TFile *f4 =  TFile::Open("StatPrec_MC_noEP.root");
-  // input coeff
+  TFile *f4 =  TFile::Open("StatPrec.root");
+
   TH2F *hcmapMcT = (TH2F*)f1->Get("h_scale_map");
   TH2F *hcmapMcR = (TH2F*)f2->Get("h_scale_map");
  
   TH2F * hcmap1 = (TH2F*)hcmapMcT->Clone("hcmap1");
-  TH1F * hringdiff = new TH1F("hringdiff","difference of ring average",100,-0.1,0.1);
   hcmap1->Reset();
+  TH1F * hringdiff = new TH1F("hringdiff","difference of ring average",100,-0.1,0.1);
+ 
     for (int jbin = 1; jbin < hcmap1-> GetNbinsY(); jbin++){
       for (int ibin = 1; ibin < hcmap1-> GetNbinsX()+1; ibin++){
-	//hcmap1->SetBinContent(ibin,jbin,1);
 	hcmap1->SetBinContent(ibin,jbin,hcmapMcT->GetBinContent(ibin,jbin)/hcmapMcR->GetBinContent(ibin,jbin));
-	//hcmap1->SetBinContent(ibin,jbin,hcmapMcR->GetBinContent(ibin,jbin)/hcmapMcT->GetBinContent(ibin,jbin));
       }
     }
 
@@ -58,13 +60,14 @@ void CompareCalibToMCtruth(){
   
   TH2F *hcmap2 = (TH2F*)hcL3 ->Clone("hcmap2");
   hcmap2->Reset();
+
     for (int jbin = 1; jbin < hcmap2-> GetNbinsY()+1; jbin++){
       for (int ibin = 1; ibin < hcmap2-> GetNbinsX()+1; ibin++){
 	hcmap2->SetBinContent(ibin,jbin,miscalib_map->GetBinContent(ibin,jbin)*hcL3->GetBinContent(ibin,jbin));
       }
     }
 
-  // output histos
+  /// IC Histogramm in Eta ring and 2D map difference
   TH2F * h2 = new TH2F("h2","h2",400,0.5,1.5,400,0.5,1.5);
 
   TH2F * h2diff = (TH2F*)hcmap1->Clone("h2diff");
@@ -96,7 +99,7 @@ void CompareCalibToMCtruth(){
     }
   }
 
-  
+  /// Final Plot in eta ring (stat prescision and scale)
   TGraphErrors *sigma_vs_ieta = new TGraphErrors();
   sigma_vs_ieta->SetMarkerStyle(20);
   sigma_vs_ieta->SetMarkerSize(1);
@@ -112,12 +115,11 @@ void CompareCalibToMCtruth(){
   scale_vs_ieta->SetMarkerSize(1);
   scale_vs_ieta->SetMarkerColor(kBlue+2);
 
+  /// Gaussian Fit of spread coefficient dstribution 
   TF1 *fgaus = new TF1("fgaus","gaus",-1,1);
   int np = 0;
-  cout<<"rrrrr "<<  hcmap1-> GetNbinsY()+1<<endl;
   for (int i = 1; i < hcmap1-> GetNbinsY()+1; i++){
     float etaring = hcmap1-> GetYaxis()->GetBinCenter(i);
-    //cout<<etaring<<endl;
     if (etaring==0.5) continue;
     if ( hspread[i-1]->GetEntries() == 0) {sigma_vs_ieta-> SetPoint(np,etaring,-100);np++;continue;}
     hspread[i-1]->Fit("fgaus","Q");
@@ -132,7 +134,7 @@ void CompareCalibToMCtruth(){
 
   }
   
-  // plot
+  /// Final Plot
   TGraphErrors* gr_stat_prec = (TGraphErrors*) f4->Get("gr_stat_prec");
   TCanvas *csigma = new TCanvas("csigma","csigma");
   csigma->SetGridx();
@@ -146,25 +148,22 @@ void CompareCalibToMCtruth(){
   gr_stat_prec->Draw("psame");
   
 
+  /// Residual Plot (spread - statistical precision)
   TGraphErrors* residual = new TGraphErrors();
-
-  cout<<"aaa "<<gr_stat_prec->GetN()<<endl;
-  cout<<"bbb "<<sigma_vs_ieta->GetN()<<endl;
- 
 
   for(int pp=0; pp< gr_stat_prec->GetN(); pp++){
     double eta1, eta2,tot, stat;
     gr_stat_prec->GetPoint(pp, eta1, stat);
     sigma_vs_ieta->GetPoint(pp, eta2, tot);
-    if(eta1 != eta2){cout<<"error FFF "<<eta1<<"  "<<eta2<<endl;}
+    if(eta1 != eta2){cout<<"error different ring "<<eta1<<"  "<<eta2<<endl;}
     double res = tot*tot -stat*stat;
-    double errres = 0.1;//r_stat_prec->GetErrorY(pp)*r_stat_prec->GetErrorY(pp)+
     if (res > 0) res = sqrt(res);
     else res = -sqrt(fabs(res));
+    double errres = sqrt( pow(tot*sigma_vs_ieta->GetErrorY(pp),2) +pow(stat*gr_stat_prec->GetErrorY(pp),2))/fabs(res);
     residual->SetPoint(pp,eta1,res);
-    residual->SetPointError(pp,eta1,errres);
+    residual->SetPointError(pp,0,errres);
   }
-
+ /// Residual spread plot 
  TCanvas *cres = new TCanvas("cres","cresidual");
   cres->SetGridx();
   cres->SetGridy();
@@ -178,7 +177,7 @@ void CompareCalibToMCtruth(){
   residual->GetYaxis()->SetTitle("residual");
   residual->GetXaxis()->SetTitle("i#eta");
   residual->Draw("ap");
-
+/// scale vs eta plot
   TCanvas *cscale = new TCanvas("cscale","cscale");
   cscale->SetGridx();
   cscale->SetGridy();
@@ -187,7 +186,7 @@ void CompareCalibToMCtruth(){
   scale_vs_ieta->GetHistogram()->GetYaxis()-> SetTitle("c_{1}-c_{2}");
   scale_vs_ieta->GetHistogram()->GetXaxis()-> SetTitle("ieta");
   scale_vs_ieta->Draw("ap");
-
+/// IC Diff map
   TCanvas *cmap2 = new TCanvas("cmap2","cmap2",500,500);
   cmap2->SetGridx();
   cmap2->SetGridy();
@@ -200,7 +199,7 @@ void CompareCalibToMCtruth(){
   h2->GetYaxis()->SetTitle("C_{2}");
   h2->Draw("colz");
 
-  
+ 
   TCanvas *cdiff = new TCanvas("cdiff","cdiff",700,500);
   cdiff->SetGridx();
   cdiff->SetGridy();

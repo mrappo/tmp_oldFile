@@ -4,16 +4,16 @@
 
 
 void DrawPrecisionPlotsEB(
-			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/R9_Z/Even_WZAnalysis_SingleEle_WJetsToLNu_Z_R9.root ",
-			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/R9_Z/Odd_WZAnalysis_SingleEle_WJetsToLNu_Z_R9.root",
+			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/MC_WJets/noEP_Z/Odd_WZAnalysis_SingleEle_WJetsToLNu_Z_noEP.root ",
+			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/MC_WJets/noEP_Z/Even_WZAnalysis_SingleEle_WJetsToLNu_Z_noEP.root",
 			    int evalStat = 1,
                             int inputLoops = 25,
 			    Char_t* fileType = "png", 
 			    Char_t* dirName = ".")
 {
 
-  // Draw plots in different modality : xtal, TT, SM
-  TString modality = "xtal"; 
+  /// Draw plots in different modality : xtal, TT, SM
+  TString modality = "xtal";
   bool printPlots = false;
   const int nLoops = inputLoops;
 
