@@ -12,7 +12,7 @@
 #include "TFile.h"
 #include "TCanvas.h"
 //
-// Macro to produce correction taking MC and MCTruth to apply on data for phi structure due to the tracker
+/// Macro to produce correction taking MC and MCTruth to apply on data for phi structure due to the tracker
 //
 
 
@@ -23,10 +23,10 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
 
   bool  printPlots = false;
 
-  // by xtal
+  /// by xtal
   int nbins = 250;
 
-  // Set style options
+  /// Set style options
   gROOT->Reset();
   gROOT->SetStyle("Plain");
 
@@ -58,7 +58,7 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   cout << "Making calibration plots for: " << infile1 << endl;
   
   
-  // imput file with full statistic normlized to the mean in a ring
+  /// imput file with full statistic normlized to the mean in a ring
 
   TFile *f = new TFile(infile1);
   TH2F *hcmap[2];
@@ -66,7 +66,7 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   hcmap[1] = (TH2F*)f->Get("ICComparison_EEP");
   
   
-  // ring geometry for the endcap
+  /// ring geometry for the endcap
   TH2F *hrings[2];
   hrings[0] = (TH2F*)hcmap[0]->Clone("hringsEEM");
   hrings[1] = (TH2F*)hcmap[0]->Clone("hringsEEP");
@@ -90,7 +90,7 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
              number_of_Rings_EEM.at(ir)++;
             }
      }   
-
+  /// Declaration of phi structure coordinate
   std::vector<float> phi_line_EEM;
   phi_line_EEM.push_back(16.);
   phi_line_EEM.push_back(59.5);
@@ -124,6 +124,7 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   phi_line_EEP.push_back(314.);
   phi_line_EEP.push_back(356.);
 
+  /// Calcolation of correction factors
   std::vector<float> Bad_IC_EEP(phi_line_EEP.size(),0);
   std::vector<float> Good_IC_EEP(phi_line_EEP.size(),0);
   std::vector<float> Bad_IC_EEM(phi_line_EEM.size(),0);
@@ -201,7 +202,7 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
            }
        }
      }
-   
+  /// Vectors of empiric correction factors
   for(int ivect =0 ; ivect <  phi_line_EEM.size() ; ivect++){
         if(num_Bad_IC_EEM[ivect]!=0)
         Bad_IC_EEM.at(ivect)=sum_Bad_IC_EEM[ivect]/num_Bad_IC_EEM[ivect];
@@ -219,6 +220,7 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   
    }
 
+  /// MC map corrected to control the result of the method
   TH2F *hcmap_corrected[2];
   hcmap_corrected[0] = (TH2F*)hcmap[0]->Clone("h_scale_map_EEM");
   hcmap_corrected[1] = (TH2F*)hcmap[1]->Clone("h_scale_map_EEP");
@@ -292,7 +294,7 @@ void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rger
   TCanvas *cEEP[12];
   TCanvas *cEEM[12];
  
-   // --- plot 0 : map of coefficients 
+   /// --- plot 0 : map of coefficients 
   cEEP[0] = new TCanvas("cEEP","cmapEEP Uncorrected");
   cEEP[0] -> cd();
   cEEP[0]->SetLeftMargin(0.1); 
