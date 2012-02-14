@@ -12,7 +12,7 @@
 #include "TFile.h"
 #include "TCanvas.h"
 //
-// Macro to Correct DATA dinamic alpha with MC/MCTruth for phi lines due to the tracker
+/// Macro to Correct DATA dinamic alpha with MC/MCTruth for phi lines due to the tracker
 //
 
 
@@ -23,10 +23,10 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
 
   bool  printPlots = false;
 
-  // by xtal
+  /// by xtal
   int nbins = 250;
 
-  // Set style options
+  /// Set style options
   gROOT->Reset();
   gROOT->SetStyle("Plain");
 
@@ -57,7 +57,7 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   cout << "Making calibration plots for: " << infile1 << endl;
   
   
-  // imput file with full statistic normlized to the mean in a ring
+  /// imput file with full statistic normlized to the mean in a ring
 
   TFile *f = new TFile(infile1,"UPDATE");
   TH2F *hcmap[2];
@@ -65,7 +65,7 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   hcmap[1] = (TH2F*)f->Get("h_scale_map_EEP");
   
   
-  // ring geometry for the endcap
+  /// ring geometry for the endcap
   TH2F *hrings[2];
   hrings[0] = (TH2F*)hcmap[0]->Clone("hringsEEM");
   hrings[1] = (TH2F*)hcmap[1]->Clone("hringsEEP");
@@ -90,8 +90,7 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
             }
      }   
 
-   // noEp Selections
-
+  /// noEp Selections
 /*  std::vector< std::pair <float,float> > phi_line_EEM;
   phi_line_EEM.push_back(std::pair<float,float> (16.,1.025));
   phi_line_EEM.push_back(std::pair<float,float> (59.5,1.047));
@@ -125,8 +124,9 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   phi_line_EEP.push_back(std::pair<float,float> (314.,1.024));
   phi_line_EEP.push_back(std::pair<float,float> (357.,1.055));
 */
- // R9 Selections
-
+ 
+/// R9 Selections
+ 
   std::vector< std::pair <float,float> > phi_line_EEM;
   phi_line_EEM.push_back(std::pair<float,float> (16.,1.02244));
   phi_line_EEM.push_back(std::pair<float,float> (59.5, 1.03235));
@@ -168,6 +168,7 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   hcmap_corrected[0] ->ResetStats();
   hcmap_corrected[1] ->ResetStats();
 
+  /// Correction of IC map data
 
    for(int k=0 ; k<2 ; k++)
    { 
@@ -231,7 +232,7 @@ void Correction_TrackerEffect_EE_DATA_dinamic_alpha (Char_t* infile1 = "/data1/r
   TCanvas *cEEP[12];
   TCanvas *cEEM[12];
  
-   // --- plot 0 : map of coefficients 
+   /// --- plot 0 : map of coefficients 
   cEEP[0] = new TCanvas("cEEP","cmapEEP Uncorrected");
   cEEP[0] -> cd();
   cEEP[0]->SetLeftMargin(0.1); 
