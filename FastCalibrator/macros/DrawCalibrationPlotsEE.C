@@ -15,10 +15,10 @@
 #include "TLegend.h"
 #include "TPaveStats.h"
 //
-// Macro to produce ECAL single electron calibration plots for EE
-// Input Files : MC or Data splistat and no splitstat, MCTruth and MCReco IC maps
-// Output Files :  StatPrec_MC_noEP_EE.root --> stat precision MC usefull for CompareCalibMCTruth_EE.C only MC
-//                 IC_MC_4Correction.root --> Map IC for radial correction only MC
+/// Macro to produce ECAL single electron calibration plots for EE
+/// Input Files : MC or Data splistat and no splitstat, MCTruth and MCReco IC maps EE
+/// Output Files :  StatPrec_MC_EE.root --> stat precision MC usefull for CompareCalibMCTruth_EE.C only MC
+///                 IC_MC_4Correction.root --> Map IC for radial correction only MC
 //                  
 using namespace std;
 
@@ -33,11 +33,11 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
 
   bool  printPlots = false;
 
-  // by xtal
+  /// by xtal
 
   int nbins = 250;
 
-  // Set style options
+  /// Set style options
   gROOT->Reset();
   gROOT->SetStyle("Plain");
 
@@ -73,7 +73,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   cout << "Making calibration plots for: " << infile1 << endl;
   
   
-  // imput file with full statistic normlized to the mean in a ring
+  /// imput file with full statistic normlized to the mean in a ring
 
   TFile *f = new TFile(infile1);
   TH2F *hcmap[2];
@@ -81,7 +81,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   hcmap[1] = (TH2F*)f->Get("h_scale_map_EEP");
     
 
-  // ring geometry for the endcap
+  /// ring geometry for the endcap
   TH2F *hrings[2];
   hrings[0] = (TH2F*)hcmap[0]->Clone("hringsEEM");
   hrings[1] = (TH2F*)hcmap[0]->Clone("hringsEEP");
@@ -107,15 +107,15 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   TH2F *hcmapMcR_EEM = (TH2F*)f5->Get("h_scale_EEM");
  
  
-  //--------------------------------------------------------------------------------
-  //--- Build the precision vs ring plot starting from the TH2F of IC folded and not
-  //--------------------------------------------------------------------------------
+  ///--------------------------------------------------------------------------------
+  ///--- Build the precision vs ring plot starting from the TH2F of IC folded and not
+  ///--------------------------------------------------------------------------------
 
   char hname[100];
   char htitle[100];
   TH1F *hspread[2][50];
   TH1F* hspreadAll [40];
-//   TH1F* hspread_MCTruth[2][40];
+
   TH2F* ICComparison [2];
   ICComparison[0] = (TH2F*) hcmapMcT_EEP->Clone("ICComparison_EEM");
   ICComparison[1] = (TH2F*) hcmapMcT_EEM->Clone("ICComparison_EEP");
@@ -133,8 +133,6 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
        sprintf(hname,"hspreadAll_ring%02d",iring);
        hspreadAll[iring] = new TH1F(hname, hname, nbins,0.,2.);
        sprintf(hname,"hspreadEEM_MCTruth_ring%02d",iring);
-//        hspread_MCTruth[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
-//        sprintf(hname,"hspreadEEM_ring%02d",iring);
        hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
 
       }
@@ -142,15 +140,12 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
 	
         sprintf(hname,"hspreadEEP_ring%02d",iring);
          hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
-//         sprintf(hname,"hspreadEEP_MCTruth_ring%02d",iring);
-//         hspread_MCTruth[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
  
+     }
     }
-  }
- 
  }
   
- 
+ /// spread all distribution, spread for EE+ and EE- and comparison with the MC truth
   for (int k = 0; k < 2 ; k++){
     for (int ix = 1; ix < 101; ix++){
       for (int iy = 1; iy < 101; iy++){
@@ -166,14 +161,13 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
  	if ( ic>0 && ic2>0 )    {
 	  hspread[k][ring]->Fill(ic);
           hspreadAll[ring]->Fill(ic);
-//           hspread_MCTruth[k][ring]->Fill(ic/ic2);
           ICComparison[k]->Fill(ix,iy,ic/ic2);
 	}
       }
     }
   }
   
-  // Graph Error for spread EE+ and EE-
+  /// Graph Error for spread EE+ and EE-
 
   TGraphErrors *sigma_vs_ring[3];
   sigma_vs_ring[0] = new TGraphErrors();
@@ -191,7 +185,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   sigma_vs_ring[2]->SetMarkerSize(1);
   sigma_vs_ring[2]->SetMarkerColor(kBlue+2);
  
-  // Graph for scale vs ring EE+, EE- and folded
+  /// Graph for scale vs ring EE+, EE- and folded
 
   TGraphErrors *scale_vs_ring[3];
   scale_vs_ring[0] = new TGraphErrors();
@@ -208,24 +202,12 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   scale_vs_ring[2]->SetMarkerStyle(20);
   scale_vs_ring[2]->SetMarkerSize(1);
   scale_vs_ring[2]->SetMarkerColor(kBlue+2);
-  
-//   TGraphErrors *sigma_vs_ring_MCTruth[2];
-//   sigma_vs_ring_MCTruth[0] = new TGraphErrors();
-//   sigma_vs_ring_MCTruth[0]->SetMarkerStyle(20);
-//   sigma_vs_ring_MCTruth[0]->SetMarkerSize(1);
-//   sigma_vs_ring_MCTruth[0]->SetMarkerColor(kBlue+2);
-//  
-//   sigma_vs_ring_MCTruth[1] = new TGraphErrors();
-//   sigma_vs_ring_MCTruth[1]->SetMarkerStyle(20);
-//   sigma_vs_ring_MCTruth[1]->SetMarkerSize(1);
-//   sigma_vs_ring_MCTruth[1]->SetMarkerColor(kBlue+2);
- 
-  
+    
   
   TF1 *fgaus = new TF1("fgaus","gaus",-10,10);
   int np[3] = {0};
 
-  // Gaussian fit for EE+ and EE-
+  /// Gaussian fit for EE+ and EE-
 
   for (int k = 0; k < 2 ; k++){
     for (int iring = 0; iring < 40; iring++){
@@ -239,15 +221,6 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
       sigma_vs_ring[k]-> SetPointError(np[k], e ,fgaus->GetParError(2));
       scale_vs_ring[k]-> SetPoint(np[k],iring,fgaus->GetParameter(1));
       scale_vs_ring[k]-> SetPointError(np[k],e,fgaus->GetParError(1));
-
-//       float e     = 0.5*ICComparison[k]-> GetYaxis()->GetBinWidth(1);
-//       fgaus->SetParameter(1,1);
-//       fgaus->SetParameter(2,hspread_MCTruth[k][iring]->GetRMS());
-//       fgaus->SetRange(1-5*hspread_MCTruth[k][iring]->GetRMS(),1+5*hspread_MCTruth[k][iring]->GetRMS());
-//       hspread_MCTruth[k][iring]->Fit("fgaus","QR");
-//       sigma_vs_ring_MCTruth[k]-> SetPoint(np[k],iring,fgaus->GetParameter(2));
-//       sigma_vs_ring_MCTruth[k]-> SetPointError(np[k], e ,fgaus->GetParError(2));
-   
       np[k]++;    
     }
   }
@@ -266,7 +239,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
       np[2]++;    
     }
 
-  // Intercalibration constant vs phi
+  /// Intercalibration constant vs phi
  
  /* TGraphErrors *IC_vs_phi[2];
   IC_vs_phi[0] = new TGraphErrors();
@@ -324,7 +297,8 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
     }
   }
   */
-  //----------------- Statistical Precision  and Residual --------------------
+
+ ///----------------- Statistical Precision  and Residual --------------------
 
     TGraphErrors *statprecision_vs_ring[3];
     statprecision_vs_ring[0]  = new TGraphErrors();
@@ -347,10 +321,12 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
     residual_vs_ring[0]->SetMarkerStyle(20);
     residual_vs_ring[0]->SetMarkerSize(1);
     residual_vs_ring[0]->SetMarkerColor(kGreen+2);
+  
     residual_vs_ring[1] = new TGraphErrors();
     residual_vs_ring[1]->SetMarkerStyle(20);
     residual_vs_ring[1]->SetMarkerSize(1);
     residual_vs_ring[1]->SetMarkerColor(kGreen+2);
+  
     residual_vs_ring[2] = new TGraphErrors();
     residual_vs_ring[2]->SetMarkerStyle(20);
     residual_vs_ring[2]->SetMarkerSize(1);
@@ -359,7 +335,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   
   if (evalStat){
     
-    // acuire file for statistical precision
+    /// acquisition file for statistical precision
 
     TFile *f2 = new TFile(infile2);
     TFile *f3 = new TFile(infile3);
@@ -373,25 +349,20 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
 
     TH1F *hstatprecision[2][40];
     TH1F *hstatprecisionAll[40];
-//     TH1F *hstatprecision_MCTruth[2][40];
 
-
+    /// stat precision histos for each EE ring
     for (int k = 0; k < 2; k++){
       for (int iring = 0; iring < 40 ; iring ++){
       
 	if (k==0)
 	 { sprintf(hname,"hstatprecisionAll_ring%02d",iring);
            hstatprecisionAll[iring] = new TH1F(hname, hname, nbins,-2.,2.);
-//            sprintf(hname,"hstatprecision_MCTruthEEM_ring%02d",iring);
-//            hstatprecision_MCTruth[k][iring] = new TH1F(hname, hname, nbins,-2.,2.);
            sprintf(hname,"hstatprecisionEEM_ring%02d",iring);
            hstatprecision[k][iring] = new TH1F(hname, hname, nbins,-2.,2.);
           }
 	else {
 	      sprintf(hname,"hstatprecisionEEP_ring%02d",iring);
               hstatprecision[k][iring] = new TH1F(hname, hname, nbins,-2.,2.);
-//               sprintf(hname,"hstatprecision_MCTruthEEP_ring%02d",iring);
-//               hstatprecision_MCTruth[k][iring] = new TH1F(hname, hname, nbins,-2.,2.);
             }
 
       }
@@ -407,7 +378,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
 	  float ic1 = hcmap2[k]->GetBinContent(mybin);
 	  float ic2 = hcmap3[k]->GetBinContent(mybin);
           if (ic1>0 && ic2 >0){
-	    hstatprecision[k][ring]->Fill((ic1-ic2)/(ic1+ic2)); // sigma (diff/sum) gives the stat. precision on teh entire sample
+	    hstatprecision[k][ring]->Fill((ic1-ic2)/(ic1+ic2)); /// sigma (diff/sum) gives the stat. precision on teh entire sample
             hstatprecisionAll[ring]->Fill((ic1-ic2)/(ic1+ic2));
 	  }
 	}
@@ -416,7 +387,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
 
   
     TCanvas* c44 [120];
-
+    /// Gaussian fit of the even/odd distribution (rms of the distribution can be also used)
     int n[3] = {0};
     for (int k = 0; k < 2; k++){
       for (int iring = 0; iring < 40 ; iring++){
@@ -426,8 +397,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
 	fgaus->SetParameter(2,hstatprecision[k][iring]->GetRMS());
 	fgaus->SetRange(-5*hstatprecision[k][iring]->GetRMS(),5*hstatprecision[k][iring]->GetRMS());
 	TString name = Form("ff%d_%d",iring,k);
-//          c44[iring+50*k] = new TCanvas (name,name);
-//          c44[iring+50*k]->Draw();
+
         hstatprecision[k][iring]->Fit("fgaus","QR");
        
 	statprecision_vs_ring[k]-> SetPoint(n[k],iring,fgaus->GetParameter(2));
@@ -449,19 +419,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
 	statprecision_vs_ring[2]-> SetPointError(n[2],e,fgaus->GetParError(2));
 	n[2]++;
       }
-    
      
-//     TGraphErrors *residual_vs_ring_MCTruth[2];
-//     residual_vs_ring_MCTruth[0] = new TGraphErrors();
-//     residual_vs_ring_MCTruth[0]->SetMarkerStyle(20);
-//     residual_vs_ring_MCTruth[0]->SetMarkerSize(1);
-//     residual_vs_ring_MCTruth[0]->SetMarkerColor(kGreen+2);
-//   
-//     residual_vs_ring_MCTruth[1] = new TGraphErrors();
-//     residual_vs_ring_MCTruth[1]->SetMarkerStyle(20);
-//     residual_vs_ring_MCTruth[1]->SetMarkerSize(1);
-//     residual_vs_ring_MCTruth[1]->SetMarkerColor(kGreen+2);
- 
     
     TH1F *hresidual[3];
     hresidual[0] = new TH1F("hresidualEEM","hresidualEEM",1000,0,1);
@@ -478,7 +436,8 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
     hspre[1] = new TH1F("hspreEEP","hspreEEP",1000,0,0.5);
     hspre[2] = new TH1F("hspreAll","hspreAll",1000,0,0.5);
 
-	
+    /// Residual spread plot
+
     for (int k = 0; k < 3 ; k++){
       for (int i= 0; i < statprecision_vs_ring[k]-> GetN(); i++){
 	double spread, espread;
@@ -500,49 +459,18 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
 	}
 	residual_vs_ring[k]->SetPoint(i,xdummy, residual);
 	residual_vs_ring[k]->SetPointError(i,ex,eresidual);
-        
-        /*if(k!=2)
-        {
-           sigma_vs_ring_MCTruth[k]-> GetPoint(i, xdummy, spread );
-	   espread = sigma_vs_ring_MCTruth[k]-> GetErrorY(i);
-	   statprecision_vs_ring[k]-> GetPoint(i, xdummy, stat );
-	   estat = statprecision_vs_ring[k]-> GetErrorY(i);
-	   ex = statprecision_vs_ring[k]-> GetErrorX(i);
-	   if (spread > stat ){
-	    residual  = sqrt( spread*spread - stat*stat );
-	    eresidual = sqrt( pow(spread*espread,2) + pow(stat*estat,2))/residual;
-	   }
-	   else {
-	    residual = 0;
-	    eresidual = 0;
-	  }
-	   residual_vs_ring_MCTruth[k]->SetPoint(i,xdummy, residual);
-	   residual_vs_ring_MCTruth[k]->SetPointError(i,ex,eresidual);
-        }
-	
-	if ( fabs(xdummy-0.5) < 21 ){
-	  hspre[k] ->Fill(spread);
-	  hstat[k] ->Fill(stat);
-	  hresidual[k] ->Fill(residual);
-	}*/
       }
     }
  
  }
   
-  
-  //------------------------------------------------------------------------
-
-
-    
-  
-  //-----------------------------------------------------------------
-  //--- Draw plots
-  //-----------------------------------------------------------------
+  ///-----------------------------------------------------------------
+  ///--- Draw plots
+  ///-----------------------------------------------------------------
   TCanvas *cEEP[12];
   TCanvas *cEEM[12];
 
-  // --- plot 0 : map of coefficients 
+  /// --- plot 0 : map of coefficients 
   cEEP[0] = new TCanvas("cmapEEP","cmapEEP");
   cEEP[0] -> cd();
   cEEP[0]->SetLeftMargin(0.1); 
@@ -569,7 +497,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   hcmap[0]->GetYaxis() ->SetTitle("iy");
   hcmap[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
 
-  // --- plot 1 : ring precision vs ieta
+  /// --- plot 1 : ring precision vs ieta
   cEEP[1] = new TCanvas("csigmaEEP","csigmaEEP");
   cEEP[1]->SetGridx();
   cEEP[1]->SetGridy();
@@ -607,7 +535,7 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   }
 
 
-  // --- plot 5 : statistical precision vs ieta
+  /// --- plot 5 : statistical precision vs ieta
   if (evalStat){
     cEEP[5] = new TCanvas("cstat","cstat");
     cEEP[5]->SetGridx();
@@ -672,11 +600,11 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
     residual_vs_ring[2]->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
     residual_vs_ring[2]->Draw("ap");
 
-    // save precision for MC comparison
+    /// save precision for MC comparison
 
     if(isMC==true)
     {
-     TFile * output = new TFile ("StatPrec_MC_noEP_EE.root","RECREATE");
+     TFile * output = new TFile ("StatPrec_MC_EE.root","RECREATE");
      output->cd();
      statprecision_vs_ring[0]->SetName("gr_stat_prec_EEP");
      statprecision_vs_ring[1]->SetName("gr_stat_prec_EEM");
@@ -687,25 +615,8 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
      statprecision_vs_ring[2]->Write();
     }
   }
-  
-  /*cEEP[10] = new TCanvas("spread_vs_phi_EEP","spread_vs_phi_EEP");
-  cEEP[10]->SetGridx();
-  cEEP[10]->SetGridy();
-  IC_vs_phi[0]->GetHistogram()->GetYaxis()-> SetRangeUser(0.7,1.3);
-  IC_vs_phi[0]->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
-  IC_vs_phi[0]->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
-  IC_vs_phi[0]->GetHistogram()->GetXaxis()-> SetTitle("i#phi");
-  IC_vs_phi[0]->Draw("ap");
-
-  cEEM[10] = new TCanvas("spread_vs_phi_EEM","spread_vs_phi_EEM");
-  cEEM[10]->SetGridx();
-  cEEM[10]->SetGridy();
-  IC_vs_phi[1]->GetHistogram()->GetYaxis()-> SetRangeUser(0.7,1.3);
-  IC_vs_phi[1]->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
-  IC_vs_phi[1]->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
-  IC_vs_phi[1]->GetHistogram()->GetXaxis()-> SetTitle("i#phi");
-  IC_vs_phi[1]->Draw("ap");
- */
+ 
+  /// Comparison Plot MC - Data
   TCanvas* canEEP[10], *canEEM[10];
   if(isMC == true)
   {
@@ -734,44 +645,6 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
    ICComparison[1]->Write();
    output->Close();
   }
-/*
-  canEEM[1] = new TCanvas("csigmaEEM_MCTruth","csigmaEEM_MCTruth");
-  canEEM[1]->SetGridx();
-  canEEM[1]->SetGridy();
-  sigma_vs_ring_MCTruth[0]->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.20);
-  sigma_vs_ring_MCTruth[0]->GetHistogram()->GetXaxis()-> SetRangeUser(-85,85);
-  sigma_vs_ring_MCTruth[0]->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
-  sigma_vs_ring_MCTruth[0]->GetHistogram()->GetXaxis()-> SetTitle("ring");
-  sigma_vs_ring_MCTruth[0]->Draw("ap");
-  
-  canEEP[1] = new TCanvas("csigmaEEP_MCTruth","csigmaEEP_MCTruth");
-  canEEP[1]->SetGridx();
-  canEEP[1]->SetGridy();
-  sigma_vs_ring_MCTruth[1]->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.20);
-  sigma_vs_ring_MCTruth[1]->GetHistogram()->GetXaxis()-> SetRangeUser(-85,85);
-  sigma_vs_ring_MCTruth[1]->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
-  sigma_vs_ring_MCTruth[1]->GetHistogram()->GetXaxis()-> SetTitle("ring");
-  sigma_vs_ring_MCTruth[1]->Draw("ap");
-
-  canEEM[2] = new TCanvas("residualEEM_MCTruth","residualEEM_MCTruth");
-  canEEM[2]->SetGridx();
-  canEEM[2]->SetGridy();
-  residual_vs_ring_MCTruth[0]->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.20);
-  residual_vs_ring_MCTruth[0]->GetHistogram()->GetXaxis()-> SetRangeUser(-85,85);
-  residual_vs_ring_MCTruth[0]->GetHistogram()->GetYaxis()-> SetTitle("residual term");
-  residual_vs_ring_MCTruth[0]->GetHistogram()->GetXaxis()-> SetTitle("ring");
-  residual_vs_ring_MCTruth[0]->Draw("ap");
-  
-  canEEP[2] = new TCanvas("residualEEP_MCTruth","residualEEP_MCTruth");
-  canEEP[2]->SetGridx();
-  canEEP[2]->SetGridy();
-  sigma_vs_ring_MCTruth[1]->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.20);
-  sigma_vs_ring_MCTruth[1]->GetHistogram()->GetXaxis()-> SetRangeUser(-85,85);
-  sigma_vs_ring_MCTruth[1]->GetHistogram()->GetYaxis()-> SetTitle("residual term");
-  sigma_vs_ring_MCTruth[1]->GetHistogram()->GetXaxis()-> SetTitle("ring");
-  sigma_vs_ring_MCTruth[1]->Draw("ap");
-
- */
 
   TFile *exisistingEE = new TFile ("existingEE.root","READ");
   TH2F* exmap = (TH2F*) exisistingEE->Get("endcap");
