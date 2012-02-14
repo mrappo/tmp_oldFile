@@ -26,7 +26,7 @@ make exe
 
 1) Intercalibration on EB (Ecal Barrel) :
 
-Run the code: ./bin/FastCalibratorWeight.exe test/Barrel.cfg
+Run the code: ./bin/FastCalibratorWeight.exe cfg/Barrel.cfg
 
 Paramters to set in the cfg file:   -> inputFile = Root file input data to analyse WZtoenu
                                     -> inputFileDeadXtal= Add dead Channel to evaluate the effect on the IC
@@ -45,7 +45,7 @@ Paramters to set in the cfg file:   -> inputFile = Root file input data to analy
 
 1) Intercalibration on EE (Ecal Barrel) :
 
-Run the code: ./bin/FastCalibratorEE.exe test/EndCap.cfg
+Run the code: ./bin/FastCalibratorEE.exe cfg/EndCap.cfg
 
 Paramters to set in the cfg file:   -> inputFile = Root file input data to analyse WZtoenu
                                     -> inputFileDeadXtal= Add dead Channel to evaluate the effect on the IC
