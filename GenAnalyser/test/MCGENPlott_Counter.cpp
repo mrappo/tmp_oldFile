@@ -20,7 +20,7 @@
 #include "TLatex.h"
 #include "TMinuit.h"
 #include "qqHWWlnulnuUtils.h"
-#include "Variables.h"
+#include "Variables_Gen.h"
 
 #include "../test/TDRStyle.cc"
 #include "../test/Read.cc"
