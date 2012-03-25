@@ -22,9 +22,13 @@
 //                  
 using namespace std;
 
-void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
-			     Char_t* infile2 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
-			     Char_t* infile3 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/Odd_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
+void DrawCalibrationPlotsEE (
+ 			     Char_t* infile1 = "data_LC_20120131_ALPHA_test_prompt/SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcaibEE_11032011_Z_R9_EE.root",
+ 			     Char_t* infile2 = "data_LC_20120131_ALPHA_test_prompt/Even_SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcaibEE_11032011_Z_R9_EE.root",
+ 			     Char_t* infile3 = "data_LC_20120131_ALPHA_test_prompt/Odd_SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcaibEE_11032011_Z_R9_EE.root",
+ 			     //Char_t* infile1 = "FT_R_42_V21B/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9_EE.root",
+ 			     //Char_t* infile2 = "FT_R_42_V21B/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9_EE.root",
+ 			     //Char_t* infile3 = "FT_R_42_V21B/Odd_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9_EE.root",
 			     int evalStat = 1,
                              bool isMC=false,
 			     Char_t* fileType = "png", 
@@ -661,48 +665,85 @@ void DrawCalibrationPlotsEE (Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptS
   if(isMC == false)
   {
    std::ofstream outTxt ("Calibration_Coefficient_EE_dinamic_alpha.txt",std::ios::out);
+
    outTxt << "---------------------------------------------------------------" << std::endl;
-   outTxt << "--- ix ---- iy ------iz------- IC value EE (normalized by mean on EE ring) ---------" << std::endl;
+   outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iX"
+          << std::fixed << std::setprecision(0) << std::setw(10) << "iY"
+          << std::fixed << std::setprecision(0) << std::setw(10) << "iZ"
+          << std::fixed << std::setprecision(6) << std::setw(15) << "IC"
+          << std::fixed << std::setprecision(6) << std::setw(15) << "error"
+          << std::endl;
    outTxt << "---------------------------------------------------------------" << std::endl;
+
     for (int ix = 1; ix < hcmap[0]->GetNbinsX()+1 ; ix ++)
     {
       for (int iy = 1; iy < hcmap[0] -> GetNbinsY()+1; iy++)
-       {
+	{
           if( exmap->GetBinContent(ix,iy) !=1) continue;
+
+	  double x,statPrec;
+	  statprecision_vs_ring[0]->GetPoint(hrings[0]->GetBinContent(ix,iy),x,statPrec);
+
+
           if( (hcmap[0]->GetBinContent(ix,iy)>0.4 && hcmap[0]->GetBinContent(ix,iy)<2.)|| hcmap[0]->GetBinContent(ix,iy)==0 )
-          outTxt << "  " << std::fixed << std::setw(1) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
-           << std::fixed << std::setw(1) << "   " << hcmap[0]->GetYaxis()->GetBinLowEdge(iy) 
-            << "          " << -1 <<"     "<< hcmap[0]->GetBinContent(ix,iy) << std::endl;
+	    
+	    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
+		   << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetYaxis()->GetBinLowEdge(iy)
+		   << std::fixed << std::setprecision(0) << std::setw(10) << "-1"
+		   << std::fixed << std::setprecision(6) << std::setw(15) << hcmap[0]->GetBinContent(ix,iy)
+		   << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
+		   << std::endl;
+
           else{
-                outTxt << std::fixed << std::setw(1) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
-                << std::fixed << std::setw(1) << "   " << hcmap[0]->GetYaxis()->GetBinLowEdge(iy) 
-                << "          " << -1 << "      "<<0. << std::endl;
-                warning_Map_EEM->Fill(ix,iy);
-              }
- 
-       }
+
+            outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
+                   << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetYaxis()->GetBinLowEdge(iy)
+                   << std::fixed << std::setprecision(0) << std::setw(10) << "-1"
+                   << std::fixed << std::setprecision(6) << std::setw(15) << "0"
+                   << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
+                   << std::endl;
+
+	    warning_Map_EEM->Fill(ix,iy);
+	  }
+	  
+	}
     }
-   
+    
     for (int ix = 1; ix < hcmap[1]->GetNbinsX()+1 ; ix ++)
-    {
-      for (int iy = 1; iy < hcmap[1] -> GetNbinsY()+1; iy++)
-       {
-          if( exmap->GetBinContent(ix,iy) !=1) continue;
-          if((hcmap[1]->GetBinContent(ix,iy)>0.4 && hcmap[1]->GetBinContent(ix,iy)<2.)|| hcmap[1]->GetBinContent(ix,iy)==0)
-          outTxt << "  " << std::fixed << std::setw(1) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
-           << std::fixed << std::setw(1) << "   " << hcmap[1]->GetYaxis()->GetBinLowEdge(iy) 
-            << "          " << 1 << "      "<<hcmap[1]->GetBinContent(ix,iy) << std::endl;
-          else{
-               outTxt << std::fixed << std::setw(1) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
-               << std::fixed << std::setw(1) << "   " << hcmap[1]->GetYaxis()->GetBinLowEdge(iy) 
-               << "          " << 1 << "      "<<0. << std::endl;
-               warning_Map_EEP->Fill(ix,iy);
-              }
-       }
-    }
- }
+      {
+	for (int iy = 1; iy < hcmap[1] -> GetNbinsY()+1; iy++)
+	  {
+	    if( exmap->GetBinContent(ix,iy) !=1) continue;
+
+	    double x,statPrec;
+	    statprecision_vs_ring[1]->GetPoint(hrings[1]->GetBinContent(ix,iy),x,statPrec);
+
+	    if((hcmap[1]->GetBinContent(ix,iy)>0.4 && hcmap[1]->GetBinContent(ix,iy)<2.)|| hcmap[1]->GetBinContent(ix,iy)==0)
+
+	      outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
+		     << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetYaxis()->GetBinLowEdge(iy)
+		     << std::fixed << std::setprecision(0) << std::setw(10) << "1"
+		     << std::fixed << std::setprecision(6) << std::setw(15) << hcmap[1]->GetBinContent(ix,iy)
+		     << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
+		     << std::endl;
+
+	    else{
+
+              outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
+                     << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetYaxis()->GetBinLowEdge(iy)
+                     << std::fixed << std::setprecision(0) << std::setw(10) << "1"
+                     << std::fixed << std::setprecision(6) << std::setw(15) << "0"
+                     << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
+                     << std::endl;
 
 
+	      warning_Map_EEP->Fill(ix,iy);
+	    }
+	  }
+      }
+  }
+  
+  
   canEEP[1] = new TCanvas("Warning_EEP","Warning_EEP");
   canEEP[1]->SetGridx();
   canEEP[1]->SetGridy();
