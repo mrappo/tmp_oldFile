@@ -56,14 +56,20 @@ bool CheckxtalTT (int iPhi, int iEta, std::vector<std::pair<int,int> >& TT_centr
 
 
 
-void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EB/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9.root",
-			    Char_t* infile2 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EB/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9.root",
-			    Char_t* infile3 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EB/Odd_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9.root",
-			    int evalStat = 1,
-			    Char_t* fileType = "png", 
-			    Char_t* dirName = ".")
-{
+void DrawFoldedPlotsEB(     
+ 		       Char_t* infile1 = "data_LC_20120131_ALPHA_test_prompt/SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcalibEB_11032012_Z_noEP.root",
+ 		       Char_t* infile2 = "data_LC_20120131_ALPHA_test_prompt/Even_SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcalibEB_11032012_Z_noEP.root",
+ 		       Char_t* infile3 = "data_LC_20120131_ALPHA_test_prompt/Odd_SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcalibEB_11032012_Z_noEP.root",
+		       
+		       //Char_t* infile1 = "FT_R_42_V21B/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
+		       //Char_t* infile2 = "FT_R_42_V21B/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
+		       //Char_t* infile3 = "FT_R_42_V21B/Odd_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
 
+		       int evalStat = 1,
+		       Char_t* fileType = "png", 
+		       Char_t* dirName = ".")
+{
+  
   bool  printPlots = false;
 
   // by xtal
@@ -158,10 +164,17 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
 
    }
 
+
+   //fede: skip bad channels and bad TTs
    for (int iPhi = 1; iPhi< h_scale_EB->GetNbinsX()+1  ; iPhi++)
    { 
-    if(numIC!=0 && SumIC!=0)
-    hcmap->SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(SumIC/numIC));
+     if(numIC==0 || SumIC==0) continue;
+
+     bool isGood = CheckxtalIC(h_scale_EB,iPhi,iEta);
+     bool isGoodTT = CheckxtalTT(iPhi,iEta,TT_centre);
+     if (!isGood || !isGoodTT) continue;
+
+     hcmap->SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(SumIC/numIC));
    }
   }
   
@@ -467,6 +480,9 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   ///-----------------------------------------------------------------
   ///--- Draw plots
   ///-----------------------------------------------------------------
+   //TFile* fout = new TFile("plots/fout.root","RECREATE");
+   //fout->cd();
+
   TCanvas *c[20];
   
   c[0] = new TCanvas("csigmaFold","csigmaFold");
@@ -497,6 +513,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   residual_vs_EtaFold->GetHistogram()->GetXaxis()-> SetTitle("|i#eta|");
   residual_vs_EtaFold->Draw("ap");
 
+
   TLegend * legg1 = new TLegend(0.75,0.75,0.89, 0.89);
   
   c[3] = new TCanvas("cphimeanfold_crack_EB+","cphimeanfold_crack_EB+");
@@ -513,6 +530,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
   ic_vs_PhiFold_crack_EBp->GetHistogram()->SetTitle("EB+");
   ic_vs_PhiFold_crack_EBp->Draw("ap");
   legg1->Draw("same");
+
   
   c[4] = new TCanvas("cphimeanfold_crack_EB-","cphimeanfold_crackEB-");
   c[4]->cd();
@@ -545,6 +563,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
      
      k--;
   }
+
 
    c[12] = new TCanvas("cphimeanfold_crack_EB_ref","cphimeanfold_crackEB_ref");
    c[12]->cd();
@@ -622,6 +641,7 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
    
     }
   }
+  
   
     TGraphErrors *ic_vs_PhiFold_corrected_EBp = new TGraphErrors();
     ic_vs_PhiFold_corrected_EBp->SetMarkerStyle(20);
@@ -739,6 +759,8 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
    hcmap_crackcorrected->GetYaxis() ->SetTitle("i#eta");
    hcmap_crackcorrected->GetZaxis() ->SetRangeUser(0.9,1.1);
 
+   //hcmap_crackcorrected->Write();
+
    c[10] = new TCanvas("cphimeanfold_corrected_EB+","cphimeanfold_crack_EB+");
    c[10]->SetGridx();
    c[10]->SetGridy();
@@ -763,16 +785,30 @@ void DrawFoldedPlotsEB(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSk
    /// Dump IC in a txt file
    std::ofstream outTxt ("Calibration_Coefficient_EB_static_alpha_crackCorrected.txt",std::ios::out);
    outTxt << "---------------------------------------------------------------" << std::endl;
-   outTxt << "--- iPhi ---- iEta ------ IC value (mean on phi ring + crack effect correction) ---------" << std::endl;
+   outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iPhi"
+	  << std::fixed << std::setprecision(0) << std::setw(10) << "iEta"
+	  << std::fixed << std::setprecision(0) << std::setw(10) << "iZ"
+	  << std::fixed << std::setprecision(6) << std::setw(15) << "IC"
+	  << std::fixed << std::setprecision(6) << std::setw(15) << "error"
+	  << std::endl;
    outTxt << "---------------------------------------------------------------" << std::endl;
    for (int iEta = 1; iEta < hcmap_crackcorrected->GetNbinsY()+1 ; iEta ++)
    {
-      for (int iPhi =1 ; iPhi < hcmap_crackcorrected -> GetNbinsX()+1; iPhi++)
-      {
-          outTxt << "  " << std::fixed << std::setw(1) << hcmap_crackcorrected->GetXaxis()->GetBinLowEdge(iPhi)
-          << std::fixed << std::setw(1) << "   " << hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta) 
-          << "          " << hcmap_crackcorrected->GetBinContent(iPhi,iEta) << std::endl;
+     if (iEta+86 == 0) continue; //skip ieta=0
+     for (int iPhi =1 ; iPhi < hcmap_crackcorrected -> GetNbinsX()+1; iPhi++)
+       {
+	 double x,statPrec;
+	 statprecision_vs_EtaFold->GetPoint(iEta-1,x,statPrec);
 
-      }
+	 outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap_crackcorrected->GetXaxis()->GetBinLowEdge(iPhi)
+		<< std::fixed << std::setprecision(0) << std::setw(10) << hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta) 
+		<< std::fixed << std::setprecision(0) << std::setw(10) << "0" //iz for the barrel
+		<< std::fixed << std::setprecision(6) << std::setw(15) << hcmap_crackcorrected->GetBinContent(iPhi,iEta) 
+		<< std::fixed << std::setprecision(6) << std::setw(15) << statPrec
+		<< std::endl;
+	 
+       }
    }
+   //fout->Close();
+
 }
