@@ -48,7 +48,7 @@ bool CheckxtalTT (int iPhi, int iEta, std::vector<std::pair<int,int> >& TT_centr
 {
  for(unsigned int k =0; k<TT_centre.size(); k++)
  {
-   if(fabs(iPhi-TT_centre.at(k).second)<5 && fabs(iEta-TT_centre.at(k).first)<5) return false;
+   if(fabs(iPhi-TT_centre.at(k).second)<5 && fabs(iEta-86-TT_centre.at(k).first)<5) return false;
 
  }
  return true;
@@ -113,26 +113,26 @@ void DrawFoldedPlotsEB(
 
  std::vector< std::pair<int,int> > TT_centre ;
  
- TT_centre.push_back(std::pair<int,int> (58,49));
- TT_centre.push_back(std::pair<int,int> (53,109));
- TT_centre.push_back(std::pair<int,int> (8,114));
- TT_centre.push_back(std::pair<int,int> (83,169));
- TT_centre.push_back(std::pair<int,int> (53,174));
- TT_centre.push_back(std::pair<int,int> (63,194));
- TT_centre.push_back(std::pair<int,int> (83,224));
- TT_centre.push_back(std::pair<int,int> (73,344));
- TT_centre.push_back(std::pair<int,int> (83,358));
- TT_centre.push_back(std::pair<int,int> (-13,18));
- TT_centre.push_back(std::pair<int,int> (-18,23));
- TT_centre.push_back(std::pair<int,int> (-8,53));
- TT_centre.push_back(std::pair<int,int> (-3,63));
- TT_centre.push_back(std::pair<int,int> (-53,128));
- TT_centre.push_back(std::pair<int,int> (-53,183));
- TT_centre.push_back(std::pair<int,int> (-83,193));
- TT_centre.push_back(std::pair<int,int> (-74,218));
- TT_centre.push_back(std::pair<int,int> (-8,223));
- TT_centre.push_back(std::pair<int,int> (-68,303));
- TT_centre.push_back(std::pair<int,int> (-43,328));
+  TT_centre.push_back(std::pair<int,int> (58,49));
+  TT_centre.push_back(std::pair<int,int> (53,109));
+  TT_centre.push_back(std::pair<int,int> (8,114));
+  TT_centre.push_back(std::pair<int,int> (83,169));
+  TT_centre.push_back(std::pair<int,int> (53,174));
+  TT_centre.push_back(std::pair<int,int> (63,194));
+  TT_centre.push_back(std::pair<int,int> (83,224));
+  TT_centre.push_back(std::pair<int,int> (73,344));
+  TT_centre.push_back(std::pair<int,int> (83,358));
+  TT_centre.push_back(std::pair<int,int> (-13,18));
+  TT_centre.push_back(std::pair<int,int> (-18,23));
+  TT_centre.push_back(std::pair<int,int> (-8,53));
+  TT_centre.push_back(std::pair<int,int> (-3,63));
+  TT_centre.push_back(std::pair<int,int> (-53,128));
+  TT_centre.push_back(std::pair<int,int> (-53,183));
+  TT_centre.push_back(std::pair<int,int> (-83,193));
+  TT_centre.push_back(std::pair<int,int> (-74,218));
+  TT_centre.push_back(std::pair<int,int> (-8,223));
+  TT_centre.push_back(std::pair<int,int> (-68,303));
+  TT_centre.push_back(std::pair<int,int> (-43,328));
  
   ///  Input file with full statistic
  
