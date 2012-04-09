@@ -785,8 +785,8 @@ void DrawFoldedPlotsEB(
    /// Dump IC in a txt file
    std::ofstream outTxt ("Calibration_Coefficient_EB_static_alpha_crackCorrected.txt",std::ios::out);
    outTxt << "---------------------------------------------------------------" << std::endl;
-   outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iPhi"
-	  << std::fixed << std::setprecision(0) << std::setw(10) << "iEta"
+   outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iEta"
+	  << std::fixed << std::setprecision(0) << std::setw(10) << "iPhi"
 	  << std::fixed << std::setprecision(0) << std::setw(10) << "iZ"
 	  << std::fixed << std::setprecision(6) << std::setw(15) << "IC"
 	  << std::fixed << std::setprecision(6) << std::setw(15) << "error"
@@ -794,18 +794,34 @@ void DrawFoldedPlotsEB(
    outTxt << "---------------------------------------------------------------" << std::endl;
    for (int iEta = 1; iEta < hcmap_crackcorrected->GetNbinsY()+1 ; iEta ++)
    {
-     if (iEta+86 == 0) continue; //skip ieta=0
+     if (hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta) == 0) continue; //skip ieta=0
+
+     double x,statPrec;
+     if (hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta) < 0)
+       statprecision_vs_EtaFold->GetPoint(fabs(hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta+85)),x,statPrec);  //mirroring of the folded precision
+     else
+       statprecision_vs_EtaFold->GetPoint(fabs(hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta-85)),x,statPrec);  //mirroring of the folded precision
+
+
      for (int iPhi =1 ; iPhi < hcmap_crackcorrected -> GetNbinsX()+1; iPhi++)
        {
-	 double x,statPrec;
-	 statprecision_vs_EtaFold->GetPoint(iEta-1,x,statPrec);
 
-	 outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap_crackcorrected->GetXaxis()->GetBinLowEdge(iPhi)
-		<< std::fixed << std::setprecision(0) << std::setw(10) << hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta) 
-		<< std::fixed << std::setprecision(0) << std::setw(10) << "0" //iz for the barrel
-		<< std::fixed << std::setprecision(6) << std::setw(15) << hcmap_crackcorrected->GetBinContent(iPhi,iEta) 
-		<< std::fixed << std::setprecision(6) << std::setw(15) << statPrec
-		<< std::endl;
+	 outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta)
+		<< std::fixed << std::setprecision(0) << std::setw(10) << hcmap_crackcorrected->GetXaxis()->GetBinLowEdge(iPhi) 
+		<< std::fixed << std::setprecision(0) << std::setw(10) << "0"; //iz for the barrel
+
+	   if(hcmap_crackcorrected->GetBinContent(iPhi,iEta) == 0.)
+	     {
+	       outTxt << std::fixed << std::setprecision(6) << std::setw(15) << "-1."
+		      << std::fixed << std::setprecision(6) << std::setw(15) << "999."
+		      << std::endl;
+	     }
+	   else
+	     {
+	       outTxt << std::fixed << std::setprecision(6) << std::setw(15) << hcmap_crackcorrected->GetBinContent(iPhi,iEta) 
+		      << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
+		      << std::endl;
+	     }
 	 
        }
    }
