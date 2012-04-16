@@ -39,13 +39,13 @@ bool CheckxtalIC (TH2F* h_scale_EE,int ix, int iy, int ir)
 }
 
 // Check if the crystal is near to a dead TT
-
+//fede: only 7x7 around dead TTs (not 9x9)
 
 bool CheckxtalTT (int ix, int iy, int ir, std::vector<std::pair<int,int> >& TT_centre )
 {
  for( int k =0; k<TT_centre.size(); k++)
  {
-   if(fabs(ix-TT_centre.at(k).first)<5 && fabs(iy-TT_centre.at(k).second)<5) return false;
+   if(fabs(ix-TT_centre.at(k).first)<4 && fabs(iy-TT_centre.at(k).second)<4) return false;
 
  }
  return true;
@@ -53,7 +53,15 @@ bool CheckxtalTT (int ix, int iy, int ir, std::vector<std::pair<int,int> >& TT_c
 
 
 
-void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim_Single_Double_Electron_recoFlag/EE/fbrem/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_regression_Z_fbrem_EE.root",
+void Normalize_IC_EE(     
+		     //Char_t* infile1 = "data_LC_20120131_ALPHA_test_prompt/SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcaibEE_11032011_Z_R9_EE.root",
+		     //Char_t* infile1 = "data_LC_20120131_ALPHA_test_prompt/Even_SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcaibEE_11032011_Z_R9_EE.root",
+		     Char_t* infile1 = "data_LC_20120131_ALPHA_test_prompt/Odd_SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcaibEE_11032011_Z_R9_EE.root",
+
+		     //Char_t* infile1 = "FT_R_42_V21B/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9_EE.root",
+		     //Char_t* infile1 = "FT_R_42_V21B/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9_EE.root",
+		     //Char_t* infile1 = "FT_R_42_V21B/Odd_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_R9_EE.root",
+
 			  Char_t* fileType = "png", 
 			  Char_t* dirName = ".")
 {
@@ -144,7 +152,7 @@ void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim
     for( int ix = 0; ix < h_scale_EE[k]->GetNbinsX()+1 ; ix++ ){
  
      for(int iy = 0; iy < h_scale_EE[k]->GetNbinsY()+1 ; iy++ ){
-           
+       
        ir = hrings[k]->GetBinContent(ix,iy);
        
        bool isGood = CheckxtalIC(h_scale_EE[k],ix,iy,ir);
@@ -166,36 +174,44 @@ void Normalize_IC_EE(     Char_t* infile1 = "/data1/rgerosa/L3_Weight/PromptSkim
        }
     }
   }
-
+  
   for(int k=0; k<2 ; k++)
-  {
-    for( int ix = 0; ix < h_scale_EE[k]->GetNbinsX()+1 ; ix++ ){
- 
-     for(int iy = 0; iy < h_scale_EE[k]->GetNbinsY()+1 ; iy++ ){
+    {
+      for( int ix = 0; ix < h_scale_EE[k]->GetNbinsX()+1 ; ix++ )
+	{	
+	  for(int iy = 0; iy < h_scale_EE[k]->GetNbinsY()+1 ; iy++ )
+	    {
+	      ir = hrings[k]->GetBinContent(ix,iy);
+	      
+	      //fede: skip bad channels and bad TTs    
+	      bool isGood = CheckxtalIC(h_scale_EE[k],ix,iy,ir);
+	      bool isGoodTT;
+	      if(k==0) isGoodTT = CheckxtalTT(ix,iy,ir,TT_centre_EEM);
+	      else isGoodTT = CheckxtalTT(ix,iy,ir,TT_centre_EEP);
+	      if (!isGood || !isGoodTT) continue;
 
-       ir = hrings[k]->GetBinContent(ix,iy);
-      
-       if(k!=0)
-       {
-          if(ir>33){  
-                      hcmap_EE[k]->Fill(ix,iy,0.);
-                      continue;
-                    }
-          if(Sumxtal_Ring_EEP.at(ir) != 0 && SumIC_Ring_EEP.at(ir)!= 0)
-          hcmap_EE[k]->Fill(ix,iy,h_scale_EE[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEP.at(ir)/Sumxtal_Ring_EEP.at(ir)));
-       }
-       else{
-            if(ir>33){
-                        hcmap_EE[k]->Fill(ix,iy,0.);
-                        continue;
-                      }
-            if(Sumxtal_Ring_EEM.at(ir) != 0 && SumIC_Ring_EEM.at(ir) != 0)
-            hcmap_EE[k]->Fill(ix,iy,h_scale_EE[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEM.at(ir)/Sumxtal_Ring_EEM.at(ir)));
-           }
-       }
-   }
-  }
-   
+	      if(k!=0)
+		{
+		  if(ir>33){  
+		    hcmap_EE[k]->Fill(ix,iy,0.);
+		    continue;
+		  }
+		  if(Sumxtal_Ring_EEP.at(ir) != 0 && SumIC_Ring_EEP.at(ir)!= 0)
+		    hcmap_EE[k]->Fill(ix,iy,h_scale_EE[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEP.at(ir)/Sumxtal_Ring_EEP.at(ir)));
+		}
+	      else
+		{
+		  if(ir>33){
+		    hcmap_EE[k]->Fill(ix,iy,0.);
+		    continue;
+		  }
+		  if(Sumxtal_Ring_EEM.at(ir) != 0 && SumIC_Ring_EEM.at(ir) != 0)
+		    hcmap_EE[k]->Fill(ix,iy,h_scale_EE[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEM.at(ir)/Sumxtal_Ring_EEM.at(ir)));
+		}
+	    }
+	}
+    }
+  
   TCanvas *cEEP[12];
   TCanvas *cEEM[12];
  
