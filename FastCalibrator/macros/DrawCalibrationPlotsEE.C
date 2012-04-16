@@ -675,36 +675,33 @@ void DrawCalibrationPlotsEE (
           << std::endl;
    outTxt << "---------------------------------------------------------------" << std::endl;
 
-    for (int ix = 1; ix < hcmap[0]->GetNbinsX()+1 ; ix ++)
-    {
-      for (int iy = 1; iy < hcmap[0] -> GetNbinsY()+1; iy++)
-	{
-          if( exmap->GetBinContent(ix,iy) !=1) continue;
-
-	  double x,statPrec;
-	  statprecision_vs_ring[0]->GetPoint(hrings[0]->GetBinContent(ix,iy),x,statPrec);
-
-
-          if( (hcmap[0]->GetBinContent(ix,iy)>0.4 && hcmap[0]->GetBinContent(ix,iy)<2.)|| hcmap[0]->GetBinContent(ix,iy)==0 )
-	    
-	    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
-		   << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetYaxis()->GetBinLowEdge(iy)
-		   << std::fixed << std::setprecision(0) << std::setw(10) << "-1"
-		   << std::fixed << std::setprecision(6) << std::setw(15) << hcmap[0]->GetBinContent(ix,iy)
-		   << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
-		   << std::endl;
-
-          else{
-
-            outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
-                   << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetYaxis()->GetBinLowEdge(iy)
-                   << std::fixed << std::setprecision(0) << std::setw(10) << "-1"
-                   << std::fixed << std::setprecision(6) << std::setw(15) << "0"
-                   << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
-                   << std::endl;
-
-	    warning_Map_EEM->Fill(ix,iy);
-	  }
+   for (int ix = 1; ix < hcmap[0]->GetNbinsX()+1 ; ix ++)
+     {
+       for (int iy = 1; iy < hcmap[0] -> GetNbinsY()+1; iy++)
+	 {
+	   if( exmap->GetBinContent(ix,iy) !=1) continue;
+	   
+	   double x,statPrec;
+	   statprecision_vs_ring[0]->GetPoint(hrings[0]->GetBinContent(ix,iy),x,statPrec);
+	   
+	   outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetXaxis()->GetBinLowEdge(ix)
+		  << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[0]->GetYaxis()->GetBinLowEdge(iy)
+		  << std::fixed << std::setprecision(0) << std::setw(10) << "-1";
+	   
+	   if( hcmap[0]->GetBinContent(ix,iy) == 0. )
+	     {  
+               outTxt << std::fixed << std::setprecision(6) << std::setw(15) << "-1."
+                      << std::fixed << std::setprecision(6) << std::setw(15) << "999."
+                      << std::endl;
+	     }
+	   else
+	     {
+	       outTxt << std::fixed << std::setprecision(6) << std::setw(15) << hcmap[0]->GetBinContent(ix,iy)
+		      << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
+		      << std::endl;
+	       
+	       //warning_Map_EEM->Fill(ix,iy);
+	     }
 	  
 	}
     }
@@ -714,31 +711,29 @@ void DrawCalibrationPlotsEE (
 	for (int iy = 1; iy < hcmap[1] -> GetNbinsY()+1; iy++)
 	  {
 	    if( exmap->GetBinContent(ix,iy) !=1) continue;
-
+	    
 	    double x,statPrec;
 	    statprecision_vs_ring[1]->GetPoint(hrings[1]->GetBinContent(ix,iy),x,statPrec);
-
-	    if((hcmap[1]->GetBinContent(ix,iy)>0.4 && hcmap[1]->GetBinContent(ix,iy)<2.)|| hcmap[1]->GetBinContent(ix,iy)==0)
-
-	      outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
-		     << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetYaxis()->GetBinLowEdge(iy)
-		     << std::fixed << std::setprecision(0) << std::setw(10) << "1"
-		     << std::fixed << std::setprecision(6) << std::setw(15) << hcmap[1]->GetBinContent(ix,iy)
-		     << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
-		     << std::endl;
-
-	    else{
-
-              outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
-                     << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetYaxis()->GetBinLowEdge(iy)
-                     << std::fixed << std::setprecision(0) << std::setw(10) << "1"
-                     << std::fixed << std::setprecision(6) << std::setw(15) << "0"
-                     << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
-                     << std::endl;
-
-
-	      warning_Map_EEP->Fill(ix,iy);
-	    }
+	    
+	    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetXaxis()->GetBinLowEdge(ix)
+		   << std::fixed << std::setprecision(0) << std::setw(10) << hcmap[1]->GetYaxis()->GetBinLowEdge(iy)
+		   << std::fixed << std::setprecision(0) << std::setw(10) << "1";
+	    
+	    if( hcmap[1]->GetBinContent(ix,iy) == 0. )
+	      {
+		outTxt << std::fixed << std::setprecision(6) << std::setw(15) << "-1."
+		       << std::fixed << std::setprecision(6) << std::setw(15) << "999."
+		       << std::endl;
+	      }
+	    else
+	      {
+		outTxt << std::fixed << std::setprecision(6) << std::setw(15) << hcmap[1]->GetBinContent(ix,iy)
+		       << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
+		       << std::endl;
+		
+		//warning_Map_EEM->Fill(ix,iy);                                                                                                                               
+	      }
+	    
 	  }
       }
   }
