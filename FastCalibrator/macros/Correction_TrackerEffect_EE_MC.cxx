@@ -16,7 +16,7 @@
 //
 
 
-void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/IC_MC_4Correction.root",
+void Correction_TrackerEffect_EE_MC (Char_t* infile1 = "/afs/cern.ch/user/r/rgerosa/scratch0/FastCalibrator/output/IC_MC_4Correction.root",
 			     Char_t* fileType = "png", 
 			     Char_t* dirName = ".")
 {

@@ -35,11 +35,11 @@ void CompareCalibToMCtruth(){
 
   /// Input File MCTruth IC Map , RECO IC map, MC IC set after calibration (Usually set with miscalibration 5%)
   /// and StatPrecision IC coefficient obtained from DrawFoldedEB.C
-  TFile *f1 = TFile::Open("MCtruthIC.root");
-  TFile *f2 = TFile::Open("MCRecoIC.root");
+  TFile *f1 = TFile::Open("output/MCtruthIC.root");
+  TFile *f2 = TFile::Open("output/MCRecoIC.root");
   TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/noEP_Z/WZAnalysis_SingleEle_WJetsToLNu_Z_noEP_miscalib.root");
   
-  TFile *f4 =  TFile::Open("StatPrec.root");
+  TFile *f4 =  TFile::Open("output/StatPrec.root");
 
   TH2F *hcmapMcT = (TH2F*)f1->Get("h_scale_map");
   TH2F *hcmapMcR = (TH2F*)f2->Get("h_scale_map");

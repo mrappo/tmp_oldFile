@@ -32,14 +32,14 @@ void CompareCalibToMCtruth_EE() {
   gROOT->ForceStyle();
   
   /// Reco and truth map for MC IC EE
-  TFile *f1 = TFile::Open("MCtruthIC_EE.root");
-  TFile *f2 = TFile::Open("MCRecoIC_EE.root");
+  TFile *f1 = TFile::Open("output/MCtruthIC_EE.root");
+  TFile *f2 = TFile::Open("output/MCRecoIC_EE.root");
   
   /// L3 result MC endcap
   TFile *f3 = TFile::Open("/data1/rgerosa/L3_Weight/MC_WJets/EE_recoFlag/WZAnalysis_WJetsToLNu_TuneZ2_7TeV-madgraph-tauola_Fall11_Z_noEP_miscalib_EE.root");
   
   /// Statistical Precision map 
-  TFile *f4 =  TFile::Open("StatPrec_MC_R9_EE.root");
+  TFile *f4 =  TFile::Open("output/StatPrec_MC_R9_EE.root");
   /// input coeff map for EEP and EEM
   TH2F *hcmapMcT_EEP = (TH2F*)f1->Get("h_scale_EEP");
   TH2F *hcmapMcT_EEM = (TH2F*)f1->Get("h_scale_EEM");
