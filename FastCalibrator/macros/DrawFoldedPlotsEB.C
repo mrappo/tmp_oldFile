@@ -57,10 +57,10 @@ bool CheckxtalTT (int iPhi, int iEta, std::vector<std::pair<int,int> >& TT_centr
 
 
 void DrawFoldedPlotsEB(     
- 		       Char_t* infile1 = "data_LC_20120131_ALPHA_test_prompt/SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcalibEB_11032012_Z_noEP.root",
- 		       Char_t* infile2 = "data_LC_20120131_ALPHA_test_prompt/Even_SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcalibEB_11032012_Z_noEP.root",
- 		       Char_t* infile3 = "data_LC_20120131_ALPHA_test_prompt/Odd_SingleElectron_Run2011AB-WElectron-data_LC_20120131_ALPHA_test_prompt_EoPcalibEB_11032012_Z_noEP.root",
-		       
+ 		       Char_t* infile1 = "/data1/rgerosa/L3_Weight/MC_WJets/EB_Z_recoFlag/WJetsToLNu_DYJetsToLL_7TeV-madgraph-tauola_Fall11_Etrue_Z_noEP.root",
+ 		       Char_t* infile2 = "/data1/rgerosa/L3_Weight/MC_WJets/EB_Z_recoFlag/Odd_WJetsToLNu_DYJetsToLL_7TeV-madgraph-tauola_Fall11_Etrue_Z_noEP.root",
+		       Char_t* infile3 = "/data1/rgerosa/L3_Weight/MC_WJets/EB_Z_recoFlag/Even_WJetsToLNu_DYJetsToLL_7TeV-madgraph-tauola_Fall11_Etrue_Z_noEP.root",
+			   
 		       //Char_t* infile1 = "FT_R_42_V21B/WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
 		       //Char_t* infile2 = "FT_R_42_V21B/Even_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
 		       //Char_t* infile3 = "FT_R_42_V21B/Odd_WZAnalysis_PromptSkim_W-DoubleElectron_FT_R_42_V21B_Z_noEP.root",
@@ -455,6 +455,7 @@ void DrawFoldedPlotsEB(
       hspreadPhiFold_crack_EBp[i-1]->Fit("fgaus2","QR");
 
       ic_vs_PhiFold_crack_EBp-> SetPoint(np, i, fgaus2->GetParameter(1));
+
       spread_ic_vs_PhiFold_crack_EBp -> SetPoint(np, i, fgaus2->GetParameter(2));
 //       ic_vs_PhiFold_crack-> SetPoint(np,phibin,hspreadPhiFold_crack[i-1]->GetMean()); 
       ic_vs_PhiFold_crack_EBp-> SetPointError(np,0.5,fgaus2->GetParError(1));
@@ -468,6 +469,7 @@ void DrawFoldedPlotsEB(
       hspreadPhiFold_crack_EBm[i-1]->Fit("fgaus2","QR");
 
       ic_vs_PhiFold_crack_EBm-> SetPoint(np, i, fgaus2->GetParameter(1));
+
       spread_ic_vs_PhiFold_crack_EBm-> SetPoint(np, i, fgaus2->GetParameter(2));
       //       ic_vs_PhiFold_crack-> SetPoint(np,phibin,hspreadPhiFold_crack[i-1]->GetMean()); 
       ic_vs_PhiFold_crack_EBm-> SetPointError(np,0.5,fgaus2->GetParError(1));
@@ -476,6 +478,130 @@ void DrawFoldedPlotsEB(
       
       np++;
    }
+  /// IC Correction for Crack structure 
+  TF1 *pol0_EBp = new TF1("pol0_EBp","pol0",4,16);
+  TF1 *pol0_EBm = new TF1("pol0_EBm","pol0",4,16);
+  pol0_EBp->SetLineColor(kWhite);
+  pol0_EBm->SetLineColor(kWhite);
+
+  ic_vs_PhiFold_crack_EBp->Fit("pol0_EBp","QR");
+  ic_vs_PhiFold_crack_EBm->Fit("pol0_EBm","QR");
+  
+  TH2F *hcmap_crackcorrected = (TH2F*) h_scale_EB->Clone("hcmap_crackcorrected");
+  hcmap_crackcorrected->Reset("ICMES");
+  hcmap_crackcorrected->ResetStats();
+
+  /// crack corrected map
+  for(int ibin =1 ; ibin <hcmap->GetNbinsX()+1 ; ibin++)
+  {
+    for(int jbin =1; jbin <hcmap->GetNbinsY()+1 ; jbin++)
+    {
+      float ic = hcmap->GetBinContent(ibin,jbin);
+      int iPhi ;
+      if(ibin<=20) iPhi=ibin-1;
+      else iPhi = (ibin-1)%20;
+      if (jbin <= 85){
+      double ix,ic_crack;
+      ic_vs_PhiFold_crack_EBm->GetPoint(iPhi,ix,ic_crack);
+      if(iPhi>=16)
+      hcmap_crackcorrected->SetBinContent(ibin,jbin,ic*pol0_EBm->GetParameter(0)/ic_crack);
+      else hcmap_crackcorrected->SetBinContent(ibin,jbin,ic);
+      }
+    
+      if (jbin >= 87){
+      double ix,ic_crack;
+      ic_vs_PhiFold_crack_EBp->GetPoint(iPhi,ix,ic_crack);
+      if(iPhi<=4)
+      hcmap_crackcorrected->SetBinContent(ibin,jbin,ic*pol0_EBp->GetParameter(0)/ic_crack);
+      else hcmap_crackcorrected->SetBinContent(ibin,jbin,ic);
+      }
+   
+    }
+  }
+  
+  
+    TGraphErrors *ic_vs_PhiFold_corrected_EBp = new TGraphErrors();
+    ic_vs_PhiFold_corrected_EBp->SetMarkerStyle(20);
+    ic_vs_PhiFold_corrected_EBp->SetMarkerSize(1);
+    ic_vs_PhiFold_corrected_EBp->SetMarkerColor(kRed);
+    
+    TGraphErrors *ic_vs_PhiFold_corrected_EBm = new TGraphErrors();
+    ic_vs_PhiFold_corrected_EBm->SetMarkerStyle(20);
+    ic_vs_PhiFold_corrected_EBm->SetMarkerSize(1);
+    ic_vs_PhiFold_corrected_EBm->SetMarkerColor(kBlue);
+   
+
+   TH1F* hspreadPhiFold_corrected_EBp[20];
+   TH1F* hspreadPhiFold_corrected_EBm[20];
+   nStep =0;
+    
+    for(int jbin = 1; jbin < hcmap_crackcorrected-> GetNbinsX()+1; jbin++){
+      if (jbin <= 20) {
+        nStep++;
+        sprintf(hname,"hspreadPhiFold_corrected_EBp%02d",nStep);
+        hspreadPhiFold_corrected_EBp[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
+        sprintf(hname,"hspreadPhiFold_corrected_EBm%02d",nStep);
+        hspreadPhiFold_corrected_EBm[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
+
+      }
+
+    for(int ibin = 1; ibin < hcmap_crackcorrected-> GetNbinsY()+1; ibin++){
+     float ic = hcmap_crackcorrected->GetBinContent(jbin,ibin);
+     bool isGood = CheckxtalIC(hcmap,jbin,ibin);
+     bool isGoodTT = CheckxtalTT(jbin,ibin,TT_centre);
+
+     if (ic>0 && ic<2 && isGood && isGoodTT ) {
+       if(jbin <= 20)
+       {
+//           if (ibin >= 66 && ibin <= 80)  hspreadPhiFold_crack_EBm[jbin-1]->Fill(ic); //ieta from 5 to 20 included
+//           if (ibin >= 91 && ibin <= 105) hspreadPhiFold_crack_EBp[jbin-1]->Fill(ic);
+
+          if (ibin <= 85) hspreadPhiFold_corrected_EBm[jbin-1]->Fill(ic); //from 1 to 85 included
+          if (ibin >= 87) hspreadPhiFold_corrected_EBp[jbin-1]->Fill(ic); //from 86 to 170 included
+       }
+       else
+       {
+          int kbin = (jbin-1)%20 ;
+//           cout << jbin << "   " << kbin << endl;
+
+//          if (ibin >= 66 && ibin <= 80) hspreadPhiFold_crack_EBm[kbin]->Fill(ic);
+//          if (ibin >= 91 && ibin <= 105) hspreadPhiFold_crack_EBp[kbin]->Fill(ic);
+
+          if (ibin <= 85) hspreadPhiFold_corrected_EBm[kbin]->Fill(ic);
+          if (ibin >= 87) hspreadPhiFold_corrected_EBp[kbin]->Fill(ic);
+       }
+      }
+    }
+  }
+
+   np=0;
+   for(int i=1; i<=20; i++)
+   {
+      fgaus2->SetParameter(1,hspreadPhiFold_corrected_EBp[i-1]->GetMean());
+      fgaus2->SetParameter(2,hspreadPhiFold_corrected_EBp[i-1]->GetRMS());
+
+      fgaus2->SetRange(hspreadPhiFold_corrected_EBp[i-1]->GetMean()-5*hspreadPhiFold_corrected_EBp[i-1]->GetRMS(),
+                       hspreadPhiFold_corrected_EBp[i-1]->GetMean()+5*hspreadPhiFold_corrected_EBp[i-1]->GetRMS());
+      hspreadPhiFold_corrected_EBp[i-1]->Fit("fgaus2","QR");
+
+      ic_vs_PhiFold_corrected_EBp-> SetPoint(np, i, fgaus2->GetParameter(1));
+      ic_vs_PhiFold_corrected_EBp-> SetPointError(np,0.5,fgaus2->GetParError(1));
+  
+      fgaus2->SetParameter(1,hspreadPhiFold_corrected_EBm[i-1]->GetMean());
+      fgaus2->SetParameter(2,hspreadPhiFold_corrected_EBm[i-1]->GetRMS());
+
+      fgaus2->SetRange(hspreadPhiFold_corrected_EBm[i-1]->GetMean()-5*hspreadPhiFold_corrected_EBm[i-1]->GetRMS(),
+                       hspreadPhiFold_corrected_EBm[i-1]->GetMean()+5*hspreadPhiFold_corrected_EBm[i-1]->GetRMS());
+      hspreadPhiFold_corrected_EBm[i-1]->Fit("fgaus2","QR");
+
+      ic_vs_PhiFold_corrected_EBm-> SetPoint(np, i, fgaus2->GetParameter(1));
+      ic_vs_PhiFold_corrected_EBm-> SetPointError(np,0.5,fgaus2->GetParError(1));
+      
+      np++;
+   }
+
+
+
   ///------------------------------------------------------------------------
   ///-----------------------------------------------------------------
   ///--- Draw plots
@@ -600,167 +726,46 @@ void DrawFoldedPlotsEB(
    spread_ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetTitle("Phi%20");
    spread_ic_vs_PhiFold_crack_EBm->Draw("ap");
    
+   c[12] = new TCanvas("dist","dist"); 
   
-  /// IC Correction 
-  TF1 *pol0_EBp = new TF1("pol0_EBp","pol0",4,16);
-  TF1 *pol0_EBm = new TF1("pol0_EBm","pol0",4,16);
-  pol0_EBp->SetLineColor(kWhite);
-  pol0_EBm->SetLineColor(kWhite);
 
-  ic_vs_PhiFold_crack_EBp->Fit("pol0_EBp","QR");
-  ic_vs_PhiFold_crack_EBm->Fit("pol0_EBm","QR");
-  
-  TH2F *hcmap_crackcorrected = (TH2F*) h_scale_EB->Clone("hcmap_crackcorrected");
-  hcmap_crackcorrected->Reset("ICMES");
-  hcmap_crackcorrected->ResetStats();
-
-  /// crack corrected map
-  for(int ibin =1 ; ibin <hcmap->GetNbinsX()+1 ; ibin++)
-  {
-    for(int jbin =1; jbin <hcmap->GetNbinsY()+1 ; jbin++)
-    {
-      float ic = hcmap->GetBinContent(ibin,jbin);
-      int iPhi ;
-      if(ibin<=20) iPhi=ibin-1;
-      else iPhi = (ibin-1)%20;
-      if (jbin <= 85){
-      double ix,ic_crack;
-      ic_vs_PhiFold_crack_EBm->GetPoint(iPhi,ix,ic_crack);
-      if(iPhi>=16)
-      hcmap_crackcorrected->SetBinContent(ibin,jbin,ic*pol0_EBm->GetParameter(0)/ic_crack);
-      else hcmap_crackcorrected->SetBinContent(ibin,jbin,ic);
-      }
-    
-      if (jbin >= 87){
-      double ix,ic_crack;
-      ic_vs_PhiFold_crack_EBp->GetPoint(iPhi,ix,ic_crack);
-      if(iPhi<=4)
-      hcmap_crackcorrected->SetBinContent(ibin,jbin,ic*pol0_EBp->GetParameter(0)/ic_crack);
-      else hcmap_crackcorrected->SetBinContent(ibin,jbin,ic);
-      }
-   
-    }
-  }
-  
-  
-    TGraphErrors *ic_vs_PhiFold_corrected_EBp = new TGraphErrors();
-    ic_vs_PhiFold_corrected_EBp->SetMarkerStyle(20);
-    ic_vs_PhiFold_corrected_EBp->SetMarkerSize(1);
-    ic_vs_PhiFold_corrected_EBp->SetMarkerColor(kRed);
-    
-    TGraphErrors *ic_vs_PhiFold_corrected_EBm = new TGraphErrors();
-    ic_vs_PhiFold_corrected_EBm->SetMarkerStyle(20);
-    ic_vs_PhiFold_corrected_EBm->SetMarkerSize(1);
-    ic_vs_PhiFold_corrected_EBm->SetMarkerColor(kBlue);
-   
-
-   TH1F* hspreadPhiFold_corrected_EBp[20];
-   TH1F* hspreadPhiFold_corrected_EBm[20];
-   nStep =0;
-    
-    for(int jbin = 1; jbin < hcmap_crackcorrected-> GetNbinsX()+1; jbin++){
-      if (jbin <= 20) {
-        nStep++;
-        sprintf(hname,"hspreadPhiFold_corrected_EBp%02d",nStep);
-        hspreadPhiFold_corrected_EBp[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
-        sprintf(hname,"hspreadPhiFold_corrected_EBm%02d",nStep);
-        hspreadPhiFold_corrected_EBm[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
-
-      }
-
-    for(int ibin = 1; ibin < hcmap_crackcorrected-> GetNbinsY()+1; ibin++){
-     float ic = hcmap_crackcorrected->GetBinContent(jbin,ibin);
-     bool isGood = CheckxtalIC(hcmap,jbin,ibin);
-     bool isGoodTT = CheckxtalTT(jbin,ibin,TT_centre);
-
-     if (ic>0 && ic<2 && isGood && isGoodTT ) {
-       if(jbin <= 20)
-       {
-//           if (ibin >= 66 && ibin <= 80)  hspreadPhiFold_crack_EBm[jbin-1]->Fill(ic); //ieta from 5 to 20 included
-//           if (ibin >= 91 && ibin <= 105) hspreadPhiFold_crack_EBp[jbin-1]->Fill(ic);
-
-          if (ibin <= 85) hspreadPhiFold_corrected_EBm[jbin-1]->Fill(ic); //from 1 to 85 included
-          if (ibin >= 87) hspreadPhiFold_corrected_EBp[jbin-1]->Fill(ic); //from 86 to 170 included
-       }
-       else
-       {
-          int kbin = (jbin-1)%20 ;
-//           cout << jbin << "   " << kbin << endl;
-
-//          if (ibin >= 66 && ibin <= 80) hspreadPhiFold_crack_EBm[kbin]->Fill(ic);
-//          if (ibin >= 91 && ibin <= 105) hspreadPhiFold_crack_EBp[kbin]->Fill(ic);
-
-          if (ibin <= 85) hspreadPhiFold_corrected_EBm[kbin]->Fill(ic);
-          if (ibin >= 87) hspreadPhiFold_corrected_EBp[kbin]->Fill(ic);
-       }
-      }
-    }
-  }
-
-   np=0;
-   for(int i=1; i<=20; i++)
-   {
-      fgaus2->SetParameter(1,hspreadPhiFold_corrected_EBp[i-1]->GetMean());
-      fgaus2->SetParameter(2,hspreadPhiFold_corrected_EBp[i-1]->GetRMS());
-
-      fgaus2->SetRange(hspreadPhiFold_corrected_EBp[i-1]->GetMean()-5*hspreadPhiFold_corrected_EBp[i-1]->GetRMS(),
-                       hspreadPhiFold_corrected_EBp[i-1]->GetMean()+5*hspreadPhiFold_corrected_EBp[i-1]->GetRMS());
-      hspreadPhiFold_corrected_EBp[i-1]->Fit("fgaus2","QR");
-
-      ic_vs_PhiFold_corrected_EBp-> SetPoint(np, i, fgaus2->GetParameter(1));
-      ic_vs_PhiFold_corrected_EBp-> SetPointError(np,0.5,fgaus2->GetParError(1));
-  
-      fgaus2->SetParameter(1,hspreadPhiFold_corrected_EBm[i-1]->GetMean());
-      fgaus2->SetParameter(2,hspreadPhiFold_corrected_EBm[i-1]->GetRMS());
-
-      fgaus2->SetRange(hspreadPhiFold_corrected_EBm[i-1]->GetMean()-5*hspreadPhiFold_corrected_EBm[i-1]->GetRMS(),
-                       hspreadPhiFold_corrected_EBm[i-1]->GetMean()+5*hspreadPhiFold_corrected_EBm[i-1]->GetRMS());
-      hspreadPhiFold_corrected_EBm[i-1]->Fit("fgaus2","QR");
-
-      ic_vs_PhiFold_corrected_EBm-> SetPoint(np, i, fgaus2->GetParameter(1));
-      ic_vs_PhiFold_corrected_EBm-> SetPointError(np,0.5,fgaus2->GetParError(1));
-      
-      np++;
-   }
  
    c[7] = new TCanvas("hcmap","hcmap");
    c[7]->SetGridx();
    c[7]->SetGridy();
    hcmap->GetXaxis()->SetNdivisions(1020);
    hcmap->GetXaxis() -> SetLabelSize(0.03);
-   hcmap->Draw("colz");
    hcmap->GetXaxis() ->SetTitle("i#phi");
    hcmap->GetYaxis() ->SetTitle("i#eta");
    hcmap->GetZaxis() ->SetRangeUser(0.9,1.1);
+   hcmap->Draw("colz");
+ 
 
    c[8] = new TCanvas("hspreadEB","hspreadEB");
-   c[8] -> cd();
    c[8]->SetLeftMargin(0.1); 
    c[8]->SetRightMargin(0.13); 
    c[8]->SetGridx();
   
    h_scale_EB->GetXaxis()->SetNdivisions(1020);
    h_scale_EB->GetXaxis() -> SetLabelSize(0.03);
-   h_scale_EB->Draw("COLZ");
    h_scale_EB->GetXaxis() ->SetTitle("i#phi");
    h_scale_EB->GetYaxis() ->SetTitle("i#eta");
    h_scale_EB->GetZaxis() ->SetRangeUser(0.9,1.1);
+   h_scale_EB->Draw("COLZ");
    
    c[9] = new TCanvas("hcmap_crackcorrected","hcmap_crackcorrected");
-   c[9] -> cd();
    c[9]->SetLeftMargin(0.1); 
    c[9]->SetRightMargin(0.13); 
    c[9]->SetGridx();
   
    hcmap_crackcorrected->GetXaxis()->SetNdivisions(1020);
    hcmap_crackcorrected->GetXaxis() -> SetLabelSize(0.03);
-   hcmap_crackcorrected->Draw("COLZ");
    hcmap_crackcorrected->GetXaxis() ->SetTitle("i#phi");
    hcmap_crackcorrected->GetYaxis() ->SetTitle("i#eta");
    hcmap_crackcorrected->GetZaxis() ->SetRangeUser(0.9,1.1);
-
-   //hcmap_crackcorrected->Write();
-
+   hcmap_crackcorrected->Draw("COLZ");
+   
+   
    c[10] = new TCanvas("cphimeanfold_corrected_EB+","cphimeanfold_crack_EB+");
    c[10]->SetGridx();
    c[10]->SetGridy();
@@ -782,7 +787,8 @@ void DrawFoldedPlotsEB(
    ic_vs_PhiFold_corrected_EBm->Draw("ap");
 
   
-   /// Dump IC in a txt file
+   /// Dump IC in a txt file ---> IC from isolated electrons
+
    std::ofstream outTxt ("Calibration_Coefficient_EB_static_alpha_crackCorrected.txt",std::ios::out);
    outTxt << "---------------------------------------------------------------" << std::endl;
    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iEta"
