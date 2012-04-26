@@ -7,8 +7,7 @@
 #include "TPad.h"
 #include "TLegend.h"
 #include "TStyle.h"
-#include "TH1F.h"
-#include "TKey.h"
+#include "TH2F.h"
 
 void DrawMomentumCalibration()
 {
@@ -22,11 +21,12 @@ void DrawMomentumCalibration()
   gStyle->SetStatFont(42);
   gStyle->SetStatFontSize(0.05);
   gStyle->SetOptTitle(0); 
-  gStyle->SetOptStat(10); 
+  gStyle->SetOptStat(10111); 
   gStyle->SetOptFit(1); 
+  gStyle->SetPalette(1); 
   gROOT->ForceStyle();
 
-  TFile *f = TFile::Open("output/MomentumCalibration_vtx_min5_max100.root");
+  TFile *f = TFile::Open("output/MomentumCalibration.root");
   int i=0;
   
   while(f!=0) 
@@ -36,6 +36,9 @@ void DrawMomentumCalibration()
   TGraphErrors* g_EoP_EB = (TGraphErrors*)f->Get(Name);
   Name= Form("g_EoC_EB_%d",i);
   TGraphErrors* g_EoC_EB = (TGraphErrors*)f->Get(Name);
+  Name= Form("g_EoC_EB_%d",i+1);
+  TGraphErrors* g_EoC_EB2 = (TGraphErrors*)f->Get(Name);
+
   Name= Form("g_Rat_EB_%d",i);
   TGraphErrors* g_Rat_EB = (TGraphErrors*)f->Get(Name);
 
@@ -44,13 +47,36 @@ void DrawMomentumCalibration()
   g_EoP_EB -> SetMarkerStyle(20);
   g_EoP_EB -> SetMarkerSize(1);
   g_EoP_EB -> SetMarkerColor(kRed+1); 
-  g_EoP_EB -> SetLineColor(kRed+1); 
+  g_EoP_EB -> SetLineColor(kRed+1);
+ 
 
   g_EoC_EB -> SetMarkerStyle(20);
   g_EoC_EB -> SetMarkerSize(1);
   g_EoC_EB -> SetMarkerColor(kGreen+1);
   g_EoC_EB -> SetLineColor(kGreen+1);
- 
+  
+  if(g_EoC_EB2!=0)
+  {
+
+  g_EoC_EB2 -> SetMarkerStyle(20);
+  g_EoC_EB2 -> SetMarkerSize(1);
+  g_EoC_EB2 -> SetMarkerColor(kGreen+1);
+  g_EoC_EB2 -> SetLineColor(kGreen+1);
+  
+  TH2F* correlation = new TH2F("correlation","correlation",50,0.98,1.02,50,0.97,1.03);
+  for(int i=0; i<g_EoC_EB->GetN() && i<g_EoC_EB2->GetN()  ; i++)
+  { double x,y,z,k;
+    g_EoC_EB->GetPoint(i,x,y);
+    g_EoC_EB2->GetPoint(i,z,k);
+
+    correlation->Fill(y,k);
+   }
+  correlation->GetXaxis()->SetTitle("mod1-2");
+  correlation->GetYaxis()->SetTitle("mod3-4");
+  cout<<" correlation "<<correlation->GetCorrelationFactor()<<endl;;
+  correlation->Draw("colz");
+  }
+//  correlation->Draw("colz");
   g_Rat_EB -> SetMarkerStyle(20);
   g_Rat_EB -> SetMarkerSize(1);
   g_Rat_EB -> SetMarkerColor(kBlue+2); 
@@ -85,7 +111,7 @@ void DrawMomentumCalibration()
    hPad_EB->GetXaxis()->SetTitleOffset(tYoffset);
    hPad_EB->GetYaxis()->SetTitleOffset(tYoffset);
    hPad_EB->GetXaxis()->SetTitle("#phi_{SC}");
-   hPad_EB->GetYaxis()->SetTitle("M_{Z}^{2}/M_{ee}^{2} #propto 1/p"); 
+   hPad_EB->GetYaxis()->SetTitle("M_{Z}^{2}/M_{ee}^{2} #propto p"); 
   
    g_EoP_EB -> Draw("PL");
    g_EoC_EB -> Draw("PL");
@@ -167,7 +193,7 @@ void DrawMomentumCalibration()
    hPad_EE->GetXaxis()->SetTitleOffset(tYoffset);
    hPad_EE->GetYaxis()->SetTitleOffset(tYoffset);
    hPad_EE->GetXaxis()->SetTitle("#phi_{SC}");
-   hPad_EE->GetYaxis()->SetTitle("M_{Z}^{2}/M_{ee}^{2} #propto 1/p"); 
+   hPad_EE->GetYaxis()->SetTitle("M_{ee}^{2}/M_{Z}^{2} #propto 1/p"); 
   
    g_EoP_EE -> Draw("PL");
    g_EoC_EE -> Draw("PL");
