@@ -21,13 +21,13 @@
 #include "ntpleUtils.h"
 #include "TApplication.h"
 
-//
-/// Macro to produce ECAL single electron calibration plots for EE
-/// Input Files : MC or Data splistat and no splitstat, MCTruth and MCReco IC maps EE
-/// Output Files :  StatPrec_MC_EE.root --> stat precision MC usefull for CompareCalibMCTruth_EE.C only MC
-///                 IC_MC_4Correction.root --> Map IC for radial correction only MC
+/// Stand-alone program to produce ECAL single electron calibration plots for EE
+/// Input Files : MC or Data splistat and no splitstat, Momentum scale vs phi plot
+/// Output Files :  StatPrec_MC_R9_EE.root --> stat precision MC usefull for CompareCalibMCTruth_EE.C only MC
 //                  
 using namespace std;
+
+/// Run ./bin/CalibrationEndacp.cpp cfg/calibrationEE_cfg.cfg
 
 int main (int argc, char **argv)
 {
