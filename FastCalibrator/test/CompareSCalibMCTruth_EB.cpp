@@ -40,7 +40,14 @@ int main(int argc, char**argv){
  gROOT->ForceStyle();
 
  /// Input File MCTruth IC Map , RECO IC map, MC IC set after calibration (Usually set with miscalibration 5%)
- /// and StatPrecision IC coefficient obtained from DrawFoldedEB.C
+ /// and StatPrecision IC coefficient obtained from CalibrationBarrel.cpp
+
+ if(argc != 2){
+ std::cerr << ">>>>> analysis.cpp::usage: " << argv[0] << " configFileName" << std::endl ;
+ return 1;
+ }
+
+ parseConfigFile (argv[1]) ;
 
  std::string inputFile = gConfigParser -> readStringOption("Input::inputFile");  
  std::string fileMCTruth = gConfigParser -> readStringOption("Input::fileMCTruth");  
