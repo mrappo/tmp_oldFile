@@ -844,26 +844,6 @@ int main(int argc, char **argv){
    ic_vs_PhiFold_crack_EBm_reflect->Draw("psame");
    legg->SetFillColor(0);
    legg->Draw("same");
-   
-   c[9] = new TCanvas("cphispreadfold_crack_EB+","cphispreadfold_crack_EB+");
-   c[9]->SetGridx();
-   c[9]->SetGridy();
-   spread_ic_vs_PhiFold_crack_EBp->GetHistogram()->SetTitle(" Spread IC EB+");
-   spread_ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetRangeUser(0.,0.03);
-   spread_ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
-   spread_ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetTitle("Spread IC");
-   spread_ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetTitle("Phi%20");
-   spread_ic_vs_PhiFold_crack_EBp->Draw("ap");
-
-   c[10] = new TCanvas("cphispreadfold_crack_EB-","cphispreadfold_crackEB-");
-   c[10]->SetGridx();
-   c[10]->SetGridy();
-   spread_ic_vs_PhiFold_crack_EBm->GetHistogram()->SetTitle("spread IC EB-");
-   spread_ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetRangeUser(0.,0.03);
-   spread_ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
-   spread_ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetTitle("spread IC EB-");
-   spread_ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetTitle("Phi%20");
-   spread_ic_vs_PhiFold_crack_EBm->Draw("ap");
    */
 
    c[9] = new TCanvas("hcmap_crackcorrected","hcmap_crackcorrected");
