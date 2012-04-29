@@ -828,8 +828,6 @@ int main(int argc, char **argv){
      
      k--;
   }
-
-
    c[12] = new TCanvas("cphimeanfold_crack_EB_ref","cphimeanfold_crackEB_ref");
    c[12]->cd();
    c[12]->SetGridx();
