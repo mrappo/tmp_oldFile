@@ -44,7 +44,6 @@ int main (int argc, char **argv)
   gStyle->SetPadTickY(1);
   gStyle->SetOptTitle(0); 
   gStyle->SetOptStat(0); 
-  gStyle->SetOptFit(0); 
   gStyle->SetFitFormat("6.3g"); 
   gStyle->SetPalette(1); 
  
@@ -68,10 +67,13 @@ int main (int argc, char **argv)
   parseConfigFile (argv[1]) ;
  
   std::string infile1  = gConfigParser -> readStringOption("Input::Inputfile1");
-  std::string infile2 = gConfigParser -> readStringOption("Input::Inputfile2");
-  std::string infile3 = gConfigParser -> readStringOption("Input::Inputfile3");
-  std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
   int evalStat = gConfigParser -> readIntOption("Input::evalStat");
+  std::string infile2,infile3; 
+  if(evalStat){
+   infile2= gConfigParser -> readStringOption("Input::Inputfile2");
+   infile3 = gConfigParser -> readStringOption("Input::Inputfile3");
+  }
+  std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
   bool isMC = gConfigParser -> readBoolOption("Input::isMC");
  
   if ( infile1.empty()) {
@@ -85,7 +87,8 @@ int main (int argc, char **argv)
   }
 
   cout << "Making calibration plots for: " << infile1 << endl;
- 
+
+  std::string outputTxt = gConfigParser -> readStringOption("Output::outputTxt");
   std::string fileType = gConfigParser -> readStringOption("Output::fileType");
   std::string dirName = gConfigParser -> readStringOption("Output::dirName");
   bool printPlots = gConfigParser -> readBoolOption("Output::printPlots");
@@ -1065,24 +1068,40 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
     double k,h,j,m;
     statprecision_vs_ring[0]->GetPoint(i,k,h);
     systematicEEM->GetPoint(i,j,m);
-    if(m>0) tempEEM->SetPoint(i,k,sqrt(h*h+m*m));
-    else tempEEM->SetPoint(i,k,h);
+    if(m>0){ tempEEM->SetPoint(i,k,sqrt(h*h+m*m));
+             tempEEM->SetPointError(i,sqrt(statprecision_vs_ring[0]->GetErrorX(i)*statprecision_vs_ring[0]->GetErrorX(i)+
+                     systematicEEM->GetErrorX(i)*systematicEEM->GetErrorX(i)),sqrt(statprecision_vs_ring[0]->GetErrorY(i)*statprecision_vs_ring[0]->GetErrorY(i)+systematicEEM->GetErrorY(i)*systematicEEM->GetErrorY(i)));}
+               
+    else{ tempEEM->SetPoint(i,k,h);
+          tempEEM->SetPointError(i,statprecision_vs_ring[0]->GetErrorX(i),statprecision_vs_ring[0]->GetErrorY(i));
+         }
    }
   
     for(int i=0 ; i<statprecision_vs_ring[1]->GetN(); i++){
     double k,h,j,m;
     statprecision_vs_ring[1]->GetPoint(i,k,h);
     systematicEEP->GetPoint(i,j,m);
-    if(m>0) tempEEP->SetPoint(i,k,sqrt(h*h+m*m));
-    else tempEEP->SetPoint(i,k,h);
+    if(m>0){ tempEEP->SetPoint(i,k,sqrt(h*h+m*m));
+             tempEEP->SetPointError(i,sqrt(statprecision_vs_ring[1]->GetErrorX(i)*statprecision_vs_ring[1]->GetErrorX(i)+
+                     systematicEEP->GetErrorX(i)*systematicEEP->GetErrorX(i)),sqrt(statprecision_vs_ring[1]->GetErrorY(i)*statprecision_vs_ring[1]->GetErrorY(i)+systematicEEP->GetErrorY(i)*systematicEEP->GetErrorY(i)));}
+
+    else{ tempEEP->SetPoint(i,k,h);
+          tempEEP->SetPointError(i,statprecision_vs_ring[1]->GetErrorX(i),statprecision_vs_ring[1]->GetErrorY(i));
+         }
+
    }
 
     for(int i=0 ; i<statprecision_vs_ring[2]->GetN(); i++){
     double k,h,j,m;
     statprecision_vs_ring[2]->GetPoint(i,k,h);
     systematicAll->GetPoint(i,j,m);
-    if(m>0) tempAll->SetPoint(i,k,sqrt(h*h+m*m));
-    else tempAll->SetPoint(i,k,h);
+    if(m>0){ tempAll->SetPoint(i,k,sqrt(h*h+m*m));
+             tempAll->SetPointError(i,sqrt(statprecision_vs_ring[2]->GetErrorX(i)*statprecision_vs_ring[2]->GetErrorX(i)+
+                     systematicAll->GetErrorX(i)*systematicAll->GetErrorX(i)),sqrt(statprecision_vs_ring[2]->GetErrorY(i)*statprecision_vs_ring[2]->GetErrorY(i)+systematicAll->GetErrorY(i)*systematicAll->GetErrorY(i)));}
+
+    else{ tempAll->SetPoint(i,k,h);
+          tempAll->SetPointError(i,statprecision_vs_ring[2]->GetErrorX(i),statprecision_vs_ring[2]->GetErrorY(i));}
+   
    }
 
     cAll[8] = new TCanvas("UncertaintyAll","UncertaintyAll");
@@ -1098,7 +1117,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
 
   if(isMC == false)
   {
-   std::ofstream outTxt ("Calibration_Coefficient_EE.txt",std::ios::out);
+   std::ofstream outTxt (outputTxt.c_str(),std::ios::out);
 
    outTxt << "---------------------------------------------------------------" << std::endl;
    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iX"
@@ -1119,7 +1138,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
 	  statprecision_vs_ring[0]->GetPoint(int(hrings[0]->GetBinContent(ix,iy)),X,statPrec);
           systematicAll->GetPoint(int(hrings[0]->GetBinContent(ix,iy)),Y,sysPrec);
 
-          if( (mapMomentumCorrected[0]->GetBinContent(ix,iy)>0.4 && mapMomentumCorrected[0]->GetBinContent(ix,iy)<2.)|| mapMomentumCorrected[0]->GetBinContent(ix,iy)==0 )
+          if( (mapMomentumCorrected[0]->GetBinContent(ix,iy)>0.4 && mapMomentumCorrected[0]->GetBinContent(ix,iy)<2.)|| mapMomentumCorrected[0]->GetBinContent(ix,iy)!=0. )
 	    
 	    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[0]->GetXaxis()->GetBinLowEdge(ix)
 		   << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[0]->GetYaxis()->GetBinLowEdge(iy)
@@ -1133,8 +1152,8 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
             outTxt << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[0]->GetXaxis()->GetBinLowEdge(ix)
                    << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[0]->GetYaxis()->GetBinLowEdge(iy)
                    << std::fixed << std::setprecision(0) << std::setw(10) << "-1"
-                   << std::fixed << std::setprecision(6) << std::setw(15) << "0"
-                   << std::fixed << std::setprecision(6) << std::setw(15) << sqrt(statPrec*statPrec+sysPrec*sysPrec)
+                   << std::fixed << std::setprecision(6) << std::setw(15) << "-1"
+                   << std::fixed << std::setprecision(6) << std::setw(15) << "999"
                    << std::endl;
 
 	    warning_Map_EEM->Fill(ix,iy);
@@ -1153,7 +1172,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
 	  statprecision_vs_ring[1]->GetPoint(int(hrings[1]->GetBinContent(ix,iy)),X,statPrec);
           systematicAll->GetPoint(int(hrings[1]->GetBinContent(ix,iy)),Y,sysPrec);
 
-	    if((mapMomentumCorrected[1]->GetBinContent(ix,iy)>0.4 && mapMomentumCorrected[1]->GetBinContent(ix,iy)<2.)|| mapMomentumCorrected[1]->GetBinContent(ix,iy)==0)
+	if((mapMomentumCorrected[1]->GetBinContent(ix,iy)>0.4 && mapMomentumCorrected[1]->GetBinContent(ix,iy)<2.)|| mapMomentumCorrected[1]->GetBinContent(ix,iy)!=0.)
 
 	      outTxt << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[1]->GetXaxis()->GetBinLowEdge(ix)
 		     << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[1]->GetYaxis()->GetBinLowEdge(iy)
@@ -1167,8 +1186,8 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
               outTxt << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[1]->GetXaxis()->GetBinLowEdge(ix)
                      << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[1]->GetYaxis()->GetBinLowEdge(iy)
                      << std::fixed << std::setprecision(0) << std::setw(10) << "1"
-                     << std::fixed << std::setprecision(6) << std::setw(15) << "0"
-                     << std::fixed << std::setprecision(6) << std::setw(15) << sqrt(statPrec*statPrec+sysPrec*sysPrec)
+                     << std::fixed << std::setprecision(6) << std::setw(15) << "-1"
+                     << std::fixed << std::setprecision(6) << std::setw(15) << "999"
                      << std::endl;
 
 
