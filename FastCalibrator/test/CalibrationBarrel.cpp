@@ -184,7 +184,7 @@ int main(int argc, char **argv){
     fgaus->SetParameter(1,1);
     fgaus->SetParameter(2,hspreadEtaFold[i-1]->GetRMS());
     fgaus->SetRange(1-5*hspreadEtaFold[i-1]->GetRMS(),1+5*hspreadEtaFold[i-1]->GetRMS());
-    hspreadEtaFold[i-1]->Fit("fgaus","QR");
+    hspreadEtaFold[i-1]->Fit("fgaus","QRNME");
 
     sigma_vs_EtaFold-> SetPoint(np,fabs(etaring),fgaus->GetParameter(2));
     sigma_vs_EtaFold-> SetPointError(np,e,fgaus->GetParError(2));
@@ -296,7 +296,7 @@ int main(int argc, char **argv){
       fgaus->SetParameter(1,1);
       fgaus->SetParameter(2,hstatprecisionEtaFold[i-1]->GetRMS());
       fgaus->SetRange(-5*hstatprecisionEtaFold[i-1]->GetRMS(),5*hstatprecisionEtaFold[i-1]->GetRMS());
-      hstatprecisionEtaFold[i-1]->Fit("fgaus","QR");
+      hstatprecisionEtaFold[i-1]->Fit("fgaus","QRNME");
 
       statprecision_vs_EtaFold-> SetPoint(np,fabs(etaring),fgaus->GetParameter(2));
       statprecision_vs_EtaFold-> SetPointError(np,e,fgaus->GetParError(2));
@@ -452,7 +452,7 @@ int main(int argc, char **argv){
 
       fgaus2->SetRange(hspreadPhiFold_crack_EBp[i-1]->GetMean()-5*hspreadPhiFold_crack_EBp[i-1]->GetRMS(),
                        hspreadPhiFold_crack_EBp[i-1]->GetMean()+5*hspreadPhiFold_crack_EBp[i-1]->GetRMS());
-      hspreadPhiFold_crack_EBp[i-1]->Fit("fgaus2","QR");
+      hspreadPhiFold_crack_EBp[i-1]->Fit("fgaus2","QRNME");
 
       ic_vs_PhiFold_crack_EBp-> SetPoint(np, i, fgaus2->GetParameter(1));
 
@@ -466,7 +466,7 @@ int main(int argc, char **argv){
 
       fgaus2->SetRange(hspreadPhiFold_crack_EBm[i-1]->GetMean()-5*hspreadPhiFold_crack_EBm[i-1]->GetRMS(),
                        hspreadPhiFold_crack_EBm[i-1]->GetMean()+5*hspreadPhiFold_crack_EBm[i-1]->GetRMS());
-      hspreadPhiFold_crack_EBm[i-1]->Fit("fgaus2","QR");
+      hspreadPhiFold_crack_EBm[i-1]->Fit("fgaus2","QRNME");
 
       ic_vs_PhiFold_crack_EBm-> SetPoint(np, i, fgaus2->GetParameter(1));
 
@@ -483,8 +483,8 @@ int main(int argc, char **argv){
   pol0_EBp->SetLineColor(kWhite);
   pol0_EBm->SetLineColor(kWhite);
 
-  ic_vs_PhiFold_crack_EBp->Fit("pol0_EBp","QR");
-  ic_vs_PhiFold_crack_EBm->Fit("pol0_EBm","QR");
+  ic_vs_PhiFold_crack_EBp->Fit("pol0_EBp","QRNME");
+  ic_vs_PhiFold_crack_EBm->Fit("pol0_EBm","QRNME");
   
   TH2F *hcmap_crackcorrected = (TH2F*) h_scale_EB->Clone("hcmap_crackcorrected");
   hcmap_crackcorrected->Reset("ICMES");
@@ -565,7 +565,7 @@ int main(int argc, char **argv){
 
       fgaus2->SetRange(hspreadPhiFold_corrected_EBp[i-1]->GetMean()-5*hspreadPhiFold_corrected_EBp[i-1]->GetRMS(),
                        hspreadPhiFold_corrected_EBp[i-1]->GetMean()+5*hspreadPhiFold_corrected_EBp[i-1]->GetRMS());
-      hspreadPhiFold_corrected_EBp[i-1]->Fit("fgaus2","QR");
+      hspreadPhiFold_corrected_EBp[i-1]->Fit("fgaus2","QRNME");
 
       ic_vs_PhiFold_corrected_EBp-> SetPoint(np, i, fgaus2->GetParameter(1));
       ic_vs_PhiFold_corrected_EBp-> SetPointError(np,0.5,fgaus2->GetParError(1));
@@ -575,7 +575,7 @@ int main(int argc, char **argv){
 
       fgaus2->SetRange(hspreadPhiFold_corrected_EBm[i-1]->GetMean()-5*hspreadPhiFold_corrected_EBm[i-1]->GetRMS(),
                        hspreadPhiFold_corrected_EBm[i-1]->GetMean()+5*hspreadPhiFold_corrected_EBm[i-1]->GetRMS());
-      hspreadPhiFold_corrected_EBm[i-1]->Fit("fgaus2","QR");
+      hspreadPhiFold_corrected_EBm[i-1]->Fit("fgaus2","QRNME");
 
       ic_vs_PhiFold_corrected_EBm-> SetPoint(np, i, fgaus2->GetParameter(1));
       ic_vs_PhiFold_corrected_EBm-> SetPointError(np,0.5,fgaus2->GetParError(1));
@@ -651,7 +651,7 @@ int main(int argc, char **argv){
     fgaus->SetParameter(1,1);
     fgaus->SetParameter(2,hspreadEtaFold2[i-1]->GetRMS());
     fgaus->SetRange(1-5*hspreadEtaFold2[i-1]->GetRMS(),1+5*hspreadEtaFold2[i-1]->GetRMS());
-    hspreadEtaFold2[i-1]->Fit("fgaus","QR");
+    hspreadEtaFold2[i-1]->Fit("fgaus","QRNME");
     sigma_vs_EtaFold_corrected-> SetPoint(np,fabs(etaring),fgaus->GetParameter(2));
     sigma_vs_EtaFold_corrected-> SetPointError(np,e,fgaus->GetParError(2));
     np++;
@@ -905,10 +905,10 @@ int main(int argc, char **argv){
    Profile1->GetXaxis()->SetTitle("#bar{IC}");
    Profile1->SetLineColor(kBlack);
    Profile1->SetMarkerSize(0.8);
-   Profile1->SetLineWidth(2.);
+   Profile1->SetLineWidth(2);
    Profile2->SetLineColor(kGreen+2);
    Profile2->SetMarkerSize(0.8);
-   Profile2->SetLineWidth(2.);
+   Profile2->SetLineWidth(2);
 
    Profile1->Draw();
    Profile2->Draw("same");
@@ -928,20 +928,20 @@ int main(int argc, char **argv){
    Profile1->SetMarkerSize(0.8);
    Profile3->SetLineColor(kRed);
    Profile3->SetMarkerSize(0.8);
-   Profile3->SetLineWidth(2.);
+   Profile3->SetLineWidth(2);
     
    fgaus->SetParameter(1,1);
    fgaus->SetParameter(2,Profile1->GetRMS());
    fgaus->SetRange(1-5*Profile1->GetRMS(),1+5*Profile1->GetRMS());
    fgaus->SetLineColor(kBlack);
-   Profile1->Fit("fgaus","QR");
+   Profile1->Fit("fgaus","QRME");
    cout<<" Mean Values : Uncorrected = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<endl;
    
    fgaus->SetParameter(1,1);
    fgaus->SetParameter(2,Profile3->GetRMS());
    fgaus->SetRange(1-5*Profile3->GetRMS(),1+5*Profile3->GetRMS());
    fgaus->SetLineColor(kRed);
-   Profile3->Fit("fgaus","QR");
+   Profile3->Fit("fgaus","QRME");
    cout<<" Mean Values : Corrected Crack = "<<Profile3->GetMean()<<" RMS "<<Profile3->GetRMS()<<endl;
    
    Profile1->Draw();
@@ -1003,9 +1003,9 @@ int main(int argc, char **argv){
 
      double x,statPrec;
      if (hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta) < 0)
-       statprecision_vs_EtaFold->GetPoint(fabs(hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta+85)),x,statPrec);  //mirroring of the folded precision
+       statprecision_vs_EtaFold->GetPoint(int(fabs(hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta+85))),x,statPrec);  //mirroring of the folded precision
      else
-       statprecision_vs_EtaFold->GetPoint(fabs(hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta-85)),x,statPrec);  //mirroring of the folded precision
+       statprecision_vs_EtaFold->GetPoint(int(fabs(hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta-85))),x,statPrec);  //mirroring of the folded precision
 
 
      for (int iPhi =1 ; iPhi < hcmap_crackcorrected -> GetNbinsX()+1; iPhi++)
