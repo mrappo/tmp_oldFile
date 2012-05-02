@@ -73,7 +73,9 @@ int main (int argc, char **argv)
    infile2= gConfigParser -> readStringOption("Input::Inputfile2");
    infile3 = gConfigParser -> readStringOption("Input::Inputfile3");
   }
+
   std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
+  std::string SystematicToAdd =  gConfigParser -> readStringOption("Input::SystematicToAdd"); 
   bool isMC = gConfigParser -> readBoolOption("Input::isMC");
  
   if ( infile1.empty()) {
@@ -1001,7 +1003,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
 
    /// Acquisition residual systematic from scalib MC
   
-   TFile *f4= new TFile("output/ResidualForSystematic_EE_MC.root","READ");
+   TFile *f4= new TFile(SystematicToAdd.c_str(),"READ");
    TGraphErrors* systematicEEM = (TGraphErrors*) f4->Get("residual_EEM");
    TGraphErrors* systematicEEP = (TGraphErrors*) f4->Get("residual_EEP");
    TGraphErrors* systematicAll = (TGraphErrors*) f4->Get("residual_All");
