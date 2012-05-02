@@ -503,14 +503,16 @@ fgaus->SetParameter(2,phiProfileEB1->GetRMS());
 fgaus->SetRange(1-5*phiProfileEB1->GetRMS(),1+5*phiProfileEB1->GetRMS());
 fgaus->SetLineColor(kBlue);
 phiProfileEB1->Fit("fgaus","QRME");
-cout<<" Mean Values : First Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set :  Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean dist = "<<phiProfileEB1->GetMean()<<" RMS dist "<<phiProfileEB1->GetRMS()<<endl;
 
 fgaus->SetParameter(1,1);
 fgaus->SetParameter(2,phiProfileEB2->GetRMS());
 fgaus->SetRange(1-5*phiProfileEB2->GetRMS(),1+5*phiProfileEB2->GetRMS());
 fgaus->SetLineColor(kRed);
 phiProfileEB2->Fit("fgaus","QRME");
-cout<<" Mean Values : Second Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean dist = "<<phiProfileEB2->GetMean()<<" RMS dist "<<phiProfileEB2->GetRMS()<<endl;
 
  /// phi Profile Histos EE+
 
@@ -534,14 +536,16 @@ fgaus->SetParameter(2,phiProfileEEp1->GetRMS());
 fgaus->SetRange(1-5*phiProfileEEp1->GetRMS(),1+5*phiProfileEEp1->GetRMS());
 fgaus->SetLineColor(kBlue);
 phiProfileEEp1->Fit("fgaus","QRME");
-cout<<" Mean Values : First Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set :  Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean dist = "<<phiProfileEEp1->GetMean()<<" RMS dist "<<phiProfileEEp1->GetRMS()<<endl;
 
 fgaus->SetParameter(1,1);
 fgaus->SetParameter(2,phiProfileEEp2->GetRMS());
 fgaus->SetRange(1-5*phiProfileEEp2->GetRMS(),1+5*phiProfileEEp2->GetRMS());
 fgaus->SetLineColor(kRed);
 phiProfileEEp2->Fit("fgaus","QRME");
-cout<<" Mean Values : Second Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean dist = "<<phiProfileEEp2->GetMean()<<" RMS dist "<<phiProfileEEp2->GetRMS()<<endl;
 
  /// phi Profile Histos EE-
 
@@ -565,21 +569,23 @@ fgaus->SetParameter(2,phiProfileEEm1->GetRMS());
 fgaus->SetRange(1-5*phiProfileEEm1->GetRMS(),1+5*phiProfileEEm1->GetRMS());
 fgaus->SetLineColor(kBlue);
 phiProfileEEm1->Fit("fgaus","QRME");
-cout<<" Mean Values : First Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set :  Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean dist = "<<phiProfileEEm1->GetMean()<<" RMS dist "<<phiProfileEEm1->GetRMS()<<endl;
 
 fgaus->SetParameter(1,1);
 fgaus->SetParameter(2,phiProfileEEm2->GetRMS());
 fgaus->SetRange(1-5*phiProfileEEm2->GetRMS(),1+5*phiProfileEEm2->GetRMS());
 fgaus->SetLineColor(kRed);
 phiProfileEEm2->Fit("fgaus","QRME");
-cout<<" Mean Values : Second Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean dist = "<<phiProfileEEm2->GetMean()<<" RMS dist "<<phiProfileEEm2->GetRMS()<<endl;
 
  /// eta Profile Histos EB
 
  cout<<" Eta Profile Histos "<<endl;
 
- TH1F* etaProfileEB1 = new TH1F ("etaProfileEB1","etaProfileEB1",60,0.8,1.2);
- TH1F* etaProfileEB2 = new TH1F ("etaProfileEB2","etaProfileEB2",60,0.8,1.2);
+ TH1F* etaProfileEB1 = new TH1F ("etaProfileEB1","etaProfileEB1",60,0.85,1.15);
+ TH1F* etaProfileEB2 = new TH1F ("etaProfileEB2","etaProfileEB2",60,0.85,1.15);
  
  for(int i=0; i<etaProjectionEB1->GetN() ; i++){
       double x=0,y=0;
@@ -598,19 +604,21 @@ fgaus->SetParameter(2,etaProfileEB1->GetRMS());
 fgaus->SetRange(1-5*etaProfileEB1->GetRMS(),1+5*etaProfileEB1->GetRMS());
 fgaus->SetLineColor(kBlue);
 etaProfileEB1->Fit("fgaus","QRME");
-cout<<" Mean Values : First Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean dist = "<<etaProfileEB1->GetMean()<<" RMS dist "<<etaProfileEB1->GetRMS()<<endl;
 
 fgaus->SetParameter(1,1);
 fgaus->SetParameter(2,etaProfileEB2->GetRMS());
 fgaus->SetRange(1-5*etaProfileEB2->GetRMS(),1+5*etaProfileEB2->GetRMS());
 fgaus->SetLineColor(kRed);
 etaProfileEB2->Fit("fgaus","QRME");
-cout<<" Mean Values : Second Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean dist = "<<etaProfileEB2->GetMean()<<" RMS dist "<<etaProfileEB2->GetRMS()<<endl;
 
  /// eta Profile Histos EE+
 
- TH1F* etaProfileEEp1 = new TH1F ("etaProfileEEp1","etaProfileEEp1",100,0.6,1.6);
- TH1F* etaProfileEEp2 = new TH1F ("etaProfileEEp2","etaProfileEEp2",100,0.6,1.6);
+ TH1F* etaProfileEEp1 = new TH1F ("etaProfileEEp1","etaProfileEEp1",35,0.,2.5);
+ TH1F* etaProfileEEp2 = new TH1F ("etaProfileEEp2","etaProfileEEp2",35,0.,2.5);
  
  for(int i=0; i<etaProjectionEEp1->GetN() ; i++){
       double x=0,y=0;
@@ -629,20 +637,22 @@ fgaus->SetParameter(2,etaProfileEEp1->GetRMS());
 fgaus->SetRange(1-5*etaProfileEEp1->GetRMS(),1+5*etaProfileEEp1->GetRMS());
 fgaus->SetLineColor(kBlue);
 etaProfileEEp1->Fit("fgaus","QRME");
-cout<<" Mean Values : First Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean dist = "<<etaProfileEEp1->GetMean()<<" RMS dist "<<etaProfileEEp1->GetRMS()<<endl;
 
 fgaus->SetParameter(1,1);
 fgaus->SetParameter(2,etaProfileEEp2->GetRMS());
 fgaus->SetRange(1-5*etaProfileEEp2->GetRMS(),1+5*etaProfileEEp2->GetRMS());
 fgaus->SetLineColor(kRed);
 etaProfileEEp2->Fit("fgaus","QRME");
-cout<<" Mean Values : Second Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean dist = "<<etaProfileEEp2->GetMean()<<" RMS dist "<<etaProfileEEp2->GetRMS()<<endl;
 
 
  /// eta Profile Histos EB
 
- TH1F* etaProfileEEm1 = new TH1F ("etaProfileEEm1","etaProfileEEm1",100,0.6,1.6);
- TH1F* etaProfileEEm2 = new TH1F ("etaProfileEEm2","etaProfileEEm2",100,0.6,1.6);
+ TH1F* etaProfileEEm1 = new TH1F ("etaProfileEEm1","etaProfileEEm1",35,0.,2.5);
+ TH1F* etaProfileEEm2 = new TH1F ("etaProfileEEm2","etaProfileEEm2",35,0.,2.5);
  
  for(int i=0; i<etaProjectionEEm1->GetN() ; i++){
       double x=0,y=0;
@@ -661,14 +671,16 @@ fgaus->SetParameter(2,etaProfileEEm1->GetRMS());
 fgaus->SetRange(1-5*etaProfileEEm1->GetRMS(),1+5*etaProfileEEm1->GetRMS());
 fgaus->SetLineColor(kBlue);
 etaProfileEEm1->Fit("fgaus","QRME");
-cout<<" Mean Values : First Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" First Set : Mean dist = "<<etaProfileEEm1->GetMean()<<" RMS dist "<<etaProfileEEm1->GetRMS()<<endl;
 
 fgaus->SetParameter(1,1);
 fgaus->SetParameter(2,etaProfileEEm2->GetRMS());
 fgaus->SetRange(1-5*etaProfileEEm2->GetRMS(),1+5*etaProfileEEm2->GetRMS());
 fgaus->SetLineColor(kRed);
 etaProfileEEm2->Fit("fgaus","QRME");
-cout<<" Mean Values : Second Set = "<<fgaus->GetParameter(1)<<" RMS = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean Fit = "<<fgaus->GetParameter(1)<<" RMS Fit = "<<fgaus->GetParameter(2)<<" chi2/ndf = "<<fgaus->GetChisquare()/fgaus->GetNDF()<<endl;
+cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<etaProfileEEm2->GetRMS()<<endl;
 
 
   
