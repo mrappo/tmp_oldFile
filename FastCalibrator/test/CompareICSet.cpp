@@ -136,6 +136,30 @@ Name = Form("ratiomapEEm");
 TH2F * ratiomap_EEm = (TH2F*) map1_EEm->Clone("ratiomapEEm");
 ratiomap_EEm->Reset();
 
+Name = Form("diffHistEB");
+TH1F * diffHistEB = new TH1F(Name,Name,100,-0.6,0.6);
+diffHistEB->SetLineWidth(2);
+
+Name = Form("diffHistEEp");
+TH1F * diffHistEEp = new TH1F(Name,Name,100,-0.6,0.6);
+diffHistEEp->SetLineWidth(2);
+
+Name = Form("diffHistEEm");
+TH1F * diffHistEEm = new TH1F(Name,Name,100,-0.6,0.6);
+diffHistEEm->SetLineWidth(2);
+
+Name = Form("correlationEB");
+TH2F * correlationEB = new TH2F(Name,Name,100,0.2,2.,100,0.2,2.);
+
+Name = Form("correlationEEp");
+TH2F * correlationEEp= new TH2F(Name,Name,100,0.2,2.,100,0.2,2.);
+
+Name = Form("correlationEEm");
+TH2F * correlationEEm= new TH2F(Name,Name,100,0.2,2.,100,0.2,2.);
+
+
+
+
 
 for(int iPhi =1; iPhi<map1_EB->GetNbinsX()+1; iPhi++){
  for(int iEta=1; iEta<map1_EB->GetNbinsY()+1; iEta++){
@@ -146,7 +170,10 @@ for(int iPhi =1; iPhi<map1_EB->GetNbinsX()+1; iPhi++){
  continue;}
 
  diffmap_EB->SetBinContent(iPhi,iEta,map1_EB->GetBinContent(iPhi,iEta)-map2_EB->GetBinContent(iPhi,iEta));
+ diffHistEB->Fill(map1_EB->GetBinContent(iPhi,iEta)-map2_EB->GetBinContent(iPhi,iEta));
  ratiomap_EB->SetBinContent(iPhi,iEta,map1_EB->GetBinContent(iPhi,iEta)/map2_EB->GetBinContent(iPhi,iEta));
+ correlationEB->Fill(map1_EB->GetBinContent(iPhi,iEta),map2_EB->GetBinContent(iPhi,iEta));
+
  }
 }
 
@@ -159,7 +186,10 @@ for(int ix =1; ix<map1_EEp->GetNbinsX()+1; ix++){
   continue;}
 
   diffmap_EEp->SetBinContent(ix,iy,map1_EEp->GetBinContent(ix,iy)-map2_EEp->GetBinContent(ix,iy));
+  diffHistEEp->Fill(map1_EEp->GetBinContent(ix,iy)-map2_EEp->GetBinContent(ix,iy));
   ratiomap_EEp->SetBinContent(ix,iy,map1_EEp->GetBinContent(ix,iy)/map2_EEp->GetBinContent(ix,iy));
+  correlationEEp->Fill(map1_EEp->GetBinContent(ix,iy),map2_EEp->GetBinContent(ix,iy));
+
  }
 }
 
@@ -172,9 +202,14 @@ for(int ix =1; ix<map1_EEm->GetNbinsX()+1; ix++){
  continue;}
 
  diffmap_EEm->SetBinContent(ix,iy,map1_EEm->GetBinContent(ix,iy)-map2_EEm->GetBinContent(ix,iy));
+ diffHistEEm->Fill(map1_EEm->GetBinContent(ix,iy)-map2_EEm->GetBinContent(ix,iy));
  ratiomap_EEm->SetBinContent(ix,iy,map1_EEm->GetBinContent(ix,iy)/map2_EEm->GetBinContent(ix,iy));
+ correlationEEm->Fill(map1_EEm->GetBinContent(ix,iy),map2_EEm->GetBinContent(ix,iy));
+
  }
 }
+
+
 
 /// Profile along phi  for EB:
 
@@ -705,11 +740,20 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  diffmap_EB->GetYaxis() ->SetTitle("i#eta");
  diffmap_EB->GetZaxis() ->SetRangeUser(-0.1,0.1);
  diffmap_EB->Draw("COLZ");
- 
- c[1] = new TCanvas("hratioEB","hratioEB");
+
+ c[1] = new TCanvas("histdiffEB","histdiffEB");
  c[1]->SetLeftMargin(0.1); 
  c[1]->SetRightMargin(0.13); 
- c[1]->SetGridx();
+ c[1]->SetLogy();
+
+ diffHistEB->GetXaxis()->SetTitle("c_{#pi}-c_{ele}"); 
+ diffHistEB->Draw();
+
+ 
+ c[2] = new TCanvas("hratioEB","hratioEB");
+ c[2]->SetLeftMargin(0.1); 
+ c[2]->SetRightMargin(0.13); 
+ c[2]->SetGridx();
   
  ratiomap_EB->GetXaxis()->SetNdivisions(1020);
  ratiomap_EB->GetXaxis() -> SetLabelSize(0.03);
@@ -717,11 +761,24 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  ratiomap_EB->GetYaxis() ->SetTitle("i#eta");
  ratiomap_EB->GetZaxis() ->SetRangeUser(0.95,1.05);
  ratiomap_EB->Draw("COLZ");
+
+ c[3] = new TCanvas("correlationEB","correlationEB");
+ c[3]->SetLeftMargin(0.1); 
+ c[3]->SetRightMargin(0.13); 
+ c[3]->SetGridx();
+ c[3]->SetGridy();
+
+ correlationEB->GetXaxis()->SetNdivisions(1020);
+ correlationEB->GetXaxis() -> SetLabelSize(0.03);
+ correlationEB->GetXaxis() ->SetTitle("c_{#pi}");
+ correlationEB->GetYaxis() ->SetTitle("c_{ele}");
+ correlationEB->Draw("COLZ");
+
  
- c[2] = new TCanvas("hdiffEEp","hdiffEEp");
- c[2]->SetLeftMargin(0.1); 
- c[2]->SetRightMargin(0.13); 
- c[2]->SetGridx();
+ c[4] = new TCanvas("hdiffEEp","hdiffEEp");
+ c[4]->SetLeftMargin(0.1); 
+ c[4]->SetRightMargin(0.13); 
+ c[4]->SetGridx();
   
  diffmap_EEp->GetXaxis()->SetNdivisions(1020);
  diffmap_EEp->GetXaxis() -> SetLabelSize(0.03);
@@ -729,11 +786,19 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  diffmap_EEp->GetYaxis() ->SetTitle("iy");
  diffmap_EEp->GetZaxis() ->SetRangeUser(-0.15,0.15);
  diffmap_EEp->Draw("COLZ");
+
+ c[5] = new TCanvas("histdiffEEp","histdiffEEp");
+ c[5]->SetLeftMargin(0.1); 
+ c[5]->SetRightMargin(0.13); 
+ c[5]->SetLogy();
+
+ diffHistEEp->GetXaxis()->SetTitle("c_{#pi}-c_{ele}"); 
+ diffHistEEp->Draw();
  
- c[3] = new TCanvas("hratioEEp","hratioEEp");
- c[3]->SetLeftMargin(0.1); 
- c[3]->SetRightMargin(0.13); 
- c[3]->SetGridx();
+ c[6] = new TCanvas("hratioEEp","hratioEEp");
+ c[6]->SetLeftMargin(0.1); 
+ c[6]->SetRightMargin(0.13); 
+ c[6]->SetGridx();
   
  ratiomap_EEp->GetXaxis()->SetNdivisions(1020);
  ratiomap_EEp->GetXaxis() -> SetLabelSize(0.03);
@@ -742,10 +807,22 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  ratiomap_EEp->GetZaxis() ->SetRangeUser(0.9,1.1);
  ratiomap_EEp->Draw("COLZ");
 
- c[4] = new TCanvas("hdiffEEm","hdiffEEm");
- c[4]->SetLeftMargin(0.1); 
- c[4]->SetRightMargin(0.13); 
- c[4]->SetGridx();
+ c[7] = new TCanvas("correlationEEp","correlationEEp");
+ c[7]->SetLeftMargin(0.1); 
+ c[7]->SetRightMargin(0.13); 
+ c[7]->SetGridx();
+ c[7]->SetGridy();
+  
+ correlationEEp->GetXaxis()->SetNdivisions(1020);
+ correlationEEp->GetXaxis() -> SetLabelSize(0.03);
+ correlationEEp->GetXaxis() ->SetTitle("c_{#pi}");
+ correlationEEp->GetYaxis() ->SetTitle("c_{ele}");
+ correlationEEp->Draw("COLZ");
+
+ c[8] = new TCanvas("hdiffEEm","hdiffEEm");
+ c[8]->SetLeftMargin(0.1); 
+ c[8]->SetRightMargin(0.13); 
+ c[8]->SetGridx();
   
  diffmap_EEm->GetXaxis()->SetNdivisions(1020);
  diffmap_EEm->GetXaxis() -> SetLabelSize(0.03);
@@ -753,11 +830,21 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  diffmap_EEm->GetYaxis() ->SetTitle("iy");
  diffmap_EEm->GetZaxis() ->SetRangeUser(-0.15,0.15);
  diffmap_EEm->Draw("COLZ");
+
+ c[9] = new TCanvas("histdiffEEm","histdiffEEm");
+ c[9]->SetLeftMargin(0.1); 
+ c[9]->SetRightMargin(0.13); 
+ c[9]->SetLogy();
+
+ diffHistEEm->GetXaxis()->SetTitle("c_{#pi}-c_{ele}"); 
+ diffHistEEm->Draw();
  
- c[5] = new TCanvas("hratioEEm","hratioEEm");
- c[5]->SetLeftMargin(0.1); 
- c[5]->SetRightMargin(0.13); 
- c[5]->SetGridx();
+
+
+ c[10] = new TCanvas("hratioEEm","hratioEEm");
+ c[10]->SetLeftMargin(0.1); 
+ c[10]->SetRightMargin(0.13); 
+ c[10]->SetGridx();
   
  ratiomap_EEm->GetXaxis()->SetNdivisions(1020);
  ratiomap_EEm->GetXaxis() -> SetLabelSize(0.03);
@@ -766,10 +853,22 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  ratiomap_EEm->GetZaxis() ->SetRangeUser(0.9,1.1);
  ratiomap_EEm->Draw("COLZ");
  
+ c[11] = new TCanvas("correlationEEm","correlationEEm");
+ c[11]->SetLeftMargin(0.1); 
+ c[11]->SetRightMargin(0.13); 
+ c[11]->SetGridx();
+ c[11]->SetGridy();
+  
+ correlationEEm->GetXaxis()->SetNdivisions(1020);
+ correlationEEm->GetXaxis() -> SetLabelSize(0.03);
+ correlationEEm->GetXaxis() ->SetTitle("c_{#pi}");
+ correlationEEm->GetYaxis() ->SetTitle("c_{ele}");
+ correlationEEm->Draw("COLZ");
 
- c[6] = new TCanvas("phiProjectionEB","phiProjectionEB");
- c[6]->SetGridx();
- c[6]->SetGridy();
+
+ c[12] = new TCanvas("phiProjectionEB","phiProjectionEB");
+ c[12]->SetGridx();
+ c[12]->SetGridy();
  phiProjectionEB1->GetHistogram()->GetYaxis()-> SetRangeUser(0.85,1.1);
  phiProjectionEB1->GetHistogram()->GetXaxis()-> SetRangeUser(1,361);
  phiProjectionEB1->GetHistogram()->GetYaxis()-> SetTitle("Mean IC");
@@ -783,9 +882,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg1->SetFillColor(0);
  leg1->Draw("same");
 
- c[7] = new TCanvas("phiProjectionEEp","phiProjectionEEp");
- c[7]->SetGridx();
- c[7]->SetGridy();
+ c[13] = new TCanvas("phiProjectionEEp","phiProjectionEEp");
+ c[13]->SetGridx();
+ c[13]->SetGridy();
  phiProjectionEEp1->GetHistogram()->GetYaxis()-> SetRangeUser(0.7,1.4);
  phiProjectionEEp1->GetHistogram()->GetXaxis()-> SetRangeUser(1,361);
  phiProjectionEEp1->GetHistogram()->GetYaxis()-> SetTitle("Mean IC");
@@ -800,9 +899,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg2->Draw("same");
 
 
- c[8] = new TCanvas("phiProjectionEEm","phiProjectionEEm");
- c[8]->SetGridx();
- c[8]->SetGridy();
+ c[14] = new TCanvas("phiProjectionEEm","phiProjectionEEm");
+ c[14]->SetGridx();
+ c[14]->SetGridy();
  phiProjectionEEm1->GetHistogram()->GetYaxis()-> SetRangeUser(0.7,1.4);
  phiProjectionEEm1->GetHistogram()->GetXaxis()-> SetRangeUser(1,361);
  phiProjectionEEm1->GetHistogram()->GetYaxis()-> SetTitle("Mean IC");
@@ -816,9 +915,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg3->SetFillColor(0);
  leg3->Draw("same");
 
- c[9] = new TCanvas("etaProjectionEB","etaProjectionEB");
- c[9]->SetGridx();
- c[9]->SetGridy();
+ c[15] = new TCanvas("etaProjectionEB","etaProjectionEB");
+ c[15]->SetGridx();
+ c[15]->SetGridy();
  etaProjectionEB1->GetHistogram()->GetYaxis()-> SetRangeUser(0.9,1.1);
  etaProjectionEB1->GetHistogram()->GetXaxis()-> SetRangeUser(0,171);
  etaProjectionEB1->GetHistogram()->GetYaxis()-> SetTitle("Mean IC");
@@ -832,9 +931,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg4->SetFillColor(0);
  leg1->Draw("same");
 
- c[10] = new TCanvas("etaProjectionEEp","etaProjectionEEp");
- c[10]->SetGridx();
- c[10]->SetGridy();
+ c[16] = new TCanvas("etaProjectionEEp","etaProjectionEEp");
+ c[16]->SetGridx();
+ c[16]->SetGridy();
  etaProjectionEEp1->GetHistogram()->GetYaxis()-> SetRangeUser(0.55,1.5);
  etaProjectionEEp1->GetHistogram()->GetXaxis()-> SetRangeUser(85,125);
  etaProjectionEEp1->GetHistogram()->GetYaxis()-> SetTitle("Mean IC");
@@ -849,9 +948,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg5->Draw("same");
 
 
- c[11] = new TCanvas("etaProjectionEEm","etaProjectionEEm");
- c[11]->SetGridx();
- c[11]->SetGridy();
+ c[17] = new TCanvas("etaProjectionEEm","etaProjectionEEm");
+ c[17]->SetGridx();
+ c[17]->SetGridy();
  etaProjectionEEm1->GetHistogram()->GetYaxis()-> SetRangeUser(0.55,1.5);
  etaProjectionEEm1->GetHistogram()->GetXaxis()-> SetRangeUser(85,125);
  etaProjectionEEm1->GetHistogram()->GetYaxis()-> SetTitle("Mean IC");
@@ -865,9 +964,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg6->SetFillColor(0);
  leg6->Draw("same");
 
- c[12] = new TCanvas("phiProfileEB","phiProfileEB");
- c[12]->SetGridx();
- c[12]->SetGridy();
+ c[18] = new TCanvas("phiProfileEB","phiProfileEB");
+ c[18]->SetGridx();
+ c[18]->SetGridy();
  phiProfileEB1->GetXaxis()->SetTitle("#bar{IC}");
  phiProfileEB1->SetLineColor(kBlue);
  phiProfileEB1->SetMarkerSize(0.8);
@@ -884,9 +983,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg7->AddEntry(phiProfileEB2,"EB Projection II set ", "LP");
  leg7->Draw("same");
 
- c[13] = new TCanvas("phiProfileEEp","phiProfileEEp");
- c[13]->SetGridx();
- c[13]->SetGridy();
+ c[19] = new TCanvas("phiProfileEEp","phiProfileEEp");
+ c[19]->SetGridx();
+ c[19]->SetGridy();
  phiProfileEEp1->GetXaxis()->SetTitle("#bar{IC}");
  phiProfileEEp1->SetLineColor(kBlue);
  phiProfileEEp1->SetMarkerSize(0.8);
@@ -903,9 +1002,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg8->AddEntry(phiProfileEEp2,"EE+ Projection II set ", "LP");
  leg8->Draw("same");
 
- c[14] = new TCanvas("phiProfileEEm","phiProfileEEm");
- c[14]->SetGridx();
- c[14]->SetGridy();
+ c[20] = new TCanvas("phiProfileEEm","phiProfileEEm");
+ c[20]->SetGridx();
+ c[20]->SetGridy();
  phiProfileEEm1->GetXaxis()->SetTitle("#bar{IC}");
  phiProfileEEm1->SetLineColor(kBlue);
  phiProfileEEm1->SetMarkerSize(0.8);
@@ -922,9 +1021,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg9->AddEntry(phiProfileEEm2,"EE- Projection II set ", "LP");
  leg9->Draw("same");
 
- c[15] = new TCanvas("etaProfileEB","etaProfileEB");
- c[15]->SetGridx();
- c[15]->SetGridy();
+ c[21] = new TCanvas("etaProfileEB","etaProfileEB");
+ c[21]->SetGridx();
+ c[21]->SetGridy();
  etaProfileEB1->GetXaxis()->SetTitle("#bar{IC}");
  etaProfileEB1->SetLineColor(kBlue);
  etaProfileEB1->SetMarkerSize(0.8);
@@ -941,9 +1040,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg10->AddEntry(etaProfileEB2,"EB Projection II set ", "LP");
  leg10->Draw("same");
 
- c[14] = new TCanvas("etaProfileEEp","etaProfileEEp");
- c[14]->SetGridx();
- c[14]->SetGridy();
+ c[22] = new TCanvas("etaProfileEEp","etaProfileEEp");
+ c[22]->SetGridx();
+ c[22]->SetGridy();
  etaProfileEEp1->GetXaxis()->SetTitle("#bar{IC}");
  etaProfileEEp1->SetLineColor(kBlue);
  etaProfileEEp1->SetMarkerSize(0.8);
@@ -960,9 +1059,9 @@ cout<<" Second Set : Mean dist = "<<etaProfileEEm2->GetMean()<<" RMS dist "<<eta
  leg11->AddEntry(phiProfileEEp2,"EE+ Projection II set ", "LP");
  leg11->Draw("same");
 
- c[15] = new TCanvas("etaProfileEEm","etaProfileEEm");
- c[15]->SetGridx();
- c[15]->SetGridy();
+ c[23] = new TCanvas("etaProfileEEm","etaProfileEEm");
+ c[23]->SetGridx();
+ c[23]->SetGridy();
  etaProfileEEm1->GetXaxis()->SetTitle("#bar{IC}");
  etaProfileEEm1->SetLineColor(kBlue);
  etaProfileEEm1->SetMarkerSize(0.8);
