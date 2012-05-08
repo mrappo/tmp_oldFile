@@ -327,11 +327,13 @@ if(category == "EB-EB"){
 
 void SetParameterFunctionEE_EE(TF1* bw_cb, TRandom3 * rand){
 
-  // Z invariant Mass 
+   // Z invariant Mass
+  bw_cb -> SetParName(1,"M_{Z}"); 
   bw_cb -> FixParameter(1,91.14);
   // Z FWHM
+  bw_cb -> SetParName(1,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
-  // Normalization
+ // Normalization
   bw_cb -> SetParName(0,"N");
   bw_cb -> SetParameter(0,rand->Uniform(18.,30.));
   // Delta M
@@ -350,9 +352,11 @@ void SetParameterFunctionEE_EE(TF1* bw_cb, TRandom3 * rand){
 
 void SetParameterFunctionEB_EE(TF1* bw_cb, TRandom3 * rand){
 
-  // Z invariant Mass 
+  // Z invariant Mass
+  bw_cb -> SetParName(1,"M_{Z}"); 
   bw_cb -> FixParameter(1,91.14);
   // Z FWHM
+  bw_cb -> SetParName(1,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
   // Normalization
   bw_cb -> SetParName(0,"N");
@@ -373,9 +377,11 @@ void SetParameterFunctionEB_EE(TF1* bw_cb, TRandom3 * rand){
 
 void SetParameterFunctionEB_EB(TF1* bw_cb, TRandom3 * rand){
 
-  // Z invariant Mass 
+  // Z invariant Mass
+  bw_cb -> SetParName(1,"M_{Z}"); 
   bw_cb -> FixParameter(1,91.14);
   // Z FWHM
+  bw_cb -> SetParName(1,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
   // Normalization
   bw_cb -> SetParName(0,"N");
