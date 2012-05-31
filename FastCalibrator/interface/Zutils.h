@@ -38,7 +38,10 @@ double breitWigner_crystalBallLow(double* x, double* par,const int nPoints);
 /*** Method for binned and ubinned lineshape fit ***/
 
 void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DATA, TH1F* h_mZ_MC,
-                    int nPoints, const double &min,const double &max);
+                    int nPoints, const double &min,const double &max, std::string energyType = "Reg");
+
+void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DATA,
+                    int nPoints, const double &min,const double &max, std::string energyType ="Reg");
 
 
 void SetParameterFunctionEE_EE(TF1* bw_cb, TRandom3 * rand);

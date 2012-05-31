@@ -2,9 +2,11 @@
 #include <cmath>
 #include "TMath.h"
 #include "TRandom3.h"
+#include "TStyle.h"
 
 int nPoint;
 double mZ_min, mZ_max ;
+std::string energySC ;
 
 /*** breit-wigner ***/
 double breitWigner(double* x, double* par){
@@ -138,11 +140,12 @@ double breitWigner_crystalBallLow(double* x, double* par){
 /*** Binned chi^{2} fit ***/
 
 void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DATA, TH1F* h_mZ_MC,
-                    int nPoints, const double &min,const double &max){
+                    int nPoints, const double &min,const double &max,std::string energyType ){
 
   nPoint = nPoints;
   mZ_min = min;
   mZ_max = max;
+  energySC=energyType;
 
   TRandom3 * rand = new TRandom3();
  
@@ -167,7 +170,7 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   h_mZ_DATA -> GetXaxis() -> SetLabelSize(0.03);
   h_mZ_DATA -> GetXaxis() -> SetLabelFont(42);
   h_mZ_DATA -> GetXaxis() -> SetTitleSize(0.03);
-  h_mZ_DATA -> GetXaxis() -> SetTitleOffset(2.);
+  h_mZ_DATA -> GetXaxis() -> SetTitleOffset(1.5);
   h_mZ_DATA -> GetXaxis() -> SetTitle(("m(e^{+}e^{-}) - "+category).c_str());
   h_mZ_DATA -> GetYaxis() -> SetLabelSize(0.03);
   h_mZ_DATA -> GetYaxis() -> SetTitle(axisTitle);
@@ -177,7 +180,7 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   h_mZ_DATA -> SetMarkerColor(kBlack);
   h_mZ_DATA -> SetMarkerStyle(20);
   h_mZ_DATA -> SetMarkerSize(0.5);
-  h_mZ_DATA -> GetYaxis() -> SetTitleOffset(2.);
+  h_mZ_DATA -> GetYaxis() -> SetTitleOffset(1.5);
   h_mZ_DATA -> Draw("P");
   gPad->Update();
    
@@ -200,7 +203,7 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   h_mZ_MC -> GetXaxis() -> SetTitleOffset(1.5);
   h_mZ_MC -> GetXaxis() -> SetTitle(("m(e^{+}e^{-}) - "+category).c_str());
   h_mZ_MC -> GetYaxis() -> SetLabelSize(0.03);
-  h_mZ_MC -> GetYaxis() -> SetTitleOffset(2.);
+  h_mZ_MC -> GetYaxis() -> SetTitleOffset(1.5);
   h_mZ_MC -> GetYaxis() -> SetTitle(axisTitle);
   
   h_mZ_MC -> SetLineWidth(2);
@@ -218,22 +221,21 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   // fit peaks
   
   std::cout << ">>>Zutils::DrawZPeak::fit peaks" << std::endl;  
-  std::string funcNameDATA = "bw_cb_DATA" + category;
-  std::string funcNameMC = "bw_cb_MC" + category;
+  std::string funcNameDATA = "bw_cb_DATA_" + category +"_"+energySC;
+  std::string funcNameMC = "bw_cb_MC_" + category +"_"+energySC;
 
-
-  if(category == "EE-EE"){
-   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,75.,105.,7);
+  if(category == "EE-EE" || category == "EEp" || category == "EEm" || category=="EE_R9_g" || category=="EE_R9_l"){
+   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    SetParameterFunctionEE_EE(bw_cb_DATA, rand);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
    bw_cb_DATA -> SetLineWidth(2);
    bw_cb_DATA -> SetLineStyle(1);
    c->cd();
-   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0ME+");
+   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
    bw_cb_DATA -> Draw("same"); 
 
-   TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,75.,105.,7);
+   TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    SetParameterFunctionEE_EE(bw_cb_MC, rand);
    bw_cb_MC -> SetNpx(10000);
    bw_cb_MC -> SetLineWidth(2);
@@ -246,18 +248,18 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
  
  }
   
-if(category == "EB-EE"){
-   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,75.,105.,7);
+if(category == "EB-EE" || category=="EB_R9_l"){
+   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    SetParameterFunctionEB_EE(bw_cb_DATA, rand);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
    bw_cb_DATA -> SetLineWidth(2);
    bw_cb_DATA -> SetLineStyle(1);
    c->cd();
-   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0ME+");
+   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
    bw_cb_DATA -> Draw("same"); 
 
-   TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,75.,105.,7);
+   TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    SetParameterFunctionEB_EE(bw_cb_MC, rand);
    bw_cb_MC -> SetNpx(10000);
    bw_cb_MC -> SetLineWidth(2);
@@ -269,18 +271,18 @@ if(category == "EB-EE"){
 
  }
 
-if(category == "EB-EB"){
-   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,75.,105.,7);
+if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="EB_R9_g" ){
+   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    SetParameterFunctionEB_EB(bw_cb_DATA, rand);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
    bw_cb_DATA -> SetLineWidth(2);
    bw_cb_DATA -> SetLineStyle(1);
    c->cd();
-   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0ME+");
+   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
    bw_cb_DATA -> Draw("same"); 
 
-   TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,75.,105.,7);
+   TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    SetParameterFunctionEB_EB(bw_cb_MC, rand);
    bw_cb_MC -> SetNpx(10000);
    bw_cb_MC -> SetLineWidth(2);
@@ -292,17 +294,17 @@ if(category == "EB-EB"){
 
  }
 
-    
   // ------------------
   // get the statistics
   
+
   TPaveStats* p_mZ_DATA = (TPaveStats*)(h_mZ_DATA->GetListOfFunctions()->FindObject("stats"));  
   p_mZ_DATA->SetX1NDC(0.69);
   p_mZ_DATA->SetX2NDC(0.99);
   p_mZ_DATA->SetY1NDC(0.69);
   p_mZ_DATA->SetY2NDC(0.99);
   p_mZ_DATA->SetTextColor(kGreen+2);
-  p_mZ_DATA->SetOptFit(0011);
+  p_mZ_DATA->SetOptFit(0012);
   p_mZ_DATA->Draw("same");
 
   TPaveStats* p_mZ_MC = (TPaveStats*)(h_mZ_MC->GetListOfFunctions()->FindObject("stats"));  
@@ -311,18 +313,131 @@ if(category == "EB-EB"){
   p_mZ_MC->SetY1NDC(0.69);
   p_mZ_MC->SetY2NDC(0.99);
   p_mZ_MC->SetTextColor(kRed+1);
-  p_mZ_MC->SetOptFit(0011);
+  p_mZ_MC->SetOptFit(0012);
   p_mZ_MC->Draw("same");
 
     
   // ---------------
   // print the plots
   
-  c -> Print((h_mZ_DATA_Name+"_DATA.png").c_str(),"png");
-  c1 -> Print((h_mZ_MC_Name+"_MC.png").c_str(),"png");
+  c -> Print((h_mZ_DATA_Name+"_DATA_IC_V20120510_PiZeroElectronCombination_EtaScaleAllR9.png").c_str(),"png");
+  c1 -> Print((h_mZ_MC_Name+"_MC_IC.png").c_str(),"png");
 
   delete c;
   delete c1;
+}
+
+
+void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DATA,
+                    int nPoints, const double &min,const double &max,std::string energyType ){
+
+  nPoint = nPoints;
+  mZ_min = min;
+  mZ_max = max;
+  energySC = energyType ;
+
+  TRandom3 * rand = new TRandom3();
+ 
+  //-----------
+  // draw peaks
+  std::cout << ">>>Zutils::DrawZPeak::draw peaks" << std::endl;
+  std::string h_mZ_DATA_Name = h_mZ_DATA->GetName();
+ 
+ TCanvas* c = new TCanvas(("c_mZ_DATA"+h_mZ_DATA_Name).c_str(),("mZ - "+h_mZ_DATA_Name).c_str(),0,0,600,600);
+  c -> cd();
+  c -> SetGridx();
+  c -> SetGridy();
+  
+  c -> SetLeftMargin(0.15);
+  c -> SetRightMargin(0.15);
+  
+  char axisTitle[50];
+  sprintf(axisTitle,"events / %.2e GeV/c^{2}",h_mZ_DATA->GetBinWidth(1));
+  h_mZ_DATA -> Rebin(rebin);
+  h_mZ_DATA -> GetXaxis() -> SetLabelSize(0.03);
+  h_mZ_DATA -> GetXaxis() -> SetLabelFont(42);
+  h_mZ_DATA -> GetXaxis() -> SetTitleSize(0.03);
+  h_mZ_DATA -> GetXaxis() -> SetTitleOffset(1.5);
+  h_mZ_DATA -> GetXaxis() -> SetTitle(("m(e^{+}e^{-}) - "+category).c_str());
+  h_mZ_DATA -> GetYaxis() -> SetLabelSize(0.03);
+  h_mZ_DATA -> GetYaxis() -> SetTitle(axisTitle);
+  
+  h_mZ_DATA -> SetLineWidth(2);
+  h_mZ_DATA -> SetLineColor(kGreen+2);
+  h_mZ_DATA -> SetMarkerColor(kBlack);
+  h_mZ_DATA -> SetMarkerStyle(20);
+  h_mZ_DATA -> SetMarkerSize(0.5);
+  h_mZ_DATA -> GetYaxis() -> SetTitleOffset(1.5);
+  h_mZ_DATA -> Draw("P");
+  gPad->Update();
+   
+  h_mZ_DATA  -> GetYaxis() -> SetRangeUser(0.,1.05*h_mZ_DATA->GetMaximum());
+  gPad->Update();
+ 
+  //----------
+  // fit peaks
+  
+  std::cout << ">>>Zutils::DrawZPeak::fit peaks" << std::endl;  
+  std::string funcNameDATA = "bw_cb_DATA_" + category+"_"+energyType;
+
+
+  if(category == "EE-EE" || category == "EEp" || category == "EEm" || category=="EE_R9_g" || category=="EE_R9_l"){
+   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
+   SetParameterFunctionEE_EE(bw_cb_DATA, rand);
+   bw_cb_DATA -> SetNpx(10000);
+   bw_cb_DATA -> SetLineColor(kGreen+2);
+   bw_cb_DATA -> SetLineWidth(2);
+   bw_cb_DATA -> SetLineStyle(1);
+   c->cd();
+   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+   bw_cb_DATA -> Draw("same"); 
+ 
+ }
+  
+if(category == "EB-EE" || category=="EB_R9_l"){
+   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
+   SetParameterFunctionEB_EE(bw_cb_DATA, rand);
+   bw_cb_DATA -> SetNpx(10000);
+   bw_cb_DATA -> SetLineColor(kGreen+2);
+   bw_cb_DATA -> SetLineWidth(2);
+   bw_cb_DATA -> SetLineStyle(1);
+   c->cd();
+   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+   bw_cb_DATA -> Draw("same"); 
+ }
+
+if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="EB_R9_g" ){
+   TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
+   SetParameterFunctionEB_EB(bw_cb_DATA, rand);
+   bw_cb_DATA -> SetNpx(10000);
+   bw_cb_DATA -> SetLineColor(kGreen+2);
+   bw_cb_DATA -> SetLineWidth(2);
+   bw_cb_DATA -> SetLineStyle(1);
+   c->cd();
+   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+   bw_cb_DATA -> Draw("same"); 
+ }
+
+    
+  // ------------------
+  // get the statistics
+  
+
+  TPaveStats* p_mZ_DATA = (TPaveStats*)(h_mZ_DATA->GetListOfFunctions()->FindObject("stats"));  
+  p_mZ_DATA->SetX1NDC(0.69);
+  p_mZ_DATA->SetX2NDC(0.99);
+  p_mZ_DATA->SetY1NDC(0.69);
+  p_mZ_DATA->SetY2NDC(0.99);
+  p_mZ_DATA->SetTextColor(kGreen+2);
+  p_mZ_DATA->SetOptFit(0012);
+  p_mZ_DATA->Draw("same");
+
+  // ---------------
+  // print the plots
+  
+  c -> Print((h_mZ_DATA_Name+"_DATA_IC_V20120510_Electron2011_EtaScaleAllR9.png").c_str(),"png");
+
+  delete c;
 }
 
 void SetParameterFunctionEE_EE(TF1* bw_cb, TRandom3 * rand){
@@ -331,11 +446,11 @@ void SetParameterFunctionEE_EE(TF1* bw_cb, TRandom3 * rand){
   bw_cb -> SetParName(1,"M_{Z}"); 
   bw_cb -> FixParameter(1,91.14);
   // Z FWHM
-  bw_cb -> SetParName(1,"#Gamma_{Z}");
+  bw_cb -> SetParName(2,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
  // Normalization
   bw_cb -> SetParName(0,"N");
-  bw_cb -> SetParameter(0,rand->Uniform(18.,30.));
+  bw_cb -> SetParameter(0,rand->Uniform(25.,50.));
   // Delta M
   bw_cb -> SetParName(3,"#Deltam");
   bw_cb -> SetParameter(3,rand->Uniform(1.5,3.5));
@@ -356,14 +471,14 @@ void SetParameterFunctionEB_EE(TF1* bw_cb, TRandom3 * rand){
   bw_cb -> SetParName(1,"M_{Z}"); 
   bw_cb -> FixParameter(1,91.14);
   // Z FWHM
-  bw_cb -> SetParName(1,"#Gamma_{Z}");
+  bw_cb -> SetParName(2,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
   // Normalization
   bw_cb -> SetParName(0,"N");
-  bw_cb -> SetParameter(0,rand->Uniform(110.,150.));
+  bw_cb -> SetParameter(0,rand->Uniform(300.,600.));
   // Delta M
   bw_cb -> SetParName(3,"#Deltam");
-  bw_cb -> SetParameter(3,rand->Uniform(1.,1.5));
+  bw_cb -> SetParameter(3,rand->Uniform(0.9,1.5));
   // Sigma CB
   bw_cb -> SetParName(4,"#sigma_{CB}");
   bw_cb -> SetParameter(4,rand->Uniform(2.,3.));
@@ -381,21 +496,21 @@ void SetParameterFunctionEB_EB(TF1* bw_cb, TRandom3 * rand){
   bw_cb -> SetParName(1,"M_{Z}"); 
   bw_cb -> FixParameter(1,91.14);
   // Z FWHM
-  bw_cb -> SetParName(1,"#Gamma_{Z}");
+  bw_cb -> SetParName(2,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
   // Normalization
   bw_cb -> SetParName(0,"N");
-  bw_cb -> SetParameter(0,rand->Uniform(300.,400.));
+  bw_cb -> SetParameter(0,rand->Uniform(300.,600.));
   // Delta M
   bw_cb -> SetParName(3,"#Deltam");
-  bw_cb -> SetParameter(3,rand->Uniform(0.1,0.7));
+  bw_cb -> SetParameter(3,rand->Uniform(0.05,0.7));
   // Sigma CB
   bw_cb -> SetParName(4,"#sigma_{CB}");
-  bw_cb -> SetParameter(4,rand->Uniform(1.,2.));
+  bw_cb -> SetParameter(4,rand->Uniform(0.7,1.8));
   // Alpha CB
   bw_cb -> SetParName(5,"#alpha");
-  bw_cb -> SetParameter(5,rand->Uniform(1.,1.8));
+  bw_cb -> SetParameter(5,rand->Uniform(1.,1.9));
   // n parameter CB
   bw_cb -> SetParName(6,"n");
-  bw_cb -> SetParameter(6,rand->Uniform(1.5,3.5));
+  bw_cb -> SetParameter(6,rand->Uniform(1.5,3.7));
 }
