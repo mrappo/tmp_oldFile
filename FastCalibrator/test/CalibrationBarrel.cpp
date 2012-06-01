@@ -21,22 +21,24 @@
 #include "TApplication.h"
 #include "ConfigParser.h"
 #include "ntpleUtils.h"
+#include "CalibrationUtils.h"
 
 using namespace std;
 
+int templIndexEB(float eta){
+    float feta = fabs(eta);
+    if (feta <= 25)               {return 0;}
+    if (feta>  25 && feta <=  45) {return 0;}
+    if (feta>  45 && feta <=  65) {return 0;}
+    if (feta>  65 && feta <=  85) {return 0;}
+    return -1;
+}
 
-/// Check if the crystal is near to a dead one
-bool CheckxtalIC (TH2F* h_scale_EB,int iPhi, int iEta );
-/// Check if the crystal is near to a dead TT
-bool CheckxtalTT (int iPhi, int iEta, std::vector<std::pair<int,int> >& TT_centre );
-/// Initialize TT dead map
-void InitializeDeadTT(std::vector<std::pair<int,int> >& TT_centre);
+
 
 /// Main function
 int main(int argc, char **argv){
 
- // by xtal
- int nbins = 500;
 
  // Set style options
  gROOT->Reset();
@@ -71,6 +73,8 @@ int main(int argc, char **argv){
  std::string infile1  = gConfigParser -> readStringOption("Input::Inputfile1");
  std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
  int evalStat = gConfigParser -> readIntOption("Input::evalStat");
+ int nEtaBinsEB = gConfigParser -> readIntOption("Input::nEtaBinsEB");
+
  std::string infile2, infile3;
  if(evalStat){
  infile2 = gConfigParser -> readStringOption("Input::Inputfile2");
@@ -100,85 +104,41 @@ int main(int argc, char **argv){
  
  /// map for dead TT centre
  std::vector< std::pair<int,int> > TT_centre ;
- InitializeDeadTT(TT_centre);
+ InitializeDeadTT_EB(TT_centre);
 
  ///  Input file with full statistic
  
  TFile *f = new TFile(infile1.c_str());
  TH2F *h_scale_EB = (TH2F*)f->Get("h_scale_EB");
  TH2F *hcmap = (TH2F*) h_scale_EB->Clone("hcmap");
-  
  hcmap -> Reset("ICEMS");
  hcmap -> ResetStats();
+
+ NormalizeIC_EB(h_scale_EB, hcmap,TT_centre);
   
- /// Mean over phi corrected skipping dead channel 
-  for (int iEta = 1 ; iEta < h_scale_EB->GetNbinsY()+1; iEta ++){
-   float SumIC = 0;
-   int numIC = 0;
-   
-   for(int iPhi = 1 ; iPhi < h_scale_EB->GetNbinsX()+1 ; iPhi++){
-    bool isGood = CheckxtalIC(h_scale_EB,iPhi,iEta);
-    bool isGoodTT = CheckxtalTT(iPhi,iEta,TT_centre);
- 
-     if(isGood && isGoodTT){
-      SumIC = SumIC + h_scale_EB->GetBinContent(iPhi,iEta);
-      numIC ++ ;
-     }
-   }
-
-   ///fede: skip bad channels and bad TTs
-   for (int iPhi = 1; iPhi< h_scale_EB->GetNbinsX()+1  ; iPhi++){ 
-     if(numIC==0 || SumIC==0) continue;
-     bool isGood = CheckxtalIC(h_scale_EB,iPhi,iEta);
-     bool isGoodTT = CheckxtalTT(iPhi,iEta,TT_centre);
-     if (!isGood || !isGoodTT) continue;
-     hcmap->SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(SumIC/numIC));
-   }
-  }
-
-  ///-----------------------------------------------------------------
-  ///--- Build the precision vs ieta plot starting from the TH2F of IC
-  ///-----------------------------------------------------------------
+ ///-----------------------------------------------------------------
+ ///--- Build the precision vs ieta plot starting from the TH2F of IC
+ ///-----------------------------------------------------------------
   
-  TH1F *hspreadEtaFold[85];
+ int ringGroupSize = 1;
+ int nEtaRing = 85;
+ TH1F **hspreadEtaFold= new TH1F*[nEtaRing];
 
-  char hname[100];
-  char htitle[100];
-  int ringGroupSize = 1;
-  int nStep = 0;
+ BookSpreadHistos_EB(hcmap,hspreadEtaFold,ringGroupSize,nEtaRing);
 
-  /// Spread histos folding EB+ and EB-
-  for (int jbin = 1; jbin < hcmap-> GetNbinsY()+1; jbin++){
-   if (jbin < 86 && (jbin-1)%ringGroupSize == 0 ) {
-      nStep++;
-      sprintf(hname,"hspread_ringGroup_ietaFolded%02d",nStep);
-      hspreadEtaFold[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
-   }
-   if (jbin > 86 && (jbin-2)%ringGroupSize == 0 ) {
-      nStep++;
-   }
+ /// Total spred Graph through Gaussian fit
 
-   for (int ibin = 1; ibin < hcmap-> GetNbinsX()+1; ibin++){
-      float ic = hcmap->GetBinContent(ibin,jbin);
-   if (ic>0 && ic<2 )    {
-        if (nStep <= 85) hspreadEtaFold[nStep-1]->Fill(ic);
-        else             hspreadEtaFold[170-nStep]->Fill(ic);
-      }
-    }
-  }
+ TGraphErrors *sigma_vs_EtaFold = new TGraphErrors();
+ sigma_vs_EtaFold->SetMarkerStyle(20);
+ sigma_vs_EtaFold->SetMarkerSize(1);
+ sigma_vs_EtaFold->SetMarkerColor(kBlue+2);
+
+ TF1 *fgaus = new TF1("fgaus","gaus",-10,10);
+ TF1 *fgaus2 = new TF1("fgaus2","gaus",-100,100);
+
+ int np = 0;
   
-  /// Total spred Graph through Gaussian fit
-  TGraphErrors *sigma_vs_EtaFold = new TGraphErrors();
-  sigma_vs_EtaFold->SetMarkerStyle(20);
-  sigma_vs_EtaFold->SetMarkerSize(1);
-  sigma_vs_EtaFold->SetMarkerColor(kBlue+2);
-
-  TF1 *fgaus = new TF1("fgaus","gaus",-10,10);
-  TF1 *fgaus2 = new TF1("fgaus2","gaus",-100,100);
-
-  int np = 0;
-
-  for (int i = 1; i < 86; i++){
+  for (int i = 1; i < nEtaRing+1; i++){
     float etaring = hcmap->GetYaxis()->GetBinCenter((ringGroupSize*i + ringGroupSize*(i-1))/2 + 1);
     float e     = 0.5*ringGroupSize;
     fgaus->SetParameter(1,1);
@@ -213,28 +173,7 @@ int main(int argc, char **argv){
   hcmap2 -> Reset("ICEMS");
   hcmap2 -> ResetStats();
 
-  /// Mean over phi  skipping dead channels
-
-  for (int iEta = 1 ; iEta < h_scale_EB_2->GetNbinsY()+1 ; iEta ++){
-   float SumIC = 0;
-   int numIC = 0;
-   
-   for(int iPhi = 1 ; iPhi < h_scale_EB_2->GetNbinsX()+1 ; iPhi++){
-    bool isGood = CheckxtalIC(h_scale_EB_2,iPhi,iEta);
-    bool isGoodTT = CheckxtalTT(iPhi,iEta,TT_centre);
- 
-    if(isGood && isGoodTT){
-      SumIC = SumIC + h_scale_EB_2->GetBinContent(iPhi,iEta);
-      numIC ++ ;
-    }
-   }
-   
-   for (int iPhi = 1; iPhi< h_scale_EB_2->GetNbinsX()+1  ; iPhi++){
-    if(numIC!=0 && SumIC!=0)
-    hcmap2->SetBinContent(iPhi,iEta,h_scale_EB_2->GetBinContent(iPhi,iEta)/(SumIC/numIC));
-   }
-  }
- 
+  NormalizeIC_EB(h_scale_EB_2, hcmap2,TT_centre);
   
   TFile *f3 = new TFile(infile3.c_str());
   TH2F *h_scale_EB_3 = (TH2F*)f3->Get("h_scale_EB");
@@ -242,55 +181,18 @@ int main(int argc, char **argv){
   hcmap3 -> Reset("ICEMS");
   hcmap3 -> ResetStats();
   
+  NormalizeIC_EB(h_scale_EB_3, hcmap3,TT_centre);
 
-  /// Mean over phi skipping dead channel 
-  for (int iEta = 1 ; iEta < h_scale_EB_3->GetNbinsY()+1 ; iEta ++){
-   float SumIC = 0;
-   int numIC = 0;
-   
-   for(int iPhi = 1 ; iPhi < h_scale_EB_3->GetNbinsX()+1 ; iPhi++){
-    bool isGood = CheckxtalIC(h_scale_EB_3,iPhi,iEta);
-    bool isGoodTT = CheckxtalTT(iPhi,iEta,TT_centre);
  
-    if(isGood && isGoodTT){
-      SumIC = SumIC + h_scale_EB_3->GetBinContent(iPhi,iEta);
-      numIC ++ ;
-    }
-   }
-   
-   for (int iPhi = 1; iPhi< h_scale_EB_3->GetNbinsX()+1  ; iPhi++){
-    if(numIC!=0 && SumIC!=0)
-    hcmap3->SetBinContent(iPhi,iEta,h_scale_EB_3->GetBinContent(iPhi,iEta)/(SumIC/numIC));
-   }
-  }
-
   /// spread histos for statistical precision folding EB+ on EB-
-  TH1F *hstatprecisionEtaFold[85];
-  nStep = 0;
+  TH1F **hstatprecisionEtaFold= new TH1F*[nEtaRing];
 
-  for (int jbin = 1; jbin < hcmap-> GetNbinsY()+1; jbin++){
-    if (jbin < 86 && (jbin-1)%ringGroupSize == 0 ) {
-       nStep++;
-       sprintf(hname,"hstatprecision_ringGroup_ietaFolded%02d",nStep);
-       hstatprecisionEtaFold[nStep-1]= new TH1F(hname, hname, nbins,-0.5,0.5);
-    }
-    if (jbin > 86 && (jbin-2)%ringGroupSize == 0 ) {
-       nStep++;
-    }
+  BookSpreadStatHistos_EB(hcmap2,hcmap3,hstatprecisionEtaFold,ringGroupSize,nEtaRing);
 
-    for (int ibin = 1; ibin < hcmap2-> GetNbinsX()+1; ibin++){
-       float ic1 = hcmap2->GetBinContent(ibin,jbin);
-       float ic2 = hcmap3->GetBinContent(ibin,jbin);
-    if (ic1>0 && ic1<2 && ic2>0 && ic2 <2 )    {
-        if (nStep <= 85) hstatprecisionEtaFold[nStep-1]->Fill((ic1-ic2)/(ic1+ic2));
-        else             hstatprecisionEtaFold[170-nStep]->Fill((ic1-ic2)/(ic1+ic2));
-       }
-     }
-   }
+  np = 0;
 
-   np = 0;
-   /// statical spread
-   for (int i = 1; i < 86; i++){
+  /// statical spread
+  for (int i = 1; i < nEtaRing+1; i++){
       float etaring = hcmap2->GetYaxis()->GetBinCenter((ringGroupSize*i + ringGroupSize*(i-1))/2 + 1);
       float e     = 0.5*ringGroupSize;
       fgaus->SetParameter(1,1);
@@ -301,38 +203,23 @@ int main(int argc, char **argv){
       statprecision_vs_EtaFold-> SetPoint(np,fabs(etaring),fgaus->GetParameter(2));
       statprecision_vs_EtaFold-> SetPointError(np,e,fgaus->GetParError(2));
       np++;
-    }
+   }
   
-   /// reasidual spread
-   for (int i= 0; i < statprecision_vs_EtaFold-> GetN(); i++){
-      double spread, espread;
-      double stat, estat;
-      double residual, eresidual;
-      double xdummy,ex;
-      sigma_vs_EtaFold-> GetPoint(i, xdummy, spread);
-      espread = sigma_vs_EtaFold-> GetErrorY(i);
-      statprecision_vs_EtaFold-> GetPoint(i, xdummy, stat);
-      estat = statprecision_vs_EtaFold-> GetErrorY(i);
-      ex = statprecision_vs_EtaFold-> GetErrorX(i);
-      if (spread > stat ){
-	residual  = sqrt( spread*spread - stat*stat );
-	eresidual = sqrt( pow(spread*espread,2) + pow(stat*estat,2))/residual;
-      }
-      else {
-	residual = 0;
-	eresidual = 0;
-      }
-      residual_vs_EtaFold->SetPoint(i,xdummy, residual);
-      residual_vs_EtaFold->SetPointError(i,ex,eresidual);
-    }
-  }
-
+  ResidualSpread (statprecision_vs_EtaFold, sigma_vs_EtaFold, residual_vs_EtaFold);
+ }
   /////////////////////////////////////////////////////////////
   /// Apply corrections for Momentum scale vs phi
   /////////////////////////////////////////////////////////////
   
   TFile *f4 = new TFile(inputMomentumScale.c_str());
-  TGraphErrors *g_EoC_EB = (TGraphErrors*)f4->Get("g_EoC_EB_0");
+ 
+  TGraphErrors** g_EoC_EB = new TGraphErrors* [nEtaBinsEB];
+
+  for (int i =0 ; i< nEtaBinsEB ; i++){
+  TString Name = Form ("g_EoC_EB_%d",i);
+  g_EoC_EB[i] = (TGraphErrors*)f4->Get(Name);
+  }
+
   TH2F *hcmapMomentumCorrected = (TH2F*) h_scale_EB->Clone("hcmap");
   
   hcmapMomentumCorrected -> Reset("ICEMS");
@@ -350,44 +237,23 @@ int main(int argc, char **argv){
 
 
   /// For draw the projection value vs phi before and after correction
-
-  for(int iPhi =1; iPhi<hcmap->GetNbinsX()+1; iPhi++){
-   double sumEta=0, nEta=0;
-  
-   for(int iEta =1; iEta<hcmap->GetNbinsY()+1; iEta++){
-    if(hcmap->GetBinContent(iPhi,iEta)==0) continue;
-    sumEta=sumEta+hcmap->GetBinContent(iPhi,iEta);
-    nEta++;
-   }
-   phiProjection->SetPoint(iPhi-1,iPhi-1,sumEta/nEta);
-   phiProjection->SetPointError(iPhi-1,0.,0.002);
-  }
+  PhiProfile(phiProjection,g_EoC_EB,hcmap);
   
   /// Correction of the map for momentum systematic
   for(int iPhi =1; iPhi<hcmap->GetNbinsX()+1; iPhi++){
    for(int iEta =1; iEta<hcmap->GetNbinsY()+1; iEta++){
      if(hcmap->GetBinContent(iPhi,iEta)==0) continue;
      double xPhi=0, yValue=0;
-     g_EoC_EB->GetPoint(iPhi-1,xPhi,yValue);
+     int modEta = templIndexEB(iEta-85);
+     if(modEta==-1) continue;
+     g_EoC_EB[modEta]->GetPoint(int((iPhi-1)/(360./g_EoC_EB[0]->GetN())),xPhi,yValue);
      hcmapMomentumCorrected->SetBinContent(iPhi,iEta,hcmap->GetBinContent(iPhi,iEta)*yValue);
    }
   }
 
   /// Projection after momentum correction
-
-  for(int iPhi =1; iPhi<hcmapMomentumCorrected->GetNbinsX()+1; iPhi++){
-   double sumEta=0, nEta=0;
-  
-   for(int iEta =1; iEta<hcmapMomentumCorrected->GetNbinsY()+1; iEta++){
-    if(hcmapMomentumCorrected->GetBinContent(iPhi,iEta)==0) continue;
-    sumEta=sumEta+hcmapMomentumCorrected->GetBinContent(iPhi,iEta);
-    nEta++;
-   }
-   phiCorrection->SetPoint(iPhi-1,iPhi-1,sumEta/nEta);
-   phiCorrection->SetPointError(iPhi-1,0.,0.002);
-  }
-
-  
+  PhiProfile(phiCorrection,g_EoC_EB,hcmapMomentumCorrected);
+   
   //////////////////////////////////////////////////////////////////
   ///Plot Folded %20 Phi for mean IC Normalized value and spread 
   //////////////////////////////////////////////////////////////////
@@ -414,7 +280,10 @@ int main(int argc, char **argv){
 
   TH1F* hspreadPhiFold_crack_EBp[20];
   TH1F* hspreadPhiFold_crack_EBm[20];
-  nStep =0;
+  
+  int nStep =0;
+  char hname[100];
+  int nbins =500;
     
   for(int jbin = 1; jbin < hcmapMomentumCorrected-> GetNbinsX()+1; jbin++){
    if (jbin <= 20) {
@@ -428,25 +297,26 @@ int main(int argc, char **argv){
    for(int ibin = 1; ibin < hcmapMomentumCorrected-> GetNbinsY()+1; ibin++){
      float ic = hcmapMomentumCorrected->GetBinContent(jbin,ibin);
      
-     bool isGood = CheckxtalIC(hcmapMomentumCorrected,jbin,ibin);
-     bool isGoodTT = CheckxtalTT(jbin,ibin,TT_centre);
+     bool isGood = CheckxtalIC_EB(hcmapMomentumCorrected,jbin,ibin);
+     bool isGoodTT = CheckxtalTT_EB(jbin,ibin,TT_centre);
 
     if (ic>0 && ic<2 && isGood && isGoodTT ) {
       if(jbin <= 20) {
-          if (ibin <= 85) hspreadPhiFold_crack_EBm[jbin-1]->Fill(ic); //from 1 to 85 included
-          if (ibin >= 87) hspreadPhiFold_crack_EBp[jbin-1]->Fill(ic); //from 86 to 170 included
+          if (ibin <= nEtaRing) hspreadPhiFold_crack_EBm[jbin-1]->Fill(ic); //from 1 to 85 included
+          if (ibin >= nEtaRing+2) hspreadPhiFold_crack_EBp[jbin-1]->Fill(ic); //from 86 to 170 included
        }
        else{
           int kbin = (jbin-1)%20 ;
-          if (ibin <= 85) hspreadPhiFold_crack_EBm[kbin]->Fill(ic);
-          if (ibin >= 87) hspreadPhiFold_crack_EBp[kbin]->Fill(ic);
+          if (ibin <= nEtaRing) hspreadPhiFold_crack_EBm[kbin]->Fill(ic);
+          if (ibin >= nEtaRing+2) hspreadPhiFold_crack_EBp[kbin]->Fill(ic);
        }
       }
     }
   }
-   np=0;
-   /// Fit in each iphi%20 region (if you want you can use the mean of the distribution)
-   for(int i=1; i<=20; i++){
+
+  np=0;
+  /// Fit in each iphi%20 region (if you want you can use the mean of the distribution)
+  for(int i=1; i<=20; i++){
       fgaus2->SetParameter(1,hspreadPhiFold_crack_EBp[i-1]->GetMean());
       fgaus2->SetParameter(2,hspreadPhiFold_crack_EBp[i-1]->GetRMS());
 
@@ -455,10 +325,9 @@ int main(int argc, char **argv){
       hspreadPhiFold_crack_EBp[i-1]->Fit("fgaus2","QRNME");
 
       ic_vs_PhiFold_crack_EBp-> SetPoint(np, i, fgaus2->GetParameter(1));
+      ic_vs_PhiFold_crack_EBp-> SetPointError(np,0.5,fgaus2->GetParError(1));
 
       spread_ic_vs_PhiFold_crack_EBp -> SetPoint(np, i, fgaus2->GetParameter(2));
-//       ic_vs_PhiFold_crack-> SetPoint(np,phibin,hspreadPhiFold_crack[i-1]->GetMean()); 
-      ic_vs_PhiFold_crack_EBp-> SetPointError(np,0.5,fgaus2->GetParError(1));
       spread_ic_vs_PhiFold_crack_EBp-> SetPointError(np,0.5,fgaus2->GetParError(2));
 
       fgaus2->SetParameter(1,hspreadPhiFold_crack_EBm[i-1]->GetMean());
@@ -469,10 +338,9 @@ int main(int argc, char **argv){
       hspreadPhiFold_crack_EBm[i-1]->Fit("fgaus2","QRNME");
 
       ic_vs_PhiFold_crack_EBm-> SetPoint(np, i, fgaus2->GetParameter(1));
-
-      spread_ic_vs_PhiFold_crack_EBm-> SetPoint(np, i, fgaus2->GetParameter(2));
-      //       ic_vs_PhiFold_crack-> SetPoint(np,phibin,hspreadPhiFold_crack[i-1]->GetMean()); 
       ic_vs_PhiFold_crack_EBm-> SetPointError(np,0.5,fgaus2->GetParError(1));
+      
+      spread_ic_vs_PhiFold_crack_EBm-> SetPoint(np, i, fgaus2->GetParameter(2));
       spread_ic_vs_PhiFold_crack_EBm-> SetPointError(np,0.5,fgaus2->GetParError(2));
       np++;
    }
@@ -497,7 +365,7 @@ int main(int argc, char **argv){
       int iPhi ;
       if(ibin<=20) iPhi=ibin-1;
       else iPhi = (ibin-1)%20;
-      if (jbin <= 85){
+      if (jbin <= nEtaRing){
       double ix,ic_crack;
       ic_vs_PhiFold_crack_EBm->GetPoint(iPhi,ix,ic_crack);
       if(iPhi>=16)
@@ -505,7 +373,7 @@ int main(int argc, char **argv){
       else hcmap_crackcorrected->SetBinContent(ibin,jbin,ic);
       }
     
-      if (jbin >= 87){
+      if (jbin >= nEtaRing+2){
       double ix,ic_crack;
       ic_vs_PhiFold_crack_EBp->GetPoint(iPhi,ix,ic_crack);
       if(iPhi<=4)
@@ -541,18 +409,18 @@ int main(int argc, char **argv){
        }
     for(int ibin = 1; ibin < hcmap_crackcorrected-> GetNbinsY()+1; ibin++){
      float ic = hcmap_crackcorrected->GetBinContent(jbin,ibin);
-     bool isGood = CheckxtalIC(hcmap_crackcorrected,jbin,ibin);
-     bool isGoodTT = CheckxtalTT(jbin,ibin,TT_centre);
+     bool isGood = CheckxtalIC_EB(hcmap_crackcorrected,jbin,ibin);
+     bool isGoodTT = CheckxtalTT_EB(jbin,ibin,TT_centre);
 
      if (ic>0 && ic<2 && isGood && isGoodTT ) {
        if(jbin <= 20){
-          if (ibin <= 85) hspreadPhiFold_corrected_EBm[jbin-1]->Fill(ic); //from 1 to 85 included
-          if (ibin >= 87) hspreadPhiFold_corrected_EBp[jbin-1]->Fill(ic); //from 86 to 170 included
+          if (ibin <= nEtaRing) hspreadPhiFold_corrected_EBm[jbin-1]->Fill(ic); //from 1 to 85 included
+          if (ibin >= nEtaRing+2) hspreadPhiFold_corrected_EBp[jbin-1]->Fill(ic); //from 86 to 170 included
        }
        else{
           int kbin = (jbin-1)%20 ;
-          if (ibin <= 85) hspreadPhiFold_corrected_EBm[kbin]->Fill(ic);
-          if (ibin >= 87) hspreadPhiFold_corrected_EBp[kbin]->Fill(ic);
+          if (ibin <= nEtaRing) hspreadPhiFold_corrected_EBm[kbin]->Fill(ic);
+          if (ibin >= nEtaRing+2) hspreadPhiFold_corrected_EBp[kbin]->Fill(ic);
        }
       }
     }
@@ -588,18 +456,14 @@ int main(int argc, char **argv){
    PhiProjection_CrackCorrection->SetMarkerStyle(20);
    PhiProjection_CrackCorrection->SetMarkerSize(1);
    PhiProjection_CrackCorrection->SetMarkerColor(kRed);
+   /// renormalize after correction
+   TH2F *hcmapFinal = (TH2F*) hcmap_crackcorrected->Clone("hcmapFinal");
+   hcmapFinal -> Reset("ICEMS");
+   hcmapFinal -> ResetStats();
+
+   NormalizeIC_EB(hcmap_crackcorrected, hcmapFinal,TT_centre,false);
    
-   for(int iPhi =1; iPhi<hcmap_crackcorrected->GetNbinsX()+1; iPhi++){
-   double sumEta=0, nEta=0;
-  
-   for(int iEta =1; iEta<hcmap_crackcorrected->GetNbinsY()+1; iEta++){
-    if(hcmap_crackcorrected->GetBinContent(iPhi,iEta)==0) continue;
-    sumEta=sumEta+hcmap_crackcorrected->GetBinContent(iPhi,iEta);
-    nEta++;
-   }
-   PhiProjection_CrackCorrection->SetPoint(iPhi-1,iPhi-1,sumEta/nEta);
-   PhiProjection_CrackCorrection->SetPointError(iPhi-1,0.,0.002);
-  }
+   PhiProfile(PhiProjection_CrackCorrection,g_EoC_EB,hcmapFinal);
 
    /// Distribution of phi profile
 
@@ -619,32 +483,18 @@ int main(int argc, char **argv){
    }
  
   /// Spread after correction folding EB+ over EB-:
-  TH1F *hspreadEtaFold2[85];
+  TH1F **hspreadEtaFold2= new TH1F* [nEtaRing];
   nStep=0;
-  for (int jbin = 1; jbin < hcmap_crackcorrected-> GetNbinsY()+1; jbin++){
-   if (jbin < 86 && (jbin-1)%ringGroupSize == 0 ) {
-      nStep++;
-      sprintf(hname,"hspread_ringGroup_ietaFolded2_%02d",nStep);
-      hspreadEtaFold2[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
-   }
-   if (jbin > 86 && (jbin-2)%ringGroupSize == 0 ) {
-      nStep++;
-   }
 
-   for (int ibin = 1; ibin < hcmap_crackcorrected-> GetNbinsX()+1; ibin++){
-      float ic = hcmap_crackcorrected->GetBinContent(ibin,jbin);
-   if (ic>0 && ic<2)    {
-        if (nStep <= 85) hspreadEtaFold2[nStep-1]->Fill(ic);
-        else             hspreadEtaFold2[170-nStep]->Fill(ic);
-      }
-    }
-  }
+  BookSpreadHistos_EB(hcmapFinal, hspreadEtaFold2, ringGroupSize,nEtaRing);
+
   /// Total spred Graph through Gaussian fit
   TGraphErrors *sigma_vs_EtaFold_corrected = new TGraphErrors();
   sigma_vs_EtaFold_corrected->SetMarkerStyle(20);
   sigma_vs_EtaFold_corrected->SetMarkerSize(1);
   sigma_vs_EtaFold_corrected->SetMarkerColor(kBlue+2);
   np=0;
+
   for (int i = 1; i < 86; i++){
     float etaring = hcmap_crackcorrected->GetYaxis()->GetBinCenter((ringGroupSize*i + ringGroupSize*(i-1))/2 + 1);
     float e     = 0.5*ringGroupSize;
@@ -662,30 +512,7 @@ int main(int argc, char **argv){
   residual_vs_EtaFold_Corrected->SetMarkerSize(1);
   residual_vs_EtaFold_Corrected->SetMarkerColor(kGreen+2);
 
-  if(evalStat){
-     /// reasidual spread
-     for (int i= 0; i < statprecision_vs_EtaFold-> GetN(); i++){
-      double spread, espread;
-      double stat, estat;
-      double residual, eresidual;
-      double xdummy,ex;
-      sigma_vs_EtaFold_corrected-> GetPoint(i, xdummy, spread);
-      espread = sigma_vs_EtaFold_corrected-> GetErrorY(i);
-      statprecision_vs_EtaFold-> GetPoint(i, xdummy, stat);
-      estat = statprecision_vs_EtaFold-> GetErrorY(i);
-      ex = statprecision_vs_EtaFold-> GetErrorX(i);
-      if (spread > stat ){
-	residual  = sqrt( spread*spread - stat*stat );
-	eresidual = sqrt( pow(spread*espread,2) + pow(stat*estat,2))/residual;
-      }
-      else {
-	residual = 0;
-	eresidual = 0;
-      }
-      residual_vs_EtaFold_Corrected->SetPoint(i,xdummy, residual);
-      residual_vs_EtaFold_Corrected->SetPointError(i,ex,eresidual);
-    }
- } 
+  if(evalStat) ResidualSpread (statprecision_vs_EtaFold, sigma_vs_EtaFold_corrected,residual_vs_EtaFold_Corrected);
 
   ///------------------------------------------------------------------------
   ///-----------------------------------------------------------------
@@ -762,7 +589,7 @@ int main(int argc, char **argv){
   phiCorrection->GetYaxis()-> SetTitle("#bar{IC}");
   phiCorrection->GetXaxis()-> SetTitle("i#phi");
   phiCorrection->Draw("ap");
-  
+ 
   c[6] = new TCanvas("hcmapcorrected","hcmapcorrected");
   c[6]->SetGridx();
   c[6]->SetGridy();
@@ -855,11 +682,23 @@ int main(int argc, char **argv){
    hcmap_crackcorrected->GetYaxis() ->SetTitle("i#eta");
    hcmap_crackcorrected->GetZaxis() ->SetRangeUser(0.9,1.1);
    hcmap_crackcorrected->Draw("COLZ");
-   
-   
-   c[10] = new TCanvas("cphimeanfold_corrected_EB+","cphimeanfold_crack_EB+");
+
+   c[10] = new TCanvas("hcmapFinal","hcmapFinal");
+   c[10]->SetLeftMargin(0.1); 
+   c[10]->SetRightMargin(0.13); 
    c[10]->SetGridx();
-   c[10]->SetGridy();
+  
+   hcmapFinal->GetXaxis()->SetNdivisions(1020);
+   hcmapFinal->GetXaxis() -> SetLabelSize(0.03);
+   hcmapFinal->GetXaxis() ->SetTitle("i#phi");
+   hcmapFinal->GetYaxis() ->SetTitle("i#eta");
+   hcmapFinal->GetZaxis() ->SetRangeUser(0.9,1.1);
+   hcmapFinal->Draw("COLZ");
+   
+   
+   c[11] = new TCanvas("cphimeanfold_corrected_EB+","cphimeanfold_crack_EB+");
+   c[11]->SetGridx();
+   c[11]->SetGridy();
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->SetTitle(" Mean IC EB+");
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->GetYaxis()-> SetRangeUser(0.95,1.05);
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
@@ -867,9 +706,9 @@ int main(int argc, char **argv){
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
    ic_vs_PhiFold_corrected_EBp->Draw("ap");
 
-   c[11] = new TCanvas("cphimeanfold_corrected_EB-","cphimeanfold_crack_EB-");
-   c[11]->SetGridx();
-   c[11]->SetGridy();
+   c[12] = new TCanvas("cphimeanfold_corrected_EB-","cphimeanfold_crack_EB-");
+   c[12]->SetGridx();
+   c[12]->SetGridy();
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->SetTitle(" Mean IC EB-");
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->GetYaxis()-> SetRangeUser(0.95,1.05);
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
@@ -877,18 +716,18 @@ int main(int argc, char **argv){
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
    ic_vs_PhiFold_corrected_EBm->Draw("ap");
 
-   c[12] = new TCanvas("PhiProjection_crackcorrected","PhiProjection_crackcorrected");
-   c[12]->SetGridx();
-   c[12]->SetGridy();
+   c[13] = new TCanvas("PhiProjection_crackcorrected","PhiProjection_crackcorrected");
+   c[13]->SetGridx();
+   c[13]->SetGridy();
    PhiProjection_CrackCorrection->GetHistogram()->GetYaxis()-> SetRangeUser(0.97,1.03);
    PhiProjection_CrackCorrection->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
    PhiProjection_CrackCorrection->GetHistogram()->GetYaxis()-> SetTitle("Mean IC");
    PhiProjection_CrackCorrection->GetHistogram()->GetXaxis()-> SetTitle("i#phi");
    PhiProjection_CrackCorrection->Draw("ap");
 
-   c[13] = new TCanvas("PhiProjection_same","PhiProjection_same");
-   c[13]->SetGridx();
-   c[13]->SetGridy();
+   c[14] = new TCanvas("PhiProjection_same","PhiProjection_same");
+   c[14]->SetGridx();
+   c[14]->SetGridy();
    PhiProjection_CrackCorrection->GetXaxis()->SetRangeUser(280,360);
    PhiProjection_CrackCorrection->Draw("ap");
    phiProjection->Draw("psame");
@@ -899,9 +738,9 @@ int main(int argc, char **argv){
    legg3->SetFillColor(0);
    legg3->Draw("same");
 
-   c[14] = new TCanvas("Profile1","Profile1");
-   c[14]->SetGridx();
-   c[14]->SetGridy();
+   c[15] = new TCanvas("Profile1","Profile1");
+   c[15]->SetGridx();
+   c[15]->SetGridy();
    Profile1->GetXaxis()->SetTitle("#bar{IC}");
    Profile1->SetLineColor(kBlack);
    Profile1->SetMarkerSize(0.8);
@@ -920,9 +759,9 @@ int main(int argc, char **argv){
    legg4->Draw("same");
 
 
-   c[15] = new TCanvas("Profile2","Profile2");
-   c[15]->SetGridx();
-   c[15]->SetGridy();
+   c[16] = new TCanvas("Profile2","Profile2");
+   c[16]->SetGridx();
+   c[16]->SetGridy();
    Profile1->GetXaxis()->SetTitle("#bar{IC}");
    Profile1->SetLineColor(kBlack);
    Profile1->SetMarkerSize(0.8);
@@ -955,9 +794,9 @@ int main(int argc, char **argv){
    
    
 
-   c[16] = new TCanvas("csigmaFoldCorrected","csigmaFoldCorrected");
-   c[16]->SetGridx();
-   c[16]->SetGridy();
+   c[17] = new TCanvas("csigmaFoldCorrected","csigmaFoldCorrected");
+   c[17]->SetGridx();
+   c[17]->SetGridy();
    sigma_vs_EtaFold_corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.07);
    sigma_vs_EtaFold_corrected->GetHistogram()->GetXaxis()-> SetRangeUser(0,85);
    sigma_vs_EtaFold_corrected->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
@@ -975,9 +814,9 @@ int main(int argc, char **argv){
    
    if(evalStat)
    {
-    c[17] = new TCanvas("cResidualFoldCorrected","cResidualFoldCorrected");
-    c[17]->SetGridx();
-    c[17]->SetGridy();
+    c[18] = new TCanvas("cResidualFoldCorrected","cResidualFoldCorrected");
+    c[18]->SetGridx();
+    c[18]->SetGridy();
     residual_vs_EtaFold_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.04);
     residual_vs_EtaFold_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(0,85);
     residual_vs_EtaFold_Corrected->GetHistogram()->GetYaxis()-> SetTitle("residual");
@@ -997,25 +836,25 @@ int main(int argc, char **argv){
 	  << std::fixed << std::setprecision(6) << std::setw(15) << "error"
 	  << std::endl;
    outTxt << "---------------------------------------------------------------" << std::endl;
-   for (int iEta = 1; iEta < hcmap_crackcorrected->GetNbinsY()+1 ; iEta ++)
+   for (int iEta = 1; iEta < hcmapFinal->GetNbinsY()+1 ; iEta ++)
    {
-     if (hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta) == 0) continue; //skip ieta=0
+     if (hcmapFinal->GetYaxis()->GetBinLowEdge(iEta) == 0) continue; //skip ieta=0
 
      double x,statPrec;
-     if (hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta) < 0)
-       statprecision_vs_EtaFold->GetPoint(int(fabs(hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta+85))),x,statPrec);  //mirroring of the folded precision
+     if (hcmapFinal->GetYaxis()->GetBinLowEdge(iEta) < 0)
+       statprecision_vs_EtaFold->GetPoint(int(fabs(hcmapFinal->GetYaxis()->GetBinLowEdge(iEta+85))),x,statPrec);  //mirroring of the folded precision
      else
-       statprecision_vs_EtaFold->GetPoint(int(fabs(hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta-85))),x,statPrec);  //mirroring of the folded precision
+       statprecision_vs_EtaFold->GetPoint(int(fabs(hcmapFinal->GetYaxis()->GetBinLowEdge(iEta-85))),x,statPrec);  //mirroring of the folded precision
 
 
-     for (int iPhi =1 ; iPhi < hcmap_crackcorrected -> GetNbinsX()+1; iPhi++)
+     for (int iPhi =1 ; iPhi < hcmapFinal -> GetNbinsX()+1; iPhi++)
        {
 
-	 outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmap_crackcorrected->GetYaxis()->GetBinLowEdge(iEta)
-		<< std::fixed << std::setprecision(0) << std::setw(10) << hcmap_crackcorrected->GetXaxis()->GetBinLowEdge(iPhi) 
+	 outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinal->GetYaxis()->GetBinLowEdge(iEta)
+		<< std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinal->GetXaxis()->GetBinLowEdge(iPhi) 
 		<< std::fixed << std::setprecision(0) << std::setw(10) << "0"; //iz for the barrel
 
-	   if(hcmap_crackcorrected->GetBinContent(iPhi,iEta) == 0.)
+	   if(hcmapFinal->GetBinContent(iPhi,iEta) == 0.)
 	     {
 	       outTxt << std::fixed << std::setprecision(6) << std::setw(15) << "-1."
 		      << std::fixed << std::setprecision(6) << std::setw(15) << "999."
@@ -1023,7 +862,7 @@ int main(int argc, char **argv){
 	     }
 	   else
 	     {
-	       outTxt << std::fixed << std::setprecision(6) << std::setw(15) << hcmap_crackcorrected->GetBinContent(iPhi,iEta) 
+	       outTxt << std::fixed << std::setprecision(6) << std::setw(15) << hcmapFinal->GetBinContent(iPhi,iEta) 
 		      << std::fixed << std::setprecision(6) << std::setw(15) << statPrec
 		      << std::endl;
 	     }
@@ -1037,55 +876,3 @@ return 0;
 
 }
 
-/////////////////////////////////////////////////////////// 
-
-bool CheckxtalIC (TH2F* h_scale_EB,int iPhi, int iEta ){
-  if(h_scale_EB->GetBinContent(iPhi,iEta) ==0) return false;
-  
-  int bx= h_scale_EB->GetNbinsX();
-  int by= h_scale_EB->GetNbinsY();
-
-  if((iPhi<bx && h_scale_EB->GetBinContent(iPhi+1,iEta) ==0) || (h_scale_EB->GetBinContent(iPhi-1,iEta)==0 && iPhi>1)) return false;
-
-  if((iEta<by && h_scale_EB->GetBinContent(iPhi,iEta+1) ==0 && iEta!=85 ) || (h_scale_EB->GetBinContent(iPhi,iEta-1)==0 && iEta>1 && iEta!=87)) return false;
-
-  if((iPhi<bx && h_scale_EB->GetBinContent(iPhi+1,iEta+1) ==0 && iEta!=85 && iEta<by) || ( h_scale_EB->GetBinContent(iPhi-1,iEta-1)==0 && iEta>1 && iEta!=87 && iPhi>1)) return false;
- 
-  if((h_scale_EB->GetBinContent(iPhi+1,iEta-1) ==0 && iEta>1 && iEta!=87 && iPhi<bx) || ( h_scale_EB->GetBinContent(iPhi-1,iEta+1)==0 && iPhi>1 && iEta!=85 && iEta<by )) return false;
-
-  return true;
-}
-
-/////////////////////////////////////////////////////////
-
-bool CheckxtalTT (int iPhi, int iEta, std::vector<std::pair<int,int> >& TT_centre ){
- for(unsigned int k =0; k<TT_centre.size(); k++){
-   if(fabs(iPhi-TT_centre.at(k).second)<5 && fabs(iEta-86-TT_centre.at(k).first)<5) return false;
- }
- return true;
-}
-
-/////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-void InitializeDeadTT(std::vector<std::pair<int,int> >& TT_centre){
- TT_centre.push_back(std::pair<int,int> (58,49));
- TT_centre.push_back(std::pair<int,int> (53,109));
- TT_centre.push_back(std::pair<int,int> (8,114));
- TT_centre.push_back(std::pair<int,int> (83,169));
- TT_centre.push_back(std::pair<int,int> (53,174));
- TT_centre.push_back(std::pair<int,int> (63,194));
- TT_centre.push_back(std::pair<int,int> (83,224));
- TT_centre.push_back(std::pair<int,int> (73,344));
- TT_centre.push_back(std::pair<int,int> (83,358));
- TT_centre.push_back(std::pair<int,int> (-13,18));
- TT_centre.push_back(std::pair<int,int> (-18,23));
- TT_centre.push_back(std::pair<int,int> (-8,53));
- TT_centre.push_back(std::pair<int,int> (-3,63));
- TT_centre.push_back(std::pair<int,int> (-53,128));
- TT_centre.push_back(std::pair<int,int> (-53,183));
- TT_centre.push_back(std::pair<int,int> (-83,193));
- TT_centre.push_back(std::pair<int,int> (-74,218));
- TT_centre.push_back(std::pair<int,int> (-8,223));
- TT_centre.push_back(std::pair<int,int> (-68,303));
- TT_centre.push_back(std::pair<int,int> (-43,328));
-}
