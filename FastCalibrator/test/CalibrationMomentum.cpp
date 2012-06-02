@@ -1,6 +1,6 @@
 // per compilare: g++ -Wall -o CalibrationMomentum `root-config --cflags --glibs` CalibrationMomentum.cpp
 
-#include "../CommonTools/TEndcapRings.h"
+#include "TEndcapRings.h"
 #include "../CommonTools/histoFunc.h"
 #include <iostream>
 #include <iomanip>
