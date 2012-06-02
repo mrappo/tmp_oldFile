@@ -14,7 +14,7 @@
 #include "TCanvas.h"
 #include "TString.h"
 #include "TGraphErrors.h"
-#include "../CommonTools/TEndcapRings.h"
+#include "TEndcapRings.h"
 #include "TLegend.h"
 #include "TApplication.h"
 

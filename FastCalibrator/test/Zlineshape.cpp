@@ -26,7 +26,6 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
-#include <strstream>
 
 
 int main(int argc, char **argv){
