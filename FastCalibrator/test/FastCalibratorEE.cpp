@@ -21,7 +21,9 @@ int main (int argc, char ** argv)
   /// Parse the config file
   parseConfigFile (argv[1]) ;
 
-  std::string inputFile       = gConfigParser -> readStringOption("Input::inputFile");
+//   std::string inputFile       = gConfigParser -> readStringOption("Input::inputFile");
+  std::string inputList       = gConfigParser -> readStringOption("Input::inputList");
+
   std::string inputTree       = gConfigParser -> readStringOption("Input::inputTree");
   std::string inputFileDeadXtal ="NULL" ;
   try {
@@ -48,7 +50,7 @@ int main (int argc, char ** argv)
   int nLoops               = gConfigParser -> readIntOption("Options::nLoops");
   /// Acquistion input ntuplas
   TChain * albero = new TChain (inputTree.c_str());
-  albero -> Add(inputFile.c_str());
+  FillChain(*albero,inputList); 
   
   ///Use the whole sample statistics if numberOfEvents < 0
   if ( numberOfEvents < 0 ) numberOfEvents = albero->GetEntries(); 
