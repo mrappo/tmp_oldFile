@@ -4,10 +4,10 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
-#include <cmath>
 #include <string>
 #include "TFile.h"
 #include "TStyle.h"
+#include "TMath.h"
 #include "TH2F.h"
 #include "TH1F.h"
 #include "TGraphErrors.h"
@@ -16,10 +16,13 @@
 #include "TROOT.h"
 #include "TLegend.h"
 #include "TPaveStats.h"
-#include "../CommonTools/TEndcapRings.h"
+#include "TEndcapRings.h"
 #include "ConfigParser.h"
 #include "ntpleUtils.h"
 #include "TApplication.h"
+#include "CalibrationUtils.h"
+#include "TEndcapRings.h"
+
 
 /// Stand-alone program to produce ECAL single electron calibration plots for EE
 /// Input Files : MC or Data splistat and no splitstat, Momentum scale vs phi plot
@@ -27,14 +30,28 @@
 //                  
 using namespace std;
 
+int templIndexEE(float eta){
+    float feta = fabs(eta);
+    if(eta<0){
+    if (feta>  85 && feta <=  98) {return 0;}
+    if (feta>  98 && feta <= 100) {return 0;}
+    if (feta> 100 && feta <= 118) {return 0;}
+    if (feta> 118 )               {return 0;}
+    }
+    else{
+    if (feta>  85 && feta <=  98) {return 1;}
+    if (feta>  98 && feta <= 100) {return 1;}
+    if (feta> 100 && feta <= 118) {return 1;}
+    if (feta> 118 )               {return 1;}
+    }
+    return -1;
+}
+
+
 /// Run ./bin/CalibrationEndacp.cpp cfg/calibrationEE_cfg.cfg
 
 int main (int argc, char **argv)
 {
-
-  /// by xtal
-
-  int nbins = 200;
 
   /// Set style options
   gROOT->Reset();
@@ -77,7 +94,8 @@ int main (int argc, char **argv)
   std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
   std::string SystematicToAdd =  gConfigParser -> readStringOption("Input::SystematicToAdd"); 
   bool isMC = gConfigParser -> readBoolOption("Input::isMC");
- 
+  int nEtaBinsEE = gConfigParser -> readIntOption("Input::nEtaBinsEE");
+
   if ( infile1.empty()) {
     cout << " No input file specified !" << endl;
     return 1;
@@ -100,64 +118,24 @@ int main (int argc, char **argv)
   /// imput file with full statistic normlized to the mean in a ring
 
   TFile *f = new TFile(infile1.c_str());
-  TH2F *hcmap[2];
+  TH2F **hcmap = new TH2F*[2];
   hcmap[0] = (TH2F*)f->Get("h_scale_map_EEM");
   hcmap[1] = (TH2F*)f->Get("h_scale_map_EEP");
     
-
-  /// ring geometry for the endcap
-  TH2F *hrings[2];
-  hrings[0] = (TH2F*)hcmap[0]->Clone("hringsEEM");
-  hrings[1] = (TH2F*)hcmap[0]->Clone("hringsEEP");
-  hrings[0] ->Reset("ICMES");
-  hrings[1] ->Reset("ICMES");
-  hrings[0] ->ResetStats();
-  hrings[1] ->ResetStats();
-
-  FILE *fRing;
-  fRing = fopen("macros/eerings.dat","r");
-  int x,y,z,ir;
-  while(fscanf(fRing,"(%d,%d,%d) %d \n",&x,&y,&z,&ir) !=EOF ) {
-    if(z>0) hrings[1]->Fill(x,y,ir); 
-    if(z<0) hrings[0]->Fill(x,y,ir);
-  }
 
   ///--------------------------------------------------------------------------------
   ///--- Build the precision vs ring plot starting from the TH2F of IC folded and not
   ///--------------------------------------------------------------------------------
 
-  char hname[100];
-  TH1F *hspread[2][50];
-  TH1F* hspreadAll [40];
+  TH1F ***hspread = new TH1F**[2];
+  for( int i =0 ; i<2 ; i ++)   hspread[i] = new TH1F*[40];
+ 
+  TH1F **hspreadAll = new TH1F*[40];
+ 
+  /// ring geometry for the endcap
+  TEndcapRings *eRings = new TEndcapRings(); 
+  BookSpreadHistos_EE(hcmap,hspread,hspreadAll,eRings);
 
-
-  for (int k = 0; k < 2; k++){         
-    for (int iring = 0; iring < 40 ; iring++){
-      if (k==0){
-       sprintf(hname,"hspreadAll_ring%02d",iring);
-       hspreadAll[iring] = new TH1F(hname, hname, nbins,0.,2.);
-       sprintf(hname,"hspreadEEM_ring%02d",iring);
-       hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
-      }
-      else{ sprintf(hname,"hspreadEEP_ring%02d",iring);
-            hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.); }
-   }
-  }
-  
- /// spread all distribution, spread for EE+ and EE- and comparison with the MC truth
-  for (int k = 0; k < 2 ; k++){
-    for (int ix = 1; ix < 101; ix++){
-      for (int iy = 1; iy < 101; iy++){
-	int mybin = hcmap[k] -> FindBin(ix,iy);
-	int ring  = int(hrings[1]-> GetBinContent(mybin));
-	float ic = hcmap[k]->GetBinContent(mybin);
- 	if (ic>0){
-	  hspread[k][ring]->Fill(ic);
-          hspreadAll[ring]->Fill(ic);}
-      }
-    }
-  }
-  
   /// Graph Error for spread EE+ and EE-
 
   TGraphErrors *sigma_vs_ring[3];
@@ -270,48 +248,24 @@ int main (int argc, char **argv)
 
    TFile *f2 = new TFile(infile2.c_str());
    TFile *f3 = new TFile(infile3.c_str());
-   TH2F *hcmap2[2];
+   TH2F **hcmap2 = new TH2F*[2];
    hcmap2[0] = (TH2F*)f2->Get("h_scale_map_EEM"); 
    hcmap2[1] = (TH2F*)f2->Get("h_scale_map_EEP");
 
-   TH2F *hcmap3[2];
+   TH2F **hcmap3 = new TH2F*[2];
    hcmap3[0] = (TH2F*)f3->Get("h_scale_map_EEM"); 
    hcmap3[1] = (TH2F*)f3->Get("h_scale_map_EEP");
 
-   TH1F *hstatprecision[2][40];
-   TH1F *hstatprecisionAll[40];
+   TH1F ***hstatprecision = new TH1F**[2];
+   for(int i =0; i<2; i++) hstatprecision[i]=new TH1F*[40];
 
-    /// stat precision histos for each EE ring
-   for (int k = 0; k < 2; k++){
-     for (int iring = 0; iring < 40 ; iring ++){
-       if (k==0)
-	 { sprintf(hname,"hstatprecisionAll_ring%02d",iring);
-           hstatprecisionAll[iring] = new TH1F(hname, hname, nbins,-1.3,1.3);
-           sprintf(hname,"hstatprecisionEEM_ring%02d",iring);
-           hstatprecision[k][iring] = new TH1F(hname, hname, nbins,-1.3,1.3);}
-	else {sprintf(hname,"hstatprecisionEEP_ring%02d",iring);
-              hstatprecision[k][iring] = new TH1F(hname, hname, nbins,-1.3,1.3);}
-       }
-     }
-//     
-    for (int k = 0; k < 2 ; k++){
-      for (int ix = 1; ix < 102; ix++){
-	for (int iy = 1; iy < 102; iy++){
-	  int mybin = hcmap2[k] -> FindBin(ix,iy);
-	  int ring  = int(hrings[1]-> GetBinContent(mybin));
-	  float ic1 = hcmap2[k]->GetBinContent(mybin);
-	  float ic2 = hcmap3[k]->GetBinContent(mybin);
-          if (ic1>0 && ic2 >0){
-	    hstatprecision[k][ring]->Fill((ic1-ic2)/(ic1+ic2)); /// sigma (diff/sum) gives the stat. precision on teh entire sample
-            hstatprecisionAll[ring]->Fill((ic1-ic2)/(ic1+ic2));
-	  }
-	}
-      }
-    }
+   TH1F **hstatprecisionAll= new TH1F*[40];
  
-    /// Gaussian fit of the even/odd distribution (rms of the distribution can be also used)
-    int n[3] = {0};
-    for (int k = 0; k < 2; k++){
+   BookSpreadStatHistos_EE(hcmap2,hcmap3,hstatprecision,hstatprecisionAll,eRings);
+
+   /// Gaussian fit of the even/odd distribution (rms of the distribution can be also used)
+   int n[3] = {0};
+   for (int k = 0; k < 2; k++){
       for (int iring = 0; iring < 40 ; iring++){
 	if ( hstatprecision[k][iring]->GetEntries() == 0) continue;
 	float e     = 0.5*hcmap2[k]-> GetYaxis()->GetBinWidth(1);
@@ -342,38 +296,24 @@ int main (int argc, char **argv)
       }
      
     /// Residual spread plot
-
-    for (int k = 0; k < 3 ; k++){
-      for (int i= 0; i < statprecision_vs_ring[k]-> GetN(); i++){
-	double spread, espread;
-	double stat, estat;
-	double residual, eresidual;
-	double xdummy,ex;
-	sigma_vs_ring[k]-> GetPoint(i, xdummy, spread );
-	espread = sigma_vs_ring[k]-> GetErrorY(i);
-	statprecision_vs_ring[k]-> GetPoint(i, xdummy, stat );
-	estat = statprecision_vs_ring[k]-> GetErrorY(i);
-	ex = statprecision_vs_ring[k]-> GetErrorX(i);
-	if (spread > stat ){
-	  residual  = sqrt( spread*spread - stat*stat );
-	  eresidual = sqrt( pow(spread*espread,2) + pow(stat*estat,2))/residual;
-	}
-	else {
-	  residual = 0;
-	  eresidual = 0;
-	}
-	residual_vs_ring[k]->SetPoint(i,xdummy, residual);
-	residual_vs_ring[k]->SetPointError(i,ex,eresidual);
-      }
-    }
- 
+    for (int k = 0; k < 3 ; k++) ResidualSpread (statprecision_vs_ring[k], sigma_vs_ring[k], residual_vs_ring[k]);
+      
  }
 
  /// Momentum scale correction
  
  TFile* input = new TFile(inputMomentumScale.c_str());
  
- TGraphErrors* g_EoC_EE = (TGraphErrors*) input->Get("g_EoC_EE_0");
+ TGraphErrors** g_EoC_EE = new TGraphErrors* [nEtaBinsEE];
+
+ for (int i =0 ; i< nEtaBinsEE ; i++){
+  TString Name = Form ("g_EoC_EE_%d",i);
+  g_EoC_EE[i] = (TGraphErrors*)input->Get(Name);
+ }
+
+ TH2F* mapConversionEEp = (TH2F*) input->Get("mapConversionEEp");
+ TH2F* mapConversionEEm = (TH2F*) input->Get("mapConversionEEm");
+
  TGraphErrors* PhiProjectionEEp = new TGraphErrors();
  TGraphErrors* PhiProjectionEEm = new TGraphErrors();
  
@@ -397,49 +337,10 @@ int main (int argc, char **argv)
  PhiProjectionEEm_Corrected->SetMarkerSize(1);
  PhiProjectionEEm_Corrected->SetMarkerColor(kBlue);
 
-
- TEndcapRings *eRings = new TEndcapRings();
- std::vector<double> vectSum;
- std::vector<double> vectCounter;
+ PhiProfileEE(PhiProjectionEEm, g_EoC_EE, hcmap[0],eRings,-1);
  
- vectCounter.assign(g_EoC_EE->GetN(),0.);
- vectSum.assign(g_EoC_EE->GetN(),0.);
+ PhiProfileEE(PhiProjectionEEp, g_EoC_EE, hcmap[1],eRings,1);
 
- /// EE+ and EE- projection 
-
- for(int ix=1; ix<hcmap[0]->GetNbinsX()+1;ix++){
-   for(int iy=1; iy<hcmap[0]->GetNbinsY()+1;iy++){
-    if(hcmap[0]->GetBinContent(ix,iy)==0) continue;
-      int iPhi = int(eRings->GetEndcapIphi(ix,iy,-1)/(360./g_EoC_EE->GetN()));
-      vectSum.at(iPhi)=vectSum.at(iPhi)+hcmap[0]->GetBinContent(ix,iy);
-      vectCounter.at(iPhi)=vectCounter.at(iPhi)+1;
-  }
- }
-
-
- for(unsigned int i=0; i<vectCounter.size();i++)
-  PhiProjectionEEm->SetPoint(i,int(i*(360./g_EoC_EE->GetN())),vectSum.at(i)/vectCounter.at(i));
-
- for(unsigned int i=0; i<vectSum.size(); i++){
-  vectSum.at(i)=0; vectCounter.at(i)=0;
- }
-
- for(int ix=1; ix<hcmap[1]->GetNbinsX()+1;ix++){
-   for(int iy=1; iy<hcmap[1]->GetNbinsY()+1;iy++){
-    if(hcmap[1]->GetBinContent(ix,iy)==0) continue;
-     int iPhi = int(eRings->GetEndcapIphi(ix,iy,1)/(360./g_EoC_EE->GetN()));
-     vectSum.at(iPhi)=vectSum.at(iPhi)+hcmap[1]->GetBinContent(ix,iy);
-     vectCounter.at(iPhi)=vectCounter.at(iPhi)+1;
-  }
- }
-
- 
- for(unsigned int i=0; i<vectCounter.size();i++)
-  PhiProjectionEEp->SetPoint(i,int(i*(360./g_EoC_EE->GetN())),vectSum.at(i)/vectCounter.at(i));
- 
- for(unsigned int i=0; i<vectSum.size(); i++){
-  vectSum.at(i)=0; vectCounter.at(i)=0;
- }
 
  /// Correction EE+ and EE-
 
@@ -450,61 +351,55 @@ int main (int argc, char **argv)
  mapMomentumCorrected[1]->Reset();
 
  for(int ix=1; ix<hcmap[0]->GetNbinsX()+1;ix++){
-  for(int iy=1; iy<hcmap[0]->GetNbinsY()+1;iy++){
-   if(hcmap[0]->GetBinContent(ix,iy)==0) continue;
-    int iPhi = int(eRings->GetEndcapIphi(ix,iy,-1));
-    double xphi,yphi;
-    g_EoC_EE->GetPoint(int(iPhi/(360./PhiProjectionEEm->GetN())),xphi,yphi);
-    mapMomentumCorrected[0]->SetBinContent(ix,iy,hcmap[0]->GetBinContent(ix,iy)*yphi);
+   for(int iy=1; iy<hcmap[0]->GetNbinsY()+1;iy++){
+    if(hcmap[0]->GetBinContent(ix,iy)==0) continue;
+     int iPhi = int(eRings->GetEndcapIphi(ix,iy,-1));
+     int modEta = templIndexEE(int(eRings->GetEndcapIeta(ix,iy,-1)));
+     double xphi,yphi;
+     if(modEta == -1) continue;
+     g_EoC_EE[modEta]->GetPoint(int(iPhi/(360./PhiProjectionEEm->GetN())),xphi,yphi);
+     mapMomentumCorrected[0]->SetBinContent(ix,iy,hcmap[0]->GetBinContent(ix,iy)*yphi);
+   }
   }
- }
 
- for(int ix=1; ix<hcmap[1]->GetNbinsX()+1;ix++){
-  for(int iy=1; iy<hcmap[1]->GetNbinsY()+1;iy++){
-   if(hcmap[1]->GetBinContent(ix,iy)==0) continue;
-    int iPhi = int(eRings->GetEndcapIphi(ix,iy,1));
-    double xphi,yphi; 
-    g_EoC_EE->GetPoint(int(iPhi/(360./PhiProjectionEEp->GetN())),xphi,yphi);
-    mapMomentumCorrected[1]->SetBinContent(ix,iy,hcmap[1]->GetBinContent(ix,iy)*yphi);
+  for(int ix=1; ix<hcmap[1]->GetNbinsX()+1;ix++){
+   for(int iy=1; iy<hcmap[1]->GetNbinsY()+1;iy++){
+    if(hcmap[1]->GetBinContent(ix,iy)==0) continue;
+     int iPhi = int(eRings->GetEndcapIphi(ix,iy,1));
+     int modEta = templIndexEE(int(eRings->GetEndcapIeta(ix,iy,-1)));
+     if(modEta == -1) continue;
+     double xphi,yphi; 
+     g_EoC_EE[modEta]->GetPoint(int(iPhi/(360./PhiProjectionEEp->GetN())),xphi,yphi);
+     mapMomentumCorrected[1]->SetBinContent(ix,iy,hcmap[1]->GetBinContent(ix,iy)*yphi);
+   }
   }
- }
   
+ /// New Normalization after momentum scale correction
+ std::vector< std::pair<int,int> > TT_centre_EEP; 
+ std::vector< std::pair<int,int> > TT_centre_EEM;
  
+ InitializeDeadTTEEP(TT_centre_EEP);
+ InitializeDeadTTEEM(TT_centre_EEP);
+
+ TH2F** hcmapFinalEE= new TH2F*[2];
+
+ hcmapFinalEE[0] = (TH2F*) mapMomentumCorrected[1]->Clone("hcmapFinalEEp");
+ hcmapFinalEE[1] = (TH2F*) mapMomentumCorrected[0]->Clone("hcmapFinalEEm");
+  
+ hcmapFinalEE[0] -> Reset("ICEMS");
+ hcmapFinalEE[1] -> Reset("ICEMS");
+ hcmapFinalEE[0] -> ResetStats();
+ hcmapFinalEE[1] -> ResetStats();
+
+ NormalizeIC_EE(mapMomentumCorrected, hcmapFinalEE, TT_centre_EEP,TT_centre_EEM, eRings);
+
  /// EE+ and EE- projection after correction
 
- for(int ix=1; ix<mapMomentumCorrected[0]->GetNbinsX()+1; ix++){
-   for(int iy=1; iy<mapMomentumCorrected[0]->GetNbinsY()+1; iy++){
-     if(mapMomentumCorrected[0]->GetBinContent(ix,iy)==0) continue;
-     int iPhi = int(eRings->GetEndcapIphi(ix,iy,-1)/(360./g_EoC_EE->GetN()));
-     vectSum.at(iPhi)=vectSum.at(iPhi)+mapMomentumCorrected[0]->GetBinContent(ix,iy);
-     vectCounter.at(iPhi)=vectCounter.at(iPhi)+1;
-  }
- }
+ PhiProfileEE(PhiProjectionEEm_Corrected, g_EoC_EE, hcmapFinalEE[0],eRings,-1);
+ 
+ PhiProfileEE(PhiProjectionEEp_Corrected, g_EoC_EE, hcmapFinalEE[1],eRings,1);
 
 
- for(unsigned int i=0; i<vectCounter.size();i++)
-  PhiProjectionEEm_Corrected->SetPoint(i,int(i*(360./g_EoC_EE->GetN())),vectSum.at(i)/vectCounter.at(i));
- 
- for(unsigned int i=0; i<vectSum.size(); i++){
-  vectSum.at(i)=0; vectCounter.at(i)=0;
- }
-
- for(int ix=1; ix<mapMomentumCorrected[1]->GetNbinsX()+1;ix++){
-   for(int iy=1; iy<mapMomentumCorrected[1]->GetNbinsY()+1;iy++){
-    if(mapMomentumCorrected[1]->GetBinContent(ix,iy)==0) continue;
-     int iPhi = int(eRings->GetEndcapIphi(ix,iy,1)/(360./g_EoC_EE->GetN()));
-     vectSum.at(iPhi)=vectSum.at(iPhi)+mapMomentumCorrected[1]->GetBinContent(ix,iy);
-     vectCounter.at(iPhi)=vectCounter.at(iPhi)+1;
-  }
- }
- 
- for(unsigned int i=0; i<vectCounter.size();i++)
-  PhiProjectionEEp_Corrected->SetPoint(i,int(i*(360./g_EoC_EE->GetN())),vectSum.at(i)/vectCounter.at(i));
- 
- for(unsigned int i=0; i<vectSum.size(); i++){
-  vectSum.at(i)=0; vectCounter.at(i)=0;
- }
-    
  /// Projection Histos :
  TH1F* ProfileEEp = new TH1F ("ProfileEEp","ProfileEEp",60,0.9,1.1);
  TH1F* ProfileEEm = new TH1F ("ProfileEEm","ProfileEEm",60,0.9,1.1);
@@ -574,37 +469,13 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
 
  /// reEvaluate precision of IC
 
- TH1F *hspreadCorrected[2][50];
- TH1F* hspreadAllCorrected [40];
+ TH1F ***hspreadCorrected= new TH1F**[2];
+ for(int i =0; i<2 ; i++) hspreadCorrected[i]= new TH1F*[50];
 
+ TH1F** hspreadAllCorrected= new TH1F*[40];
 
-  for (int k = 0; k < 2; k++){         
-    for (int iring = 0; iring < 40 ; iring++){
-      if (k==0){
-       sprintf(hname,"hspreadAllCorrected_ring%02d",iring);
-       hspreadAllCorrected[iring] = new TH1F(hname, hname, nbins,0.,2.);
-       sprintf(hname,"hspreadEEMCorrected_ring%02d",iring);
-       hspreadCorrected[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
-      }
-      else{ sprintf(hname,"hspreadEEPCorrected_ring%02d",iring);
-            hspreadCorrected[k][iring] = new TH1F(hname, hname, nbins,0.,2.); }
-   }
-  }
-  
- /// spread all distribution, spread for EE+ and EE- 
-  for (int k = 0; k < 2 ; k++){
-    for (int ix = 1; ix < 101; ix++){
-      for (int iy = 1; iy < 101; iy++){
-	int mybin = mapMomentumCorrected[k] -> FindBin(ix,iy);
-	int ring  = int(hrings[1]-> GetBinContent(mybin));
-	float ic = mapMomentumCorrected[k]->GetBinContent(mybin);
- 	if (ic>0){
-	  hspreadCorrected[k][ring]->Fill(ic);
-          hspreadAllCorrected[ring]->Fill(ic);}
-      }
-    }
-  }
-  
+ BookSpreadHistos_EE(hcmapFinalEE,hspreadCorrected,hspreadAllCorrected,eRings);
+
   /// Graph Error for spread EE+ and EE-
 
   TGraphErrors *sigma_vs_ringCorrected[3];
@@ -671,33 +542,9 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
   residual_vs_ringCorrected[2]->SetMarkerSize(1);
   residual_vs_ringCorrected[2]->SetMarkerColor(kGreen+2);
 
-  if(evalStat)
-  {
-     for (int k = 0; k < 3 ; k++){
-      for (int i= 0; i < statprecision_vs_ring[k]-> GetN(); i++){
-	double spread, espread;
-	double stat, estat;
-	double residual, eresidual;
-	double xdummy,ex;
-	sigma_vs_ringCorrected[k]-> GetPoint(i, xdummy, spread );
-	espread = sigma_vs_ringCorrected[k]-> GetErrorY(i);
-	statprecision_vs_ring[k]-> GetPoint(i, xdummy, stat );
-	estat = statprecision_vs_ring[k]-> GetErrorY(i);
-	ex = statprecision_vs_ring[k]-> GetErrorX(i);
-	if (spread > stat ){
-	  residual  = sqrt( spread*spread - stat*stat );
-	  eresidual = sqrt( pow(spread*espread,2) + pow(stat*estat,2))/residual;
-	}
-	else {
-	  residual = 0;
-	  eresidual = 0;
-	}
-	residual_vs_ringCorrected[k]->SetPoint(i,xdummy, residual);
-	residual_vs_ringCorrected[k]->SetPointError(i,ex,eresidual);
-      }
-    }
+  if(evalStat){  for (int k = 0; k < 3 ; k++) ResidualSpread (statprecision_vs_ring[k], sigma_vs_ringCorrected[k], residual_vs_ringCorrected[k]);
   }
-
+ 
   
   ///-----------------------------------------------------------------
   ///--- Draw plots
@@ -833,6 +680,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
      statprecision_vs_ring[0]->Write();
      statprecision_vs_ring[1]->Write();
      statprecision_vs_ring[2]->Write();
+     output->Close();
     }
    }
   
@@ -840,8 +688,8 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEM[3] = new TCanvas("PhiProjectionEEM","PhiProjectionEEM");
    cEEM[3]->SetGridx();
    cEEM[3]->SetGridy();
-   PhiProjectionEEm->GetHistogram()->GetYaxis()-> SetRangeUser(0.90,1.1);
-   PhiProjectionEEm->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
+   PhiProjectionEEm->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
+   PhiProjectionEEm->GetHistogram()->GetXaxis()-> SetRangeUser(200,360);
    PhiProjectionEEm->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEm->GetHistogram()->GetXaxis()-> SetTitle("#phi");
    PhiProjectionEEm->Draw("apl");
@@ -849,8 +697,8 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEP[3] = new TCanvas("PhiProjectionEEP","PhiProjectionEEP");
    cEEP[3]->SetGridx();
    cEEP[3]->SetGridy();
-   PhiProjectionEEp->GetHistogram()->GetYaxis()-> SetRangeUser(0.90,1.1);
-   PhiProjectionEEp->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
+   PhiProjectionEEp->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
+   PhiProjectionEEp->GetHistogram()->GetXaxis()-> SetRangeUser(200,360);
    PhiProjectionEEp->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEp->GetHistogram()->GetXaxis()-> SetTitle("#phi");
    PhiProjectionEEp->Draw("apl");
@@ -874,11 +722,11 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEM[4]->SetRightMargin(0.13); 
    cEEM[4]->SetGridx();
    cEEM[4]->SetGridy();
-   mapMomentumCorrected[0]->GetXaxis() -> SetLabelSize(0.03);
-   mapMomentumCorrected[0]->GetXaxis() ->SetTitle("ix");
-   mapMomentumCorrected[0]->GetYaxis() ->SetTitle("iy");
-   mapMomentumCorrected[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
-   mapMomentumCorrected[0]->Draw("colz");
+   hcmapFinalEE[0]->GetXaxis() -> SetLabelSize(0.03);
+   hcmapFinalEE[0]->GetXaxis() ->SetTitle("ix");
+   hcmapFinalEE[0]->GetYaxis() ->SetTitle("iy");
+   hcmapFinalEE[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
+   hcmapFinalEE[0]->Draw("colz");
 
    cEEP[4] = new TCanvas("cmapCorrectedEEP","cmapCorrectedEEP");
    cEEP[4] -> cd();
@@ -886,18 +734,18 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEP[4]->SetRightMargin(0.13); 
    cEEP[4]->SetGridx();
    cEEP[4]->SetGridy();
-   mapMomentumCorrected[1]->GetXaxis() -> SetLabelSize(0.03);
-   mapMomentumCorrected[1]->GetXaxis() ->SetTitle("ix");
-   mapMomentumCorrected[1]->GetYaxis() ->SetTitle("iy");
-   mapMomentumCorrected[1]->GetZaxis() ->SetRangeUser(0.8,1.2);
-   mapMomentumCorrected[1]->Draw("colz");
+   hcmapFinalEE[1]->GetXaxis() -> SetLabelSize(0.03);
+   hcmapFinalEE[1]->GetXaxis() ->SetTitle("ix");
+   hcmapFinalEE[1]->GetYaxis() ->SetTitle("iy");
+   hcmapFinalEE[1]->GetZaxis() ->SetRangeUser(0.8,1.2);
+   hcmapFinalEE[1]->Draw("colz");
 
    /// Projection after correction
    cEEM[5] = new TCanvas("PhiProjectionEEM_Corrected","PhiProjectionEEM_Corrected");
    cEEM[5]->SetGridx();
    cEEM[5]->SetGridy();
-   PhiProjectionEEm_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.9,1.1);
-   PhiProjectionEEm_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
+   PhiProjectionEEm_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
+   PhiProjectionEEm_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(200,360);
    PhiProjectionEEm_Corrected->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEm_Corrected->GetHistogram()->GetXaxis()-> SetTitle("#phi");
    PhiProjectionEEm_Corrected->Draw("apl");
@@ -905,8 +753,8 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEP[5] = new TCanvas("PhiProjectionEEP_Corrected","PhiProjectionEEP_Corrected");
    cEEP[5]->SetGridx();
    cEEP[5]->SetGridy();
-   PhiProjectionEEp_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.9,1.1);
-   PhiProjectionEEp_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
+   PhiProjectionEEp_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
+   PhiProjectionEEp_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(200,360);
    PhiProjectionEEp_Corrected->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEp_Corrected->GetHistogram()->GetXaxis()-> SetTitle("#phi");
    PhiProjectionEEp_Corrected->Draw("apl");
@@ -1031,7 +879,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
     double k,h,j,m;
     statprecision_vs_ring[0]->GetPoint(i,k,h);
     systematicEEM->GetPoint(i,j,m);
-    if(m>0){ tempEEM->SetPoint(i,k,sqrt(h*h+m*m));
+    if(m!=0){ tempEEM->SetPoint(i,k,sqrt(h*h+m*m));
              tempEEM->SetPointError(i,sqrt(statprecision_vs_ring[0]->GetErrorX(i)*statprecision_vs_ring[0]->GetErrorX(i)+
                      systematicEEM->GetErrorX(i)*systematicEEM->GetErrorX(i)),sqrt(statprecision_vs_ring[0]->GetErrorY(i)*statprecision_vs_ring[0]->GetErrorY(i)+systematicEEM->GetErrorY(i)*systematicEEM->GetErrorY(i)));}
                
@@ -1044,7 +892,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
     double k,h,j,m;
     statprecision_vs_ring[1]->GetPoint(i,k,h);
     systematicEEP->GetPoint(i,j,m);
-    if(m>0){ tempEEP->SetPoint(i,k,sqrt(h*h+m*m));
+    if(m!=0){ tempEEP->SetPoint(i,k,sqrt(h*h+m*m));
              tempEEP->SetPointError(i,sqrt(statprecision_vs_ring[1]->GetErrorX(i)*statprecision_vs_ring[1]->GetErrorX(i)+
                      systematicEEP->GetErrorX(i)*systematicEEP->GetErrorX(i)),sqrt(statprecision_vs_ring[1]->GetErrorY(i)*statprecision_vs_ring[1]->GetErrorY(i)+systematicEEP->GetErrorY(i)*systematicEEP->GetErrorY(i)));}
 
@@ -1058,7 +906,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
     double k,h,j,m;
     statprecision_vs_ring[2]->GetPoint(i,k,h);
     systematicAll->GetPoint(i,j,m);
-    if(m>0){ tempAll->SetPoint(i,k,sqrt(h*h+m*m));
+    if(m!=0){ tempAll->SetPoint(i,k,sqrt(h*h+m*m));
              tempAll->SetPointError(i,sqrt(statprecision_vs_ring[2]->GetErrorX(i)*statprecision_vs_ring[2]->GetErrorX(i)+
                      systematicAll->GetErrorX(i)*systematicAll->GetErrorX(i)),sqrt(statprecision_vs_ring[2]->GetErrorY(i)*statprecision_vs_ring[2]->GetErrorY(i)+systematicAll->GetErrorY(i)*systematicAll->GetErrorY(i)));}
 
@@ -1129,29 +977,29 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
           << std::endl;
    outTxt << "---------------------------------------------------------------" << std::endl;
 
-    for (int ix = 1; ix < mapMomentumCorrected[0]->GetNbinsX()+1 ; ix ++)
+    for (int ix = 1; ix < hcmapFinalEE[0]->GetNbinsX()+1 ; ix ++)
     {
-      for (int iy = 1; iy < mapMomentumCorrected[0] -> GetNbinsY()+1; iy++)
+      for (int iy = 1; iy < hcmapFinalEE[0] -> GetNbinsY()+1; iy++)
 	{
           if( exmap->GetBinContent(ix,iy) !=1) continue;
 
 	  double X,statPrec,Y,sysPrec;
-	  statprecision_vs_ring[0]->GetPoint(int(hrings[0]->GetBinContent(ix,iy)),X,statPrec);
-          systematicAll->GetPoint(int(hrings[0]->GetBinContent(ix,iy)),Y,sysPrec);
+	  statprecision_vs_ring[0]->GetPoint(int(eRings->GetEndcapRing(ix,iy,-1)),X,statPrec);
+          systematicAll->GetPoint(int(eRings->GetEndcapRing(ix,iy,-1)),Y,sysPrec);
 
-          if( (mapMomentumCorrected[0]->GetBinContent(ix,iy)>0.4 && mapMomentumCorrected[0]->GetBinContent(ix,iy)<2.)|| mapMomentumCorrected[0]->GetBinContent(ix,iy)!=0. )
+          if( (hcmapFinalEE[0]->GetBinContent(ix,iy)>0.4 && hcmapFinalEE[0]->GetBinContent(ix,iy)<2.)|| hcmapFinalEE[0]->GetBinContent(ix,iy)!=0. )
 	    
-	    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[0]->GetXaxis()->GetBinLowEdge(ix)
-		   << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[0]->GetYaxis()->GetBinLowEdge(iy)
+	    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinalEE[0]->GetXaxis()->GetBinLowEdge(ix)
+		   << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinalEE[0]->GetYaxis()->GetBinLowEdge(iy)
 		   << std::fixed << std::setprecision(0) << std::setw(10) << "-1"
-		   << std::fixed << std::setprecision(6) << std::setw(15) << mapMomentumCorrected[0]->GetBinContent(ix,iy)
+		   << std::fixed << std::setprecision(6) << std::setw(15) << hcmapFinalEE[0]->GetBinContent(ix,iy)
 		   << std::fixed << std::setprecision(6) << std::setw(15) << sqrt(statPrec*statPrec+sysPrec*sysPrec)
 		   << std::endl;
 
           else{
 
-            outTxt << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[0]->GetXaxis()->GetBinLowEdge(ix)
-                   << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[0]->GetYaxis()->GetBinLowEdge(iy)
+            outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinalEE[0]->GetXaxis()->GetBinLowEdge(ix)
+                   << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinalEE[0]->GetYaxis()->GetBinLowEdge(iy)
                    << std::fixed << std::setprecision(0) << std::setw(10) << "-1"
                    << std::fixed << std::setprecision(6) << std::setw(15) << "-1."
                    << std::fixed << std::setprecision(6) << std::setw(15) << "999."
@@ -1163,29 +1011,29 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
 	}
     }
     
-    for (int ix = 1; ix < mapMomentumCorrected[1]->GetNbinsX()+1 ; ix ++)
+    for (int ix = 1; ix < hcmapFinalEE[1]->GetNbinsX()+1 ; ix ++)
       {
-	for (int iy = 1; iy < mapMomentumCorrected[1] -> GetNbinsY()+1; iy++)
+	for (int iy = 1; iy < hcmapFinalEE[1] -> GetNbinsY()+1; iy++)
 	  {
 	    if( exmap->GetBinContent(ix,iy) !=1) continue;
 
 	  double X,statPrec,Y,sysPrec;
-	  statprecision_vs_ring[1]->GetPoint(int(hrings[1]->GetBinContent(ix,iy)),X,statPrec);
-          systematicAll->GetPoint(int(hrings[1]->GetBinContent(ix,iy)),Y,sysPrec);
+	  statprecision_vs_ring[1]->GetPoint(int(eRings->GetEndcapRing(ix,iy,1)),X,statPrec);
+          systematicAll->GetPoint(int(eRings->GetEndcapRing(ix,iy,1)),Y,sysPrec);
 
-	if((mapMomentumCorrected[1]->GetBinContent(ix,iy)>0.4 && mapMomentumCorrected[1]->GetBinContent(ix,iy)<2.)|| mapMomentumCorrected[1]->GetBinContent(ix,iy)!=0.)
+	if((hcmapFinalEE[1]->GetBinContent(ix,iy)>0.4 && hcmapFinalEE[1]->GetBinContent(ix,iy)<2.)|| hcmapFinalEE[1]->GetBinContent(ix,iy)!=0.)
 
-	      outTxt << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[1]->GetXaxis()->GetBinLowEdge(ix)
-		     << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[1]->GetYaxis()->GetBinLowEdge(iy)
+	      outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinalEE[1]->GetXaxis()->GetBinLowEdge(ix)
+		     << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinalEE[1]->GetYaxis()->GetBinLowEdge(iy)
 		     << std::fixed << std::setprecision(0) << std::setw(10) << "1"
-		     << std::fixed << std::setprecision(6) << std::setw(15) << mapMomentumCorrected[1]->GetBinContent(ix,iy)
+		     << std::fixed << std::setprecision(6) << std::setw(15) << hcmapFinalEE[1]->GetBinContent(ix,iy)
 		     << std::fixed << std::setprecision(6) << std::setw(15) << sqrt(statPrec*statPrec+sysPrec*sysPrec)
 		     << std::endl;
 
 	    else{
 
-              outTxt << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[1]->GetXaxis()->GetBinLowEdge(ix)
-                     << std::fixed << std::setprecision(0) << std::setw(10) << mapMomentumCorrected[1]->GetYaxis()->GetBinLowEdge(iy)
+              outTxt << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinalEE[1]->GetXaxis()->GetBinLowEdge(ix)
+                     << std::fixed << std::setprecision(0) << std::setw(10) << hcmapFinalEE[1]->GetYaxis()->GetBinLowEdge(iy)
                      << std::fixed << std::setprecision(0) << std::setw(10) << "1"
                      << std::fixed << std::setprecision(6) << std::setw(15) << "-1."
                      << std::fixed << std::setprecision(6) << std::setw(15) << "999."
