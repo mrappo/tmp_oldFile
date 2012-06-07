@@ -371,7 +371,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " Category " << " & " <<" Data Event "<<" & "<<" #Delta M_{data} "<<" & "<<" #Delta M_{MC} "<<" & "<<" #sigma_{cb}^{data} "<<" & "<<" #sigma_{cb}^{MC} "<<" \\\\ "<<std::endl;
+   outTableFile<< " Category " << " & " <<" Data Event "<<" & "<<" #Delta M_{data} "<<" & "<<" #Delta M_{MC} "<<" & "<<" #sigma_{cb}^{data}/#Delta M_{data} "<<" & "<<" #sigma_{cb}^{MC}/#Delta M_{MC} "<<" \\\\ "<<std::endl;
  
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
@@ -385,7 +385,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(4) <<" & "<< ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(4)/(91.18+ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EB-EB DATA and MC Regression"<<std::endl;
@@ -395,7 +395,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParError(3)<<" &"<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EBp DATA and MC"<<std::endl;
  
@@ -403,7 +403,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3) <<" & "<< ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(4) <<" & "<< ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< " EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3) <<" & "<< ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(4)/(91.18+ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EBp DATA and MC Regression"<<std::endl;
@@ -412,7 +412,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
   
    std::cout<<" Fit Z Peak EBm DATA and MC"<<std::endl;
@@ -421,7 +421,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3) <<" & "<< ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(4) <<" & "<< ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< " EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3) <<" & "<< ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(4)/(91.18+ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
  
    std::cout<<" Fit Z Peak EBm DATA and MC Regression"<<std::endl;
@@ -430,7 +430,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak R9 > DATA and MC "<<std::endl;
@@ -439,7 +439,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(4) <<" & "<< ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< " EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 > DATA and MC Regression"<<std::endl;
  
@@ -447,7 +447,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak R9 < DATA and MC "<<std::endl;
@@ -456,7 +456,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(4) <<" & "<< ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< " EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 < DATA and MC Regression "<<std::endl;
 
@@ -464,15 +464,15 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
- 
+   outTableFile<< "EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+
    std::cout<<" Fit Z Peak EE  DATA and MC  "<<std::endl;
 
    BinnedFitZPeak("EE-EE", 1, ZmassDATA["EE-EE"], ZmassMC["EE-EE"], nPoints, mZ_Min, mZ_Max,energyType);
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(4) <<" & "<< ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(4)/(91.18+ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE  DATA and MC Regression  "<<std::endl;
  
@@ -480,8 +480,8 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
- 
+   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+
 
    std::cout<<" Fit Z Peak EEp  DATA and MC "<<std::endl;
 
@@ -489,7 +489,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3) <<" & "<< ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(4) <<" & "<< ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3) <<" & "<< ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(4)/(91.18+ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEp  DATA and MC Regression "<<std::endl;
 
@@ -497,7 +497,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEm  DATA and MC "<<std::endl;
 
@@ -505,7 +505,8 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3) <<" & "<< ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(4) <<" & "<< ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3) <<" & "<< ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(4)/(91.18+ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+
 
    std::cout<<" Fit Z Peak EEm  DATA and MC Regression "<<std::endl;
 
@@ -513,7 +514,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 > DATA and MC  "<<std::endl;
 
@@ -521,7 +522,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(4) <<" & "<< ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 > DATA and MC Regression "<<std::endl;
  
@@ -529,7 +530,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 < DATA and MC  "<<std::endl;
 
@@ -537,7 +538,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(4) <<" & "<< ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParError(4)<<"\\\\ "<<std::endl;
+   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 < DATA and MC "<<std::endl;
 
@@ -545,7 +546,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE-EB DATA and MC "<<std::endl;
 
@@ -553,7 +554,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(4)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(4) <<" & "<< ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(4) <<" #pm "<<ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(4)/(91.18+ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EE-EB DATA and MC Regression "<<std::endl;
@@ -562,7 +563,7 @@ if(useMC){
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(4)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(4) <<" & "<< ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(4) <<" #pm "<<ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParError(4)<<" \\\\ "<<std::endl;
+   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    outTableFile<< " \\hline "<<std::endl;
    outTableFile<< " \\hline "<<std::endl;
@@ -588,7 +589,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\"<<std::endl;
 
-   outTableFile<< " Category " << " & " <<" Data Event "<<" & "<<" #Delta M_{data} "<<" #sigma_{cb}^{data} "<<" \\\\ "<<std::endl;
+   outTableFile<< " Category " << " & " <<" Data Event "<<" & "<<" #Delta M_{data} "<<" #sigma_{cb}^{data}/#Delta M_{data}  "<<" \\\\ "<<std::endl;
 
    outTableFile<<"\\hline"<<std::endl;
    outTableFile<<"\\hline"<<std::endl;
@@ -602,7 +603,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EB-EB DATA and MC Regression"<<std::endl;
@@ -612,7 +613,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB-EB" <<" & "<<ZmassDATA_regression["EB-EB"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< " EB-EB" <<" & "<<ZmassDATA_regression["EB-EB"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EBp DATA and MC"<<std::endl;
  
@@ -620,7 +621,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< " EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EBp DATA and MC Regression"<<std::endl;
@@ -629,7 +630,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBp" <<" & "<<ZmassDATA_regression["EBp"]->GetEntries() <<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< " EBp" <<" & "<<ZmassDATA_regression["EBp"]->GetEntries() <<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
   
    std::cout<<" Fit Z Peak EBm DATA and MC"<<std::endl;
@@ -638,7 +639,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(4) <<" \\\\"<<std::endl;
+   outTableFile<< " EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EBm DATA and MC Regression"<<std::endl;
@@ -647,7 +648,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBm" <<" & "<<ZmassDATA_regression["EBm"]->GetEntries() <<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< " EBm" <<" & "<<ZmassDATA_regression["EBm"]->GetEntries() <<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak R9 > DATA and MC "<<std::endl;
@@ -656,7 +657,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< " EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 > DATA and MC Regression"<<std::endl;
  
@@ -664,7 +665,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB_R9_g" <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(4) <<" \\\\"<<std::endl;
+   outTableFile<< "EB_R9_g" <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak R9 < DATA and MC "<<std::endl;
@@ -673,7 +674,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< " EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 < DATA and MC Regression "<<std::endl;
 
@@ -681,7 +682,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB_R9_l" <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EB_R9_l" <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE  DATA and MC  "<<std::endl;
 
@@ -689,7 +690,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(4) <<" & "<< ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(4) <<" & "<< ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE  DATA and MC Regression  "<<std::endl;
  
@@ -697,7 +698,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE-EE" <<" & "<<ZmassDATA_regression["EE-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE-EE" <<" & "<<ZmassDATA_regression["EE-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EEp  DATA and MC "<<std::endl;
@@ -706,7 +707,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEp  DATA and MC Regression "<<std::endl;
 
@@ -714,7 +715,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEp" <<" & "<<ZmassDATA_regression["EEp"]->GetEntries() <<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EEp" <<" & "<<ZmassDATA_regression["EEp"]->GetEntries() <<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEm  DATA and MC "<<std::endl;
 
@@ -722,7 +723,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(4) <<" \\\\"<<std::endl;
+   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEm  DATA and MC Regression "<<std::endl;
 
@@ -730,7 +731,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEm" <<" & "<<ZmassDATA_regression["EEm"]->GetEntries() <<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EEm" <<" & "<<ZmassDATA_regression["EEm"]->GetEntries() <<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 > DATA and MC  "<<std::endl;
 
@@ -738,7 +739,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 > DATA and MC Regression "<<std::endl;
  
@@ -746,7 +747,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 < DATA and MC  "<<std::endl;
 
@@ -754,7 +755,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 < DATA and MC "<<std::endl;
 
@@ -762,7 +763,7 @@ else{
 
   outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE-EB R9  DATA and MC "<<std::endl;
 
@@ -770,7 +771,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(4) <<" #pm "<< ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EE-EB R9  DATA and MC Regression "<<std::endl;
@@ -779,7 +780,7 @@ else{
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB-EE" <<" & "<<ZmassDATA_regression["EB-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(4) <<" #pm "<< ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(4) <<" \\\\ "<<std::endl;
+   outTableFile<< "EB-EE" <<" & "<<ZmassDATA_regression["EB-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    outTableFile<< " \\hline "<<std::endl;
    outTableFile<< " \\hline "<<std::endl;
