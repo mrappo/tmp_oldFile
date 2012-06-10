@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
+
 
 #include "TFile.h"
 #include "TChain.h"
@@ -12,6 +14,7 @@
 #include "TH1F.h"
 #include "TF1.h"
 #include "TRandom3.h"
+#include "TMath.h"
 
 
 #ifdef _MAKECINT_
@@ -34,6 +37,12 @@ double crystalBallLowHigh(double* x, double* par);
 /*** breit-wigner convoluted with crystalBall ***/
 
 double breitWigner_crystalBallLow(double* x, double* par,const int nPoints);
+
+
+std::pair<double,double> breitWigner_crystalBallLowFWHM(TF1* bwcb, const double &min, const double &max, const double &Precision = 0.001, const int & maxCycle=100000);
+
+void MoveInterval(TF1* bwcb,const double & xCenter,std::pair<double,double> & Interval, const double & MAX);
+
 
 /*** Method for binned and ubinned lineshape fit ***/
 

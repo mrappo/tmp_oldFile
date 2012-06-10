@@ -133,7 +133,73 @@ double breitWigner_crystalBallLow(double* x, double* par){
     val += bw->Eval(yy) * cb->Eval(xx-yy);
   }
 
+  delete bw;
+  delete cb;
   return val;
+}
+
+/*** Visible BwCB FWH estimation assumption the function is monotonic in the interval***/
+std::pair<double,double> breitWigner_crystalBallLowFWHM(TF1* bwcb, const double &min,const double &max, const double &Precision,const int & maxCycle){
+
+std::pair<double,double> extreme ;
+extreme.first = -99. ; extreme.second=-99.;
+
+std::cout<<" Entering "<<std::endl;
+
+double xMAX = bwcb->GetMaximumX();
+
+std::cout<<" xMax = "<<xMAX<<std::endl;
+
+double MAX = bwcb->GetMaximum();
+
+std::cout<<" MAX = "<<MAX<<std::endl;
+
+std::pair<double,double> IntervalUp ;
+IntervalUp.first = xMAX ; IntervalUp.second=max;
+
+std::pair<double,double> IntervalDown ;
+IntervalDown.first = min ; IntervalDown.second=xMAX;
+
+bool EndUp=false, EndDown=false;
+
+
+for(int icycle=0; icycle<maxCycle; icycle++){
+
+double xCenterDown = (IntervalDown.second -IntervalDown.first )/2 +IntervalDown.first;
+double xCenterUp = (IntervalUp.second -IntervalUp.first )/2 +IntervalUp.first;
+
+if(!EndDown) MoveInterval(bwcb,xCenterDown,IntervalDown,MAX/2);
+if(!EndUp) MoveInterval(bwcb,xCenterUp,IntervalUp,MAX/2);
+
+if(fabs(bwcb->Eval(IntervalDown.second)-bwcb->Eval(IntervalDown.first))<=Precision) EndDown = true;
+
+if(fabs(bwcb->Eval(IntervalUp.second)-bwcb->Eval(IntervalUp.first))<=Precision) EndUp = true;
+
+if(EndUp && EndDown) break;
+
+}
+
+extreme.first=(IntervalDown.second -IntervalDown.first )/2 +IntervalDown.first;
+extreme.second=(IntervalUp.second -IntervalUp.first )/2 +IntervalUp.first;
+
+std::cout<<" extreme first = "<<extreme.first<<" extreme second = "<<extreme.second<<std::endl;
+
+return extreme;
+
+}
+
+/*** Decide the right interval to bracket a point assumption the function is monotonic in the interval ***/
+void MoveInterval(TF1* bwcb,const double & xCenter,std::pair<double,double> & Interval, const double & MAX){
+
+if(bwcb->Eval(xCenter)<MAX && ((bwcb->Eval(Interval.second)-bwcb->Eval(Interval.first))/(Interval.second-Interval.first))>0) Interval.first=xCenter;
+
+if(bwcb->Eval(xCenter)>MAX && ((bwcb->Eval(Interval.second)-bwcb->Eval(Interval.first))/(Interval.second-Interval.first))>0) Interval.second=xCenter;
+
+if(bwcb->Eval(xCenter)<MAX && ((bwcb->Eval(Interval.second)-bwcb->Eval(Interval.first))/(Interval.second-Interval.first))<0) Interval.second=xCenter;
+
+if(bwcb->Eval(xCenter)>MAX && ((bwcb->Eval(Interval.second)-bwcb->Eval(Interval.first))/(Interval.second-Interval.first))<0) Interval.first=xCenter;
+
+
 }
 
 
@@ -225,30 +291,44 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   std::string funcNameMC = "bw_cb_MC_" + category +"_"+energySC;
 
   if(category == "EE-EE" || category == "EEp" || category == "EEm" || category=="EE_R9_g" || category=="EE_R9_l"){
+
+
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
-   SetParameterFunctionEE_EE(bw_cb_DATA, rand);
+
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
    bw_cb_DATA -> SetLineWidth(2);
    bw_cb_DATA -> SetLineStyle(1);
    c->cd();
-   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+ 
+   TFitResultPtr rp;
+   int fStatus=4; 
+   while(fStatus ==4){
+      SetParameterFunctionEE_EE(bw_cb_DATA, rand);
+      rp =  h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+      fStatus = rp;
+    }
    bw_cb_DATA -> Draw("same"); 
 
+   
    TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
-   SetParameterFunctionEE_EE(bw_cb_MC, rand);
    bw_cb_MC -> SetNpx(10000);
    bw_cb_MC -> SetLineWidth(2);
    bw_cb_MC -> SetLineStyle(1);
    bw_cb_MC -> SetLineColor(kRed+1);
    c1->cd();
-   h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0MEWL+");
+   fStatus=4; 
+   while(fStatus ==4){
+      SetParameterFunctionEE_EE(bw_cb_MC, rand);
+      h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0MEWL+");
+      fStatus = rp;
+   }
    bw_cb_MC -> Draw("same"); 
 
- 
  }
   
 if(category == "EB-EE" || category=="EB_R9_l"){
+
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    SetParameterFunctionEB_EE(bw_cb_DATA, rand);
    bw_cb_DATA -> SetNpx(10000);
@@ -256,7 +336,13 @@ if(category == "EB-EE" || category=="EB_R9_l"){
    bw_cb_DATA -> SetLineWidth(2);
    bw_cb_DATA -> SetLineStyle(1);
    c->cd();
-   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+   TFitResultPtr rp;
+   int fStatus=4;
+   while(fStatus ==4){
+      SetParameterFunctionEE_EE(bw_cb_DATA, rand);
+      rp =  h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+      fStatus = rp;
+   }
    bw_cb_DATA -> Draw("same"); 
 
    TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
@@ -266,20 +352,35 @@ if(category == "EB-EE" || category=="EB_R9_l"){
    bw_cb_MC -> SetLineStyle(1);
    bw_cb_MC -> SetLineColor(kRed+1);
    c1->cd();
-   h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0MEWL+");
-   bw_cb_MC -> Draw("same"); 
+  
+   fStatus=4;
+   while(fStatus==4){
+      SetParameterFunctionEE_EE(bw_cb_MC, rand);
+      rp =  h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0MEL+");
+      fStatus = rp;
+     }
 
+   bw_cb_MC -> Draw("same"); 
  }
 
 if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="EB_R9_g" ){
+
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    SetParameterFunctionEB_EB(bw_cb_DATA, rand);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
    bw_cb_DATA -> SetLineWidth(2);
-   bw_cb_DATA -> SetLineStyle(1);
+   bw_cb_DATA -> SetLineStyle(1); 
    c->cd();
-   h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+
+   TFitResultPtr rp;
+   int fStatus=4; 
+   
+   while(fStatus==4){
+      SetParameterFunctionEE_EE(bw_cb_DATA, rand);
+      rp =  h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0MEL+");
+      fStatus = rp;
+   }
    bw_cb_DATA -> Draw("same"); 
 
    TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
@@ -289,7 +390,14 @@ if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="E
    bw_cb_MC -> SetLineStyle(1);
    bw_cb_MC -> SetLineColor(kRed+1);
    c1->cd();
-   h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0MEWL+");
+
+   fStatus=4;
+   while(fStatus==4){
+      SetParameterFunctionEE_EE(bw_cb_MC, rand);
+      rp =  h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0MEL+");
+      fStatus = rp;
+   }
+
    bw_cb_MC -> Draw("same"); 
 
  }
@@ -320,8 +428,8 @@ if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="E
   // ---------------
   // print the plots
   
-  c -> Print((h_mZ_DATA_Name+"_DATA_IC_V20120510_PiZeroElectronCombination_EtaScaleAllR9.png").c_str(),"png");
-  c1 -> Print((h_mZ_MC_Name+"_MC_IC.png").c_str(),"png");
+  c -> Print((h_mZ_DATA_Name+"_rerecoICHEP2012.png").c_str(),"png");
+  c1 -> Print((h_mZ_MC_Name+"_MC_IC_v2.png").c_str(),"png");
 
   delete c;
   delete c1;
@@ -435,7 +543,7 @@ if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="E
   // ---------------
   // print the plots
   
-  c -> Print((h_mZ_DATA_Name+"_DATA_IC_V20120510_Electron2011_EtaScaleAllR9.png").c_str(),"png");
+  c -> Print((h_mZ_DATA_Name+"_DATA_DATA_rerecoICHEP2012_v2.png").c_str(),"png");
 
   delete c;
 }
@@ -444,16 +552,16 @@ void SetParameterFunctionEE_EE(TF1* bw_cb, TRandom3 * rand){
 
    // Z invariant Mass
   bw_cb -> SetParName(1,"M_{Z}"); 
-  bw_cb -> FixParameter(1,91.14);
+  bw_cb -> FixParameter(1,91.18);
   // Z FWHM
   bw_cb -> SetParName(2,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
  // Normalization
   bw_cb -> SetParName(0,"N");
-  bw_cb -> SetParameter(0,rand->Uniform(25.,50.));
+  bw_cb -> SetParameter(0,rand->Uniform(10.,20.));
   // Delta M
   bw_cb -> SetParName(3,"#Deltam");
-  bw_cb -> SetParameter(3,rand->Uniform(1.5,3.5));
+  bw_cb -> SetParameter(3,rand->Uniform(0.,1.5));
   // Sigma CB
   bw_cb -> SetParName(4,"#sigma_{CB}");
   bw_cb -> SetParameter(4,rand->Uniform(2.,3.5));
@@ -469,7 +577,7 @@ void SetParameterFunctionEB_EE(TF1* bw_cb, TRandom3 * rand){
 
   // Z invariant Mass
   bw_cb -> SetParName(1,"M_{Z}"); 
-  bw_cb -> FixParameter(1,91.14);
+  bw_cb -> FixParameter(1,91.18);
   // Z FWHM
   bw_cb -> SetParName(2,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
@@ -494,19 +602,19 @@ void SetParameterFunctionEB_EB(TF1* bw_cb, TRandom3 * rand){
 
   // Z invariant Mass
   bw_cb -> SetParName(1,"M_{Z}"); 
-  bw_cb -> FixParameter(1,91.14);
+  bw_cb -> FixParameter(1,91.18);
   // Z FWHM
   bw_cb -> SetParName(2,"#Gamma_{Z}");
   bw_cb -> FixParameter(2,2.4952);
   // Normalization
   bw_cb -> SetParName(0,"N");
-  bw_cb -> SetParameter(0,rand->Uniform(300.,600.));
+  bw_cb -> SetParameter(0,rand->Uniform(300.,500.));
   // Delta M
   bw_cb -> SetParName(3,"#Deltam");
-  bw_cb -> SetParameter(3,rand->Uniform(0.05,0.7));
+  bw_cb -> SetParameter(3,rand->Uniform(-0.5,0.7));
   // Sigma CB
   bw_cb -> SetParName(4,"#sigma_{CB}");
-  bw_cb -> SetParameter(4,rand->Uniform(0.7,1.8));
+  bw_cb -> SetParameter(4,rand->Uniform(0.7,1.6));
   // Alpha CB
   bw_cb -> SetParName(5,"#alpha");
   bw_cb -> SetParameter(5,rand->Uniform(1.,1.9));
