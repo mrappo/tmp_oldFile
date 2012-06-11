@@ -16,6 +16,7 @@
 #include "TLegend.h"
 #include "TTree.h"
 #include "TVirtualFitter.h"
+#include "TMath.h"
 
 #include <iostream>
 #include <string>
@@ -27,6 +28,10 @@
 #include <vector>
 #include <fstream>
 
+#define a 0.5346
+#define b 0.2166
+#define FWHMZ 2.4952
+ 
 
 int main(int argc, char **argv){
 
@@ -383,187 +388,376 @@ if(useMC){
 
    BinnedFitZPeak("EB-EB", 1, ZmassDATA["EB-EB"], ZmassMC["EB-EB"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   std::pair<double,double> extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg"), mZ_Min,mZ_Max);
+
+   double sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   std::pair<double,double> extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg"), mZ_Min,mZ_Max);
+
+   double sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(4)/(91.18+ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+
 
 
    std::cout<<" Fit Z Peak EB-EB DATA and MC Regression"<<std::endl;
 
    BinnedFitZPeak("EB-EB", 1, ZmassDATA_regression["EB-EB"], ZmassMC_regression["EB-EB"], nPoints, mZ_Min, mZ_Max);  
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParError(3)<<" &"<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParError(3)<<" &"<<sigmaDATA/(91.18+ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EB-EB"]->GetFunction("bw_cb_MC_EB-EB_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EBp DATA and MC"<<std::endl;
  
    BinnedFitZPeak("EBp", 1, ZmassDATA["EBp"], ZmassMC["EBp"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3) <<" & "<< ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(4)/(91.18+ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< " EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3) <<" & "<< ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EBp"]->GetFunction("bw_cb_MC_EBp_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EBp DATA and MC Regression"<<std::endl;
 
    BinnedFitZPeak("EBp", 1, ZmassDATA_regression["EBp"], ZmassMC_regression["EBp"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+ 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EBp"]->GetFunction("bw_cb_MC_EBp_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
   
    std::cout<<" Fit Z Peak EBm DATA and MC"<<std::endl;
 
    BinnedFitZPeak("EBm", 1, ZmassDATA["EBm"], ZmassMC["EBm"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3) <<" & "<< ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(4)/(91.18+ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< " EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3) <<" & "<< ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EBm"]->GetFunction("bw_cb_MC_EBm_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
  
    std::cout<<" Fit Z Peak EBm DATA and MC Regression"<<std::endl;
 
    BinnedFitZPeak("EBm", 1, ZmassDATA_regression["EBm"], ZmassMC_regression["EBm"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EBm"]->GetFunction("bw_cb_MC_EBm_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak R9 > DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EB_R9_g", 1, ZmassDATA["EB_R9_g"], ZmassMC["EB_R9_g"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< " EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 > DATA and MC Regression"<<std::endl;
  
    BinnedFitZPeak("EB_R9_g", 1, ZmassDATA_regression["EB_R9_g"], ZmassMC_regression["EB_R9_g"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EB_R9_g"]->GetFunction("bw_cb_MC_EB_R9_g_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak R9 < DATA and MC "<<std::endl;
  
    BinnedFitZPeak("EB_R9_l", 1, ZmassDATA["EB_R9_l"], ZmassMC["EB_R9_l"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< " EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 < DATA and MC Regression "<<std::endl;
 
    BinnedFitZPeak("EB_R9_l", 1, ZmassDATA_regression["EB_R9_l"], ZmassMC_regression["EB_R9_l"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EB_R9_l"]->GetFunction("bw_cb_MC_EB_R9_l_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE  DATA and MC  "<<std::endl;
 
-   BinnedFitZPeak("EE-EE", 1, ZmassDATA["EE-EE"], ZmassMC["EE-EE"], nPoints, mZ_Min, mZ_Max,energyType);
+   BinnedFitZPeak("EE-EE", 2, ZmassDATA["EE-EE"], ZmassMC["EE-EE"], nPoints, mZ_Min, mZ_Max,energyType);
+
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
 
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(4)/(91.18+ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE  DATA and MC Regression  "<<std::endl;
  
    BinnedFitZPeak("EE-EE", 2, ZmassDATA_regression["EE-EE"], ZmassMC_regression["EE-EE"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EE-EE"]->GetFunction("bw_cb_MC_EE-EE_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EEp  DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EEp", 2, ZmassDATA["EEp"], ZmassMC["EEp"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3) <<" & "<< ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(4)/(91.18+ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3) <<" & "<< ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EEp"]->GetFunction("bw_cb_MC_EEp_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEp  DATA and MC Regression "<<std::endl;
 
    BinnedFitZPeak("EEp", 2, ZmassDATA_regression["EEp"], ZmassMC_regression["EEp"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EEp"]->GetFunction("bw_cb_MC_EEp_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEm  DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EEm", 2, ZmassDATA["EEm"], ZmassMC["EEm"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3) <<" & "<< ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(4)/(91.18+ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3) <<" & "<< ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EEm"]->GetFunction("bw_cb_MC_EEm_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EEm  DATA and MC Regression "<<std::endl;
 
    BinnedFitZPeak("EEm", 2, ZmassDATA_regression["EEm"], ZmassMC_regression["EEm"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EEm"]->GetFunction("bw_cb_MC_EEm_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 > DATA and MC  "<<std::endl;
 
    BinnedFitZPeak("EE_R9_g", 2, ZmassDATA["EE_R9_g"], ZmassMC["EE_R9_g"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 > DATA and MC Regression "<<std::endl;
  
    BinnedFitZPeak("EE_R9_g", 2, ZmassDATA_regression["EE_R9_g"], ZmassMC_regression["EE_R9_g"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EE_R9_g"]->GetFunction("bw_cb_MC_EE_R9_g_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 < DATA and MC  "<<std::endl;
 
    BinnedFitZPeak("EE_R9_l", 2, ZmassDATA["EE_R9_l"], ZmassMC["EE_R9_l"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 < DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EE_R9_l", 2, ZmassDATA_regression["EE_R9_l"], ZmassMC_regression["EE_R9_l"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EE_R9_l"]->GetFunction("bw_cb_MC_EE_R9_l_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE-EB DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EB-EE", 2, ZmassDATA["EB-EE"], ZmassMC["EB-EE"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParError(3)<<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3))<<" & "<< ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(4)/(91.18+ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3) <<" & "<< ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(3) <<" #pm "<<ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_NoReg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EE-EB DATA and MC Regression "<<std::endl;
 
    BinnedFitZPeak("EB-EE", 2, ZmassDATA_regression["EB-EE"], ZmassMC_regression["EB-EE"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg"), mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power(((extremeDATA.second-extremeDATA.first)-a*FWHMZ),2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   extremeMC = breitWigner_crystalBallLowFWHM(ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg"),mZ_Min,mZ_Max);
+
+   sigmaMC = sqrt(TMath::Power((extremeMC.second-extremeMC.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParError(3)<<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3))<<" & "<< ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(4)/(91.18+ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
+   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3) <<" & "<< ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(3) <<" #pm "<<ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParError(3)<<" & "<<sigmaDATA/(91.18+ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3))<<" & "<< sigmaMC/(91.18+ZmassMC_regression["EB-EE"]->GetFunction("bw_cb_MC_EB-EE_Reg")->GetParameter(3)) <<" \\\\ "<<std::endl;
 
    outTableFile<< " \\hline "<<std::endl;
    outTableFile<< " \\hline "<<std::endl;
@@ -599,188 +793,274 @@ else{
 
    std::cout<<" Fit Z Peak EB-EB DATA and MC"<<std::endl;
 
-   BinnedFitZPeak("EB-EB", 1, ZmassDATA["EB-EB"], nPoints, mZ_Min, mZ_Max,energyType);
+  BinnedFitZPeak("EB-EB", 1, ZmassDATA["EB-EB"], nPoints, mZ_Min, mZ_Max,energyType);
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   std::pair<double,double> extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg"),mZ_Min,mZ_Max);
+
+   double sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   outTableFile<< " EB-EB" <<" & "<<ZmassDATA["EB-EB"]->GetEntries() <<" & "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EB-EB DATA and MC Regression"<<std::endl;
 
    BinnedFitZPeak("EB-EB", 1, ZmassDATA_regression["EB-EB"],  nPoints, mZ_Min, mZ_Max);  
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB-EB" <<" & "<<ZmassDATA_regression["EB-EB"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< " EB-EB" <<" & "<<ZmassDATA_regression["EB-EB"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EB-EB"]->GetFunction("bw_cb_DATA_EB-EB_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EBp DATA and MC"<<std::endl;
  
    BinnedFitZPeak("EBp", 1, ZmassDATA["EBp"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< " EBp" <<" & "<<ZmassDATA["EBp"]->GetEntries() <<" & "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EBp"]->GetFunction("bw_cb_DATA_EBp_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EBp DATA and MC Regression"<<std::endl;
 
    BinnedFitZPeak("EBp", 1, ZmassDATA_regression["EBp"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBp" <<" & "<<ZmassDATA_regression["EBp"]->GetEntries() <<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< " EBp" <<" & "<<ZmassDATA_regression["EBp"]->GetEntries() <<" & "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EBp"]->GetFunction("bw_cb_DATA_EBp_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
   
    std::cout<<" Fit Z Peak EBm DATA and MC"<<std::endl;
 
    BinnedFitZPeak("EBm", 1, ZmassDATA["EBm"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< " EBm" <<" & "<<ZmassDATA["EBm"]->GetEntries() <<" & "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EBm"]->GetFunction("bw_cb_DATA_EBm_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EBm DATA and MC Regression"<<std::endl;
 
    BinnedFitZPeak("EBm", 1, ZmassDATA_regression["EBm"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EBm" <<" & "<<ZmassDATA_regression["EBm"]->GetEntries() <<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
-
+   outTableFile<< " EBm" <<" & "<<ZmassDATA_regression["EBm"]->GetEntries() <<" & "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EBm"]->GetFunction("bw_cb_DATA_EBm_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 > DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EB_R9_g", 1, ZmassDATA["EB_R9_g"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< " EB_R9_g" <<" & "<<ZmassDATA["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 > DATA and MC Regression"<<std::endl;
  
    BinnedFitZPeak("EB_R9_g", 1, ZmassDATA_regression["EB_R9_g"],nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB_R9_g" <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EB_R9_g" <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EB_R9_g"]->GetFunction("bw_cb_DATA_EB_R9_g_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak R9 < DATA and MC "<<std::endl;
  
    BinnedFitZPeak("EB_R9_l", 1, ZmassDATA["EB_R9_l"],  nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA = breitWigner_crystalBallLowFWHM(ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< " EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< " EB_R9_l" <<" & "<<ZmassDATA["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak R9 < DATA and MC Regression "<<std::endl;
 
    BinnedFitZPeak("EB_R9_l", 1, ZmassDATA_regression["EB_R9_l"],  nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB_R9_l" <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EB_R9_l" <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EB_R9_l"]->GetFunction("bw_cb_DATA_EB_R9_l_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE  DATA and MC  "<<std::endl;
 
    BinnedFitZPeak("EE-EE", 1, ZmassDATA["EE-EE"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(4) <<" & "<< ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EE-EE" <<" & "<<ZmassDATA["EE-EE"]->GetEntries() <<" & "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(4) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE  DATA and MC Regression  "<<std::endl;
  
    BinnedFitZPeak("EE-EE", 2, ZmassDATA_regression["EE-EE"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE-EE" <<" & "<<ZmassDATA_regression["EE-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EE-EE" <<" & "<<ZmassDATA_regression["EE-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EE-EE"]->GetFunction("bw_cb_DATA_EE-EE_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EEp  DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EEp", 2, ZmassDATA["EEp"],nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EEp" <<" & "<<ZmassDATA["EEp"]->GetEntries() <<" & "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EEp"]->GetFunction("bw_cb_DATA_EEp_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEp  DATA and MC Regression "<<std::endl;
 
    BinnedFitZPeak("EEp", 2, ZmassDATA_regression["EEp"],  nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEp" <<" & "<<ZmassDATA_regression["EEp"]->GetEntries() <<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EEp" <<" & "<<ZmassDATA_regression["EEp"]->GetEntries() <<" & "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EEp"]->GetFunction("bw_cb_DATA_EEp_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEm  DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EEm", 2, ZmassDATA["EEm"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EEm" <<" & "<<ZmassDATA["EEm"]->GetEntries() <<" & "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EEm"]->GetFunction("bw_cb_DATA_EEm_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EEm  DATA and MC Regression "<<std::endl;
 
    BinnedFitZPeak("EEm", 2, ZmassDATA_regression["EEm"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EEm" <<" & "<<ZmassDATA_regression["EEm"]->GetEntries() <<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EEm" <<" & "<<ZmassDATA_regression["EEm"]->GetEntries() <<" & "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EEm"]->GetFunction("bw_cb_DATA_EEm_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 > DATA and MC  "<<std::endl;
 
    BinnedFitZPeak("EE_R9_g", 2, ZmassDATA["EE_R9_g"], nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 > DATA and MC Regression "<<std::endl;
  
    BinnedFitZPeak("EE_R9_g", 2, ZmassDATA_regression["EE_R9_g"], nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_g" <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EE_R9_g"]->GetFunction("bw_cb_DATA_EE_R9_g_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 < DATA and MC  "<<std::endl;
 
    BinnedFitZPeak("EE_R9_l", 2, ZmassDATA["EE_R9_l"], nPoints, mZ_Min, mZ_Max,energyType);
+  
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
 
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE R9 < DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EE_R9_l", 2, ZmassDATA_regression["EE_R9_l"], nPoints, mZ_Min, mZ_Max);
 
-  outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg"),mZ_Min,mZ_Max);
 
-   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
+   outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
+
+   outTableFile<< "EE_R9_l" <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetEntries() <<" & "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EE_R9_l"]->GetFunction("bw_cb_DATA_EE_R9_l_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    std::cout<<" Fit Z Peak EE-EB R9  DATA and MC "<<std::endl;
 
    BinnedFitZPeak("EB-EE", 2, ZmassDATA["EB-EE"],  nPoints, mZ_Min, mZ_Max,energyType);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3) <<" & "<< ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(4)/(91.18+ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EB-EE" <<" & "<<ZmassDATA["EB-EE"]->GetEntries() <<" & "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParameter(3)<<" #pm "<<ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_NoReg")->GetParError(3))<<" \\\\ "<<std::endl;
 
 
    std::cout<<" Fit Z Peak EE-EB R9  DATA and MC Regression "<<std::endl;
 
    BinnedFitZPeak("EB-EE", 2, ZmassDATA_regression["EB-EE"],  nPoints, mZ_Min, mZ_Max);
 
+   extremeDATA =  breitWigner_crystalBallLowFWHM(ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg"),mZ_Min,mZ_Max);
+
+   sigmaDATA = sqrt(TMath::Power((extremeDATA.second-extremeDATA.first)-a*FWHMZ,2)-b*FWHMZ*FWHMZ)/(2.*sqrt(2.*log(2.)));
+
    outTableFile<< " & " <<" & "<<" & "<<" \\\\ "<<std::endl;
 
-   outTableFile<< "EB-EE" <<" & "<<ZmassDATA_regression["EB-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3) <<" & "<< ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(4)/(91.18+ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
+   outTableFile<< "EB-EE" <<" & "<<ZmassDATA_regression["EB-EE"]->GetEntries() <<" & "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParameter(3)<<" #pm "<<ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3) <<" & "<< sigmaDATA/(91.18+ZmassDATA_regression["EB-EE"]->GetFunction("bw_cb_DATA_EB-EE_Reg")->GetParError(3))<<" \\\\ "<<std::endl;
 
    outTableFile<< " \\hline "<<std::endl;
    outTableFile<< " \\hline "<<std::endl;
