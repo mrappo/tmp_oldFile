@@ -21,7 +21,7 @@ double breitWigner(double* x, double* par){
   double gamma = sqrt(M*M*(M*M+G*G));
   double norm =(2.*sqrt(2)*M*G*gamma)/(TMath::Pi()*sqrt(M*M+gamma));
   
-  return norm / ( pow((xx*xx-M*M),2) + M*M*G*G );
+  return par[0]*norm / ( pow((xx*xx-M*M),2) + M*M*G*G );
 }
 
 /*** crystall ball with low tail ***/
@@ -213,9 +213,7 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   energySC=energyType;
 
   TRandom3 * rand = new TRandom3();
-  rand->SetSeed(0);
 
-  
   //-----------
   // draw peaks
   std::cout << ">>>Zutils::DrawZPeak::draw peaks" << std::endl;
@@ -290,24 +288,22 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   std::string funcNameDATA = "bw_cb_DATA_" + category +"_"+energySC;
   std::string funcNameMC = "bw_cb_MC_" + category +"_"+energySC;
 
-  if(category == "EE-EE" || category == "EEp" || category == "EEm" || category=="EE_R9_g" || category=="EE_R9_l"){
-
+  if(category == "EE-EE" || category == "EEp" || category == "EEm" || category=="EE_R9_g" || category=="EE_R9_l" || category=="EE_Eta_l" || category=="EE_Eta_g" ){
 
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
-
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
    bw_cb_DATA -> SetLineWidth(2);
    bw_cb_DATA -> SetLineStyle(1);
    c->cd();
 
-   TFitResultPtr rp;
-   int fStatus;
+   TFitResultPtr rpDATA;
+   int fStatusDATA;
    do{
        SetParameterFunctionEE_EE(bw_cb_DATA, rand);
-       rp=h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0EL");
-       fStatus = rp;
-       } while(fStatus!=0);
+       rpDATA=h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0EL");
+       fStatusDATA = rpDATA;
+       } while(fStatusDATA!=0);
 
    bw_cb_DATA -> Draw("same"); 
 
@@ -318,84 +314,89 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
    bw_cb_MC -> SetLineStyle(1);
    bw_cb_MC -> SetLineColor(kRed+1);
    c1->cd();
+
+   int fStatusMC;
+   TFitResultPtr rpMC;   
    do{
+  
        SetParameterFunctionEE_EE(bw_cb_MC, rand);
-       h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0EWL");
-       fStatus = rp;
-       } while(fStatus!=0);
-
+       rpMC=h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0EWL");
+       fStatusMC = rpMC;
+       std::cout<<" fStatus "<<fStatusMC<<std::endl;
+       } while(fStatusMC!=0);
+   
    bw_cb_MC -> Draw("same"); 
-
  }
   
 if(category == "EB-EE" || category=="EB_R9_l"){
 
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
-   SetParameterFunctionEB_EE(bw_cb_DATA, rand);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
    bw_cb_DATA -> SetLineWidth(2);
    bw_cb_DATA -> SetLineStyle(1);
    c->cd();
-   TFitResultPtr rp;
-   int fStatus;
+   TFitResultPtr rpDATA;
+   int fStatusDATA;
    do{
        SetParameterFunctionEB_EE(bw_cb_DATA, rand);
-       rp=h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0EL");
-       fStatus = rp;
-       } while(fStatus!=0);
+       rpDATA=h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0EL");
+       fStatusDATA = rpDATA;
+       } while(fStatusDATA!=0);
 
    bw_cb_DATA -> Draw("same"); 
 
    TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
-   SetParameterFunctionEB_EE(bw_cb_MC, rand);
    bw_cb_MC -> SetNpx(10000);
    bw_cb_MC -> SetLineWidth(2);
    bw_cb_MC -> SetLineStyle(1);
    bw_cb_MC -> SetLineColor(kRed+1);
    c1->cd();
-   
+
+   TFitResultPtr rpMC;
+   int fStatusMC;   
    do{
        SetParameterFunctionEB_EE(bw_cb_MC, rand);
-       h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0EWL");
-       fStatus = rp;
-       } while(fStatus!=0);
+       rpMC=h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0EWL");
+       fStatusMC = rpMC;
+       } while(fStatusMC!=0);
    
    bw_cb_MC -> Draw("same"); 
  }
 
-if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="EB_R9_g" ){
+if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="EB_R9_g" || category=="EB_Eta_l"|| category=="EB_Eta_g"){
 
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
-   SetParameterFunctionEB_EB(bw_cb_DATA, rand);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
    bw_cb_DATA -> SetLineWidth(2);
    bw_cb_DATA -> SetLineStyle(1); 
    c->cd();
-   TFitResultPtr rp;
-   int fStatus;   
+
+   TFitResultPtr rpDATA;
+   int fStatusDATA;   
    do{
        SetParameterFunctionEB_EB(bw_cb_DATA, rand);
-       rp=h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0EL");
-       fStatus = rp;
-       } while(fStatus!=0);
+       rpDATA=h_mZ_DATA -> Fit(funcNameDATA.c_str(),"SR0EL");
+       fStatusDATA = rpDATA;
+       } while(fStatusDATA!=0);
 
    bw_cb_DATA -> Draw("same"); 
 
    TF1* bw_cb_MC = new TF1(funcNameMC.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
-   SetParameterFunctionEB_EB(bw_cb_MC, rand);
    bw_cb_MC -> SetNpx(10000);
    bw_cb_MC -> SetLineWidth(2);
    bw_cb_MC -> SetLineStyle(1);
    bw_cb_MC -> SetLineColor(kRed+1);
    c1->cd();
 
+   TFitResultPtr rpMC;
+   int fStatusMC;   
    do{
        SetParameterFunctionEB_EB(bw_cb_MC, rand);
-       rp=h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0EWL");
-       fStatus = rp;
-       } while(fStatus!=0);
+       rpMC=h_mZ_MC -> Fit(funcNameMC.c_str(),"SR0EWL+");
+       fStatusMC = rpMC;
+       } while(fStatusMC!=0);
 
    bw_cb_MC -> Draw("same"); 
 
@@ -444,8 +445,8 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   energySC = energyType ;
 
   TRandom3 * rand = new TRandom3();
-  rand->SetSeed(0);
-  //-----------
+
+   //-----------
   // draw peaks
   std::cout << ">>>Zutils::DrawZPeak::draw peaks" << std::endl;
   std::string h_mZ_DATA_Name = h_mZ_DATA->GetName();
@@ -488,7 +489,7 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
   std::string funcNameDATA = "bw_cb_DATA_" + category+"_"+energyType;
 
 
-  if(category == "EE-EE" || category == "EEp" || category == "EEm" || category=="EE_R9_g" || category=="EE_R9_l"){
+  if(category == "EE-EE" || category == "EEp" || category == "EEm" || category=="EE_R9_g" || category=="EE_R9_l" || category=="EE_Eta_l" || category=="EE_Eta_g" ){
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
@@ -507,7 +508,7 @@ void BinnedFitZPeak(const std::string& category, const int& rebin, TH1F* h_mZ_DA
  
  }
   
-if(category == "EB-EE" || category=="EB_R9_l"){
+if(category == "EB-EE" || category=="EB_R9_l" ){
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
@@ -524,7 +525,7 @@ if(category == "EB-EE" || category=="EB_R9_l"){
      bw_cb_DATA -> Draw("same"); 
  }
 
-if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="EB_R9_g" ){
+if(category == "EB-EB" || category == "EBp" || category == "EBm" || category=="EB_R9_g" || category=="EB_Eta_l" || category=="EB_Eta_g"){
    TF1* bw_cb_DATA = new TF1(funcNameDATA.c_str(),breitWigner_crystalBallLow,mZ_min,mZ_max,7);
    bw_cb_DATA -> SetNpx(10000);
    bw_cb_DATA -> SetLineColor(kGreen+2);
@@ -598,7 +599,7 @@ void SetParameterFunctionEB_EE(TF1* bw_cb, TRandom3 * rand){
   bw_cb -> FixParameter(2,2.4952);
   // Normalization
   bw_cb -> SetParName(0,"N");
-  bw_cb -> SetParameter(0,rand->Uniform(100.,250.));
+  bw_cb -> SetParameter(0,rand->Uniform(300.,600.));
   // Delta M
   bw_cb -> SetParName(3,"#Deltam");
   bw_cb -> SetParameter(3,rand->Uniform(0.9,1.5));
@@ -623,7 +624,7 @@ void SetParameterFunctionEB_EB(TF1* bw_cb, TRandom3 * rand){
   bw_cb -> FixParameter(2,2.4952);
   // Normalization
   bw_cb -> SetParName(0,"N");
-  bw_cb -> SetParameter(0,rand->Uniform(200.,400.));
+  bw_cb -> SetParameter(0,rand->Uniform(300.,500.));
   // Delta M
   bw_cb -> SetParName(3,"#Deltam");
   bw_cb -> SetParameter(3,rand->Uniform(-0.5,0.7));
