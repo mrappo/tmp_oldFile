@@ -1,4 +1,4 @@
-// @(#)root/tmva $Id: TMVARegression.C 38475 2011-03-17 10:46:00Z evt $
+// @(#)root/tmva $Id: MVARegression.cpp,v 1.1 2012/06/18 21:49:00 rgerosa Exp $
 /**********************************************************************************
  * Project   : TMVA - a Root-integrated toolkit for multivariate data analysis    *
  * Package   : TMVA                                                               *
@@ -158,7 +158,7 @@ int main(int argc, char**argv){
  // [all types of expressions that can also be parsed by TTree::Draw( "expression" )]
  std::string RegionOfTraining =  gConfigParser -> readStringOption("Input::RegionOfTraining");
  std::cout<<" RegionOfTraining = "<<RegionOfTraining<<std::endl;
-
+ 
  if(RegionOfTraining=="EB"){
    
  factory->AddVariable( "PV_n" , 'F');
@@ -173,12 +173,12 @@ int main(int argc, char**argv){
  factory->AddVariable( "ele1_eRegrInput_etaW" , 'F');
  factory->AddVariable( "ele1_eRegrInput_phiW" , 'F');
 
- factory->AddVariable( "ele1_eRegrInput_sigietaieta_bC1" , 'F');
- factory->AddVariable( "ele1_eRegrInput_sigiphiiphi_bC1" , 'F');
- factory->AddVariable( "ele1_eRegrInput_sigietaiphi_bC1" , 'F');
- factory->AddVariable( "ele1_eRegrInput_e3x3_Over_bCE" , 'F');
- factory->AddVariable( "ele1_eRegrInput_Deta_bC_sC" , 'F');
- factory->AddVariable( "ele1_eRegrInput_Dphi_bC_sC" , 'F');
+//  factory->AddVariable( "ele1_eRegrInput_sigietaieta_bC1" , 'F');
+//  factory->AddVariable( "ele1_eRegrInput_sigiphiiphi_bC1" , 'F');
+//  factory->AddVariable( "ele1_eRegrInput_sigietaiphi_bC1" , 'F');
+//  factory->AddVariable( "ele1_eRegrInput_e3x3_Over_bCE" , 'F');
+//  factory->AddVariable( "ele1_eRegrInput_Deta_bC_sC" , 'F');
+//  factory->AddVariable( "ele1_eRegrInput_Dphi_bC_sC" , 'F');
 
 //  factory->AddVariable( "ele1_eRegrInput_sigietaieta_bC2" , 'F');
 //  factory->AddVariable( "ele1_eRegrInput_sigiphiiphi_bC2" , 'F');
@@ -209,7 +209,7 @@ int main(int argc, char**argv){
  // factory->AddSpectator( "spec1:=var1*2",  "Spectator 1", "units", 'F' );
  // factory->AddSpectator( "spec2:=var1*3",  "Spectator 2", "units", 'F' );
  // Add the variable carrying the regression target
- factory->AddTarget("(ele1_scE-ele1_E_true)*(ele1_tkP-ele1_E_true)" ); 
+ factory->AddTarget("(abs(ele1_scE-ele1_E_true))*(abs(ele1_tkP-ele1_E_true))" ); 
 
  // It is also possible to declare additional targets for multi-dimensional regression, ie:
  // -- factory->AddTarget( "fvalue2" );
@@ -252,7 +252,7 @@ int main(int argc, char**argv){
  // factory->AddSpectator( "spec1:=var1*2",  "Spectator 1", "units", 'F' );
  // factory->AddSpectator( "spec2:=var1*3",  "Spectator 2", "units", 'F' );
  // Add the variable carrying the regression target
- factory->AddTarget("(ele1_scE-ele1_E_true)*(ele1_tkP-ele1_E_true)" ); 
+ factory->AddTarget("(abs(ele1_scE-ele1_E_true))*(abs(ele1_tkP-ele1_E_true))" ); 
 
  // It is also possible to declare additional targets for multi-dimensional regression, ie:
  // -- factory->AddTarget( "fvalue2" );
@@ -274,7 +274,7 @@ int main(int argc, char**argv){
                                         "nTrain_Regression=0:nTest_Regression=0:SplitMode=Random:NormMode=NumEvents:!V" );
  }
  // Apply additional cuts on the signal and background samples (can be different)
-
+ 
  // If no numbers of events are given, half of the events in the tree are used 
  // for training, and the other half for testing:
  //    factory->PrepareTrainingAndTestTree( mycut, "SplitMode=random:!V" );  
