@@ -33,6 +33,10 @@
 
 #define xtalWidth 0.01745329
 #define PI        3.1415926536 
+#define rescaleFactorEB 0.9929
+#define rescaleFactorEEP 0.99
+#define rescaleFactorEEM 0.99
+
 
 
 
@@ -309,13 +313,13 @@ int main(int argc, char** argv){
  
     TString histoName;
     histoName=Form("EoP_%d_%d_EE", i,j);
-    h_EoP_EE[i][j] = new TH1F(histoName, histoName, 2000, 0., 2.);
+    h_EoP_EE[i][j] = new TH1F(histoName, histoName, 2200, 0., 2.);
     h_EoP_EE[i][j]->SetFillColor(kRed+2);
     h_EoP_EE[i][j]->SetLineColor(kRed+2);
     h_EoP_EE[i][j]->SetFillStyle(3004);
 
     histoName=Form("EoC_%d_%d_EE", i,j);
-    h_EoC_EE[i][j] = new TH1F(histoName, histoName, 2000, 0., 2.);
+    h_EoC_EE[i][j] = new TH1F(histoName, histoName, 2200, 0., 2.);
     h_EoC_EE[i][j]->SetFillColor(kGreen+2);
     h_EoC_EE[i][j]->SetLineColor(kGreen+2);
     h_EoC_EE[i][j]->SetFillStyle(3004);
@@ -336,7 +340,7 @@ int main(int argc, char** argv){
     for(Int_t j = 0; j<nEtaBinsEB; j++){
     TString histoName;
     histoName=Form("template_%d_%d_EB", imod,j);
-    h_template_EB[imod][j] = new TH1F(histoName, "", 2200, 0., 2.);
+    h_template_EB[imod][j] = new TH1F(histoName, "", 2200, 0.2, 1.6);
    }
   }
 
@@ -536,9 +540,20 @@ int main(int argc, char** argv){
 
     //--- set ieta for the Endcaps
     int iphi,ieta;
+     
+    if(ele1_iz==0 && ele2_iz==0) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEB))/91.19;
+    if(ele1_iz==0 && ele2_iz==1) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEEP))/91.19;
+    if(ele1_iz==0 && ele2_iz==-1) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEEM))/91.19;
+
+    if(ele1_iz==1 && ele2_iz==0) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEP*rescaleFactorEB))/91.19;   
+    if(ele1_iz==1 && ele2_iz==1)var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEP*rescaleFactorEEP))/91.19;   
+    if(ele1_iz==1 && ele2_iz==-1) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEP*rescaleFactorEEM))/91.19;
    
-    if(ele1_iz!=0) var = (mZ  * sqrt(pTK/scEne))/91.19;    /// use the momentum for ele1
-    if(ele1_iz==0) var = (mZ  * sqrt(pTK/scEne)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2))/91.19;
+    if(ele1_iz==-1 && ele2_iz==0) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEM*rescaleFactorEB))/91.19;   
+    if(ele1_iz==-1 && ele2_iz==1)var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEM*rescaleFactorEEP))/91.19;   
+    if(ele1_iz==-1 && ele2_iz==-1) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEM*rescaleFactorEEM))/91.19;
+
+
 
     if(ele1_iz==0){
 
@@ -681,7 +696,9 @@ int main(int argc, char** argv){
     f_EoP_EB[i][j] -> SetLineColor(kRed+2); 
     f_EoP_EB[i][j] -> SetNpx(10000);
     h_EoP_EB[i][j] -> Sumw2();
-   
+
+    h_EoP_EB[i][j] -> Scale(1*h_EoC_EB[i][j]->GetEntries()/h_EoP_EB[i][j]->GetEntries());
+
     // uncorrected    
     double xNorm = h_EoP_EB[i][j]->Integral()/h_template_EB[mod.first][mod.second]->Integral() *
                    h_EoP_EB[i][j]->GetBinWidth(1)/h_template_EB[mod.first][mod.second]->GetBinWidth(1); 
@@ -696,7 +713,7 @@ int main(int argc, char** argv){
     for (int trial=0;trial<100;trial++) {
 
       f_EoP_EB[i][j] -> SetParameter(1, rand->Uniform(0.95,1.05));
-      rp = h_EoP_EB[i][j] -> Fit(funcName, "QRLW+");
+      rp = h_EoP_EB[i][j] -> Fit(funcName, "QRWL+");
       fStatus = rp;
       if (fStatus !=4 && f_EoP_EB[i][j]->GetParError(1)!=0.) break;
       else if(trial==99) cout <<" No good Fit "<<endl;
@@ -790,6 +807,8 @@ int main(int argc, char** argv){
     f_EoP_EE[i][j] -> SetNpx(10000);
     f_EoP_EE[i][j] -> SetNpx(10000);
     h_EoP_EE[i][j] -> Sumw2();
+
+    h_EoP_EE[i][j] -> Scale(1*h_EoC_EE[i][j]->GetEntries()/h_EoP_EE[i][j]->GetEntries());
     
     // uncorrected    
     double xNorm = h_EoP_EE[i][j]->Integral()/h_template_EE[mod.first][mod.second]->Integral() *
@@ -804,7 +823,7 @@ int main(int argc, char** argv){
 
     for (int trial=0;trial<100;trial++) {
       f_EoP_EE[i][j] -> SetParameter(1, rand->Uniform(0.95,1.05));
-      rp = h_EoP_EE[i][j] -> Fit(funcName, "QRLW+");
+      rp = h_EoP_EE[i][j] -> Fit(funcName, "QRWL+");
       fStatus = rp;
       if (fStatus !=4 && f_EoP_EE[i][j]->GetParError(1)!=0.) break;
       else if(trial==99) cout <<" No good Fit "<<endl;

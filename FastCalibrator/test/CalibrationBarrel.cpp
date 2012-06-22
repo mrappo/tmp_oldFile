@@ -74,6 +74,7 @@ int main(int argc, char **argv){
  std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
  int evalStat = gConfigParser -> readIntOption("Input::evalStat");
  int nEtaBinsEB = gConfigParser -> readIntOption("Input::nEtaBinsEB");
+ bool is2012Calib =  gConfigParser -> readBoolOption("Input::is2012Calib");
 
  std::string infile2, infile3;
  if(evalStat){
@@ -104,7 +105,8 @@ int main(int argc, char **argv){
  
  /// map for dead TT centre
  std::vector< std::pair<int,int> > TT_centre ;
- InitializeDeadTT_EB(TT_centre);
+ if(!is2012Calib) InitializeDeadTT_EB(TT_centre);
+ if(is2012Calib)  InitializeDeadTT_EB2012(TT_centre);
 
  ///  Input file with full statistic
  
@@ -728,7 +730,7 @@ int main(int argc, char **argv){
    c[14] = new TCanvas("PhiProjection_same","PhiProjection_same");
    c[14]->SetGridx();
    c[14]->SetGridy();
-   PhiProjection_CrackCorrection->GetXaxis()->SetRangeUser(280,360);
+   PhiProjection_CrackCorrection->GetXaxis()->SetRangeUser(100,200);
    PhiProjection_CrackCorrection->Draw("ap");
    phiProjection->Draw("psame");
  

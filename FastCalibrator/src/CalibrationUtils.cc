@@ -51,6 +51,33 @@ void InitializeDeadTT_EB(std::vector<std::pair<int,int> >& TT_centre){
  TT_centre.push_back(std::pair<int,int> (-43,328));
 }
 
+
+void InitializeDeadTT_EB2012(std::vector<std::pair<int,int> >& TT_centre){
+ TT_centre.push_back(std::pair<int,int> (58,49));
+ TT_centre.push_back(std::pair<int,int> (53,109));
+ TT_centre.push_back(std::pair<int,int> (8,114));
+ TT_centre.push_back(std::pair<int,int> (83,169));
+ TT_centre.push_back(std::pair<int,int> (53,174));
+ TT_centre.push_back(std::pair<int,int> (63,194));
+ TT_centre.push_back(std::pair<int,int> (83,224));
+ TT_centre.push_back(std::pair<int,int> (73,344));
+ TT_centre.push_back(std::pair<int,int> (83,358));
+ TT_centre.push_back(std::pair<int,int> (-13,18));
+ TT_centre.push_back(std::pair<int,int> (-18,23));
+ TT_centre.push_back(std::pair<int,int> (-8,53));
+ TT_centre.push_back(std::pair<int,int> (-3,63));
+ TT_centre.push_back(std::pair<int,int> (-53,128));
+ TT_centre.push_back(std::pair<int,int> (-53,183));
+ TT_centre.push_back(std::pair<int,int> (-83,193));
+ TT_centre.push_back(std::pair<int,int> (-74,218));
+ TT_centre.push_back(std::pair<int,int> (-8,223));
+ TT_centre.push_back(std::pair<int,int> (-68,303));
+ TT_centre.push_back(std::pair<int,int> (-43,328));
+ TT_centre.push_back(std::pair<int,int> (-23,167));
+
+}
+
+
 ///////////////////////////////////////////////////////////////////
 void NormalizeIC_EB(TH2F* h_scale_EB, TH2F* hcmap, const std::vector< std::pair<int,int> > & TT_centre, bool skip){
 
@@ -217,7 +244,7 @@ bool CheckxtalIC_EE(TH2F* h_scale_EE,int ix, int iy, int ir){
 ////////////////////////////////////////////////////////////////
 bool CheckxtalTT_EE(int ix, int iy, int ir, const std::vector<std::pair<int,int> >& TT_centre ){
  for( unsigned int k =0; k<TT_centre.size(); k++){
-   if(fabs(ix-TT_centre.at(k).first)<5 && fabs(iy-TT_centre.at(k).second)<5) return false;
+   if(fabs(ix-TT_centre.at(k).first)<4 && fabs(iy-TT_centre.at(k).second)<4) return false;
 
  }
  return true;
@@ -230,11 +257,27 @@ void InitializeDeadTTEEP(std::vector<std::pair<int,int> >& TT_centre){
  TT_centre.push_back(std::pair<int,int> (83,23));
 }
 
+//////////////////////////////////////////////////////////////////
+void InitializeDeadTTEEP2012(std::vector<std::pair<int,int> >& TT_centre){
+ TT_centre.push_back(std::pair<int,int> (78,78));
+ TT_centre.push_back(std::pair<int,int> (83,28));
+ TT_centre.push_back(std::pair<int,int> (83,23));
+ TT_centre.push_back(std::pair<int,int> (91,23));
+}
+
 /////////////////////////////////////////////////////////////////////
 void InitializeDeadTTEEM(std::vector<std::pair<int,int> >& TT_centre){
 
 TT_centre.push_back(std::pair<int,int> (53,28)); 
 
+}
+
+/////////////////////////////////////////////////////////////////////
+void InitializeDeadTTEEM2012(std::vector<std::pair<int,int> >& TT_centre){
+
+TT_centre.push_back(std::pair<int,int> (53,28)); 
+TT_centre.push_back(std::pair<int,int> (29,34));
+TT_centre.push_back(std::pair<int,int> (89,80));
 }
 
 
@@ -336,7 +379,7 @@ vectSum.assign(MomentumScale[0]->GetN(),0.);
 }
 
 /////////////////////////////////////////////////////////////////////////
-void NormalizeIC_EE(TH2F** hcmap, TH2F** hcmap2, const std::vector< std::pair<int,int> > & TT_centre_EEP,const  std::vector< std::pair<int,int> > & TT_centre_EEM, TEndcapRings *eRings){
+void NormalizeIC_EE(TH2F** hcmap, TH2F** hcmap2, const std::vector< std::pair<int,int> > & TT_centre_EEP,const  std::vector< std::pair<int,int> > & TT_centre_EEM, TEndcapRings *eRings, bool skip){
 
  std::vector<float> SumIC_Ring_EEP,SumIC_Ring_EEM,Sumxtal_Ring_EEP,Sumxtal_Ring_EEM;
   
@@ -380,20 +423,33 @@ void NormalizeIC_EE(TH2F** hcmap, TH2F** hcmap2, const std::vector< std::pair<in
        if(k==0)  ring = eRings->GetEndcapRing(ix,iy,-1);
        else      ring = eRings->GetEndcapRing(ix,iy,1);
       
-       if(k!=0){
-          if(ring>33){ hcmap2[k]->Fill(ix,iy,0.);
-                     continue;}
-          if(Sumxtal_Ring_EEP.at(ring) != 0 && SumIC_Ring_EEP.at(ring)!= 0)
-          hcmap2[k]->Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEP.at(ring)/Sumxtal_Ring_EEP.at(ring)));
-       }
-       else{
-            if(ring>33){hcmap2[k]->Fill(ix,iy,0.);
-                      continue;
-                      }
-            if(Sumxtal_Ring_EEM.at(ring) != 0 && SumIC_Ring_EEM.at(ring) != 0)
-            hcmap2[k]->Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEM.at(ring)/Sumxtal_Ring_EEM.at(ring)));
-           }
-       }
-    }
-  }
+       if(!skip){
+   
+                  if(k!=0){if(ring>33){ hcmap2[k]->Fill(ix,iy,0.);continue;}
+                           if(Sumxtal_Ring_EEP.at(ring) != 0 && SumIC_Ring_EEP.at(ring)!= 0)
+                                hcmap2[k]->Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEP.at(ring)/Sumxtal_Ring_EEP.at(ring)));
+                  } 
+                  if(k==0){if(ring>33){hcmap2[k]->Fill(ix,iy,0.);continue;}
+                           if(Sumxtal_Ring_EEM.at(ring) != 0 && SumIC_Ring_EEM.at(ring) != 0)
+                           hcmap2[k]->Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEM.at(ring)/Sumxtal_Ring_EEM.at(ring)));
+                  }
+                }
+       if(skip){
+                  bool isGood = CheckxtalIC_EE(hcmap[k],ix,iy,ring);
+                  bool isGoodTT;
+                  if(k==0) isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEM);
+                  else isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEP);
+ 
+                  if(k!=0 && isGood && isGoodTT ){if(ring>33){ hcmap2[k]->Fill(ix,iy,0.);continue;}
+                                                  if(Sumxtal_Ring_EEP.at(ring) != 0 && SumIC_Ring_EEP.at(ring)!= 0)
+                                                  hcmap2[k]->Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEP.at(ring)/Sumxtal_Ring_EEP.at(ring)));
+                  } 
+                  if(k==0 && isGood && isGoodTT){if(ring>33){hcmap2[k]->Fill(ix,iy,0.);continue;}
+                                                 if(Sumxtal_Ring_EEM.at(ring) != 0 && SumIC_Ring_EEM.at(ring) != 0)
+                                                 hcmap2[k]->Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEM.at(ring)/Sumxtal_Ring_EEM.at(ring)));
+                  }
+                }
+     }
+   }
+ }
 }

@@ -94,6 +94,8 @@ int main (int argc, char **argv)
   std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
   std::string SystematicToAdd =  gConfigParser -> readStringOption("Input::SystematicToAdd"); 
   bool isMC = gConfigParser -> readBoolOption("Input::isMC");
+  bool is2012Calib = gConfigParser -> readBoolOption("Input::is2012Calib");
+
   int nEtaBinsEE = gConfigParser -> readIntOption("Input::nEtaBinsEE");
 
   if ( infile1.empty()) {
@@ -118,10 +120,30 @@ int main (int argc, char **argv)
   /// imput file with full statistic normlized to the mean in a ring
 
   TFile *f = new TFile(infile1.c_str());
+  TH2F **hcScale = new TH2F*[2];
   TH2F **hcmap = new TH2F*[2];
-  hcmap[0] = (TH2F*)f->Get("h_scale_map_EEM");
-  hcmap[1] = (TH2F*)f->Get("h_scale_map_EEP");
-    
+
+  std::vector< std::pair<int,int> > TT_centre_EEP; 
+  std::vector< std::pair<int,int> > TT_centre_EEM;
+ 
+  if(!is2012Calib) InitializeDeadTTEEP(TT_centre_EEP);
+  if(!is2012Calib) InitializeDeadTTEEM(TT_centre_EEM);
+
+  if(is2012Calib) InitializeDeadTTEEP2012(TT_centre_EEP);
+  if(is2012Calib) InitializeDeadTTEEM2012(TT_centre_EEM);
+
+
+  hcScale[0] = (TH2F*)f->Get("h_scale_EEM");
+  hcScale[1] = (TH2F*)f->Get("h_scale_EEP");
+ 
+  hcmap[0] = (TH2F*) hcScale[0]->Clone("hcmapEEM");
+  hcmap[1] = (TH2F*) hcScale[1]->Clone("hcmapEEP");
+  hcmap[0]->Reset();
+  hcmap[1]->Reset();
+
+  TEndcapRings *eRings = new TEndcapRings(); 
+  NormalizeIC_EE(hcScale, hcmap, TT_centre_EEP,TT_centre_EEM, eRings);
+  
 
   ///--------------------------------------------------------------------------------
   ///--- Build the precision vs ring plot starting from the TH2F of IC folded and not
@@ -133,7 +155,7 @@ int main (int argc, char **argv)
   TH1F **hspreadAll = new TH1F*[40];
  
   /// ring geometry for the endcap
-  TEndcapRings *eRings = new TEndcapRings(); 
+  
   BookSpreadHistos_EE(hcmap,hspread,hspreadAll,eRings);
 
   /// Graph Error for spread EE+ and EE-
@@ -183,7 +205,7 @@ int main (int argc, char **argv)
       fgaus->SetParameter(1,1);
       fgaus->SetParameter(2,hspread[k][iring]->GetRMS());
       fgaus->SetRange(1-5*hspread[k][iring]->GetRMS(),1+5*hspread[k][iring]->GetRMS());
-      hspread[k][iring]->Fit("fgaus","QRNME");
+      hspread[k][iring]->Fit("fgaus","QRN");
       sigma_vs_ring[k]-> SetPoint(np[k],iring,fgaus->GetParameter(2));
       sigma_vs_ring[k]-> SetPointError(np[k], e ,fgaus->GetParError(2));
       scale_vs_ring[k]-> SetPoint(np[k],iring,fgaus->GetParameter(1));
@@ -199,7 +221,7 @@ int main (int argc, char **argv)
       fgaus->SetParameter(1,1);
       fgaus->SetParameter(2,hspreadAll[iring]->GetRMS());
       fgaus->SetRange(1-5*hspreadAll[iring]->GetRMS(),1+5*hspreadAll[iring]->GetRMS());
-      hspreadAll[iring]->Fit("fgaus","QRNME");
+      hspreadAll[iring]->Fit("fgaus","QRN");
       sigma_vs_ring[2]-> SetPoint(np[2],iring,fgaus->GetParameter(2));
       sigma_vs_ring[2]-> SetPointError(np[2], e ,fgaus->GetParError(2));
       scale_vs_ring[2]-> SetPoint(np[2],iring,fgaus->GetParameter(1));
@@ -248,13 +270,30 @@ int main (int argc, char **argv)
 
    TFile *f2 = new TFile(infile2.c_str());
    TFile *f3 = new TFile(infile3.c_str());
+   TH2F **hcScale2 = new TH2F*[2];
    TH2F **hcmap2 = new TH2F*[2];
-   hcmap2[0] = (TH2F*)f2->Get("h_scale_map_EEM"); 
-   hcmap2[1] = (TH2F*)f2->Get("h_scale_map_EEP");
-
+   hcScale2[0] = (TH2F*)f2->Get("h_scale_EEM"); 
+   hcScale2[1] = (TH2F*)f2->Get("h_scale_EEP");
+ 
+   TH2F **hcScale3 = new TH2F*[2];
    TH2F **hcmap3 = new TH2F*[2];
-   hcmap3[0] = (TH2F*)f3->Get("h_scale_map_EEM"); 
-   hcmap3[1] = (TH2F*)f3->Get("h_scale_map_EEP");
+   hcScale3[0] = (TH2F*)f3->Get("h_scale_EEM"); 
+   hcScale3[1] = (TH2F*)f3->Get("h_scale_EEP");
+
+   hcmap2[0] = (TH2F*) hcScale2[0]->Clone("hcmapEEM2");
+   hcmap2[1] = (TH2F*) hcScale2[1]->Clone("hcmapEEP2");
+   hcmap2[0]->Reset();
+   hcmap2[1]->Reset();
+
+   hcmap3[0] = (TH2F*) hcScale3[0]->Clone("hcmapEEM3");
+   hcmap3[1] = (TH2F*) hcScale3[1]->Clone("hcmapEEP3");
+   hcmap3[0]->Reset();
+   hcmap3[1]->Reset();
+
+   NormalizeIC_EE(hcScale2, hcmap2, TT_centre_EEP,TT_centre_EEM, eRings);
+ 
+   NormalizeIC_EE(hcScale3, hcmap3, TT_centre_EEP,TT_centre_EEM, eRings);
+ 
 
    TH1F ***hstatprecision = new TH1F**[2];
    for(int i =0; i<2; i++) hstatprecision[i]=new TH1F*[40];
@@ -274,7 +313,7 @@ int main (int argc, char **argv)
 	fgaus->SetRange(-5*hstatprecision[k][iring]->GetRMS(),5*hstatprecision[k][iring]->GetRMS());
 	TString name = Form("ff%d_%d",iring,k);
 
-        hstatprecision[k][iring]->Fit("fgaus","QRNME");
+        hstatprecision[k][iring]->Fit("fgaus","QRN");
         statprecision_vs_ring[k]-> SetPoint(n[k],iring,fgaus->GetParameter(2));
 	statprecision_vs_ring[k]-> SetPointError(n[k],e,fgaus->GetParError(2));
 	n[k]++;
@@ -288,7 +327,7 @@ int main (int argc, char **argv)
 	fgaus->SetParameter(2,hstatprecisionAll[iring]->GetRMS());
 	fgaus->SetRange(-5*hstatprecisionAll[iring]->GetRMS(),5*hstatprecisionAll[iring]->GetRMS());
 	TString name = Form("ffAll%d",iring);
-        hstatprecisionAll[iring]->Fit("fgaus","QRNME");
+        hstatprecisionAll[iring]->Fit("fgaus","QRN");
       
 	statprecision_vs_ring[2]-> SetPoint(n[2],iring,fgaus->GetParameter(2));
 	statprecision_vs_ring[2]-> SetPointError(n[2],e,fgaus->GetParError(2));
@@ -375,11 +414,6 @@ int main (int argc, char **argv)
   }
   
  /// New Normalization after momentum scale correction
- std::vector< std::pair<int,int> > TT_centre_EEP; 
- std::vector< std::pair<int,int> > TT_centre_EEM;
- 
- InitializeDeadTTEEP(TT_centre_EEP);
- InitializeDeadTTEEM(TT_centre_EEP);
 
  TH2F** hcmapFinalEE= new TH2F*[2];
 
@@ -391,7 +425,7 @@ int main (int argc, char **argv)
  hcmapFinalEE[0] -> ResetStats();
  hcmapFinalEE[1] -> ResetStats();
 
- NormalizeIC_EE(mapMomentumCorrected, hcmapFinalEE, TT_centre_EEP,TT_centre_EEM, eRings);
+ NormalizeIC_EE(mapMomentumCorrected, hcmapFinalEE, TT_centre_EEP,TT_centre_EEM, eRings,false);
 
  /// EE+ and EE- projection after correction
 
@@ -504,7 +538,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
       fgaus->SetParameter(1,1);
       fgaus->SetParameter(2,hspreadCorrected[k][iring]->GetRMS());
       fgaus->SetRange(1-5*hspreadCorrected[k][iring]->GetRMS(),1+5*hspreadCorrected[k][iring]->GetRMS());
-      hspreadCorrected[k][iring]->Fit("fgaus","QRNME");
+      hspreadCorrected[k][iring]->Fit("fgaus","QRN");
       sigma_vs_ringCorrected[k]-> SetPoint(np2[k],iring,fgaus->GetParameter(2));
       sigma_vs_ringCorrected[k]-> SetPointError(np2[k], e ,fgaus->GetParError(2));
       np2[k]++;    
@@ -518,7 +552,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
       fgaus->SetParameter(1,1);
       fgaus->SetParameter(2,hspreadAllCorrected[iring]->GetRMS());
       fgaus->SetRange(1-5*hspreadAllCorrected[iring]->GetRMS(),1+5*hspreadAllCorrected[iring]->GetRMS());
-      hspreadAllCorrected[iring]->Fit("fgaus","QRNME");
+      hspreadAllCorrected[iring]->Fit("fgaus","QRN");
       sigma_vs_ringCorrected[2]-> SetPoint(np2[2],iring,fgaus->GetParameter(2));
       sigma_vs_ringCorrected[2]-> SetPointError(np2[2], e ,fgaus->GetParError(2));
       np2[2]++;    
@@ -689,7 +723,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEM[3]->SetGridx();
    cEEM[3]->SetGridy();
    PhiProjectionEEm->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
-   PhiProjectionEEm->GetHistogram()->GetXaxis()-> SetRangeUser(200,360);
+   PhiProjectionEEm->GetHistogram()->GetXaxis()-> SetRangeUser(0,200);
    PhiProjectionEEm->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEm->GetHistogram()->GetXaxis()-> SetTitle("#phi");
    PhiProjectionEEm->Draw("apl");
@@ -698,7 +732,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEP[3]->SetGridx();
    cEEP[3]->SetGridy();
    PhiProjectionEEp->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
-   PhiProjectionEEp->GetHistogram()->GetXaxis()-> SetRangeUser(200,360);
+   PhiProjectionEEp->GetHistogram()->GetXaxis()-> SetRangeUser(0,200);
    PhiProjectionEEp->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEp->GetHistogram()->GetXaxis()-> SetTitle("#phi");
    PhiProjectionEEp->Draw("apl");
@@ -745,7 +779,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEM[5]->SetGridx();
    cEEM[5]->SetGridy();
    PhiProjectionEEm_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
-   PhiProjectionEEm_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(200,360);
+   PhiProjectionEEm_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(100,200);
    PhiProjectionEEm_Corrected->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEm_Corrected->GetHistogram()->GetXaxis()-> SetTitle("#phi");
    PhiProjectionEEm_Corrected->Draw("apl");
@@ -754,7 +788,7 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
    cEEP[5]->SetGridx();
    cEEP[5]->SetGridy();
    PhiProjectionEEp_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
-   PhiProjectionEEp_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(200,360);
+   PhiProjectionEEp_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(0,200);
    PhiProjectionEEp_Corrected->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEp_Corrected->GetHistogram()->GetXaxis()-> SetTitle("#phi");
    PhiProjectionEEp_Corrected->Draw("apl");
