@@ -1,4 +1,4 @@
-// @(#)root/tmva $Id: MVARegression.cpp,v 1.1 2012/06/18 21:49:00 rgerosa Exp $
+// @(#)root/tmva $Id: MVARegression.cpp,v 1.2 2012/06/20 20:52:40 rgerosa Exp $
 /**********************************************************************************
  * Project   : TMVA - a Root-integrated toolkit for multivariate data analysis    *
  * Package   : TMVA                                                               *
@@ -36,6 +36,8 @@
 #include "TSystem.h"
 #include "TROOT.h"
 #include "TApplication.h"
+#include "TMVA/MsgLogger.h"
+#include "TMVA/Config.h"
 
 #include "ConfigParser.h"
 #include "ntpleUtils.h"
@@ -58,7 +60,6 @@ int main(int argc, char**argv){
 
  parseConfigFile (argv[1]) ;
 
- TApplication* theApp = new TApplication("Application",&argc, argv);
  // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
  // if you use your private .rootrc, or run from a different directory, please copy the 
  // corresponding lines from .rootrc
@@ -91,8 +92,8 @@ int main(int argc, char**argv){
 
  for(std::vector<std::string>::iterator it=UseMethodName.begin(); it!=UseMethodName.end(); ++it) Use[*it]=0;
 
-
- try{ std::string UseMethodFlag = gConfigParser -> readStringOption("Input::UseMethodFlag");
+ std::string UseMethodFlag;
+ try{ UseMethodFlag = gConfigParser -> readStringOption("Input::UseMethodFlag");
       std::cout<< UseMethodFlag<<std::endl;
       std::vector<TString> mlist = gTools().SplitString( UseMethodFlag, '/' );
       for (UInt_t i=0; i<mlist.size(); i++) {
@@ -160,56 +161,51 @@ int main(int argc, char**argv){
  std::cout<<" RegionOfTraining = "<<RegionOfTraining<<std::endl;
  
  if(RegionOfTraining=="EB"){
-   
- factory->AddVariable( "PV_n" , 'F');
+
+
+ factory->AddVariable( "ele1_scE/ele1_scERaw" , 'F');   
+ factory->AddVariable( "ele1_eRegrInput_nPV" , 'F');
  factory->AddVariable( "ele1_eRegrInput_r9" , 'F');
  factory->AddVariable( "ele1_fbrem" , 'F');
  factory->AddVariable( "ele1_eta" , 'F');
- factory->AddVariable( "ele1_sigmaIetaIeta" , 'F');
  factory->AddVariable( "ele1_DphiIn" , 'F');
  factory->AddVariable( "ele1_DetaIn" , 'F');
+ factory->AddVariable( "ele1_sigmaIetaIeta" , 'F');
 
- factory->AddVariable( "ele1_eRegrInput_r25" , 'F');
  factory->AddVariable( "ele1_eRegrInput_etaW" , 'F');
  factory->AddVariable( "ele1_eRegrInput_phiW" , 'F');
 
-//  factory->AddVariable( "ele1_eRegrInput_sigietaieta_bC1" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_sigiphiiphi_bC1" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_sigietaiphi_bC1" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_e3x3_Over_bCE" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_Deta_bC_sC" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_Dphi_bC_sC" , 'F');
+ factory->AddVariable( "ele1_eRegrInput_bCE_Over_sCE", 'F');
+ factory->AddVariable( "ele1_eRegrInput_sigietaieta_bC1" , 'F');
+ factory->AddVariable( "ele1_eRegrInput_sigiphiiphi_bC1" , 'F');
+ factory->AddVariable( "ele1_eRegrInput_sigietaiphi_bC1" , 'F');
+ factory->AddVariable( "ele1_eRegrInput_e3x3_Over_bCE" , 'F');
+ factory->AddVariable( "ele1_eRegrInput_Deta_bC_sC" , 'F');
+ factory->AddVariable( "ele1_eRegrInput_Dphi_bC_sC" , 'F');
+ factory->AddVariable( "ele1_eRegrInput_bEMax_Over_bCE" , 'F');
 
-//  factory->AddVariable( "ele1_eRegrInput_sigietaieta_bC2" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_sigiphiiphi_bC2" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_sigietaiphi_bC2" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_e3x3_Over_bCE2" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_Deta_bC2_sC" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_Dphi_bC2_sC" , 'F');
-   
+
+ factory->AddVariable( "ele1_dxy_PV" , 'F');
+ factory->AddVariable( "ele1_dz_PV" , 'F');
+ factory->AddVariable( "ele1_sigmaP/ele1_tkP" , 'F');
+
+ factory->AddVariable( "ele1_eRegrInput_bCELow_Over_sCE", 'F');
  factory->AddVariable( "ele1_eRegrInput_e3x3_Over_bCELow" , 'F');
- factory->AddVariable( "ele1_eRegrInput_sigietaieta_bCLow" , 'F');
- factory->AddVariable( "ele1_eRegrInput_sigiphiiphi_bCLow" , 'F');
- factory->AddVariable( "ele1_eRegrInput_sigietaiphi_bCLow" , 'F');
  factory->AddVariable( "ele1_eRegrInput_Deta_bCLow_sC" , 'F');
  factory->AddVariable( "ele1_eRegrInput_Dphi_bCLow_sC" , 'F');
-   
-//  factory->AddVariable( "ele1_eRegrInput_e3x3_Over_bCELow2" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_sigietaieta_bCLow2" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_sigiphiiphi_bCLow2" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_sigietaiphi_bCLow2" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_Deta_bCLow2_sC" , 'F');
-//  factory->AddVariable( "ele1_eRegrInput_Dphi_bCLow2_sC" , 'F');
 
+ factory->AddVariable( "ele1_eRegrInput_seedbC_etacry" , 'F');
+ factory->AddVariable( "ele1_eRegrInput_seedbC_phicry" , 'F');
 
-   
  // You can add so-called "Spectator variables", which are not used in the MVA training, 
  // but will appear in the final "TestTree" produced by TMVA. This TestTree will contain the 
  // input variables, the response values of all trained MVAs, and the spectator variables
  // factory->AddSpectator( "spec1:=var1*2",  "Spectator 1", "units", 'F' );
  // factory->AddSpectator( "spec2:=var1*3",  "Spectator 2", "units", 'F' );
  // Add the variable carrying the regression target
- factory->AddTarget("(abs(ele1_scE-ele1_E_true))*(abs(ele1_tkP-ele1_E_true))" ); 
+//   factory->AddTarget("ele1_scE/ele1_E_true" ); 
+   factory->AddTarget("ele1_tkP/ele1_E_true" ); 
+
 
  // It is also possible to declare additional targets for multi-dimensional regression, ie:
  // -- factory->AddTarget( "fvalue2" );
@@ -224,26 +220,37 @@ int main(int argc, char**argv){
  // This would set individual event weights (the variables defined in the 
  // expression need to exist in the original TTree)
  // factory->SetWeightExpression( "var1", "Regression" );
- TCut mycut = "ele1_isEB==1"; // for example: TCut mycut = "abs(var1)<0.5 && abs(var2-0.5)<1";
+
+//  TCut mycut = "ele1_isEB==1 && ele1_sigmaP/ele1_tkP<0.4 && ele1_fbrem>0 && abs(ele1_dxy_PV)<0.05 && abs(ele1_dz_PV)<0.05 && ele1_eRegrInput_etaW > 0.006 && ele1_eRegrInput_phiW<0.08 && ele1_eRegrInput_sigietaieta_bC1>0.006 && ele1_eRegrInput_sigiphiiphi_bC1>0.008  && abs(ele1_eRegrInput_Deta_bC_sC)<0.004 && abs(ele1_eRegrInput_Dphi_bC_sC)<0.04 && abs(ele1_eRegrInput_seedbC_etacry)<0.6 && abs(ele1_eRegrInput_seedbC_phicry)<0.6 && ele1_scE/ele1_scERaw<1.2 && (ele1_scE/ele1_E_true)<1.4 && (ele1_scE/ele1_E_true)>0.3"; // for example: TCut mycut = "abs(var1)<0.5 && abs(var2-0.5)<1";
+
+  TCut mycut = "ele1_isEB==1 && ele1_sigmaP/ele1_tkP<0.4 && ele1_fbrem>0 && abs(ele1_dxy_PV)<0.05 && abs(ele1_dz_PV)<0.05 && ele1_eRegrInput_etaW > 0.006 && ele1_eRegrInput_phiW<0.08 && ele1_eRegrInput_sigietaieta_bC1>0.006 && ele1_eRegrInput_sigiphiiphi_bC1>0.008  && abs(ele1_eRegrInput_Deta_bC_sC)<0.004 && abs(ele1_eRegrInput_Dphi_bC_sC)<0.04 && abs(ele1_eRegrInput_seedbC_etacry)<0.6 && abs(ele1_eRegrInput_seedbC_phicry)<0.6 && ele1_scE/ele1_scERaw<1.2 && ele1_tkP/ele1_E_true<1.8 && ele1_tkP/ele1_E_true>0.2"; // for example: TCut mycut = "abs(var1)<0.5 && abs(var2-0.5)<1";
+
 
  // tell the factory to use all remaining events in the trees after training for testing:
  factory->PrepareTrainingAndTestTree( mycut, 
-                                        "nTrain_Regression=0:nTest_Regression=0:SplitMode=Random:NormMode=NumEvents:!V" );
+                                        "nTrain_Regression=2500000:nTest_Regression=2500000:SplitMode=Random:NormMode=NumEvents:!V" );
+ 
+ TString Name = Form("weight_%s_%s_P_W",RegionOfTraining.c_str(),UseMethodFlag.c_str());
+ (TMVA::gConfig().GetIONames()).fWeightFileDir = Name;
  } 
 
  if(RegionOfTraining=="EE"){
-   
- factory->AddVariable( "PV_n" , 'F');
- factory->AddVariable( "ele1_eRegrInput_r9" , 'F');
- factory->AddVariable( "ele1_fbrem" , 'F');
- factory->AddVariable( "ele1_eta" , 'F');
- factory->AddVariable( "ele1_sigmaIetaIeta" , 'F');
- factory->AddVariable( "ele1_DphiIn" , 'F');
- factory->AddVariable( "ele1_DetaIn" , 'F');
 
- factory->AddVariable( "ele1_eRegrInput_r25" , 'F');
- factory->AddVariable( "ele1_eRegrInput_etaW" , 'F');
- factory->AddVariable( "ele1_eRegrInput_phiW" , 'F');
+ factory->AddVariable( "ele1_scE/ele1_scERaw" , 'F');      
+ factory->AddVariable( "ele1_eRegrInput_nPV",'F');
+ factory->AddVariable( "ele1_eRegrInput_r9",'F');
+ factory->AddVariable( "ele1_fbrem",'F');
+ factory->AddVariable( "ele1_eta",'F');
+ factory->AddVariable( "ele1_DphiIn",'F');
+ factory->AddVariable( "ele1_DetaIn",'F');
+ factory->AddVariable( "ele1_sigmaIetaIeta",'F');
+
+ factory->AddVariable( "ele1_eRegrInput_etaW",'F');
+ factory->AddVariable( "ele1_eRegrInput_phiW",'F');
+
+ factory->AddVariable( "ele1_dxy_PV",'F');
+ factory->AddVariable( "ele1_dz_PV",'F');
+ factory->AddVariable( "ele1_sigmaP/ele1_tkP",'F');
 
    
  // You can add so-called "Spectator variables", which are not used in the MVA training, 
@@ -252,7 +259,9 @@ int main(int argc, char**argv){
  // factory->AddSpectator( "spec1:=var1*2",  "Spectator 1", "units", 'F' );
  // factory->AddSpectator( "spec2:=var1*3",  "Spectator 2", "units", 'F' );
  // Add the variable carrying the regression target
- factory->AddTarget("(abs(ele1_scE-ele1_E_true))*(abs(ele1_tkP-ele1_E_true))" ); 
+
+//  factory->AddTarget("ele1_scE/ele1_E_true" ); 
+  factory->AddTarget("ele1_tkP/ele1_E_true" );
 
  // It is also possible to declare additional targets for multi-dimensional regression, ie:
  // -- factory->AddTarget( "fvalue2" );
@@ -267,15 +276,21 @@ int main(int argc, char**argv){
  // This would set individual event weights (the variables defined in the 
  // expression need to exist in the original TTree)
  // factory->SetWeightExpression( "var1", "Regression" );
- TCut mycut = "ele1_isEB==0"; // for example: TCut mycut = "abs(var1)<0.5 && abs(var2-0.5)<1";
+//  TCut mycut = "ele1_isEB==0 && ele1_sigmaP/ele1_tkP<0.4 && ele1_fbrem>0 && abs(ele1_dxy_PV)<0.05 && abs(ele1_dz_PV)<0.05 &&(ele1_scE/ele1_E_true)<1.4 && (ele1_scE/ele1_E_true)>0.3";
+  TCut mycut = "ele1_isEB==0 && ele1_sigmaP/ele1_tkP<0.4 && ele1_fbrem>0 && abs(ele1_dxy_PV)<0.05 && abs(ele1_dz_PV)<0.05 && (ele1_tkP/ele1_E_true)<1.6";
 
+ // for example: TCut mycut = "abs(var1)<0.5 && 
  // tell the factory to use all remaining events in the trees after training for testing:
  factory->PrepareTrainingAndTestTree( mycut, 
-                                        "nTrain_Regression=0:nTest_Regression=0:SplitMode=Random:NormMode=NumEvents:!V" );
+                                        "nTrain_Regression=3000000:nTest_Regression=3000000:SplitMode=Random:NormMode=NumEvents:!V" );
+
+ TString Name = Form("weight_%s_%s_P_W",RegionOfTraining.c_str(),UseMethodFlag.c_str());
+ (TMVA::gConfig().GetIONames()).fWeightFileDir = Name;
+
  }
  // Apply additional cuts on the signal and background samples (can be different)
  
- // If no numbers of events are given, half of the events in the tree are used 
+//  // If no numbers of events are given, half of the events in the tree are used 
  // for training, and the other half for testing:
  //    factory->PrepareTrainingAndTestTree( mycut, "SplitMode=random:!V" );  
 
@@ -301,7 +316,7 @@ int main(int argc, char**argv){
    factory->BookMethod( TMVA::Types::kKNN, "KNN", "nkNN=20:ScaleFrac=0.8:SigmaFact=1.0:Kernel=Gaus:UseKernel=F:UseWeight=T:!Trim" );
 
  // Linear discriminant
- if (Use["LD"])  factory->BookMethod( TMVA::Types::kLD, "LD","!H:!V:VarTransform=G" );
+ if (Use["LD"])  factory->BookMethod( TMVA::Types::kLD, "LD","!H:!V:VarTransform=G,U,D" );
 
  // Function discrimination analysis (FDA) -- test of various fitters - the recommended one is Minuit (or GA or SA)
  if (Use["FDA_MC"]) 
@@ -327,7 +342,7 @@ int main(int argc, char**argv){
 // 	factory->BookMethod( TMVA::Types::kMLP, "MLP", "!H:!V:VarTransform=Norm:NeuronType=tanh:NCycles=400:HiddenLayers=N+10:TestRate=6:TrainingMethod=BFGS:Sampling=0.3:SamplingEpoch=0.8:ConvergenceImprove=1e-6:ConvergenceTests=15" );
 // 	factory->BookMethod( TMVA::Types::kMLP, "MLP", "!H:!V:VarTransform=N:NeuronType=tanh:NCycles=200:HiddenLayers=N+10:TestRate=6:TrainingMethod=BFGS:Sampling=0.3:SamplingEpoch=0.8:ConvergenceImprove=1e-6:ConvergenceTests=15" );
 // 	factory->BookMethod( TMVA::Types::kMLP, "MLP", "!H:!V:VarTransform=G,N:NeuronType=tanh:NCycles=200:HiddenLayers=N+5:TestRate=6:TrainingMethod=BFGS:Sampling=0.3:SamplingEpoch=0.8:ConvergenceImprove=1e-6:ConvergenceTests=15" );
-   factory->BookMethod( TMVA::Types::kMLP, "MLP", "!H:!V:VarTransform=G,N:NeuronType=tanh:NCycles=500:HiddenLayers=N+5:TestRate=6:TrainingMethod=BFGS:Sampling=0.3:SamplingEpoch=0.8:ConvergenceImprove=1e-6:ConvergenceTests=15:VarTransform=Norm:TestRate=10" );
+   factory->BookMethod( TMVA::Types::kMLP, "MLP", "!H:!V:NeuronType=tanh:NCycles=250:HiddenLayers=N+5:TrainingMethod=BFGS:Sampling=0.3:SamplingEpoch=0.8:ConvergenceImprove=1e-6:ConvergenceTests=15:TestRate=10");
 	
    // Support Vector Machine
  if (Use["SVM"])
@@ -339,14 +354,13 @@ int main(int argc, char**argv){
 //      factory->BookMethod( TMVA::Types::kBDT, "BDT","!H:!V:NTrees=100:nEventsMin=5:BoostType=AdaBoostR2:SeparationType=RegressionVariance:nCuts=20:PruneMethod=CostComplexity:PruneStrength=30" );
 //         factory->BookMethod( TMVA::Types::kBDT, "BDT","!H:!V:NTrees=200:nEventsMin=5:BoostType=AdaBoostR2:SeparationType=RegressionVariance:PruneMethod=CostComplexity:PruneStrength=30" );
 //         factory->BookMethod( TMVA::Types::kBDT, "BDT","!H:!V:NTrees=300:nEventsMin=5:BoostType=AdaBoostR2:SeparationType=RegressionVariance:PruneMethod=CostComplexity:PruneStrength=30" );
-// 	factory->BookMethod( TMVA::Types::kBDT, "BDT","!H:!V:NTrees=100:nEventsMin=5:BoostType=AdaBoostR2:SeparationType=RegressionVariance:PruneMethod=CostComplexity:PruneStrength=30" );
-   factory->BookMethod( TMVA::Types::kBDT, "BDT","!H:!V:VarTransform=G,N:NTrees=200:nEventsMin=10:BoostType=AdaBoostR2:SeparationType=RegressionVariance:PruneMethod=CostComplexity:PruneStrength=30" );
+//  	factory->BookMethod( TMVA::Types::kBDT, "BDT","!H:!V:NTrees=100:nEventsMin=5:BoostType=AdaBoostR2:SeparationType=RegressionVariance:PruneMethod=CostComplexity:PruneStrength=30" );
+   factory->BookMethod( TMVA::Types::kBDT, "BDT","!H:!V:NTrees=100:nEventsMin=20:BoostType=AdaBoostR2:SeparationType=RegressionVariance:PruneMethod=CostComplexity:PruneStrength=30");
 	
  if (Use["BDTG"])
 //      factory->BookMethod( TMVA::Types::kBDT, "BDTG","!H:!V:NTrees=2000::BoostType=Grad:Shrinkage=0.1:UseBaggedGrad:GradBaggingFraction=0.5:nCuts=20:MaxDepth=3:NNodesMax=15" );
-   factory->BookMethod( TMVA::Types::kBDT, "BDTG","!H:!V:NTrees=2000::BoostType=Grad:Shrinkage=0.1:UseBaggedGrad:GradBaggingFraction=0.5:MaxDepth=5:NNodesMax=25" );
+   factory->BookMethod( TMVA::Types::kBDT, "BDTG","!H:!V:NTrees=1000::BoostType=Grad:Shrinkage=0.1:UseBaggedGrad:GradBaggingFraction=0.5:MaxDepth=5:NNodesMax=25:PruneMethod=CostComplexity:PruneStrength=30");
    // --------------------------------------------------------------------------------------------------
-
    // ---- Now you can tell the factory to train, test, and evaluate the MVAs
 
  // Train MVAs using the set of training events
@@ -368,7 +382,6 @@ int main(int argc, char**argv){
 
  delete factory;
 
-//  theApp->Run();
  // Launch the GUI for the root macros
 //  if (!gROOT->IsBatch()) TMVARegGui( outputFileName.c_str() );
 
