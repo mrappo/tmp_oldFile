@@ -26,6 +26,9 @@ bool CheckxtalTT_EB (int iPhi, int iEta, const std::vector<std::pair<int,int> >&
 /// Initialize TT dead map
 void InitializeDeadTT_EB(std::vector<std::pair<int,int> >& TT_centre);
 
+void InitializeDeadTT_EB2012(std::vector<std::pair<int,int> >& TT_centre);
+
+
 /// Normalize IC EB
 void NormalizeIC_EB(TH2F* h_scale_EB, TH2F* hcmap,const std::vector< std::pair<int,int> > & TT_centre, bool skip = true);
 
@@ -53,11 +56,15 @@ bool CheckxtalTT_EE(int ix, int iy, int ir,const std::vector<std::pair<int,int> 
 /// Map dead TT EE+
 void InitializeDeadTTEEP(std::vector<std::pair<int,int> >& TT_centre);
 
+void InitializeDeadTTEEP2012(std::vector<std::pair<int,int> >& TT_centre);
+
 /// Map dead TT EE-
 void InitializeDeadTTEEM(std::vector<std::pair<int,int> >& TT_centre);
 
+void InitializeDeadTTEEM2012(std::vector<std::pair<int,int> >& TT_centre);
+
 /// Normalize in function of ring
-void NormalizeIC_EE(TH2F** hcmap, TH2F** hcmap2, const std::vector< std::pair<int,int> > & TT_centre_EEP,const  std::vector< std::pair<int,int> > & TT_centre_EEM, TEndcapRings *eRings);
+void NormalizeIC_EE(TH2F** hcmap, TH2F** hcmap2, const std::vector< std::pair<int,int> > & TT_centre_EEP,const  std::vector< std::pair<int,int> > & TT_centre_EEM, TEndcapRings *eRings, bool skip = true);
 
 /// Book spread  Histos
 void BookSpreadHistos_EE(TH2F** hcmap, TH1F ***hspread, TH1F **hspreadAll,  TEndcapRings *eRings);
