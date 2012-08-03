@@ -97,16 +97,16 @@ c                 write(*,*)'CJV Applied'
       endif
 
 c--- ensure a rapidity gap of at least 4.2 between the tagging jets
-      if (abs(etaj1-etaj2) .lt. 3.5d0) goto 999      
+      if (abs(etaj1-etaj2) .lt. 0d0) goto 999      
       
 c--- ensure the tagging jets lie in opposite hemispheres
 c      if (etaj1*etaj2 .ge. 0d0) goto 999      
-
+      
       mj1j2=dsqrt(max(0d0,(p(j1,4)+p(j2,4))**2
      . -(p(j1,1)+p(j2,1))**2-(p(j1,2)+p(j2,2))**2-(p(j1,3)+p(j2,3))**2))
 
 c--- ensure the tagging jets have an invariant mass larger than mjjmin GeV
-      if (mj1j2 .lt. 450d0) goto 999      
+      if (mj1j2 .lt. 0d0) goto 999      
 
 ********************** END OF CUT CROSS SECTIONS ***********************
 

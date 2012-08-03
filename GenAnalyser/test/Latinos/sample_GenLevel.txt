@@ -1,25 +1,25 @@
-# name_sample                  xsection     xectionErrup        xsectionErrdown      name_human_readable
+# name_sample                  xsection     xectionErrup    xsectionErrdown      name_human_readable
 #
-ggToH120toWWto2L2Nu          0.1080942736	0.0106472859	0.0163222353          ggH
-ggToH130toWWto2L2Nu          0.19575323	 0.0375846202	0.0295587377    ggH
-ggToH140toWWto2L2Nu          0.2773340454	0.0521388005	0.0413227728    ggH
-ggToH150toWWto2L2Nu          0.333134125	0.076645467     0.0614891961     ggH
-ggToH160toWWto2L2Nu          0.3747538453	0.0697042152	0.0562130768     ggH
-ggToH170toWWto2L2Nu          0.3386684514	0.0606216528	0.0504615993     ggH
-ggToH180toWWto2L2Nu          0.285486627	0.0516730795	0.0419665342    ggH
-ggToH190toWWto2L2Nu         0.2106465844	0.0414973771	0.0318076343     ggH
-ggToH200toWWto2L2Nu          0.1767946756	0.0304086842	0.0268727907     ggH
-ggToH210toWWto2L2Nu          0.1552139115	0.026231151	0.0237477285     ggH
-ggToH220toWWto2L2Nu          0.1391641557	0.0233795782	0.0212921158    ggH
-ggToH230toWWto2L2Nu           0.1257657003	0.0208771063	0.0194936835     ggH
-ggToH250toWWto2L2Nu          0.1055316545	0.017412723	0.0164629381     ggH
-ggToH300toWWto2L2Nu          0.0761823971	0.0127986427	0.0118082716     ggH
-ggToH350toWWto2L2Nu          0.0708566147	0.0139587531	0.010486779     ggH
-ggToH400toWWto2L2Nu          0.0537552751	0.0084395782	0.0087621098     ggH
-ggToH450toWWto2L2Nu          0	0	0               ggH
-ggToH500toWWto2L2Nu          0.0210729766	0.0037299169	0.0037088439    ggH
-ggToH550toWWto2L2Nu          0	0	0 ggH
-ggToH600toWWto2L2Nu         0.0082862443	0.0016075314	0.0014832377    ggH
+ggToH120toWWto2L2Nu          0.1080942736   0.0106472859    0.0163222353         ggH
+ggToH130toWWto2L2Nu          0.19575323     0.0375846202    0.0295587377         ggH
+ggToH140toWWto2L2Nu          0.2773340454   0.0521388005    0.0413227728         ggH
+ggToH150toWWto2L2Nu          0.333134125    0.076645467     0.0614891961         ggH
+ggToH160toWWto2L2Nu          0.3747538453   0.0697042152    0.0562130768         ggH
+ggToH170toWWto2L2Nu          0.3386684514   0.0606216528    0.0504615993         ggH
+ggToH180toWWto2L2Nu          0.285486627    0.0516730795    0.0419665342         ggH
+ggToH190toWWto2L2Nu          0.2106465844   0.0414973771    0.0318076343         ggH
+ggToH200toWWto2L2Nu          0.1767946756   0.0304086842    0.0268727907         ggH
+ggToH210toWWto2L2Nu          0.1552139115   0.026231151     0.0237477285         ggH
+ggToH220toWWto2L2Nu          0.1391641557   0.0233795782    0.0212921158         ggH
+ggToH230toWWto2L2Nu          0.1257657003   0.0208771063    0.0194936835         ggH
+ggToH250toWWto2L2Nu          0.1055316545   0.017412723     0.0164629381         ggH
+ggToH300toWWto2L2Nu          0.0761823971   0.0127986427    0.0118082716         ggH
+ggToH350toWWto2L2Nu          0.0708566147   0.0139587531    0.010486779          ggH
+ggToH400toWWto2L2Nu          0.0537552751   0.0084395782    0.0087621098         ggH
+ggToH450toWWto2L2Nu          0              0               0                    ggH
+ggToH500toWWto2L2Nu          0.0210729766   0.0037299169    0.0037088439         ggH
+ggToH550toWWto2L2Nu          0              0               0                    ggH
+ggToH600toWWto2L2Nu          0.0082862443   0.0016075314    0.0014832377         ggH
 #
 #ggToH120toWWtoLNuTauNu       11.289163855285967     ggH
 #ggToH130toWWtoLNuTauNu       9.5353065877862466     ggH

@@ -357,60 +357,6 @@ for (int iSample=0; iSample<numberOfSamples; iSample++){
  TH1F* histo_temp_Plot[100][103][43];
  TH1F* histo_temp_Normalized_Plot[100][103][43];
  
-/* 
- ///==== cicle on selections ====
- for (unsigned int iCut = 0; iCut<vCut.size(); iCut++){
-  TString Cut = Form ("%s",vCut.at(iCut).c_str());
-  if (debug) std::cout << " Cut[" << iCut << ":" << vCut.size() << "] = " << Cut.Data() << " ~~ " << std::endl;
-  ///==== cicle on variables to plot ====
-  for (unsigned int iVar = 0; iVar<vVarName.size(); iVar++){
-   if (debug) std::cout << " Var[" << iVar << ":" << vVarName.size() << "] = " << vVarName.at(iVar) << " ~~ " << std::endl;
-   ///==== initialize ====
-   for (unsigned int iName=0; iName<reduced_name_samples.size(); iName++){
-    reduced_name_samples_flag.at(iName) = -1;
-   }
-   
-   ///==== cicle on samples ====
-   for (int iSample = (numberOfSamples-1); iSample>= 0; iSample--){
-    if (debug) std::cout << " Sample[" << iSample << ":" << numberOfSamples << "] = " << nameSample[iSample] << " ~~ " << std::endl;
-    TString name_histo_temp = Form("%s_%d_%d_temp_Plot",nameSample[iSample], iCut, iVar);
-    histo_temp_Plot[iSample][iCut][iVar] = new TH1F(name_histo_temp,name_histo_temp,vNBin.at(iVar),vMin.at(iVar), vMax.at(iVar));
-    char toDraw[1000];
-    sprintf(toDraw,"%s >> %s",vVarName.at(iVar).c_str(),name_histo_temp.Data());      
-
-    histo_temp_Plot[iSample][iCut][iVar] -> Sumw2(); //---- così mette l'errore giusto!
-    
-    TString CutExtended;
-   
-    if (nameptHWeight != "" && name_samples.at(iSample) == nameptHWeightSample){
-      CutExtended = Form ("(%s) * ptHWeight(ptH)",Cut.Data());    
-      }
-    else {
-     CutExtended = Form ("(%s)",Cut.Data());    
-    }
-    
-    treeJetLepVect[iSample]->Draw(toDraw,CutExtended,"");
-    
-    if (Normalization[iSample]>0) { 
-    
-    TString Name_Normalized = Form("%s_Normalized",name_histo_temp.Data());
-    histo_temp_Normalized_Plot[iSample][iCut][iVar]= (TH1F*) histo_temp_Plot[iSample][iCut][iVar]->Clone(Name_Normalized);
-    histo_temp_Normalized_Plot[iSample][iCut][iVar] -> Scale(Normalization[iSample]); 
-   }
-    
-   
-//     std::cout << "Processing: " << blue << (((double) numberOfSamples - iSample)/numberOfSamples) << "% \r"  << normal << std::flush;
-   } ///==== end cicle on samples ====
-//    std::cout << "###";
-  std::cout << "Processing: " << blue << (((double) iCut)/vCut.size())*100. << "% "  << normal <<  " -- " <<  blue << (((double) iVar)/vVarName.size())*100. << "% \r"  << normal << std::flush;   
-  } ///==== end cicle on variables to plot ====
-  //   std::cout << "***";
- } ///==== end cicle on selections ====
- std::cout << std::endl; 
- 
- 
- */
- 
  ///========================================================================================================
  ///==================================== Efficiency Calculation ============================================
  ///========================================================================================================
@@ -679,17 +625,15 @@ for (int iSample=0; iSample<numberOfSamples; iSample++){
     
  for (unsigned int iCut = 0; iCut<vCut.size(); iCut++){
    
-  myfile<<"  |  "<< mass <<
-  "  |  " << 
-   numEvents[iName][iCut]/(numEntriesBefore_reduced[iName][iCut]) <<"  |  " <<std::setprecision(8) << 
+  myfile<<"    "<< mass <<
+  "    " << 
+   numEvents[iName][iCut]/(numEntriesBefore_reduced[iName][iCut]) <<"    " <<std::setprecision(8) << 
    (1./(numEntriesBefore_reduced[iName][iCut]*numEntriesBefore_reduced[iName][iCut]))*
    sqrt(numEvents[iName][iCut]*numEntriesBefore_reduced[iName][iCut]*numEntriesBefore_reduced[iName][iCut]+numEvents[iName][iCut]*numEvents[iName][iCut]
-   *numEntriesBefore_reduced[iName][iCut]) << "  |  "<<
-   XSection_reduced[iName][iCut]<<"  |  "<<
-   XSectionErrorUp_reduced[iName][iCut] <<"  |  "<<
-   XSectionErrorDown_reduced[iName][iCut] <<"  |  "<<
-   XSection_reduced[iName][iCut] * numEvents[iName][iCut]/(numEntriesBefore_reduced[iName][iCut])
-   << "  |  "<<std::endl;
+   *numEntriesBefore_reduced[iName][iCut]) << "    "<<
+   XSection_reduced[iName][iCut]<<"    "<<
+   XSectionErrorUp_reduced[iName][iCut] <<"    "<<
+   XSectionErrorDown_reduced[iName][iCut] <<"    "<<std::endl;
    }
  
    

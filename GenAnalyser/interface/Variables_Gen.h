@@ -333,6 +333,6 @@ public std::binary_function< ROOT::Math::XYZTVector, ROOT::Math::XYZTVector, boo
 {
   bool operator() (ROOT::Math::XYZTVector x, ROOT::Math::XYZTVector y)
   {
-    return x.pt() < y.pt();
+    return x.pt() > y.pt();
   }
 };

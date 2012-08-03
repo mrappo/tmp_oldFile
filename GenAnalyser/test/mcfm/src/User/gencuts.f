@@ -79,49 +79,49 @@ c--- CMS Higgs search cuts
       endif
       
 c--- additional cuts for CDF Mjj analysis
-      if (runstring(1:3) .eq. 'mjj') then
+c      if (runstring(1:3) .eq. 'mjj') then
 c--- transverse mass of the W > 30
-        mtrans=
-     .   (pjet(3,1)*pjet(4,1)+pjet(3,2)*pjet(4,2))
-     .   /dsqrt((pjet(3,1)**2+pjet(3,2)**2)
-     .         *(pjet(4,1)**2+pjet(4,2)**2))
-        mtrans=2d0*dsqrt(pjet(3,1)**2+pjet(3,2)**2)
-     .   *dsqrt(pjet(4,1)**2+pjet(4,2)**2)*(1d0-mtrans)
-        mtrans=dsqrt(max(mtrans,0d0))
-        if (mtrans .lt. 30d0) then
-	  gencuts=.true.
-	  return
-	endif       
+c        mtrans=
+c     .   (pjet(3,1)*pjet(4,1)+pjet(3,2)*pjet(4,2))
+c     .   /dsqrt((pjet(3,1)**2+pjet(3,2)**2)
+c     .         *(pjet(4,1)**2+pjet(4,2)**2))
+c        mtrans=2d0*dsqrt(pjet(3,1)**2+pjet(3,2)**2)
+c     .   *dsqrt(pjet(4,1)**2+pjet(4,2)**2)*(1d0-mtrans)
+c        mtrans=dsqrt(max(mtrans,0d0))
+c        if (mtrans .lt. 30d0) then
+c	  gencuts=.true.
+c	  return
+c	endif       
 c--- DeltaEta(J1,J2)| < 2.5
-        deltaeta=etarap(5,pjet)-etarap(6,pjet)
-	if (abs(deltaeta) .gt. 2.5d0) then
-	  gencuts=.true.
-	  return
-	endif
+c        deltaeta=etarap(5,pjet)-etarap(6,pjet)
+c	if (abs(deltaeta) .gt. 2.5d0) then
+c	  gencuts=.true.
+c	  return
+c	endif
 c--- Pt(J1,J2) > 40 (Pt of vectorial sum of the two jets > 40) 
 c--- (this cut may be avoided)
-	if (runstring(4:9) .ne. 'noptjj') then
-	  if (pttwo(5,6,pjet) .lt. 40d0) then
-	    gencuts=.true.
-	    return
-	  endif
-	endif
+c	if (runstring(4:9) .ne. 'noptjj') then
+c	  if (pttwo(5,6,pjet) .lt. 40d0) then
+c	    gencuts=.true.
+c	    return
+c	  endif
+c	endif
 c--- DeltaPhi(J1, MET) >0.4
-	pt5sq=pjet(5,1)**2+pjet(5,2)**2
-	pt6sq=pjet(6,1)**2+pjet(6,2)**2
-	if (pt5sq .gt. pt6sq) then
-          ij=5
-	else
-	  ij=6
-	endif
-        deltaphi=atan2(pjet(3,1),pjet(3,2))-atan2(pjet(ij,1),pjet(ij,2))
-        if (deltaphi .gt. pi) deltaphi=twopi-deltaphi
-        if (deltaphi .lt. -pi) deltaphi=twopi+deltaphi
-	if (abs(deltaphi) .lt. 0.4d0) then
-	  gencuts=.true.
-	  return
-	endif
-      endif
+c	pt5sq=pjet(5,1)**2+pjet(5,2)**2
+c	pt6sq=pjet(6,1)**2+pjet(6,2)**2
+c	if (pt5sq .gt. pt6sq) then
+c          ij=5
+c	else
+c	  ij=6
+c	endif
+c        deltaphi=atan2(pjet(3,1),pjet(3,2))-atan2(pjet(ij,1),pjet(ij,2))
+c        if (deltaphi .gt. pi) deltaphi=twopi-deltaphi
+c        if (deltaphi .lt. -pi) deltaphi=twopi+deltaphi
+c	if (abs(deltaphi) .lt. 0.4d0) then
+c	  gencuts=.true.
+c	 return
+c	endif
+c      endif
 
 c--- extra transverse mass cut in W+jets for CDF
       if (runstring(1:7) .eq. 'cdfjoey') then
@@ -562,49 +562,49 @@ c      endif
 c--- DEBUG: removed all isolation      
       
 c--- WBF-style cuts (if there are 2 or more jets)
-      if ((njets .gt. 1)) then
+c      if ((njets .gt. 1)) then
 c--- jet-jet rapidity separation 
 c--- j and k point to the two highest pt ('tagging') jets
-        j=1
-        k=2
-        if (njets .eq. 3) then
-          if     ( pt(jetindex(1),pjet) .lt.
-     .      min(pt(jetindex(2),pjet),pt(jetindex(3),pjet)) ) then
-            j=2
-            k=3
-          elseif ( pt(jetindex(2),pjet) .lt.
-     .      min(pt(jetindex(1),pjet),pt(jetindex(3),pjet)) ) then
-            j=1
-            k=3
-          endif
-        endif
-        if (abs(etarap(jetindex(j),pjet)-etarap(jetindex(k),pjet))
-     .         .lt. delyjjmin) then
-          gencuts=.true.
-          return
-        endif
+c        j=1
+c        k=2
+c        if (njets .eq. 3) then
+c          if     ( pt(jetindex(1),pjet) .lt.
+c     .      min(pt(jetindex(2),pjet),pt(jetindex(3),pjet)) ) then
+c            j=2
+c            k=3
+c          elseif ( pt(jetindex(2),pjet) .lt.
+c     .      min(pt(jetindex(1),pjet),pt(jetindex(3),pjet)) ) then
+c            j=1
+c            k=3
+c          endif
+c        endif
+c        if (abs(etarap(jetindex(j),pjet)-etarap(jetindex(k),pjet))
+c     .         .lt. delyjjmin) then
+c          gencuts=.true.
+c          return
+c        endif
 
 c--- Requirement that jets be in opposite hemispheres
-        if (jetsopphem) then
-          if(etarap(jetindex(j),pjet)*etarap(jetindex(k),pjet) .gt. 0d0)
-     .       then
-            gencuts=.true.
-            return
-          endif
-        endif
+c        if (jetsopphem) then
+c          if(etarap(jetindex(j),pjet)*etarap(jetindex(k),pjet) .gt. 0d0)
+c     .       then
+c            gencuts=.true.
+c            return
+c          endif
+c        endif
 
-        if (lbjscheme .gt. 0) then
+c        if (lbjscheme .gt. 0) then
 c--- Cut to require lepton to be between jets
-          etabuffer=dble(lbjscheme-1)*Rcut
-          etaj=etarap(jetindex(j),pjet)
-          etak=etarap(jetindex(k),pjet)
-          do pntr=1,countlept
-            etalept=etarap(leptindex(pntr),pjet)
-            if ( (etalept .lt. min(etaj,etak)+etabuffer) .or.
-     .           (etalept .gt. max(etaj,etak)-etabuffer) ) then 
-              gencuts=.true.
-              return
-            endif
+c          etabuffer=dble(lbjscheme-1)*Rcut
+c          etaj=etarap(jetindex(j),pjet)
+c          etak=etarap(jetindex(k),pjet)
+c          do pntr=1,countlept
+c            etalept=etarap(leptindex(pntr),pjet)
+c            if ( (etalept .lt. min(etaj,etak)+etabuffer) .or.
+c     .           (etalept .gt. max(etaj,etak)-etabuffer) ) then 
+c              gencuts=.true.
+c              return
+c            endif
 
 c--- these lines impose an alternative WBF selection
 c             if ( ((etaj .gt. 1.6d0) .and. (etaj .lt. 4.4d0))
@@ -612,12 +612,12 @@ c     .        .or.((etak .gt. 1.6d0) .and. (etak .lt. 4.4d0)) ) then
 c             else
 c               gencuts=.true.
 c             endif             
-          enddo
+c          enddo
           
           
-        endif
+c        endif
 
-      endif
+c      endif
       
 c-- cuts on b-quarks
       if (bbproc) then

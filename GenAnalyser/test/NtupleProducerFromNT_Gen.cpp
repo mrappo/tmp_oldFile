@@ -127,7 +127,6 @@ int main(int argc, char** argv)
  if (histoEvents) preselection_efficiency = numEntriesBefore / (1. * histoEvents->GetBinContent(1));
  else preselection_efficiency = 1;
 
-  
  vars.XSection = XSection;
  vars.numEntriesBefore = numEntriesBefore;
  vars.preselection_efficiency = preselection_efficiency;
@@ -371,6 +370,7 @@ if (debug) std::cerr << " q1 = " << q1 << " : q2 = " << q2 << std::endl;
  ///=== Third jet search and information setting
  
  std::vector<ROOT::Math::XYZTVector> Jet_Candidate;
+ 
  FindAddJet (reader,q1,q2,&blacklistJet_forCJV,Jet_Candidate,0);
  
  SetThirdJetVariables(vars,Jet_Candidate);

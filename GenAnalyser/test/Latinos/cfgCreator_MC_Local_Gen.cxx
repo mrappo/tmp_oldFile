@@ -7,8 +7,6 @@
  #include "test/Read.cc"
  
  char outputDirectory[1000] = {"/home/raffaele/Programmi/RGerosa/AnalysisPackage_qqHWWlnulnu/output/out_NtupleProducer"};
-// char outputDirectory[1000] = {"/gwteraz/users/amassiro/VBFPlainRoot/Latinos_25Jul2011_Summer11/"};
-// char    inputDirectory[1000] = {"/gwteraz/users/amassiro/VBF/Summer11_25July_MC_PATLatinos/"};
  char    inputDirectory[1000] = {"/home/raffaele/Programmi/RGerosa/AnalysisPackage_qqHWWlnulnu/data/data_1011"};  
   
  char *nameSample[1000];
