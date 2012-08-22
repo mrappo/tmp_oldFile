@@ -12,7 +12,7 @@ setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${CLHEPSYS}/lib
 if (${?DYLD_LIBRARY_PATH}) then
 setenv DYLD_LIBRARY_PATH ${DYLD_LIBRARY_PATH}:${THISDIR}/lib
 setenv DYLD_LIBRARY_PATH ${DYLD_LIBRARY_PATH}:${THISDIR}/../NtuplePackage/lib
-fi
+endif
 
 
 
@@ -24,4 +24,4 @@ setenv NTUPLEPKGINCLUDE ${THISDIR}/../NtuplePackage/interface
 setenv NTUPLEPKGLIB ${THISDIR}/../NtuplePackage/lib
 
 setenv FASTCALIBRATOR ${THISDIR}/
-fi
+endif
