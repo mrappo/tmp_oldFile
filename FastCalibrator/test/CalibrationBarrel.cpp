@@ -30,7 +30,7 @@ int templIndexEB(float eta){
     if (feta <= 25)               {return 0;}
     if (feta>  25 && feta <=  45) {return 0;}
     if (feta>  45 && feta <=  65) {return 0;}
-    if (feta>  65 && feta <=  85) {return 0;}
+    if (feta>  65 && feta <=  86) {return 0;}
     return -1;
 }
 

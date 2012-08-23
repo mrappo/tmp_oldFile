@@ -33,9 +33,14 @@
 
 #define xtalWidth 0.01745329
 #define PI        3.1415926536 
-#define rescaleFactorEB 0.9929
-#define rescaleFactorEEP 0.99
-#define rescaleFactorEEM 0.99
+//#define rescaleFactorEB 0.9929
+//#define rescaleFactorEEP 0.99
+//#define rescaleFactorEEM 0.99
+#define rescaleFactorEB 0.9918
+#define rescaleFactorEEP 1.0014
+#define rescaleFactorEEM 0.9960
+
+
 
 
 
@@ -58,7 +63,7 @@ int templIndexEB(float eta){
     if (feta <= 25)               {return 0;}
     if (feta>  25 && feta <=  45) {return 0;}
     if (feta>  45 && feta <=  65) {return 0;}
-    if (feta>  65 && feta <=  85) {return 0;}
+    if (feta>  65 && feta <=  86) {return 0;}
     return -1;
 }
 
