@@ -22,17 +22,20 @@ int main (int argc, char ** argv)
   parseConfigFile (argv[1]) ;
 
 //   std::string inputFile       = gConfigParser -> readStringOption("Input::inputFile");
-  std::string inputList       = gConfigParser -> readStringOption("Input::inputList");
-
-  std::string inputTree       = gConfigParser -> readStringOption("Input::inputTree");
-  std::string inputFileDeadXtal ="NULL" ;
-  try {
-        inputFileDeadXtal = gConfigParser -> readStringOption("Input::inputFileDeadXtal");
-   }
-   catch ( char const* exceptionString ){
-   std::cerr << " exception = " << exceptionString << std::endl;
-
-   }
+  std::string inputList = gConfigParser -> readStringOption("Input::inputList");
+  std::string inputTree = gConfigParser -> readStringOption("Input::inputTree");
+  
+  std::string inputFileDeadXtal ="NULL";
+  try{
+    inputFileDeadXtal = gConfigParser -> readStringOption("Input::inputFileDeadXtal");
+  }
+  catch( char const* exceptionString ){
+    std::cerr << " exception = " << exceptionString << std::endl;
+  }
+  
+  std::string jsonFileName = gConfigParser -> readStringOption("Input::jsonFileName");
+  std::map<int, std::vector<std::pair<int, int> > > jsonMap;
+  jsonMap = readJSONFile(jsonFileName);
   
   bool isMiscalib = gConfigParser -> readBoolOption("Input::isMiscalib");
   bool isSaveEPDistribution = gConfigParser -> readBoolOption("Input::isSaveEPDistribution");
@@ -62,27 +65,27 @@ int main (int argc, char ** argv)
     TString name ;
     TString outputTxtFile ;
     TString name_tmp;
-    if(isMiscalib == true && useZ == 1 && isR9selection ==true ) name_tmp = Form ("%s_Z_R9_miscalib_EE",outputFile.c_str());
-    if(isMiscalib == true && useZ == 1 && isEPselection ==true ) name_tmp = Form ("%s_Z_EP_miscalib_EE",outputFile.c_str());
-    if(isMiscalib == true && useZ == 1 && isfbrem ==true ) name_tmp = Form ("%s_Z_fbrem_miscalib_EE",outputFile.c_str());
-    if(isMiscalib == true && useZ == 1 && isEPselection ==false && isR9selection==false && isfbrem==false ) name_tmp =Form ("%s_Z_noEP_miscalib_EE",outputFile.c_str());
+    if(isMiscalib == true && useZ == 1 && isR9selection ==true ) name_tmp = Form ("%s_WZ_R9_miscalib_EE",outputFile.c_str());
+    if(isMiscalib == true && useZ == 1 && isEPselection ==true ) name_tmp = Form ("%s_WZ_EP_miscalib_EE",outputFile.c_str());
+    if(isMiscalib == true && useZ == 1 && isfbrem ==true ) name_tmp = Form ("%s_WZ_fbrem_miscalib_EE",outputFile.c_str());
+    if(isMiscalib == true && useZ == 1 && isEPselection ==false && isR9selection==false && isfbrem==false ) name_tmp =Form ("%s_WZ_noEP_miscalib_EE",outputFile.c_str());
     
-    if(isMiscalib == false && useZ == 1 && isR9selection ==true ) name_tmp = Form ("%s_Z_R9_EE",outputFile.c_str());
-    if(isMiscalib == false && useZ == 1 && isEPselection ==true ) name_tmp = Form ("%s_Z_EP_EE",outputFile.c_str());
-    if(isMiscalib == false && useZ == 1 && isfbrem ==true ) name_tmp = Form ("%s_Z_fbrem_EE",outputFile.c_str());
-    if(isMiscalib == false && useZ == 1 && isEPselection ==false && isR9selection==false && isfbrem==false ) name_tmp =Form ("%s_Z_noEP_EE",outputFile.c_str());
+    if(isMiscalib == false && useZ == 1 && isR9selection ==true ) name_tmp = Form ("%s_WZ_R9_EE",outputFile.c_str());
+    if(isMiscalib == false && useZ == 1 && isEPselection ==true ) name_tmp = Form ("%s_WZ_EP_EE",outputFile.c_str());
+    if(isMiscalib == false && useZ == 1 && isfbrem ==true ) name_tmp = Form ("%s_WZ_fbrem_EE",outputFile.c_str());
+    if(isMiscalib == false && useZ == 1 && isEPselection ==false && isR9selection==false && isfbrem==false ) name_tmp =Form ("%s_WZ_noEP_EE",outputFile.c_str());
     
 
-    if(isMiscalib == true && useZ == 0 && isR9selection ==true ) name_tmp = Form ("%s_R9_miscalib_EE",outputFile.c_str());
-    if(isMiscalib == true && useZ == 0 && isEPselection ==true ) name_tmp = Form ("%s_EP_miscalib_EE",outputFile.c_str());
-    if(isMiscalib == true && useZ == 0 && isfbrem == true ) name_tmp = Form ("%s_Z_fbrem_EE",outputFile.c_str());
-    if(isMiscalib == true && useZ == 0 && isEPselection ==false && isR9selection==false && isfbrem==false ) name_tmp =Form ("%s_noEP_miscalib_EE",outputFile.c_str());
+    if(isMiscalib == true && useZ == 0 && isR9selection ==true ) name_tmp = Form ("%s_W_R9_miscalib_EE",outputFile.c_str());
+    if(isMiscalib == true && useZ == 0 && isEPselection ==true ) name_tmp = Form ("%s_W_EP_miscalib_EE",outputFile.c_str());
+    if(isMiscalib == true && useZ == 0 && isfbrem == true ) name_tmp = Form ("%s_W_fbrem_EE",outputFile.c_str());
+    if(isMiscalib == true && useZ == 0 && isEPselection ==false && isR9selection==false && isfbrem==false ) name_tmp =Form ("%s_W_noEP_miscalib_EE",outputFile.c_str());
     
     
-    if(isMiscalib == false && useZ == 0 && isR9selection ==true ) name_tmp = Form ("%s_R9_EE",outputFile.c_str());
-    if(isMiscalib == false && useZ == 0 && isEPselection ==true ) name_tmp = Form ("%s_EP_EE",outputFile.c_str());
-    if(isMiscalib == false && useZ == 0 && isfbrem ==true ) name_tmp = Form ("%s_Z_fbrem_EE",outputFile.c_str());
-    if(isMiscalib == false && useZ == 0 && isEPselection ==false && isR9selection==false && isfbrem==false ) name_tmp =Form ("%s_noEP_EE",outputFile.c_str());
+    if(isMiscalib == false && useZ == 0 && isR9selection ==true ) name_tmp = Form ("%s_W_R9_EE",outputFile.c_str());
+    if(isMiscalib == false && useZ == 0 && isEPselection ==true ) name_tmp = Form ("%s_W_EP_EE",outputFile.c_str());
+    if(isMiscalib == false && useZ == 0 && isfbrem ==true ) name_tmp = Form ("%s_W_fbrem_EE",outputFile.c_str());
+    if(isMiscalib == false && useZ == 0 && isEPselection ==false && isR9selection==false && isfbrem==false ) name_tmp =Form ("%s_W_noEP_EE",outputFile.c_str());
          
     name = Form("%s.root",name_tmp.Data());
     TFile *f1 = new TFile(name,"RECREATE");
@@ -97,7 +100,7 @@ int main (int argc, char ** argv)
      FastCalibratorEE analyzer(albero,outEPDistribution);
      analyzer.bookHistos(nLoops);
      analyzer.AcquireDeadXtal(DeadXtal);
-     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem);
+     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
      analyzer.saveHistos(f1);
     }
     else
@@ -105,7 +108,7 @@ int main (int argc, char ** argv)
      FastCalibratorEE analyzer(albero);
      analyzer.bookHistos(nLoops);
      analyzer.AcquireDeadXtal(DeadXtal);  
-     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem);
+     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
      analyzer.saveHistos(f1);
     }
    
@@ -212,14 +215,14 @@ int main (int argc, char ** argv)
     FastCalibratorEE analyzer_even(albero);
     analyzer_even.bookHistos(nLoops);
     analyzer_even.AcquireDeadXtal(DeadXtal);
-    analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem);
+    analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
     analyzer_even.saveHistos(f1);
   
     /// Run on even
     FastCalibratorEE analyzer_odd(albero);
     analyzer_odd.bookHistos(nLoops);
     analyzer_odd.AcquireDeadXtal(DeadXtal);
-    analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem);
+    analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
     analyzer_odd.saveHistos(f2);
     
   }
