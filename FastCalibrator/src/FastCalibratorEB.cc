@@ -91,6 +91,7 @@ void FastCalibratorEB::Init(TTree *tree)
 
   fChain->SetBranchAddress("runId", &runId, &b_runId);
   fChain->SetBranchAddress("lumiId", &lumiId, &b_lumiId);
+  fChain->SetBranchAddress("eventId", &eventId, &b_eventId);
   fChain->SetBranchAddress("isW", &isW, &b_isW);
   fChain->SetBranchAddress("isZ", &isZ, &b_isZ);
   
@@ -270,7 +271,8 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
             float thisIC = 1.;
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
            
-            if(ele1_recHit_E -> at(iRecHit) > E_seed &&  ele1_recHit_flag->at(iRecHit) < 4 ) /// control if this recHit is good
+            //if(ele1_recHit_E -> at(iRecHit) > E_seed &&  ele1_recHit_flag->at(iRecHit) < 4 ) /// control if this recHit is good
+            if(ele1_recHit_E -> at(iRecHit) > E_seed) /// control if this recHit is good
             {
               seed_hashedIndex=ele1_recHit_hashedIndex -> at(iRecHit);
               iseed=iRecHit;
@@ -280,7 +282,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
     
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
-            if(ele1_recHit_flag->at(iRecHit) < 4) ///! SC energy taking only good channels
+            //if(ele1_recHit_flag->at(iRecHit) < 4) ///! SC energy taking only good channels
             thisE += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
              
      }
@@ -294,8 +296,10 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 	    
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
          
+            //if(fabs(ele1_recHit_ietaORix->at(iRecHit)-ele1_recHit_ietaORix->at(iseed))<=1 && 
+            //   fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1 && ele1_recHit_flag->at(iRecHit) < 4
             if(fabs(ele1_recHit_ietaORix->at(iRecHit)-ele1_recHit_ietaORix->at(iseed))<=1 && 
-               fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1 && ele1_recHit_flag->at(iRecHit) < 4
+               fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1
            )
               thisE3x3+=theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
            }
@@ -343,7 +347,8 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
             
-            if(ele2_recHit_E -> at(iRecHit) > E_seed && ele2_recHit_flag->at(iRecHit) < 4)
+            //if(ele2_recHit_E -> at(iRecHit) > E_seed && ele2_recHit_flag->at(iRecHit) < 4)
+            if(ele2_recHit_E -> at(iRecHit) > E_seed)
             {
               seed_hashedIndex=ele2_recHit_hashedIndex -> at(iRecHit);
               iseed=iRecHit;
@@ -354,7 +359,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
             
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
-            if (ele2_recHit_flag->at(iRecHit) < 4 ) /// SC Energy only for good channels
+            //if (ele2_recHit_flag->at(iRecHit) < 4 ) /// SC Energy only for good channels
             thisE += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
              
      }
@@ -366,9 +371,11 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
            
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
          
+            //if(fabs(ele2_recHit_ietaORix->at(iRecHit)-ele2_recHit_ietaORix->at(iseed))<=1 && 
+            //   fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1 &&
+            //   ele2_recHit_flag->at(iRecHit) < 4)
             if(fabs(ele2_recHit_ietaORix->at(iRecHit)-ele2_recHit_ietaORix->at(iseed))<=1 && 
-               fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1 &&
-               ele2_recHit_flag->at(iRecHit) < 4)
+               fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1)
               thisE3x3+=theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
            }
 
@@ -419,7 +426,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 /// Calibration Loop over the ntu events
 
 void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution,
-                            bool isEPselection,bool isR9selection, bool isMCTruth){
+                            bool isEPselection,bool isR9selection, bool isMCTruth, std::map<int, std::vector<std::pair<int, int> > > jsonMap){
    if (fChain == 0) return;
    
    /// Define the number of crystal you want to calibrate
@@ -485,11 +492,13 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
     std::cout << "Number of analyzed events = " << nentries << std::endl;
     
     ///==== build E/p distribution ele 1 and 2
-    
     BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,isMCTruth); 
- 
-    Long64_t nbytes = 0, nb = 0;
+    
+    // define map with events
+    std::map<std::pair<int,std::pair<int,int> >,int> eventsMap;
+    
     /// Loop on each entry 
+    Long64_t nbytes = 0, nb = 0;
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
       
         if (!(jentry%10000))std::cerr<<jentry;
@@ -499,7 +508,27 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
         if (ientry < 0) break;
         nb = fChain->GetEntry(jentry);   
         nbytes += nb;
-              
+        
+        
+        
+	//*********************************
+	// JSON FILE AND DUPLIACTES IN DATA
+        
+	bool skipEvent = false;
+	if( isMCTruth == 0 )
+        {
+          if(AcceptEventByRunAndLumiSection(runId,lumiId,jsonMap) == false) skipEvent = true;
+          
+          std::pair<int,Long64_t> eventLSandID(lumiId,eventId);
+          std::pair<int,std::pair<int,Long64_t> > eventRUNandLSandID(runId,eventLSandID);
+          if( eventsMap[eventRUNandLSandID] == 1 ) skipEvent = true;
+          else eventsMap[eventRUNandLSandID] = 1;
+        }
+        
+	if( skipEvent == true ) continue;
+        
+        
+        
         float pIn, pSub, FdiEta;
         
         std::map<int,double> map;
@@ -526,11 +555,12 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
            
             if (iLoop > 0 ) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
-            if (ele1_recHit_flag->at(iRecHit) < 4) ///! SC Energy
+            //if (ele1_recHit_flag->at(iRecHit) < 4) ///! SC Energy
             thisE += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
 
               
-            if(ele1_recHit_E -> at(iRecHit) > E_seed && ele1_recHit_flag->at(iRecHit)<4)
+            //if(ele1_recHit_E -> at(iRecHit) > E_seed && ele1_recHit_flag->at(iRecHit)<4)
+            if(ele1_recHit_E -> at(iRecHit) > E_seed)
              {
               E_seed=ele1_recHit_E -> at(iRecHit);
               iseed=iRecHit;
@@ -548,9 +578,11 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
      
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
          
+            //if(fabs(ele1_recHit_ietaORix->at(iRecHit)-ele1_recHit_ietaORix->at(iseed))<=1 && 
+            //   fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1 &&
+            //   ele1_recHit_flag->at(iRecHit) < 4 )
             if(fabs(ele1_recHit_ietaORix->at(iRecHit)-ele1_recHit_ietaORix->at(iseed))<=1 && 
-               fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1 &&
-               ele1_recHit_flag->at(iRecHit) < 4 )
+               fabs(ele1_recHit_iphiORiy->at(iRecHit)-ele1_recHit_iphiORiy->at(iseed))<=1)
               thisE3x3+=theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC;
            }
  
@@ -580,7 +612,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
             /// Now cycle on the all the recHits and update the numerator and denominator
             for ( unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++ ) {
             
-              if (ele1_recHit_flag->at(iRecHit) >= 4) continue ;
+              //if (ele1_recHit_flag->at(iRecHit) >= 4) continue ;
            
               int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
               float thisIC = 1.;
@@ -644,11 +676,12 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
             
-            if(ele2_recHit_flag->at(iRecHit) < 4)
+            //if(ele2_recHit_flag->at(iRecHit) < 4)
             thisE += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
 
               
-            if(ele2_recHit_E -> at(iRecHit) > E_seed && ele2_recHit_flag->at(iRecHit) < 4)
+            //if(ele2_recHit_E -> at(iRecHit) > E_seed && ele2_recHit_flag->at(iRecHit) < 4)
+            if(ele2_recHit_E -> at(iRecHit) > E_seed)
              {
               E_seed=ele2_recHit_E -> at(iRecHit);
               iseed=iRecHit;
@@ -667,9 +700,11 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
 
        
+	    //if(fabs(ele2_recHit_ietaORix->at(iRecHit)-ele2_recHit_ietaORix->at(iseed))<=1 && 
+            //  fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1 &&
+            //  ele2_recHit_flag->at(iRecHit) < 4)
            if(fabs(ele2_recHit_ietaORix->at(iRecHit)-ele2_recHit_ietaORix->at(iseed))<=1 && 
-              fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1 &&
-              ele2_recHit_flag->at(iRecHit) < 4)
+              fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1)
              thisE3x3+=theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
              
  
@@ -700,7 +735,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
             /// Now cycle on the all the recHits and update the numerator and denominator
             for ( unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {
 
-              if (ele2_recHit_flag->at(iRecHit) >= 4) continue ;
+              //if (ele2_recHit_flag->at(iRecHit) >= 4) continue ;
   
               int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
               float thisIC = 1.;

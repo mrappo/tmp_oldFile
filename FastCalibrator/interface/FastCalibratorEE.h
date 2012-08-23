@@ -23,6 +23,8 @@
 #include "Math/PtEtaPhiM4D.h"
 #include "Math/LorentzVector.h"
 
+#include "readJSONFile.h"
+
 class FastCalibratorEE {
   public :
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -31,6 +33,7 @@ class FastCalibratorEE {
    ///! Declaration of leaf types
     Int_t           runId;
     Int_t           lumiId;
+    Int_t           eventId;
     Int_t           isW;
     Int_t           isZ;
 
@@ -92,7 +95,8 @@ class FastCalibratorEE {
    ///!  List of input branches from ntu
     
     TBranch        *b_runId;   //!
-    TBranch        *b_lumiId;   //!
+    TBranch        *b_lumiId;  //!
+    TBranch        *b_eventId; //!
     TBranch        *b_isW;   //!
     TBranch        *b_isZ;   //!
     TBranch        *b_ele1_recHit_E;   //!
@@ -161,7 +165,7 @@ class FastCalibratorEE {
     
     virtual void     Init(TTree *tree);
 
-    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool,bool);
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool,bool,std::map<int, std::vector<std::pair<int, int> > >);
     virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool,bool);
 
     virtual Bool_t   Notify();

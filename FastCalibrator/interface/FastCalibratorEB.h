@@ -23,6 +23,7 @@
 #include "Math/PtEtaPhiM4D.h"
 #include "Math/LorentzVector.h"
 
+#include "readJSONFile.h"
 
 class FastCalibratorEB {
   public :
@@ -33,6 +34,7 @@ class FastCalibratorEB {
     
     Int_t           runId;
     Int_t           lumiId;
+    Int_t           eventId;
     Int_t           isW;
     Int_t           isZ;
     
@@ -95,7 +97,8 @@ class FastCalibratorEB {
    ///! List of input branches from ntu
     
     TBranch        *b_runId;   //!
-    TBranch        *b_lumiId;   //!
+    TBranch        *b_lumiId;  //!
+    TBranch        *b_eventId; //!
     TBranch        *b_isW;   //!
     TBranch        *b_isZ;   //!
    
@@ -169,7 +172,7 @@ class FastCalibratorEB {
     
     virtual void     Init(TTree *tree);
     
-    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool);
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool,std::map<int, std::vector<std::pair<int, int> > >);
     
     virtual Bool_t   Notify();
     
