@@ -100,7 +100,7 @@ int main(int argc, char**argv){
 
  TH1F *hspread[172];
  for (int jbin = 1; jbin < hcmap1-> GetNbinsY()+1; jbin++){
-    float etaring = hcmap1-> GetYaxis()->GetBinCenter(jbin);
+    int etaring = hcmap1-> GetYaxis()->GetBinCenter(jbin);
     sprintf(hname,"hspread_ring_ieta%02d",etaring);
     hspread[jbin-1]= new TH1F(hname, hname, 400,-0.5,0.5);
  }

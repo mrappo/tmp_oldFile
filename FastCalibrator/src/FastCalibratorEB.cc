@@ -452,8 +452,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
   /// Barrel region = Barrel xtal
   std::cout << "m_regions " << m_regions << std::endl;
    
-   //Prepare the calibration blocks
-  int eventWeight = 2; //Pres8 prenscription
+  //Prepare the calibration blocks
        
   /// Build the scalibration Map for MC Analysis
   

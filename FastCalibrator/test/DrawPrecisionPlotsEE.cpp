@@ -314,7 +314,6 @@ int main(int argc, char**argv){
       statprecision_vs_loopEEM[ietaregion]->Draw("ap");
     }
 
-theApp->Run();
-return 0;
-
+  theApp->Run();
+  return 0;
 }

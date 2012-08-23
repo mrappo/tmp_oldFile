@@ -138,7 +138,7 @@ int main( int argc, char **argv){
     for( int ix = 0; ix < h_scale_EE[k]->GetNbinsX()+1 ; ix++ ){
      for(int iy = 0; iy < h_scale_EE[k]->GetNbinsY()+1 ; iy++ ){
            
-       ir = hrings[k]->GetBinContent(ix,iy);
+       ir = int(hrings[k]->GetBinContent(ix,iy));
        
        bool isGood = CheckxtalIC(h_scale_EE[k],ix,iy,ir);
        bool isGoodTT;
@@ -162,7 +162,7 @@ int main( int argc, char **argv){
    for( int ix = 0; ix < h_scale_EE[k]->GetNbinsX()+1 ; ix++ ){
      for(int iy = 0; iy < h_scale_EE[k]->GetNbinsY()+1 ; iy++ ){
 
-       ir = hrings[k]->GetBinContent(ix,iy);
+       ir = int(hrings[k]->GetBinContent(ix,iy));
       
        if(k!=0){
           if(ir>33){ hcmap_EE[k]->Fill(ix,iy,0.);
@@ -230,7 +230,7 @@ int main( int argc, char **argv){
     for( int ix = 0; ix < h_scale_EE_Even[k]->GetNbinsX()+1 ; ix++ ){
      for(int iy = 0; iy < h_scale_EE_Even[k]->GetNbinsY()+1 ; iy++ ){
            
-       ir = hrings[k]->GetBinContent(ix,iy);
+       ir = int(hrings[k]->GetBinContent(ix,iy));
        
        bool isGood = CheckxtalIC(h_scale_EE_Even[k],ix,iy,ir);
        bool isGoodTT;
@@ -254,7 +254,7 @@ int main( int argc, char **argv){
     for( int ix = 0; ix < h_scale_EE_Even[k]->GetNbinsX()+1 ; ix++ ){
      for(int iy = 0; iy < h_scale_EE_Even[k]->GetNbinsY()+1 ; iy++ ){
 
-       ir = hrings[k]->GetBinContent(ix,iy);
+       ir = int(hrings[k]->GetBinContent(ix,iy));
       
        if(k!=0){
           if(ir>33){ hcmap_EE_Even[k]->Fill(ix,iy,0.);
@@ -280,7 +280,7 @@ int main( int argc, char **argv){
     for( int ix = 0; ix < h_scale_EE_Odd[k]->GetNbinsX()+1 ; ix++ ){
      for(int iy = 0; iy < h_scale_EE_Odd[k]->GetNbinsY()+1 ; iy++ ){
            
-       ir = hrings[k]->GetBinContent(ix,iy);
+       ir = int(hrings[k]->GetBinContent(ix,iy));
        
        bool isGood = CheckxtalIC(h_scale_EE_Odd[k],ix,iy,ir);
        bool isGoodTT;
@@ -304,7 +304,7 @@ int main( int argc, char **argv){
     for( int ix = 0; ix < h_scale_EE_Odd[k]->GetNbinsX()+1 ; ix++ ){
      for(int iy = 0; iy < h_scale_EE_Odd[k]->GetNbinsY()+1 ; iy++ ){
 
-       ir = hrings[k]->GetBinContent(ix,iy);
+       ir = int(hrings[k]->GetBinContent(ix,iy));
       
        if(k!=0){
           if(ir>33){ hcmap_EE_Odd[k]->Fill(ix,iy,0.);
