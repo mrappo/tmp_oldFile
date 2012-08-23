@@ -118,92 +118,90 @@ int main (int argc, char ** argv)
   else if ( splitStat == 1 ) {
     
     /// Prepare the outputs
-    std::string evenFile = "Even_" + outputFile;
-    std::string oddFile = "Odd_" + outputFile;
     TString name;
     TString name2;
     
     if(isMiscalib == true && useZ == 1 && isR9selection==true)
-    { name = Form ("%s_WZ_R9_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_WZ_R9_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_WZ_R9_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_WZ_R9_miscalib_EE_odd.root", outputFile.c_str());
     }
     
     if(isMiscalib == true && useZ == 1 && isEPselection==true)
-    { name = Form ("%s_WZ_EP_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_WZ_EP_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_WZ_EP_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_WZ_EP_miscalib_EE.root", outputFile.c_str());
     }
     
     if(isMiscalib == true && useZ == 1 && isfbrem==true)
-    { name = Form ("%s_WZ_fbrem_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_WZ_fbrem_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_WZ_fbrem_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_WZ_fbrem_miscalib_EE_odd.root", outputFile.c_str());
     }
  
     if(isMiscalib == true && useZ == 1 && isR9selection==false && isEPselection==false && isfbrem==false)
-    { name = Form ("%s_WZ_noEP_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_WZ_noEP_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_WZ_noEP_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_WZ_noEP_miscalib_EE_odd.root", outputFile.c_str());
     }
 
 
 
     if(isMiscalib == false && useZ == 1 && isR9selection==true)
-    { name = Form ("%s_WZ_R9_EE.root",evenFile.c_str());
-      name2 = Form ("%s_WZ_R9_EE.root",oddFile.c_str());
+    { name  = Form ("%s_WZ_R9_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_WZ_R9_EE_odd.root", outputFile.c_str());
     }
     
     if(isMiscalib == false && useZ == 1 && isEPselection==true)
-    { name = Form ("%s_WZ_EP_EE.root",evenFile.c_str());
-      name2 = Form ("%s_WZ_EP_EE.root",oddFile.c_str());
+    { name  = Form ("%s_WZ_EP_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_WZ_EP_EE_odd.root", outputFile.c_str());
     }
 
     if(isMiscalib == false && useZ == 1 && isfbrem==true)
-    { name = Form ("%s_WZ_fbrem_EE.root",evenFile.c_str());
-      name2 = Form ("%s_WZ_fbrem_EE.root",oddFile.c_str());
+    { name  = Form ("%s_WZ_fbrem_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_WZ_fbrem_EE_odd.root", outputFile.c_str());
     }
     if(isMiscalib == false && useZ == 1 && isR9selection==false && isEPselection==false && isfbrem==false)
-    { name = Form ("%s_WZ_noEP_EE.root",evenFile.c_str());
-      name2 = Form ("%s_WZ_noEP_EE.root",oddFile.c_str());
+    { name  = Form ("%s_WZ_noEP_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_WZ_noEP_EE_odd.root", outputFile.c_str());
     }
     
 
     if(isMiscalib == true && useZ == 0 && isR9selection==true)
-    { name = Form ("%s_W_R9_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_W_R9_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_W_R9_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_W_R9_miscalib_EE_odd.root", outputFile.c_str());
     }
     
     if(isMiscalib == true && useZ == 0 && isEPselection==true)
-    { name = Form ("%s_W_EP_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_W_EP_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_W_EP_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_W_EP_miscalib_EE_odd.root", outputFile.c_str());
     }
 
     if(isMiscalib == true && useZ == 0 && isfbrem==true)
-    { name = Form ("%s_W_fbrem_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_W_fbrem_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_W_fbrem_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_W_fbrem_miscalib_EE_odd.root", outputFile.c_str());
     }
   
     if(isMiscalib == true && useZ == 0 && isR9selection==false && isEPselection==false && isfbrem==false)
-    { name = Form ("%s_W_noEP_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_W_noEP_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_W_noEP_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_W_noEP_miscalib_EE_odd.root", outputFile.c_str());
     }
 
     
     if(isMiscalib == false && useZ == 0 && isR9selection==true)
-    { name = Form ("%s_W_R9_EE.root",evenFile.c_str());
-      name2 = Form ("%s_W_R9_EE.root",oddFile.c_str());
+    { name  = Form ("%s_W_R9_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_W_R9_EE_odd.root", outputFile.c_str());
     }
     
     if(isMiscalib == false && useZ == 0 && isEPselection==true)
-    { name = Form ("%s_W_EP_EE.root",evenFile.c_str());
-      name2 = Form ("%s_W_EP_EE.root",oddFile.c_str());
+    { name  = Form ("%s_W_EP_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_W_EP_EE_odd.root", outputFile.c_str());
     }
 
     if(isMiscalib == false && useZ == 0 && isfbrem==true)
-    { name = Form ("%s_W_fbrem_miscalib_EE.root",evenFile.c_str());
-      name2 = Form ("%s_W_fbrem_miscalib_EE.root",oddFile.c_str());
+    { name  = Form ("%s_W_fbrem_miscalib_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_W_fbrem_miscalib_EE_odd.root", outputFile.c_str());
     }
   
     if(isMiscalib == false && useZ == 0 && isR9selection==false && isEPselection==false && isfbrem==false)
-    { name = Form ("%s_W_noEP_EE.root",evenFile.c_str());
-      name2 = Form ("%s_W_noEP_EE.root",oddFile.c_str());
+    { name  = Form ("%s_W_noEP_EE_even.root",outputFile.c_str());
+      name2 = Form ("%s_W_noEP_EE_odd.root", outputFile.c_str());
     }
 
     TFile *f1 = new TFile(name,"RECREATE");
