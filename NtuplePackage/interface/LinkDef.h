@@ -12,7 +12,6 @@
 #pragma link C++ function deltaEta (const double&, const double&);
 #pragma link C++ function deltaPhi (const double&, const double&);
 #pragma link C++ function deltaR (const double&, const double&, const double&, const double&);
-#pragma link C++ function PURescaleFactor (const int&);
 
 #endif
 
