@@ -29,13 +29,13 @@
 
 class TEndcapRings {
  private:
-  float iEndcapRing[100][100][2]; 
+  int iEndcapRing[100][100][2]; 
  public:
   TEndcapRings(); 
   ~TEndcapRings();
-  Int_t GetEndcapRing(Int_t,Int_t,Int_t);
-  Int_t GetEndcapIeta(Int_t,Int_t,Int_t);
-  Int_t GetEndcapIphi(Int_t,Int_t,Int_t);
+  int GetEndcapRing(int,int,int);
+  int GetEndcapIeta(int,int,int);
+  int GetEndcapIphi(int,int,int);
   // ClassDef(TEndcapRings,1); //ring class
 };
 
