@@ -1,0 +1,2 @@
+/media/DATA/SANDBOX/Hggpaper/DoubleElectron_Run2012AB-PromptReco-v1_RECO.root
+/data2/calibrator/NTUPLES/Run2012C/cron_DoubleElectron_Run2012C-PromptReco_AOD.root

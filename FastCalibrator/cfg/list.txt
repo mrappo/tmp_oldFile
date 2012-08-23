@@ -1,0 +1,2 @@
+/data2/calibrator/NTUPLES/Run2012C/cron_SingleElectron_Run2012C-PromptReco_AOD.root
+/data2/calibrator/NTUPLES/Run2012C/cron_DoubleElectron_Run2012C-PromptReco_AOD.root
