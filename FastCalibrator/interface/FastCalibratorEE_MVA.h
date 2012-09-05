@@ -23,6 +23,8 @@
 #include "Math/PtEtaPhiM4D.h"
 #include "Math/LorentzVector.h"
 
+#include "TEndcapRings.h"
+
 class FastCalibratorEE_MVA {
   public :
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -259,8 +261,8 @@ class FastCalibratorEE_MVA {
   
     TString outEPDistribution_p;
 
-   /// Essential values to get EE geometry
-    
+    /// Essential values to get EE geometry
+    TEndcapRings* eRings;
     static const int IX_MIN = 1;
     static const int IY_MIN = 1;
     static const int IX_MAX = 100;
@@ -270,8 +272,6 @@ class FastCalibratorEE_MVA {
     static const int kxf[200];
   
     static const int kdi[200]; 
-    
-
 };
 
 #endif

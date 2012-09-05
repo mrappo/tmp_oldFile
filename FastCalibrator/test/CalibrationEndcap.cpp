@@ -21,7 +21,6 @@
 #include "ntpleUtils.h"
 #include "TApplication.h"
 #include "CalibrationUtils.h"
-#include "TEndcapRings.h"
 
 
 /// Stand-alone program to produce ECAL single electron calibration plots for EE
@@ -144,7 +143,6 @@ int main (int argc, char **argv)
   TEndcapRings *eRings = new TEndcapRings(); 
   NormalizeIC_EE(hcScale, hcmap, TT_centre_EEP,TT_centre_EEM, eRings);
   
-
   ///--------------------------------------------------------------------------------
   ///--- Build the precision vs ring plot starting from the TH2F of IC folded and not
   ///--------------------------------------------------------------------------------
@@ -157,7 +155,6 @@ int main (int argc, char **argv)
   /// ring geometry for the endcap
   
   BookSpreadHistos_EE(hcmap,hspread,hspreadAll,eRings);
-
   /// Graph Error for spread EE+ and EE-
 
   TGraphErrors *sigma_vs_ring[3];
@@ -196,7 +193,8 @@ int main (int argc, char **argv)
     
   TF1 *fgaus = new TF1("fgaus","gaus",-10,10);
   int np[3] = {0};
-
+  
+  
   /// Gaussian fit for EE+ and EE- ---> not folded
   for (int k = 0; k < 2 ; k++){
     for (int iring = 0; iring < 40; iring++){
@@ -228,7 +226,6 @@ int main (int argc, char **argv)
       scale_vs_ring[2]-> SetPointError(np[2],e,fgaus->GetParError(1));
       np[2]++;    
     }
-
  ///----------------- Statistical Precision  and Residual --------------------
 
   TGraphErrors *statprecision_vs_ring[3];
@@ -263,7 +260,6 @@ int main (int argc, char **argv)
   residual_vs_ring[2]->SetMarkerSize(1);
   residual_vs_ring[2]->SetMarkerColor(kGreen+2);
 
-  
   if (evalStat){
     
     /// acquisition file for statistical precision
@@ -299,9 +295,9 @@ int main (int argc, char **argv)
    for(int i =0; i<2; i++) hstatprecision[i]=new TH1F*[40];
 
    TH1F **hstatprecisionAll= new TH1F*[40];
- 
+   
    BookSpreadStatHistos_EE(hcmap2,hcmap3,hstatprecision,hstatprecisionAll,eRings);
-
+   
    /// Gaussian fit of the even/odd distribution (rms of the distribution can be also used)
    int n[3] = {0};
    for (int k = 0; k < 2; k++){
@@ -337,8 +333,7 @@ int main (int argc, char **argv)
     /// Residual spread plot
     for (int k = 0; k < 3 ; k++) ResidualSpread (statprecision_vs_ring[k], sigma_vs_ring[k], residual_vs_ring[k]);
       
- }
-
+  }
  /// Momentum scale correction
  
  TFile* input = new TFile(inputMomentumScale.c_str());
@@ -364,7 +359,6 @@ int main (int argc, char **argv)
  PhiProjectionEEm->SetMarkerSize(1);
  PhiProjectionEEm->SetMarkerColor(kBlue);
  
-
  TGraphErrors* PhiProjectionEEp_Corrected = new TGraphErrors();
  TGraphErrors* PhiProjectionEEm_Corrected = new TGraphErrors();
 
@@ -379,7 +373,6 @@ int main (int argc, char **argv)
  PhiProfileEE(PhiProjectionEEm, g_EoC_EE, hcmap[0],eRings,-1);
  
  PhiProfileEE(PhiProjectionEEp, g_EoC_EE, hcmap[1],eRings,1);
-
 
  /// Correction EE+ and EE-
 
@@ -412,7 +405,6 @@ int main (int argc, char **argv)
      mapMomentumCorrected[1]->SetBinContent(ix,iy,hcmap[1]->GetBinContent(ix,iy)*yphi);
    }
   }
-  
  /// New Normalization after momentum scale correction
 
  TH2F** hcmapFinalEE= new TH2F*[2];
@@ -427,12 +419,12 @@ int main (int argc, char **argv)
 
  NormalizeIC_EE(mapMomentumCorrected, hcmapFinalEE, TT_centre_EEP,TT_centre_EEM, eRings,false);
 
+
  /// EE+ and EE- projection after correction
 
  PhiProfileEE(PhiProjectionEEm_Corrected, g_EoC_EE, hcmapFinalEE[0],eRings,-1);
  
  PhiProfileEE(PhiProjectionEEp_Corrected, g_EoC_EE, hcmapFinalEE[1],eRings,1);
-
 
  /// Projection Histos :
  TH1F* ProfileEEp = new TH1F ("ProfileEEp","ProfileEEp",60,0.9,1.1);
@@ -470,7 +462,6 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
  ProfileEEp->Fit("fgaus","QRME");
 
  cout<<" EEp Uncorrected: Mean = "<<fgaus->GetParameter(1)<<" Sigma "<<fgaus->GetParameter(2)<<endl;
-
 
  for( int i=0; i<PhiProjectionEEm_Corrected->GetN(); i++){
    double x,y;

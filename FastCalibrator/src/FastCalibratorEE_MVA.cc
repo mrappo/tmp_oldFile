@@ -1,6 +1,5 @@
 #include "FastCalibratorEE_MVA.h"
 #include "GetHashedIndexEE.h"
-#include "EERings.h"
 #include <TH2.h>
 #include <TF1.h>
 #include <TStyle.h>
@@ -25,7 +24,10 @@ outEPDistribution_p(outEPDistribution){
 
     tree = (TTree*)gDirectory->Get("ntu");
   }
-   
+  
+  // endcap geometry
+  eRings = new TEndcapRings(); 
+  
   /// Vector for ring normalization IC
   SumIC_Ring_EEP.assign(40,0);
   SumIC_Ring_EEM.assign(40,0);
@@ -390,7 +392,7 @@ void FastCalibratorEE_MVA::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
     int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
     int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
     int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-    int ir_seed = EERings(ix_seed,iy_seed,iz_seed); /// Seed ring 
+    int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring 
   
     bool skipElectron = false;
     
@@ -459,7 +461,7 @@ void FastCalibratorEE_MVA::BuildEoPeta_ele(int iLoop, int nentries , int useW, i
     int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
     int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
     int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-    int ir_seed = EERings(ix_seed,iy_seed,iz_seed); /// Seed ring
+    int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring
  
      
     bool skipElectron = false;
@@ -633,7 +635,7 @@ void FastCalibratorEE_MVA::Loop(int nentries, int useZ, int useW, int splitStat,
        int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
        int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
        int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-       int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
+       int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
       
        TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed);
        
@@ -802,7 +804,7 @@ void FastCalibratorEE_MVA::Loop(int nentries, int useZ, int useW, int splitStat,
        int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
        int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
        int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-       int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
+       int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
  
        TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed); /// Use correct pdf for reweight events in the L3 procedure
        /// E/p and R9 selections
@@ -1009,7 +1011,7 @@ void FastCalibratorEE_MVA::Loop(int nentries, int useZ, int useW, int splitStat,
              ICValues_EEP.push_back(thisIntercalibConstant);
            }
 
-       int thisIr = EERings(thisIx,thisIy,thisIz); /// Endcap ring  xtal belongs to
+       int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz); /// Endcap ring  xtal belongs to
        if(thisIz >0)
        {
         SumIC_Ring_EEP.at(thisIr) = SumIC_Ring_EEP.at(thisIr) + thisIntercalibConstant;
@@ -1037,7 +1039,7 @@ void FastCalibratorEE_MVA::Loop(int nentries, int useZ, int useW, int splitStat,
        int thisIy = GetIyFromHashedIndex(iIndex);
        int thisIz = GetZsideFromHashedIndex(iIndex);
 
-       int thisIr = EERings(thisIx,thisIy,thisIz);
+       int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz);
 
        float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
      

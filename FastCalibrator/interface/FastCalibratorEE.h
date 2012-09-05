@@ -24,21 +24,24 @@
 #include "Math/LorentzVector.h"
 
 #include "readJSONFile.h"
+#include "TEndcapRings.h"
 
-class FastCalibratorEE {
+class FastCalibratorEE
+{
   public :
+
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t           fCurrent; //!current Tree number in a TChain
-
-   ///! Declaration of leaf types
+    
+    
+    ///! Declaration of leaf types
     Int_t           runId;
     Int_t           lumiId;
     Int_t           eventId;
     Int_t           isW;
     Int_t           isZ;
 
-  ///! Ele1 Variables
-    
+    ///! Ele1 Variables
     std::vector<float>   *ele1_recHit_E;
     std::vector<int>     *ele1_recHit_hashedIndex;
     std::vector<int>     *ele1_recHit_ietaORix;
@@ -64,8 +67,7 @@ class FastCalibratorEE {
     Float_t         ele1_scE_regression;
     Float_t         ele1_scERaw_PUcleaned;
 
-  ///! Ele1 Variables
-    
+    ///! Ele1 Variables
     std::vector<float>   *ele2_recHit_E;
     std::vector<int>     *ele2_recHit_hashedIndex;
     std::vector<int>     *ele2_recHit_iphiORiy;
@@ -92,8 +94,7 @@ class FastCalibratorEE {
     Float_t         ele2_scERaw_PUcleaned;
 
 
-   ///!  List of input branches from ntu
-    
+    ///!  List of input branches from ntu
     TBranch        *b_runId;   //!
     TBranch        *b_lumiId;  //!
     TBranch        *b_eventId; //!
@@ -148,8 +149,7 @@ class FastCalibratorEE {
     TBranch        *b_ele2_scE_regression;
     TBranch        *b_ele2_scERaw_PUcleaned;
 
-  ///! Class methods
-  
+    ///! Class methods
     FastCalibratorEE(TTree *tree=0, TString outEPDistribution="NULL");
     virtual ~FastCalibratorEE();
 
@@ -178,8 +178,7 @@ class FastCalibratorEE {
     
     virtual bool     CheckDeadXtal(const int & iX, const int & iY, const int & iZ);
 
-  /// Output informations
-  
+   /// Output informations
     hChain     *hC_EoP_ir_ele;
    
     TH1F       *h_scale_hashedIndex_EE;
@@ -187,7 +186,6 @@ class FastCalibratorEE {
     hChain     *hC_EoP;
    
     /// EE+
-    
     hChain     *hC_IntercalibValues_EEP;
     hChain     *hC_PullFromScalib_EEP;
     h2Chain    *hC_scale_EEP;
@@ -210,7 +208,6 @@ class FastCalibratorEE {
     
     
     /// EE-
-    
     hChain     *hC_IntercalibValues_EEM;
     hChain     *hC_PullFromScalib_EEM;
     h2Chain    *hC_scale_EEM;
@@ -230,8 +227,7 @@ class FastCalibratorEE {
     std::vector<float> SumIC_Ring_EEM;
     std::vector<int> Sumxtal_Ring_EEM;
  
-   /// Dead Channel infos
-    
+    /// Dead Channel infos
     std::vector<int> DeadXtal_HashedIndex;
 
     TH2F       *h_map_Dead_Channels_EEP ;
@@ -245,7 +241,8 @@ class FastCalibratorEE {
   
     TString outEPDistribution_p;
 
-   /// Essential values to get EE geometry
+    /// Essential values to get EE geometry
+    TEndcapRings* eRings;
     
     static const int IX_MIN = 1;
     static const int IY_MIN = 1;
@@ -256,8 +253,6 @@ class FastCalibratorEE {
     static const int kxf[200];
   
     static const int kdi[200]; 
-    
-
 };
 
 #endif

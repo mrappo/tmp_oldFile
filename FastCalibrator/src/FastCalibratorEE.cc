@@ -1,6 +1,5 @@
 #include "FastCalibratorEE.h"
 #include "GetHashedIndexEE.h"
-#include "EERings.h"
 #include <TH2.h>
 #include <TF1.h>
 #include <TStyle.h>
@@ -26,7 +25,10 @@ outEPDistribution_p(outEPDistribution)
     tree = (TTree*)gDirectory->Get("ntu");
 
   }
-   
+  
+  // endcap geometry
+  eRings = new TEndcapRings();  
+ 
   /// Vector for ring normalization IC
   SumIC_Ring_EEP.assign(40,0);
   SumIC_Ring_EEM.assign(40,0);
@@ -94,6 +96,7 @@ void FastCalibratorEE::Init(TTree *tree)
 
   fChain->SetBranchAddress("runId", &runId, &b_runId);
   fChain->SetBranchAddress("lumiId", &lumiId, &b_lumiId);
+  fChain->SetBranchAddress("eventId", &eventId, &b_eventId);
   fChain->SetBranchAddress("isW", &isW, &b_isW);
   fChain->SetBranchAddress("isZ", &isZ, &b_isZ);
   
@@ -237,19 +240,20 @@ void FastCalibratorEE::bookHistos(int nLoops)
 
 ///===== Build E/p for electron 1 and 2
 
-void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool       isSaveEPDistribution, bool isR9selection, bool isMCTruth,bool isfbrem)
+void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration, bool isSaveEPDistribution, bool isR9selection, bool isMCTruth,bool isfbrem)
 
 {
-  if(iLoop ==0)  
+  if(iLoop ==0)
   {
    TString name = Form ("hC_EoP_eta_%d",iLoop);
    hC_EoP_ir_ele = new hChain (name,name, 250,0.1,3.0,41);
   }
-  else{
-          hC_EoP_ir_ele -> Reset();
-          TString name = Form ("hC_EoP_eta_%d",iLoop);
-          hC_EoP_ir_ele = new hChain (name,name, 250,0.1,3.0,41);
-      }
+  else
+  {
+    hC_EoP_ir_ele -> Reset();
+    TString name = Form ("hC_EoP_eta_%d",iLoop);
+    hC_EoP_ir_ele = new hChain (name,name, 250,0.1,3.0,41);
+  }
 
   Long64_t nbytes = 0, nb = 0;
   /// Loop on ntu entries
@@ -315,8 +319,8 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
      int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
      int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-     int ir_seed = EERings(ix_seed,iy_seed,iz_seed); /// Seed ring 
- 
+     int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring 
+     
      pSub = 0.; //NOTALEO : test dummy
       
      bool skipElectron = false;
@@ -391,7 +395,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
      int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
      int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-     int ir_seed = EERings(ix_seed,iy_seed,iz_seed); /// Seed ring
+     int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring
  
      
      pSub = 0.; //NOTALEO : test dummy
@@ -491,8 +495,8 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
     std::cout << "Number of analyzed events = " << nentries << std::endl;
     
     Long64_t nbytes = 0, nb = 0;
-    for (Long64_t jentry=0; jentry<nentries;jentry++) {
-      
+    for (Long64_t jentry=0; jentry<nentries;jentry++)
+    {
         if (!(jentry%100000))std::cerr<<jentry;
         if (!(jentry%10000)) std::cerr<<".";
       
@@ -508,16 +512,16 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
         
         bool skipEvent = false;
 	if( isMCTruth == 0 )
-	  {
-	    if(AcceptEventByRunAndLumiSection(runId,lumiId,jsonMap) == false) skipEvent = true;
-
-	    std::pair<int,Long64_t> eventLSandID(lumiId,eventId);
-	    std::pair<int,std::pair<int,Long64_t> > eventRUNandLSandID(runId,eventLSandID);
-	    if( eventsMap[eventRUNandLSandID] == 1 ) skipEvent = true;
-	    else eventsMap[eventRUNandLSandID] = 1;
-	  }
+        {
+          if(AcceptEventByRunAndLumiSection(runId,lumiId,jsonMap) == false) skipEvent = true;
+          
+          std::pair<int,Long64_t> eventLSandID(lumiId,eventId);
+          std::pair<int,std::pair<int,Long64_t> > eventRUNandLSandID(runId,eventLSandID);
+          if( eventsMap[eventRUNandLSandID] == 1 ) skipEvent = true;
+          else eventsMap[eventRUNandLSandID] = 1;
+        }
         
-        if( skipEvent == true ) continue;
+        //if( skipEvent == true ) continue;
         
         
         
@@ -596,7 +600,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
        int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
        int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
        int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-       int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
+       int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
       
        TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed);
        
@@ -760,7 +764,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
           int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
           int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-          int ir_seed = EERings(ix_seed,iy_seed,iz_seed);
+          int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
  
           TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed); /// Use correct pdf for reweight events in the L3 procedure
           /// E/p and R9 selections
@@ -950,7 +954,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
              ICValues_EEP.push_back(thisIntercalibConstant);
            }
 
-       int thisIr = EERings(thisIx,thisIy,thisIz); /// Endcap ring  xtal belongs to
+       int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz); /// Endcap ring  xtal belongs to
        if(thisIz >0)
        {
         SumIC_Ring_EEP.at(thisIr) = SumIC_Ring_EEP.at(thisIr) + thisIntercalibConstant;
@@ -978,7 +982,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
        int thisIy = GetIyFromHashedIndex(iIndex);
        int thisIz = GetZsideFromHashedIndex(iIndex);
 
-       int thisIr = EERings(thisIx,thisIy,thisIz);
+       int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz);
 
        float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
      

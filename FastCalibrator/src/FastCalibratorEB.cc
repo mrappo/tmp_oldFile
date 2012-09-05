@@ -470,10 +470,10 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
      h_map_Dead_Channels->Fill(GetIphiFromHashedIndex(iIndex),GetIetaFromHashedIndex(iIndex));
      }
      else{
-     
-         if(isMiscalib==true) theScalibration[iIndex] = genRand.Gaus(1.,0.05); ///! 5% of Miscalibration fixed
-         if(isMiscalib == false) theScalibration[iIndex] = 1.;
-         h_scalib_EB -> Fill ( GetIphiFromHashedIndex(iIndex), GetIetaFromHashedIndex(iIndex), theScalibration[iIndex] ); ///! Scalib map
+       
+       if(isMiscalib == true) theScalibration[iIndex] = genRand.Gaus(1.,0.01); ///! 5% of Miscalibration fixed
+       if(isMiscalib == false) theScalibration[iIndex] = 1.;
+       h_scalib_EB -> Fill ( GetIphiFromHashedIndex(iIndex), GetIetaFromHashedIndex(iIndex), theScalibration[iIndex] ); ///! Scalib map
      }
    }
 
@@ -524,7 +524,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           else eventsMap[eventRUNandLSandID] = 1;
         }
         
-	if( skipEvent == true ) continue;
+        //if( skipEvent == true ) continue;
         
         
         
