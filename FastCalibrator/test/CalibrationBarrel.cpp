@@ -806,7 +806,7 @@ int main(int argc, char **argv){
    sigma_vs_EtaFold_corrected->Draw("ap");
    if (evalStat){
     statprecision_vs_EtaFold->Draw("psame");
-    sigma_vs_EtaFold->Draw("psame");
+    //sigma_vs_EtaFold->Draw("psame");
     TLegend * leg2 = new TLegend(0.6,0.7,0.89, 0.89);
     leg2->SetFillColor(0);
     leg2->AddEntry(statprecision_vs_EtaFold,"statistical precision", "LP");
