@@ -12,7 +12,7 @@
 
 
 /// Default constructor 
-FastCalibratorEE::FastCalibratorEE(TTree *tree,TString outEPDistribution):
+FastCalibratorEE::FastCalibratorEE(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, TString outEPDistribution):
 outEPDistribution_p(outEPDistribution)
 {
 // if parameter tree is not specified (or zero), connect the file
@@ -36,6 +36,10 @@ outEPDistribution_p(outEPDistribution)
   Sumxtal_Ring_EEM.assign(40,0);
   
   Init(tree);
+
+  // Set my momentum scale using the input graphs
+  myMomentumScale = inputMomentumScale;
+
 }
 
 /// Deconstructor
@@ -316,21 +320,30 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
            }
 
           
-     int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
-     int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
-     int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-     int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring 
+     int ix_seed   = GetIxFromHashedIndex(seed_hashedIndex);
+     int iy_seed   = GetIyFromHashedIndex(seed_hashedIndex);
+     int iz_seed   = GetZsideFromHashedIndex(seed_hashedIndex);
+     int ir_seed   = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring 
+     int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
+     int momScaleIndex = 0;
+     if ( iz_seed > 0 ) momScaleIndex = 1;
      
      pSub = 0.; //NOTALEO : test dummy
       
      bool skipElectron = false;
     
      /// Option for MCTruth analysis
-     if(!isMCTruth){ pIn = ele1_tkP;
+     if(!isMCTruth)
+     { 
+       pIn = ele1_tkP;
+       //NOTALEO
+       pIn *= myMomentumScale[momScaleIndex] -> Eval( iphi_seed );
      }
-     else{ pIn = ele1_E_true;
-           if(fabs(ele1_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
-         }
+     else
+     { 
+       pIn = ele1_E_true;
+       if(fabs(ele1_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
+     }
 
      /// R9, fbrem selection before E/p distribution
      if(fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele1_scEta)<=1.75) skipElectron = true;
@@ -396,17 +409,23 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
      int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
      int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring
- 
+     int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
+     int momScaleIndex = 0;
+     if ( iz_seed > 0 ) momScaleIndex = 1;
      
      pSub = 0.; //NOTALEO : test dummy
      bool skipElectron = false;
      /// Option for MCTruth Analysis
-     if(!isMCTruth){
-      pIn = ele2_tkP;
+     if(!isMCTruth)
+     {
+       pIn = ele2_tkP;
+       pIn *= myMomentumScale[momScaleIndex] -> Eval( iphi_seed );
      }
-     else{ pIn = ele2_E_true;
-           if(fabs(ele2_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
-         }
+     else
+     { 
+       pIn = ele2_E_true;
+       if(fabs(ele2_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
+     }
      /// R9 and fbrem selection
      if(fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele2_scEta)<=1.75) skipElectron = true;
      if(fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele2_scEta)>1.75 && fabs(ele2_scEta)<=2.0) skipElectron = true;
@@ -581,26 +600,32 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
                  
               }
             
-          pSub = 0.; //NOTALEO : test dummy
+        /// find the zside
+        int thisCaliBlock = -1;
+        if (GetZsideFromHashedIndex(ele1_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
+        else thisCaliBlock = 1;
+ 
+        int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
+        int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
+        int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
+        int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
+        int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
+        int momScaleIndex = 0;
+        if ( iz_seed > 0 ) momScaleIndex = 1;
+
+        pSub = 0.; //NOTALEO : test dummy
       
         /// MCTruth option 
-         if(!isMCTruth) {
-          pIn = ele1_tkP;
+         if(!isMCTruth) 
+         {
+           pIn = ele1_tkP;
+           pIn *= myMomentumScale[momScaleIndex] -> Eval( iphi_seed );
          }
          else{
            pIn = ele1_E_true;
            if(fabs(ele1_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
          }
         
-       /// find the zside
-       int thisCaliBlock = -1;
-       if (GetZsideFromHashedIndex(ele1_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
-       else thisCaliBlock = 1;
- 
-       int ix_seed = GetIxFromHashedIndex(seed_hashedIndex);
-       int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
-       int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
-       int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
       
        TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed);
        
@@ -745,17 +770,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
               thisE3x3+=theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
                  
               }
-            
-          pSub = 0.; //NOTALEO : test dummy
-          /// Option for MCTruth Analysis
-          if(!isMCTruth)  
-	  {
-            pIn = ele2_tkP;
-          }
-          else{
-           pIn = ele2_E_true;
-           if(fabs(ele2_DR)>0.1) skipElectron = true ; /// No macthing beetween gen ele and reco ele
-          }
+
           /// find the zside
           int thisCaliBlock = -1;
           if (GetZsideFromHashedIndex(ele2_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
@@ -765,7 +780,23 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
           int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
           int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
- 
+          int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
+          int momScaleIndex = 0;
+          if ( iz_seed > 0 ) momScaleIndex = 1;
+            
+          pSub = 0.; //NOTALEO : test dummy
+          /// Option for MCTruth Analysis
+          if(!isMCTruth)  
+	  {
+            pIn = ele2_tkP;
+            pIn *= myMomentumScale[momScaleIndex] -> Eval( iphi_seed );
+          }
+          else
+          {
+            pIn = ele2_E_true;
+            if(fabs(ele2_DR)>0.1) skipElectron = true ; /// No macthing beetween gen ele and reco ele
+          }
+
           TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed); /// Use correct pdf for reweight events in the L3 procedure
           /// E/p and R9 selections
           if ( fabs(thisE/(pIn-ele2_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;

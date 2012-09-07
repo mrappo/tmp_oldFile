@@ -4,6 +4,7 @@
 #include <TF1.h>
 #include <TStyle.h>
 #include <TCanvas.h>
+#include <TRandom.h>
 #include <TRandom3.h>
 #include <iostream>
 #include <fstream>
@@ -14,11 +15,11 @@
 
 ///==== Default constructor Contructor 
 
-FastCalibratorEB::FastCalibratorEB(TTree *tree,TString outEPDistribution):
+FastCalibratorEB::FastCalibratorEB(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, TString outEPDistribution):
 outEPDistribution_p(outEPDistribution)
 {
-// if parameter tree is not specified (or zero), connect the file
-// used to generate this class and read the Tree.
+  // if parameter tree is not specified (or zero), connect the file
+  // used to generate this class and read the Tree.
   if (tree == 0) {
     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/data1/dimatteo/Calibration/Ntuples/Run2011A/WZAnalysisSingleXtal/WZAnalysis_SingleElectron_Run2011A-WElectron-May10ReReco-v1.root");
     if (!f) {
@@ -28,6 +29,10 @@ outEPDistribution_p(outEPDistribution)
 
   }
   Init(tree);
+
+  // Set my momentum scale using the input graphs
+  myMomentumScale = inputMomentumScale;
+
 }
 
 ///==== deconstructor
@@ -277,7 +282,6 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
               seed_hashedIndex=ele1_recHit_hashedIndex -> at(iRecHit);
               iseed=iRecHit;
               E_seed=ele1_recHit_E -> at(iRecHit);  ///! Seed search
-
             }
     
             if (iLoop > 0) thisIC = h_scale_EB_hashedIndex -> GetBinContent(thisIndex+1);
@@ -314,6 +318,8 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      if(!isMCTruth)  
      {
       pIn = ele1_tkP;
+      //NOTALEO
+      pIn *= myMomentumScale[0] -> Eval( ele1_recHit_iphiORiy -> at(iseed) );
      }
      else{
            pIn = ele1_E_true;
@@ -353,7 +359,6 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
               seed_hashedIndex=ele2_recHit_hashedIndex -> at(iRecHit);
               iseed=iRecHit;
               E_seed=ele2_recHit_E -> at(iRecHit); ///Seed informations
-
             }
     
             
@@ -389,13 +394,14 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      /// MCTruth analysis option
      
      if(!isMCTruth)  
-     {
-      pIn = ele2_tkP;
-     }
+       {
+	 pIn = ele2_tkP;
+         pIn *= myMomentumScale[0] -> Eval( ele2_recHit_iphiORiy -> at(iseed) );
+       }
      else{
-           pIn = ele2_E_true;
-           if(fabs(ele2_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
-         }
+       pIn = ele2_E_true;
+       if(fabs(ele2_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
+     }
      
      ///R9 Selection
      if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
@@ -564,7 +570,6 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
               E_seed=ele1_recHit_E -> at(iRecHit);
               iseed=iRecHit;
               seed_hashedIndex=ele1_recHit_hashedIndex -> at(iRecHit); //! Seed Infos
- 
              }
           
               
@@ -592,6 +597,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           if(!isMCTruth)  
 	  {
            pIn = ele1_tkP;
+           pIn *= myMomentumScale[0] -> Eval( ele1_recHit_iphiORiy -> at(iseed) );
           }
           else{
            pIn = ele1_E_true;
@@ -685,7 +691,6 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
               E_seed=ele2_recHit_E -> at(iRecHit);
               iseed=iRecHit;
               seed_hashedIndex=ele2_recHit_hashedIndex -> at(iRecHit); /// Seed information
- 
              }
           
               
@@ -716,6 +721,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           if(!isMCTruth)  
           {
            pIn = ele2_tkP;
+           pIn *= myMomentumScale[0] -> Eval( ele2_recHit_iphiORiy -> at(iseed) );
           }
           else{
            pIn = ele2_E_true;

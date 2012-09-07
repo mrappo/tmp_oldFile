@@ -43,6 +43,8 @@ int main (int argc, char ** argv)
   bool isR9selection = gConfigParser -> readBoolOption("Input::isR9selection");
   bool isMCTruth = gConfigParser -> readBoolOption("Input::isMCTruth");
   bool isfbrem = gConfigParser -> readBoolOption("Input::isfbrem");
+  std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
+  int nEtaBinsEE = gConfigParser -> readIntOption("Input::nEtaBinsEE");
   
   std::string outputFile      = gConfigParser -> readStringOption("Output::outputFile");
   
@@ -55,6 +57,15 @@ int main (int argc, char ** argv)
   TChain * albero = new TChain (inputTree.c_str());
   FillChain(*albero,inputList); 
   
+  /// open calibration momentum graph
+  TFile *f4 = new TFile(inputMomentumScale.c_str());
+  std::vector<TGraphErrors*> g_EoC_EE;
+
+  for (int i =0 ; i< nEtaBinsEE ; i++){
+    TString Name = Form ("g_EoC_EE_%d",i);
+    g_EoC_EE.push_back ( (TGraphErrors*)f4->Get(Name) );
+  }
+
   ///Use the whole sample statistics if numberOfEvents < 0
   if ( numberOfEvents < 0 ) numberOfEvents = albero->GetEntries(); 
   
@@ -97,7 +108,7 @@ int main (int argc, char ** argv)
     
     if(isSaveEPDistribution == true)
     {
-     FastCalibratorEE analyzer(albero,outEPDistribution);
+     FastCalibratorEE analyzer(albero, g_EoC_EE, outEPDistribution);
      analyzer.bookHistos(nLoops);
      analyzer.AcquireDeadXtal(DeadXtal);
      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
@@ -105,7 +116,7 @@ int main (int argc, char ** argv)
     }
     else
     {
-     FastCalibratorEE analyzer(albero);
+     FastCalibratorEE analyzer(albero, g_EoC_EE);
      analyzer.bookHistos(nLoops);
      analyzer.AcquireDeadXtal(DeadXtal);  
      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
@@ -210,14 +221,14 @@ int main (int argc, char ** argv)
   
      
     /// Run on odd
-    FastCalibratorEE analyzer_even(albero);
+    FastCalibratorEE analyzer_even(albero, g_EoC_EE);
     analyzer_even.bookHistos(nLoops);
     analyzer_even.AcquireDeadXtal(DeadXtal);
     analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
     analyzer_even.saveHistos(f1);
   
     /// Run on even
-    FastCalibratorEE analyzer_odd(albero);
+    FastCalibratorEE analyzer_odd(albero, g_EoC_EE);
     analyzer_odd.bookHistos(nLoops);
     analyzer_odd.AcquireDeadXtal(DeadXtal);
     analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);

@@ -27,6 +27,8 @@
 
 class FastCalibratorEB {
   public :
+    std::vector<TGraphErrors*> myMomentumScale;
+
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t           fCurrent; //!current Tree number in a TChain
 
@@ -156,7 +158,7 @@ class FastCalibratorEB {
 
    ///! List of class methods
    
-    FastCalibratorEB(TTree *tree=0, TString outEPDistribution="NULL");
+    FastCalibratorEB(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, TString outEPDistribution="NULL");
    
     virtual ~FastCalibratorEB();
     

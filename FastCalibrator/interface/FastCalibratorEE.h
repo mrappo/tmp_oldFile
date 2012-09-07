@@ -29,6 +29,7 @@
 class FastCalibratorEE
 {
   public :
+    std::vector<TGraphErrors*> myMomentumScale;
 
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t           fCurrent; //!current Tree number in a TChain
@@ -150,7 +151,8 @@ class FastCalibratorEE
     TBranch        *b_ele2_scERaw_PUcleaned;
 
     ///! Class methods
-    FastCalibratorEE(TTree *tree=0, TString outEPDistribution="NULL");
+    FastCalibratorEE(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, TString outEPDistribution="NULL");
+
     virtual ~FastCalibratorEE();
 
     virtual void     bookHistos(int);
