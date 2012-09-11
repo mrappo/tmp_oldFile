@@ -42,6 +42,8 @@ int main (int argc, char ** argv)
   bool isEPselection = gConfigParser -> readBoolOption("Input::isEPselection");
   bool isR9selection = gConfigParser -> readBoolOption("Input::isR9selection");
   bool isMCTruth = gConfigParser -> readBoolOption("Input::isMCTruth");
+  std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
+  int nEtaBinsEB = gConfigParser -> readIntOption("Input::nEtaBinsEB");
   
   std::string outputFile      = gConfigParser -> readStringOption("Output::outputFile");
 
@@ -56,6 +58,15 @@ int main (int argc, char ** argv)
   /// open ntupla of data or MC
   TChain * albero = new TChain (inputTree.c_str());
   FillChain(*albero,inputList); 
+
+  /// open calibration momentum graph
+  TFile *f4 = new TFile(inputMomentumScale.c_str());
+  std::vector<TGraphErrors*> g_EoC_EB;
+
+  for (int i =0 ; i< nEtaBinsEB ; i++){
+    TString Name = Form ("g_EoC_EB_%d",i);
+    g_EoC_EB.push_back ( (TGraphErrors*)f4->Get(Name) );
+  }
   
   ///Use the whole sample statistics if numberOfEvents < 0
   if ( numberOfEvents < 0 ) numberOfEvents = albero->GetEntries(); 
@@ -93,7 +104,7 @@ int main (int argc, char ** argv)
 
     if(isSaveEPDistribution == true)
     {
-     FastCalibratorEB analyzer(albero,outEPDistribution);
+     FastCalibratorEB analyzer(albero, g_EoC_EB, outEPDistribution);
      analyzer.bookHistos(nLoops);
      analyzer.AcquireDeadXtal(DeadXtal);
      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,jsonMap);
@@ -101,7 +112,7 @@ int main (int argc, char ** argv)
     }
     else
     {
-     FastCalibratorEB analyzer(albero);
+     FastCalibratorEB analyzer(albero, g_EoC_EB);
      analyzer.bookHistos(nLoops);
      analyzer.AcquireDeadXtal(DeadXtal);
      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,jsonMap);
@@ -183,14 +194,14 @@ int main (int argc, char ** argv)
     TString DeadXtal = Form("%s",inputFileDeadXtal.c_str());
      
     /// Run on odd
-    FastCalibratorEB analyzer_even(albero);
+    FastCalibratorEB analyzer_even(albero, g_EoC_EB);
     analyzer_even.bookHistos(nLoops);
     analyzer_even.AcquireDeadXtal(DeadXtal);
     analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,jsonMap);
     analyzer_even.saveHistos(f1);
   
     /// Run on even
-    FastCalibratorEB analyzer_odd(albero);
+    FastCalibratorEB analyzer_odd(albero, g_EoC_EB);
     analyzer_odd.bookHistos(nLoops);
     analyzer_odd.AcquireDeadXtal(DeadXtal);
     analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,jsonMap);
