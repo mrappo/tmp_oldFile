@@ -1,1 +1,1 @@
-/media/DATA/ALCARECO/DYSummer12/DYJets-Summer12.root
+/gwteray/users/benaglia/CALIBRATION/NTUPLES_EOverP/MC/DYJets-Summer12.root
