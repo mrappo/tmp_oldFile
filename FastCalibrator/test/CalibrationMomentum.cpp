@@ -151,6 +151,9 @@ int main(int argc, char** argv){
   }
   weightsFile.Close();
 
+//histos to get the bin in phi given the electron phi
+ TH1F* hPhiBinEB = new TH1F("hphiEB","hphiEB",nPhiBinsEB, -1*PI,1.*PI);
+ TH1F* hPhiBinEE = new TH1F("hphiEE","hphiEE",nPhiBinsEE, -1*PI,1.*PI);
 
   //----- NTUPLES--------------------
   TChain *ntu_DA = new TChain(TreeName.c_str());
@@ -425,7 +428,7 @@ int main(int argc, char** argv){
 
     if(ele1_iz==0){
 
-       var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2))/91.19;
+       var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg2/scEne2))/91.19;
 
        int modPhi = int (ele1_iphi/(360./nPhiBinsTempEB));
        int modEta  = templIndexEB(ele1_ieta);
@@ -435,7 +438,8 @@ int main(int argc, char** argv){
        else h_template_EB[modPhi][modEta]->Fill(var,ww);
 
        // fill MC histos in eta bins
-       int PhibinEB = int (ele1_iphi/(360./nPhiBinsEB)); 
+       //int PhibinEB = int (ele2_iphi/(360./nPhiBinsEB)); 
+       int PhibinEB = hPhiBinEB->FindBin(scPhi) - 1 ; 
  
        if(PhibinEB==nPhiBinsEB){ h_EoP_EB[0][modEta]-> Fill(var,ww);  // This is MC 
                                  h_phi_mc_EB[modEta]->Fill(scPhi,ww);}
@@ -463,7 +467,8 @@ int main(int argc, char** argv){
           else h_template_EE[modPhi][modEta] ->  Fill(var,ww);
 
           // fill MC histos in eta bins
-          int PhibinEE = int (iphi/(360./nPhiBinsEE)); 
+          //int PhibinEE = int (iphi/(360./nPhiBinsEE)); 
+	  int PhibinEE = hPhiBinEE->FindBin(scPhi) - 1 ;
           if(PhibinEE==nPhiBinsEE){ h_EoP_EE[0][modEta] -> Fill(var,ww);  // This is MC
                                     h_phi_mc_EE[modEta]->Fill(scPhi,ww);}
           else{
@@ -477,7 +482,7 @@ int main(int argc, char** argv){
  
     if(ele2_iz==0){
 
-       var = (mZ  * sqrt(pTK2/scEne2)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2))/91.19;
+       var = (mZ  * sqrt(pTK2/scEne2)* sqrt(scEneReg/scEne))/91.19;
  
        int modPhi = int (ele2_iphi/(360./nPhiBinsTempEB));
        int modEta  = templIndexEB(ele2_ieta);
@@ -486,8 +491,9 @@ int main(int argc, char** argv){
        else h_template_EB[modPhi][modEta]->Fill(var,ww);
 
        // fill MC histos in eta bins
-       int PhibinEB = int (ele2_iphi/(360./nPhiBinsEB)); 
- 
+       //int PhibinEB = int (ele2_iphi/(360./nPhiBinsEB)); 
+       int PhibinEB = hPhiBinEB->FindBin(scPhi) - 1 ; 
+
        if(PhibinEB==nPhiBinsEB){ h_EoP_EB[0][modEta]-> Fill(var,ww);  // This is MC 
                                  h_phi_mc_EB[modEta]->Fill(scPhi2,ww);}
        else{ h_EoP_EB[PhibinEB][modEta] -> Fill(var,ww);  // This is MC
@@ -514,7 +520,8 @@ int main(int argc, char** argv){
           else h_template_EE[modPhi][modEta] ->  Fill(var,ww);
 
           // fill MC histos in eta bins
-          int PhibinEE = int (iphi/(360./nPhiBinsEE)); 
+          //int PhibinEE = int (iphi/(360./nPhiBinsEE)); 
+	  int PhibinEE = hPhiBinEE->FindBin(scPhi) - 1 ; 
           if(PhibinEE==nPhiBinsEE){ h_EoP_EE[0][modEta] -> Fill(var,ww);  // This is MC
                                     h_phi_mc_EE[modEta]->Fill(scPhi2,ww);}
           else{
@@ -546,9 +553,9 @@ int main(int argc, char** argv){
     //--- set ieta for the Endcaps
     int iphi,ieta;
      
-    if(ele1_iz==0 && ele2_iz==0) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEB))/91.19;
-    if(ele1_iz==0 && ele2_iz==1) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEEP))/91.19;
-    if(ele1_iz==0 && ele2_iz==-1) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEEM))/91.19;
+    if(ele1_iz==0 && ele2_iz==0) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEB))/91.19;
+    if(ele1_iz==0 && ele2_iz==1) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEEP))/91.19;
+    if(ele1_iz==0 && ele2_iz==-1) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEEM))/91.19;
 
     if(ele1_iz==1 && ele2_iz==0) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEP*rescaleFactorEB))/91.19;   
     if(ele1_iz==1 && ele2_iz==1)var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEP*rescaleFactorEEP))/91.19;   
@@ -562,7 +569,8 @@ int main(int argc, char** argv){
 
     if(ele1_iz==0){
 
-       int PhibinEB = int (ele1_iphi/(360./nPhiBinsEB)); 
+      //int PhibinEB = int (ele1_iphi/(360./nPhiBinsEB)); 
+       int PhibinEB = hPhiBinEB->FindBin(scPhi) - 1 ; 
        int modEta =  templIndexEB(ele1_ieta);
        if(modEta == -1) continue;
 
@@ -577,7 +585,8 @@ int main(int argc, char** argv){
      }
     else{  iphi = eRings->GetEndcapIphi(ele1_ix,ele1_iy,ele1_iz); 
            ieta = eRings->GetEndcapIeta(ele1_ix,ele1_iy,ele1_iz);
-           int PhibinEE = int (iphi/(360./nPhiBinsEE));
+           //int PhibinEE = int (iphi/(360./nPhiBinsEE));
+	   int PhibinEE = hPhiBinEE->FindBin(scPhi) - 1 ; 
            int modEta =  templIndexEE(ieta);
            if(modEta == -1) continue;
            if(ele1_iz==1)mapConversionEEp-> SetBinContent(ele1_ix,ele1_iy,scEta);
@@ -594,11 +603,12 @@ int main(int argc, char** argv){
         }
      
     if(ele2_iz!=0) var = (mZ * sqrt(pTK2/scEne2))/91.19;    /// use the momentum for ele1
-    if(ele2_iz==0) var = (mZ * sqrt(pTK2/scEne2)* sqrt(scEneReg/scEne)* sqrt(scEneReg2/scEne2))/91.19;
+    if(ele2_iz==0) var = (mZ * sqrt(pTK2/scEne2)* sqrt(scEneReg/scEne))/91.19;
 
     if(ele2_iz==0){
 
-       int PhibinEB = int (ele2_iphi/(360./nPhiBinsEB)); 
+      //int PhibinEB = int (ele2_iphi/(360./nPhiBinsEB));
+       int PhibinEB = hPhiBinEB->FindBin(scPhi) - 1 ;  
        int modEta =  templIndexEB(ele2_ieta);
        if(modEta == -1) continue;
 
@@ -616,7 +626,8 @@ int main(int argc, char** argv){
            if(ele2_iz==1)mapConversionEEp-> SetBinContent(ele2_ix,ele2_iy,scEta2);
            if(ele2_iz==-1)mapConversionEEm-> SetBinContent(ele2_ix,ele2_iy,scEta2);
 
-           int PhibinEE = int (iphi/(360./nPhiBinsEE)); 
+           //int PhibinEE = int (iphi/(360./nPhiBinsEE));
+	   int PhibinEE = hPhiBinEE->FindBin(scPhi) - 1 ;  
            int modEta =  templIndexEE(ieta);
            if(modEta == -1) continue;
 
@@ -723,11 +734,12 @@ int main(int argc, char** argv){
       if (fStatus !=4 && f_EoP_EB[i][j]->GetParError(1)!=0.) break;
       else if(trial==99) cout <<" No good Fit "<<endl;
      }
+   
     
-    float flPhi = h_Phi_EB[i][j]->GetMean(); 
-
+    //float flPhi = h_Phi_EB[i][j]->GetMean(); 
+    float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i);
     if(i==0) g_EoP_EB[j] -> SetPoint(i, 0. , pow(f_EoP_EB[i][j]->GetParameter(1),2));
-    else  g_EoP_EB[j] -> SetPoint(i, int(flPhi) , pow(f_EoP_EB[i][j]->GetParameter(1),2));
+    else  g_EoP_EB[j] -> SetPoint(i, flPhi , pow(f_EoP_EB[i][j]->GetParameter(1),2));
 
     g_EoP_EB[j] -> SetPointError(i, 0., 2*f_EoP_EB[i][j]->GetParError(1));
         
@@ -763,7 +775,7 @@ int main(int argc, char** argv){
     }
     
     if(i==0) g_EoC_EB[j] -> SetPoint(i, 0., pow(f_EoC_EB[i][j]->GetParameter(1),2));
-    else g_EoC_EB[j] -> SetPoint(i, int(flPhi), pow(f_EoC_EB[i][j]->GetParameter(1),2));
+    else g_EoC_EB[j] -> SetPoint(i, flPhi, pow(f_EoC_EB[i][j]->GetParameter(1),2));
  
     g_EoC_EB[j] -> SetPointError(i, 0., 2*f_EoC_EB[i][j]->GetParError(1));
 
@@ -772,7 +784,7 @@ int main(int argc, char** argv){
     era = rat*sqrt(era*era+f_EoC_EB[i][j]->GetParError(1)*f_EoC_EB[i][j]->GetParError(1)); 
     
     if(i==0) g_Rat_EB[j] -> SetPoint(i, 0. , rat);
-    else  g_Rat_EB[j] -> SetPoint(i, int(flPhi) , rat);
+    else  g_Rat_EB[j] -> SetPoint(i, flPhi , rat);
 
     g_Rat_EB[j] -> SetPointError(i,  0. , era); 
     g_Rat_EB[j]->SetLineColor(kBlue+2); 
@@ -834,10 +846,10 @@ int main(int argc, char** argv){
       else if(trial==99) cout <<" No good Fit "<<endl;
     }
     
-    float flPhi = h_Phi_EE[i][j]->GetMean(); 
-    
+    //float flPhi = h_Phi_EE[i][j]->GetMean(); 
+    float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i);
     if(i==0) g_EoP_EE[j] -> SetPoint(i, 0. , pow(f_EoP_EE[i][j]->GetParameter(1),2));
-    else g_EoP_EE[j] -> SetPoint(i, int (flPhi) , pow(f_EoP_EE[i][j]->GetParameter(1),2));
+    else g_EoP_EE[j] -> SetPoint(i, flPhi , pow(f_EoP_EE[i][j]->GetParameter(1),2));
 
     g_EoP_EE[j] -> SetPointError(i, 0., 2*f_EoP_EE[i][j]->GetParError(1));
 
@@ -872,7 +884,7 @@ int main(int argc, char** argv){
     }
 
     if(i==0) g_EoC_EE[j] -> SetPoint(i, 0., pow(f_EoC_EE[i][j]->GetParameter(1),2));
-    else g_EoC_EE[j] -> SetPoint(i, int(flPhi), pow(f_EoC_EE[i][j]->GetParameter(1),2));
+    else g_EoC_EE[j] -> SetPoint(i, flPhi, pow(f_EoC_EE[i][j]->GetParameter(1),2));
     g_EoC_EE[j] -> SetPointError(i, 0., 2*f_EoC_EE[i][j]->GetParError(1));
 
     //ratio finalization
@@ -880,7 +892,7 @@ int main(int argc, char** argv){
     era = rat*sqrt(era*era+f_EoC_EE[i][j]->GetParError(1)*f_EoC_EE[i][j]->GetParError(1)); 
     
     if(i==0) g_Rat_EE[j] -> SetPoint(i, 0. , rat);
-    else  g_Rat_EE[j] -> SetPoint(i, int(flPhi) , rat);
+    else  g_Rat_EE[j] -> SetPoint(i, flPhi , rat);
     g_Rat_EE[j] -> SetPointError(i,  0. , era);
  
     g_Rat_EE[j]->SetLineColor(kBlue+2); 
