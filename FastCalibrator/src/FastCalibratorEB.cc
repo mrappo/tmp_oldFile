@@ -111,6 +111,7 @@ void FastCalibratorEB::Init(TTree *tree)
 
   fChain->SetBranchAddress("ele1_scERaw", &ele1_scERaw, &b_ele1_scERaw);
   fChain->SetBranchAddress("ele1_scE", &ele1_scE, &b_ele1_scE);
+  fChain->SetBranchAddress("ele1_scPhi", &ele1_scPhi, &b_ele1_scPhi);
   fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
   fChain->SetBranchAddress("ele1_scERaw_PUcleaned", &ele1_scERaw_PUcleaned, &b_ele1_scERaw_PUcleaned);
 
@@ -138,6 +139,7 @@ void FastCalibratorEB::Init(TTree *tree)
 
   fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
   fChain->SetBranchAddress("ele2_scE", &ele2_scE, &b_ele2_scE);
+  fChain->SetBranchAddress("ele2_scPhi", &ele2_scPhi, &b_ele2_scPhi);
   fChain->SetBranchAddress("ele2_es", &ele2_es, &b_ele2_es);
   fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
   fChain->SetBranchAddress("ele1_scERaw_PUcleaned", &ele1_scERaw_PUcleaned, &b_ele1_scERaw_PUcleaned);
@@ -319,7 +321,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      {
       pIn = ele1_tkP;
       //NOTALEO
-      pIn *= myMomentumScale[0] -> Eval( ele1_recHit_iphiORiy -> at(iseed) );
+      pIn *= myMomentumScale[0] -> Eval( ele1_scPhi );
      }
      else{
            pIn = ele1_E_true;
@@ -395,8 +397,8 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      
      if(!isMCTruth)  
        {
-	 pIn = ele2_tkP;
-         pIn *= myMomentumScale[0] -> Eval( ele2_recHit_iphiORiy -> at(iseed) );
+	       pIn = ele2_tkP;
+         pIn *= myMomentumScale[0] -> Eval( ele2_scPhi );
        }
      else{
        pIn = ele2_E_true;
@@ -597,7 +599,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           if(!isMCTruth)  
 	  {
            pIn = ele1_tkP;
-           pIn *= myMomentumScale[0] -> Eval( ele1_recHit_iphiORiy -> at(iseed) );
+           pIn *= myMomentumScale[0] -> Eval( ele1_scPhi );
           }
           else{
            pIn = ele1_E_true;
@@ -721,7 +723,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           if(!isMCTruth)  
           {
            pIn = ele2_tkP;
-           pIn *= myMomentumScale[0] -> Eval( ele2_recHit_iphiORiy -> at(iseed) );
+           pIn *= myMomentumScale[0] -> Eval( ele2_scPhi );
           }
           else{
            pIn = ele2_E_true;

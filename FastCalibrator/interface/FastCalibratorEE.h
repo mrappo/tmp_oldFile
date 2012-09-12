@@ -52,6 +52,7 @@ class FastCalibratorEE
     Float_t         ele1_scERaw;
     Float_t         ele1_scE;
     Float_t         ele1_scEta;
+    Float_t         ele1_scPhi;
     Float_t         ele1_es;
     Float_t         ele1_e3x3;
     Float_t         ele1_tkP;
@@ -78,6 +79,7 @@ class FastCalibratorEE
     Float_t         ele2_scERaw;
     Float_t         ele2_scE;
     Float_t         ele2_scEta;
+    Float_t         ele2_scPhi;
     Float_t         ele2_es;
     Float_t         ele2_e3x3;
     Float_t         ele2_tkP;
@@ -109,6 +111,7 @@ class FastCalibratorEE
     TBranch        *b_ele1_scERaw;   //!
     TBranch        *b_ele1_scE;   //!
     TBranch        *b_ele1_scEta;   //!
+    TBranch        *b_ele1_scPhi;   //!
     TBranch        *b_ele1_es;   //!
     TBranch        *b_ele1_E_true;   //!
     TBranch        *b_ele1_DR;   //!
@@ -134,6 +137,7 @@ class FastCalibratorEE
     TBranch        *b_ele2_scERaw;   //!
     TBranch        *b_ele2_scE;   //!
     TBranch        *b_ele2_scEta;   //!
+    TBranch        *b_ele2_scPhi;   //!
     TBranch        *b_ele2_es;   //!
     TBranch        *b_ele2_E_true;   //!
     TBranch        *b_ele2_DR;   //!

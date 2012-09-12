@@ -113,6 +113,7 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchAddress("ele1_scERaw", &ele1_scERaw, &b_ele1_scERaw);
   fChain->SetBranchAddress("ele1_scE", &ele1_scE, &b_ele1_scE);
   fChain->SetBranchAddress("ele1_scEta", &ele1_scEta, &b_ele1_scEta);
+  fChain->SetBranchAddress("ele1_scPhi", &ele1_scPhi, &b_ele1_scPhi);
   fChain->SetBranchAddress("ele1_es", &ele1_es, &b_ele1_es);
   fChain->SetBranchAddress("ele1_e3x3", &ele1_e3x3, &b_ele1_e3x3);
   fChain->SetBranchAddress("ele1_tkP", &ele1_tkP, &b_ele1_tkP);
@@ -138,7 +139,8 @@ void FastCalibratorEE::Init(TTree *tree)
    
   fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
   fChain->SetBranchAddress("ele2_scE", &ele2_scE, &b_ele2_scE);
-  fChain->SetBranchAddress("ele1_scEta", &ele1_scEta, &b_ele1_scEta);
+  fChain->SetBranchAddress("ele2_scEta", &ele2_scEta, &b_ele2_scEta);
+  fChain->SetBranchAddress("ele2_scPhi", &ele2_scPhi, &b_ele2_scPhi);
   fChain->SetBranchAddress("ele2_es", &ele2_es, &b_ele2_es);
   fChain->SetBranchAddress("ele2_e3x3", &ele2_e3x3, &b_ele2_e3x3);
   fChain->SetBranchAddress("ele2_tkP", &ele2_tkP, &b_ele2_tkP);
@@ -324,7 +326,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int iy_seed   = GetIyFromHashedIndex(seed_hashedIndex);
      int iz_seed   = GetZsideFromHashedIndex(seed_hashedIndex);
      int ir_seed   = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring 
-     int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
+     //int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
      int momScaleIndex = 0;
      if ( iz_seed > 0 ) momScaleIndex = 1;
      
@@ -337,7 +339,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      { 
        pIn = ele1_tkP;
        //NOTALEO
-       pIn *= myMomentumScale[momScaleIndex] -> Eval( iphi_seed );
+       pIn *= myMomentumScale[momScaleIndex] -> Eval( ele1_scPhi );
      }
      else
      { 
@@ -409,7 +411,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
      int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
      int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring
-     int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
+     //int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
      int momScaleIndex = 0;
      if ( iz_seed > 0 ) momScaleIndex = 1;
      
@@ -419,7 +421,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      if(!isMCTruth)
      {
        pIn = ele2_tkP;
-       pIn *= myMomentumScale[momScaleIndex] -> Eval( iphi_seed );
+       pIn *= myMomentumScale[momScaleIndex] -> Eval( ele2_scPhi );
      }
      else
      { 
@@ -609,7 +611,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
         int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
         int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
         int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
-        int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
+        //int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
         int momScaleIndex = 0;
         if ( iz_seed > 0 ) momScaleIndex = 1;
 
@@ -619,7 +621,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
          if(!isMCTruth) 
          {
            pIn = ele1_tkP;
-           pIn *= myMomentumScale[momScaleIndex] -> Eval( iphi_seed );
+           pIn *= myMomentumScale[momScaleIndex] -> Eval( ele1_scPhi );
          }
          else{
            pIn = ele1_E_true;
@@ -780,7 +782,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           int iy_seed = GetIyFromHashedIndex(seed_hashedIndex);
           int iz_seed = GetZsideFromHashedIndex(seed_hashedIndex);
           int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
-          int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
+          //int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
           int momScaleIndex = 0;
           if ( iz_seed > 0 ) momScaleIndex = 1;
             
@@ -789,7 +791,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           if(!isMCTruth)  
 	  {
             pIn = ele2_tkP;
-            pIn *= myMomentumScale[momScaleIndex] -> Eval( iphi_seed );
+            pIn *= myMomentumScale[momScaleIndex] -> Eval( ele2_scPhi );
           }
           else
           {
