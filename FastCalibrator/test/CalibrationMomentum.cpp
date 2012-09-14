@@ -1,5 +1,3 @@
-// per compilare: g++ -Wall -o CalibrationMomentum `root-config --cflags --glibs` CalibrationMomentum.cpp
-
 #include "TEndcapRings.h"
 #include "../CommonTools/histoFunc.h"
 #include <iostream>
@@ -31,16 +29,6 @@
 #include "TRandom3.h"
 
 
-#define xtalWidth 0.01745329
-#define PI        3.1415926536 
-//#define rescaleFactorEB 0.9929
-//#define rescaleFactorEEP 0.99
-//#define rescaleFactorEEM 0.99
-#define rescaleFactorEB 0.9918
-#define rescaleFactorEEP 1.0014
-#define rescaleFactorEEM 0.9960
-
-
 
 
 
@@ -48,7 +36,8 @@
 using namespace std;
 
  
-bool IsEtaGap(float eta){
+bool IsEtaGap(float eta)
+{
   float feta = fabs(eta);
   if( fabs(feta - 0 )<3) return true;
   if( fabs(feta - 25)<3) return true;
@@ -58,927 +47,1000 @@ bool IsEtaGap(float eta){
   return false;
 }
 
-int templIndexEB(float eta){
-    float feta = fabs(eta);
-    if (feta <= 25)               {return 0;}
-    if (feta>  25 && feta <=  45) {return 0;}
-    if (feta>  45 && feta <=  65) {return 0;}
-    if (feta>  65 && feta <=  86) {return 0;}
-    return -1;
+int templIndexEB(float eta)
+{
+  float feta = fabs(eta);
+  if( feta <= 0.4375 )                   return 0;
+  if( feta >  0.4375 && feta <= 0.7875 ) return 0;
+  if( feta >  0.7875 && feta <= 1.1375 ) return 0;
+  if( feta >  1.1375 && feta <= 1.4875 ) return 0;
+  return -1;
 }
 
-int templIndexEE(float eta){
-    float feta = fabs(eta);
-    if(eta<0){
-    if (feta>  85 && feta <=  98) {return 0;}
-    if (feta>  98 && feta <= 100) {return 0;}
-    if (feta> 100 && feta <= 118) {return 0;}
-    if (feta> 118 )               {return 0;}
-    }
-    else{
-    if (feta>  85 && feta <=  98) {return 1;}
-    if (feta>  98 && feta <= 100) {return 1;}
-    if (feta> 100 && feta <= 118) {return 1;}
-    if (feta> 118 )               {return 1;}
-    }
-    return -1;
+int templIndexEE(float eta)
+{
+  float feta = fabs(eta);
+  if( eta < 0 )
+  {
+    if( feta > 1.4875 && feta <= 2.0000) return 0;
+    if( feta > 2.0000 && feta <= 2.5000) return 0;
+  }
+  else
+  {
+    if( feta > 1.4875 && feta <= 2.0000) return 0;
+    if( feta > 2.0000 && feta <= 2.5000) return 0;
+  }
+  return -1;
 }
-   
+
+float rescaleFactorEB(float eta)
+{
+  float feta = fabs(eta);
+  if( feta <= 0.4375 )                   return 1.;
+  if( feta >  0.4375 && feta <= 0.7875 ) return 1.;
+  if( feta >  0.7875 && feta <= 1.1375 ) return 1.;
+  if( feta >  1.1375 && feta <= 1.4875 ) return 1.;
+  return -1.;
+}
+
+float rescaleFactorEE(float eta)
+{
+  float feta = fabs(eta);
+  if( eta < 0 )
+  {
+    if( feta > 1.4875 && feta <= 2.0000) return 1.;
+    if( feta > 2.0000 && feta <= 2.5000) return 1.;
+  }
+  else
+  {
+    if( feta > 1.4875 && feta <= 2.0000) return 1.;
+    if( feta > 2.0000 && feta <= 2.5000) return 1.;
+  }
+  return -1.;
+}
+
+
+
+
 
 
 //**************  MAIN PROGRAM **************************************************************
-int main(int argc, char** argv){
-
-  /// Acquisition from cfg file
- if(argc != 2){
- std::cerr << ">>>>> analysis.cpp::usage: " << argv[0] << " configFileName" << std::endl ;
- return 1;
- }
-
- parseConfigFile (argv[1]) ;
- 
- std::string TreeName = gConfigParser -> readStringOption("Input::TreeName");
- std::string infileDATA = gConfigParser -> readStringOption("Input::infileDATA");
- std::string infileMC = gConfigParser -> readStringOption("Input::infileMC");
- std::string WeightforMC =  gConfigParser -> readStringOption("Input::WeightforMC");
-
- int  nPhiBinsEB = gConfigParser -> readIntOption("Input::nPhiBinsEB");
- int  nPhiBinsEE = gConfigParser -> readIntOption("Input::nPhiBinsEE");
- int  nEtaBinsEB = gConfigParser -> readIntOption("Input::nEtaBinsEB");
- int  nEtaBinsEE = gConfigParser -> readIntOption("Input::nEtaBinsEE");
- int  nPhiBinsTempEB = gConfigParser -> readIntOption("Input::nPhiBinsTempEB");
- int  nPhiBinsTempEE = gConfigParser -> readIntOption("Input::nPhiBinsTempEE");
- int  rebinEB = gConfigParser -> readIntOption("Input::rebinEB");
- int  rebinEE = gConfigParser -> readIntOption("Input::rebinEE");
- bool usePUweights = gConfigParser -> readBoolOption("Input::usePUweights");
-
-
-
- std::string outputFile = gConfigParser -> readStringOption("Output::outputFile");
-
- cout <<" Basic Configuration " <<endl;
- cout <<" Tree Name = "<<TreeName<<endl;
- cout <<" infileDATA = "<<infileDATA<<endl;
- cout <<" infileMC = "<<infileMC<<endl;
- cout <<" WeightforMC = "<<WeightforMC<<endl;
- cout <<" nPhiBinsEB = "<<nPhiBinsEB<<endl;
- cout <<" nPhiBinsEE = "<<nPhiBinsEE<<endl;
- cout <<" nEtaBinsEB = "<<nEtaBinsEB<<endl;
- cout <<" nEtaBinsEE = "<<nEtaBinsEE<<endl;
- cout <<" nPhiBinsTempEB = "<<nPhiBinsTempEB<<endl;
- cout <<" nPhiBinsTempEE = "<<nPhiBinsTempEE<<endl;
- cout <<" rebinEB = "<<rebinEB<<endl;
- cout <<" rebinEE = "<<rebinEE<<endl;
- cout <<" usePUweights = "<<usePUweights<<endl;
-
-
- cout << "Making calibration plots for Momentum scale studies "<< endl;
-
-     
+int main(int argc, char** argv)
+{
+  // Acquisition from cfg file
+  if(argc != 2)
+  {
+    std::cerr << ">>>>> CalibrationMomentum.cpp::usage:   " << argv[0] << " configFileName" << std::endl;
+    return 1;
+  }
+  
+  parseConfigFile(argv[1]);
+  
+  std::string TreeName    = gConfigParser -> readStringOption("Input::TreeName");
+  std::string infileDATA  = gConfigParser -> readStringOption("Input::infileDATA");
+  std::string infileMC    = gConfigParser -> readStringOption("Input::infileMC");
+  std::string WeightforMC = gConfigParser -> readStringOption("Input::WeightforMC");
+  
+  int  nPhiBinsEB = gConfigParser -> readIntOption("Input::nPhiBinsEB");
+  int  nPhiBinsEE = gConfigParser -> readIntOption("Input::nPhiBinsEE");
+  int  nEtaBinsEB = gConfigParser -> readIntOption("Input::nEtaBinsEB");
+  int  nEtaBinsEE = gConfigParser -> readIntOption("Input::nEtaBinsEE");
+  int  nPhiBinsTempEB = gConfigParser -> readIntOption("Input::nPhiBinsTempEB");
+  int  nPhiBinsTempEE = gConfigParser -> readIntOption("Input::nPhiBinsTempEE");
+  int  rebinEB = gConfigParser -> readIntOption("Input::rebinEB");
+  int  rebinEE = gConfigParser -> readIntOption("Input::rebinEE");
+  bool usePUweights = gConfigParser -> readBoolOption("Input::usePUweights");
+  std::string outputFile = gConfigParser -> readStringOption("Output::outputFile");
+  
+  cout <<" Basic Configuration " <<endl;
+  cout <<" Tree Name = "<<TreeName<<endl;
+  cout <<" infileDATA = "<<infileDATA<<endl;
+  cout <<" infileMC = "<<infileMC<<endl;
+  cout <<" WeightforMC = "<<WeightforMC<<endl;
+  cout <<" nPhiBinsEB = "<<nPhiBinsEB<<endl;
+  cout <<" nPhiBinsEE = "<<nPhiBinsEE<<endl;
+  cout <<" nEtaBinsEB = "<<nEtaBinsEB<<endl;
+  cout <<" nEtaBinsEE = "<<nEtaBinsEE<<endl;
+  cout <<" nPhiBinsTempEB = "<<nPhiBinsTempEB<<endl;
+  cout <<" nPhiBinsTempEE = "<<nPhiBinsTempEE<<endl;
+  cout <<" rebinEB = "<<rebinEB<<endl;
+  cout <<" rebinEE = "<<rebinEE<<endl;
+  cout <<" usePUweights = "<<usePUweights<<endl;
+  
+  cout << "Making calibration plots for Momentum scale studies "<< endl;
+  
+  
   //---- variables for selection
-  float r9min = 0.0 ;
-  float r9max = 9999 ;  
   float etaMax  = 2.5;
   float eta2Max = 2.5;
-
+  
   //--- weights for MC
   TFile weightsFile (WeightforMC.c_str(),"READ"); 
   TH1F* hweights = (TH1F*)weightsFile.Get("hweights");
-
+  
   float w[100];
   for (int ibin = 1; ibin < hweights->GetNbinsX()+1; ibin++){
     w[ibin-1] = hweights->GetBinContent(ibin);  // bin 1 --> nvtx = 0 
   }
   weightsFile.Close();
-
-//histos to get the bin in phi given the electron phi
- TH1F* hPhiBinEB = new TH1F("hphiEB","hphiEB",nPhiBinsEB, -1*PI,1.*PI);
- TH1F* hPhiBinEE = new TH1F("hphiEE","hphiEE",nPhiBinsEE, -1*PI,1.*PI);
-
+  
+  //histos to get the bin in phi given the electron phi
+  TH1F* hPhiBinEB = new TH1F("hphiEB","hphiEB",nPhiBinsEB, -1.*TMath::Pi(),1.*TMath::Pi());
+  TH1F* hPhiBinEE = new TH1F("hphiEE","hphiEE",nPhiBinsEE, -1.*TMath::Pi(),1.*TMath::Pi());
+  
   //----- NTUPLES--------------------
   TChain *ntu_DA = new TChain(TreeName.c_str());
   TChain *ntu_MC = new TChain(TreeName.c_str());
 
   if(!FillChain(*ntu_DA, infileDATA.c_str())) return 1;
-
-  if(!FillChain(*ntu_MC, infileMC.c_str())) return 1;
-
+  if(!FillChain(*ntu_MC, infileMC.c_str()))   return 1;
+  
   std::cout << "     DATA: " << ntu_DA->GetEntries() << " entries in Data sample" << std::endl;
   std::cout << "     MC  : " << ntu_MC->GetEntries() << " entries in  MC  sample" << std::endl;
-
+  
   // observables  
   int isW;
-  float PV_z;
-  float EoP, scEta, scPhi, mZ;
-  float scEta2,scEne2,scPhi2;
-  float scE3x3, scE5x5, scEne, scERaw,scEt;  
-  float charge, scLocalEta, scLocalPhi,crackCorr,localCorr; 
-  float pTK,pTK2,ele1pt, ele2pt; 
-  float scEneReg,scEneReg2;
-  int ele1_iphi,ele1_ieta,ele1_ix,ele1_iy,ele1_iz; 
-  int ele2_iphi,ele2_ieta,ele2_ix,ele2_iy,ele2_iz;
+  float mZ;
+  float scEta,  scPhi;
+  float scEta2, scPhi2;
+  float eleEta,  elePhi;
+  float eleEta2, elePhi2;
+  float scEne,  scEneReg,  scEt;
+  float scEne2, scEneReg2, scEt2;
+  float charge, charge2;
+  float pTK,pTK2; 
+  int iphiSeed,  ele1_ix, ele1_iy, ele1_iz; 
+  int iphiSeed2, ele2_ix, ele2_iy, ele2_iz;
   int npu;
   
   // Set branch addresses for Data  
-  ntu_DA->SetBranchAddress("isW", &isW);
-  ntu_DA->SetBranchAddress("PV_z", &PV_z);
-  ntu_DA->SetBranchAddress("ele1ele2_scM",     &mZ);
-  ntu_DA->SetBranchAddress("ele1_scEta", &scEta);
-  ntu_DA->SetBranchAddress("ele2_scEta", &scEta2);
-  ntu_DA->SetBranchAddress("ele1_scPhi", &scPhi);
-  ntu_DA->SetBranchAddress("ele2_scPhi", &scPhi2);
-  ntu_DA->SetBranchAddress("ele1_EOverP", &EoP);
-  ntu_DA->SetBranchAddress("ele1_e3x3", &scE3x3);
-  ntu_DA->SetBranchAddress("ele1_e5x5", &scE5x5);
-  ntu_DA->SetBranchAddress("ele1_scERaw", &scERaw);
-  ntu_DA->SetBranchAddress("ele1_scE", &scEne);
-  ntu_DA->SetBranchAddress("ele2_scE", &scEne2);
-  ntu_DA->SetBranchAddress("ele1_scE_regression", &scEneReg);
-  ntu_DA->SetBranchAddress("ele2_scE_regression", &scEneReg2);
-  ntu_DA->SetBranchAddress("ele1_charge", &charge);
-  ntu_DA->SetBranchAddress("ele1_scLocalPhi",&scLocalPhi); 
-  ntu_DA->SetBranchAddress("ele1_scLocalEta",&scLocalEta); 
-  ntu_DA->SetBranchAddress("ele1_scCrackCorr",&crackCorr); 
-  ntu_DA->SetBranchAddress("ele1_scLocalContCorr",&localCorr); 
-  ntu_DA->SetBranchAddress("ele1_scEt",&scEt); 
-  ntu_DA->SetBranchAddress("ele1_tkP",&pTK); 
-  ntu_DA->SetBranchAddress("ele2_tkP",&pTK2);
-  ntu_DA->SetBranchAddress("ele1_pt",&ele1pt); 
-  ntu_DA->SetBranchAddress("ele2_pt",&ele2pt);
- 
-  ntu_DA->SetBranchAddress("ele1_seedIphi",&ele1_iphi); 
-  ntu_DA->SetBranchAddress("ele1_seedIeta",&ele1_ieta); 
-  ntu_DA->SetBranchAddress("ele1_seedIx",&ele1_ix); 
-  ntu_DA->SetBranchAddress("ele1_seedIy",&ele1_iy); 
-  ntu_DA->SetBranchAddress("ele1_seedZside",&ele1_iz); 
-  ntu_DA->SetBranchAddress("ele2_seedIphi",&ele2_iphi); 
-  ntu_DA->SetBranchAddress("ele2_seedIeta",&ele2_ieta); 
-  ntu_DA->SetBranchAddress("ele2_seedIx",&ele2_ix); 
-  ntu_DA->SetBranchAddress("ele2_seedIy",&ele2_iy); 
-  ntu_DA->SetBranchAddress("ele2_seedZside",&ele2_iz); 
-
-  // Set branch addresses for MC  
-  ntu_MC->SetBranchAddress("PUit_NumInteractions", &npu);
-  ntu_MC->SetBranchAddress("isW", &isW);
-  ntu_MC->SetBranchAddress("PV_z", &PV_z);
-  ntu_MC->SetBranchAddress("ele1ele2_scM",     &mZ);
-  ntu_MC->SetBranchAddress("ele1_scEta", &scEta);
-  ntu_MC->SetBranchAddress("ele2_scEta", &scEta2);
-  ntu_MC->SetBranchAddress("ele1_scPhi", &scPhi);
-  ntu_MC->SetBranchAddress("ele2_scPhi", &scPhi2);
-  ntu_MC->SetBranchAddress("ele1_EOverP", &EoP);
-  ntu_MC->SetBranchAddress("ele1_e3x3", &scE3x3);
-  ntu_MC->SetBranchAddress("ele1_e5x5", &scE5x5);
-  ntu_MC->SetBranchAddress("ele1_scE", &scEne);
-  ntu_MC->SetBranchAddress("ele2_scE", &scEne2);
-  ntu_MC->SetBranchAddress("ele1_scE_regression", &scEneReg);
-  ntu_MC->SetBranchAddress("ele2_scE_regression", &scEneReg2);
-
-  ntu_MC->SetBranchAddress("ele1_scERaw", &scERaw);
-  ntu_MC->SetBranchAddress("ele1_charge", &charge);
-  ntu_MC->SetBranchAddress("ele1_scLocalPhi",&scLocalPhi); 
-  ntu_MC->SetBranchAddress("ele1_scLocalEta",&scLocalEta); 
-  ntu_MC->SetBranchAddress("ele1_scCrackCorr",&crackCorr); 
-  ntu_MC->SetBranchAddress("ele1_scEt",&scEt); 
-  ntu_MC->SetBranchAddress("ele1_tkP",&pTK); 
-  ntu_MC->SetBranchAddress("ele2_tkP",&pTK2); 
-  ntu_MC->SetBranchAddress("ele1_seedIphi",&ele1_iphi);
-  ntu_MC->SetBranchAddress("ele2_seedIphi",&ele2_iphi);
-  ntu_MC->SetBranchAddress("ele1_seedIeta",&ele1_ieta);
-  ntu_MC->SetBranchAddress("ele2_seedIeta",&ele2_ieta);
- 
-  ntu_MC->SetBranchAddress("ele1_seedIx",&ele1_ix);
-  ntu_MC->SetBranchAddress("ele2_seedIx",&ele2_ix);
-  ntu_MC->SetBranchAddress("ele1_seedIy",&ele1_iy);
-  ntu_MC->SetBranchAddress("ele2_seedIy",&ele2_iy);
- 
-  ntu_MC->SetBranchAddress("ele1_seedZside",&ele1_iz);
-  ntu_MC->SetBranchAddress("ele2_seedZside",&ele2_iz);
- 
-  ntu_MC->SetBranchAddress("ele1_pt",&ele1pt); 
-  ntu_MC->SetBranchAddress("ele2_pt",&ele2pt);
-    
-
-  // histogram definition in EB and fit functions
-
-  TH1F*** h_EoP_EB = new TH1F**[nPhiBinsEB];   
-  TH1F*** h_EoC_EB = new TH1F**[nPhiBinsEB]; 
-  TH1F*** h_Phi_EB = new TH1F**[nPhiBinsEB]; // used to map iEta (as defined for Barrel and Endcap geom) into eta 
-  TF1*** f_EoP_EB = new TF1**[nPhiBinsEB];
-  TF1*** f_EoC_EB = new TF1**[nPhiBinsEB];
-
-  std::vector< std::pair<int,int> > refIdEB;
-  std::pair<int,int> temp ; temp.first=0; temp.second=0;
-  refIdEB.assign(nPhiBinsEB,temp) ;
-
-  // histogram definition in EE and fit functions
-
-  TH1F*** h_EoP_EE = new TH1F**[nPhiBinsEE];   
-  TH1F*** h_EoC_EE = new TH1F**[nPhiBinsEE];  
-  TH1F*** h_Phi_EE = new TH1F**[nPhiBinsEE]; // used to map iEta (as defined for Barrel and Endcap geom) into eta 
-  TF1*** f_EoP_EE = new TF1**[nPhiBinsEE];
-  TF1*** f_EoC_EE = new TF1**[nPhiBinsEE];
-
-  std::vector< std::pair<int,int> > refIdEE;
-  refIdEE.assign(nPhiBinsEE,temp) ;
-
-  // Initializate histos in EB
-  for(Int_t i = 0; i < nPhiBinsEB; ++i)
-  {
-    h_EoP_EB[i] = new TH1F* [nEtaBinsEB];
-    h_EoC_EB[i] = new TH1F* [nEtaBinsEB];
-    h_Phi_EB[i] = new TH1F* [nEtaBinsEB];
-
-    for(Int_t j=0; j< nEtaBinsEB ; j++)
-    {
-     TString histoName;
-     histoName= Form("EoP_%d_%d_EB", i,j);
-     h_EoP_EB[i][j] = new TH1F (histoName, histoName, 2200, 0.2, 1.6);
-     h_EoP_EB[i][j]->SetFillColor(kRed+2);
-     h_EoP_EB[i][j]->SetLineColor(kRed+2);
-     h_EoP_EB[i][j]->SetFillStyle(3004);
-
-    histoName=Form("EoC_%d_%d_EB", i,j);
-    h_EoC_EB[i][j] = new TH1F(histoName, histoName, 2200, 0.2, 1.6);
-    h_EoC_EB[i][j]->SetFillColor(kGreen+2);
-    h_EoC_EB[i][j]->SetLineColor(kGreen+2);
-    h_EoC_EB[i][j]->SetFillStyle(3004);
-   
-    histoName=Form("Phi_%d_%d_EB", i,j);   
-    h_Phi_EB[i][j] = new TH1F(histoName, histoName, 360, 0., 360.); 
-   }
-  }
-
-  // Initializate histos in EE
-  for(Int_t i = 0; i < nPhiBinsEE; ++i)
-  {
-    h_EoP_EE[i] = new TH1F* [nEtaBinsEE];
-    h_EoC_EE[i] = new TH1F* [nEtaBinsEE];
-    h_Phi_EE[i] = new TH1F* [nEtaBinsEE];
-
-    for(Int_t j=0; j< nEtaBinsEE ; j++)
-    {
- 
-    TString histoName;
-    histoName=Form("EoP_%d_%d_EE", i,j);
-    h_EoP_EE[i][j] = new TH1F(histoName, histoName, 2200, 0., 2.);
-    h_EoP_EE[i][j]->SetFillColor(kRed+2);
-    h_EoP_EE[i][j]->SetLineColor(kRed+2);
-    h_EoP_EE[i][j]->SetFillStyle(3004);
-
-    histoName=Form("EoC_%d_%d_EE", i,j);
-    h_EoC_EE[i][j] = new TH1F(histoName, histoName, 2200, 0., 2.);
-    h_EoC_EE[i][j]->SetFillColor(kGreen+2);
-    h_EoC_EE[i][j]->SetLineColor(kGreen+2);
-    h_EoC_EE[i][j]->SetFillStyle(3004);
-   
-    histoName=Form("Phi_%d_%d_EE", i,j);   
-    h_Phi_EE[i][j] = new TH1F(histoName, histoName, 360, 0., 360.); 
-  }
- }
-
-  // Template in EE and EB
-
-  TH1F*** h_template_EB = new TH1F**[nPhiBinsTempEB];
-  TH1F*** h_template_EE = new TH1F**[nPhiBinsTempEE];
+  ntu_DA->SetBranchStatus("*",0);
+  ntu_DA->SetBranchStatus("isW", 1);                 ntu_DA->SetBranchAddress("isW", &isW);
+  ntu_DA->SetBranchStatus("ele1_eta", 1);            ntu_DA->SetBranchAddress("ele1_eta", &eleEta);
+  ntu_DA->SetBranchStatus("ele2_eta", 1);            ntu_DA->SetBranchAddress("ele2_eta", &eleEta2);
+  ntu_DA->SetBranchStatus("ele1_phi", 1);            ntu_DA->SetBranchAddress("ele1_phi", &elePhi);
+  ntu_DA->SetBranchStatus("ele2_phi", 1);            ntu_DA->SetBranchAddress("ele2_phi", &elePhi2);
+  ntu_DA->SetBranchStatus("ele1_scEta", 1);          ntu_DA->SetBranchAddress("ele1_scEta", &scEta);
+  ntu_DA->SetBranchStatus("ele2_scEta", 1);          ntu_DA->SetBranchAddress("ele2_scEta", &scEta2);
+  ntu_DA->SetBranchStatus("ele1_scPhi", 1);          ntu_DA->SetBranchAddress("ele1_scPhi", &scPhi);
+  ntu_DA->SetBranchStatus("ele2_scPhi", 1);          ntu_DA->SetBranchAddress("ele2_scPhi", &scPhi2);
+  ntu_DA->SetBranchStatus("ele1_scE", 1);            ntu_DA->SetBranchAddress("ele1_scE", &scEne);
+  ntu_DA->SetBranchStatus("ele2_scE", 1);            ntu_DA->SetBranchAddress("ele2_scE", &scEne2);
+  ntu_DA->SetBranchStatus("ele1_scE_regression", 1); ntu_DA->SetBranchAddress("ele1_scE_regression", &scEneReg);
+  ntu_DA->SetBranchStatus("ele2_scE_regression", 1); ntu_DA->SetBranchAddress("ele2_scE_regression", &scEneReg2);
+  ntu_DA->SetBranchStatus("ele1_scEt", 1);           ntu_DA->SetBranchAddress("ele1_scEt",&scEt);
+  ntu_DA->SetBranchStatus("ele2_scEt", 1);           ntu_DA->SetBranchAddress("ele2_scEt",&scEt2);
+  ntu_DA->SetBranchStatus("ele1ele2_scM", 1);        ntu_DA->SetBranchAddress("ele1ele2_scM", &mZ);
+  ntu_DA->SetBranchStatus("ele1_charge", 1);         ntu_DA->SetBranchAddress("ele1_charge", &charge);
+  ntu_DA->SetBranchStatus("ele2_charge", 1);         ntu_DA->SetBranchAddress("ele2_charge", &charge2);
+  ntu_DA->SetBranchStatus("ele1_tkP", 1);            ntu_DA->SetBranchAddress("ele1_tkP", &pTK);
+  ntu_DA->SetBranchStatus("ele2_tkP", 1);            ntu_DA->SetBranchAddress("ele2_tkP", &pTK2);
+  ntu_DA->SetBranchStatus("ele1_seedIphi", 1);       ntu_DA->SetBranchAddress("ele1_seedIphi", &iphiSeed);
+  ntu_DA->SetBranchStatus("ele2_seedIphi", 1);       ntu_DA->SetBranchAddress("ele2_seedIphi", &iphiSeed2);
+  ntu_DA->SetBranchStatus("ele1_seedIx", 1);         ntu_DA->SetBranchAddress("ele1_seedIx", &ele1_ix);
+  ntu_DA->SetBranchStatus("ele2_seedIx", 1);         ntu_DA->SetBranchAddress("ele2_seedIx", &ele2_ix);
+  ntu_DA->SetBranchStatus("ele1_seedIy", 1);         ntu_DA->SetBranchAddress("ele1_seedIy", &ele1_iy);
+  ntu_DA->SetBranchStatus("ele2_seedIy", 1);         ntu_DA->SetBranchAddress("ele2_seedIy", &ele2_iy);
+  ntu_DA->SetBranchStatus("ele1_seedZside", 1);      ntu_DA->SetBranchAddress("ele1_seedZside", &ele1_iz);
+  ntu_DA->SetBranchStatus("ele2_seedZside", 1);      ntu_DA->SetBranchAddress("ele2_seedZside", &ele2_iz);
   
- 
-  for (Int_t imod = 0; imod<nPhiBinsTempEB; imod++){
-    h_template_EB[imod] = new TH1F*[nEtaBinsEB];
-    for(Int_t j = 0; j<nEtaBinsEB; j++){
-    TString histoName;
-    histoName=Form("template_%d_%d_EB", imod,j);
-    h_template_EB[imod][j] = new TH1F(histoName, "", 2200, 0.2, 1.6);
-   }
-  }
+  // Set branch addresses for MC
+  ntu_MC->SetBranchStatus("*",0);
+  ntu_MC->SetBranchStatus("isW", 1);                  ntu_MC->SetBranchAddress("isW", &isW);
+  ntu_MC->SetBranchStatus("ele1_eta", 1);             ntu_MC->SetBranchAddress("ele1_eta", &eleEta);
+  ntu_MC->SetBranchStatus("ele2_eta", 1);             ntu_MC->SetBranchAddress("ele2_eta", &eleEta2);
+  ntu_MC->SetBranchStatus("ele1_phi", 1);             ntu_MC->SetBranchAddress("ele1_phi", &elePhi);
+  ntu_MC->SetBranchStatus("ele2_phi", 1);             ntu_MC->SetBranchAddress("ele2_phi", &elePhi2);
+  ntu_MC->SetBranchStatus("ele1_scEta", 1);           ntu_MC->SetBranchAddress("ele1_scEta", &scEta);
+  ntu_MC->SetBranchStatus("ele2_scEta", 1);           ntu_MC->SetBranchAddress("ele2_scEta", &scEta2);
+  ntu_MC->SetBranchStatus("ele1_scPhi", 1);           ntu_MC->SetBranchAddress("ele1_scPhi", &scPhi);
+  ntu_MC->SetBranchStatus("ele2_scPhi", 1);           ntu_MC->SetBranchAddress("ele2_scPhi", &scPhi2);
+  ntu_MC->SetBranchStatus("ele1_scE", 1);             ntu_MC->SetBranchAddress("ele1_scE", &scEne);
+  ntu_MC->SetBranchStatus("ele2_scE", 1);             ntu_MC->SetBranchAddress("ele2_scE", &scEne2);
+  ntu_MC->SetBranchStatus("ele1_scE_regression", 1);  ntu_MC->SetBranchAddress("ele1_scE_regression", &scEneReg);
+  ntu_MC->SetBranchStatus("ele2_scE_regression", 1);  ntu_MC->SetBranchAddress("ele2_scE_regression", &scEneReg2);
+  ntu_MC->SetBranchStatus("ele1_scEt", 1);            ntu_MC->SetBranchAddress("ele1_scEt",&scEt);
+  ntu_MC->SetBranchStatus("ele2_scEt", 1);            ntu_MC->SetBranchAddress("ele2_scEt",&scEt2);
+  ntu_MC->SetBranchStatus("ele1ele2_scM", 1);         ntu_MC->SetBranchAddress("ele1ele2_scM", &mZ);
+  ntu_MC->SetBranchStatus("ele1_charge", 1);          ntu_MC->SetBranchAddress("ele1_charge", &charge);
+  ntu_MC->SetBranchStatus("ele2_charge", 1);          ntu_MC->SetBranchAddress("ele2_charge", &charge2);
+  ntu_MC->SetBranchStatus("ele1_tkP", 1);             ntu_MC->SetBranchAddress("ele1_tkP", &pTK);
+  ntu_MC->SetBranchStatus("ele2_tkP", 1);             ntu_MC->SetBranchAddress("ele2_tkP", &pTK2);
+  ntu_MC->SetBranchStatus("ele1_seedIphi", 1);        ntu_MC->SetBranchAddress("ele1_seedIphi", &iphiSeed);
+  ntu_MC->SetBranchStatus("ele2_seedIphi", 1);        ntu_MC->SetBranchAddress("ele2_seedIphi", &iphiSeed2);
+  ntu_MC->SetBranchStatus("ele1_seedIx", 1);          ntu_MC->SetBranchAddress("ele1_seedIx", &ele1_ix);
+  ntu_MC->SetBranchStatus("ele2_seedIx", 1);          ntu_MC->SetBranchAddress("ele2_seedIx", &ele2_ix);
+  ntu_MC->SetBranchStatus("ele1_seedIy", 1);          ntu_MC->SetBranchAddress("ele1_seedIy", &ele1_iy);
+  ntu_MC->SetBranchStatus("ele2_seedIy", 1);          ntu_MC->SetBranchAddress("ele2_seedIy", &ele2_iy);
+  ntu_MC->SetBranchStatus("ele1_seedZside", 1);       ntu_MC->SetBranchAddress("ele1_seedZside", &ele1_iz);
+  ntu_MC->SetBranchStatus("ele2_seedZside", 1);       ntu_MC->SetBranchAddress("ele2_seedZside", &ele2_iz);
+  ntu_MC->SetBranchStatus("PUit_NumInteractions", 1); ntu_MC->SetBranchAddress("PUit_NumInteractions", &npu);
 
-  for (Int_t imod = 0; imod<nPhiBinsTempEE; imod++){
-   h_template_EE[imod] = new TH1F*[nEtaBinsEE];
-   for(Int_t j = 0; j<nEtaBinsEE; j++){
-    TString histoName;
-    histoName=Form("template_%d_%d_EE", imod,j);
-    h_template_EE[imod][j] = new TH1F(histoName, "", 2200, 0., 2.);  
+  
+  
+  
+  // histogram definition in EB and fit functions
+  std::vector<std::vector<TH1F*> > h_Phi_EB(nPhiBinsEB); // used to map iEta (as defined for Barrel and Endcap geom) into eta 
+  std::vector<std::vector<TH1F*> > h_EoP_EB(nPhiBinsEB);   
+  std::vector<std::vector<TH1F*> > h_EoC_EB(nPhiBinsEB); 
+  std::vector<std::vector<TF1*> > f_EoP_EB(nPhiBinsEB);
+  std::vector<std::vector<TF1*> > f_EoC_EB(nPhiBinsEB);
+  
+  // histogram definition in EE and fit functions
+  std::vector<std::vector<TH1F*> > h_Phi_EE(nPhiBinsEE); // used to map iEta (as defined for Barrel and Endcap geom) into eta 
+  std::vector<std::vector<TH1F*> > h_EoP_EE(nPhiBinsEE);   
+  std::vector<std::vector<TH1F*> > h_EoC_EE(nPhiBinsEE);  
+  std::vector<std::vector<TF1*> > f_EoP_EE(nPhiBinsEE);
+  std::vector<std::vector<TF1*> > f_EoC_EE(nPhiBinsEE);
+  
+  
+  
+  // Initializate histos in EB
+  std::cout << ">>> Initialize EB histos" << std::endl;
+  for(int i = 0; i < nPhiBinsEB; ++i)
+  {
+    for(int j = 0; j < nEtaBinsEB; ++j)
+    {
+      TString histoName;
+      histoName= Form("EB_EoP_%d_%d", i,j);
+      TH1F* temp = new TH1F (histoName, histoName, 2200, 0.2, 1.6);
+      temp->Sumw2();
+      temp->SetFillColor(kRed+2);
+      temp->SetLineColor(kRed+2);
+      temp->SetFillStyle(3004);
+      (h_EoP_EB.at(i)).push_back(temp);
+      
+      histoName=Form("EB_EoC_%d_%d", i,j);
+      temp = new TH1F(histoName, histoName, 2200, 0.2, 1.6);
+      temp->Sumw2();
+      temp->SetFillColor(kGreen+2);
+      temp->SetLineColor(kGreen+2);
+      temp->SetFillStyle(3004);
+      (h_EoC_EB.at(i)).push_back(temp);
+      
+      histoName=Form("EB_Phi_%d_%d", i,j);
+      temp = new TH1F(histoName, histoName, 360, 0., 360.); 
+      (h_Phi_EB.at(i)).push_back(temp); 
+    }
   }
- }
+  
+  // Initializate histos in EE
+  std::cout << ">>> Initialize EE histos" << std::endl;
+  for(int i = 0; i < nPhiBinsEE; ++i)
+  {
+    for(int j = 0; j < nEtaBinsEE; ++j)
+    {
+      TString histoName;
+      histoName= Form("EE_EoP_%d_%d", i,j);
+      TH1F* temp = new TH1F (histoName, histoName, 2200, 0., 2.);
+      temp->Sumw2();
+      temp->SetFillColor(kRed+2);
+      temp->SetLineColor(kRed+2);
+      temp->SetFillStyle(3004);
+      (h_EoP_EE.at(i)).push_back(temp);
+      
+      histoName=Form("EE_EoC_%d_%d", i,j);
+      temp = new TH1F(histoName, histoName, 2200, 0., 2.);
+      temp->Sumw2();
+      temp->SetFillColor(kGreen+2);
+      temp->SetLineColor(kGreen+2);
+      temp->SetFillStyle(3004);
+      (h_EoC_EE.at(i)).push_back(temp);
+      
+      histoName=Form("EE_Phi_%d_%d", i,j);
+      temp = new TH1F(histoName, histoName, 360, 0., 360.); 
+      (h_Phi_EE.at(i)).push_back(temp); 
+    }
+  }
+  
+  
+  
+  // Template in EE and EB
+  std::vector<std::vector<TH1F*> > h_template_EB(nPhiBinsTempEB);
+  std::vector<std::vector<TH1F*> > h_template_EE(nPhiBinsTempEE);
+  
+  std::cout << ">>> Initialize EB template" << std::endl;
+  for(int mod = 0; mod < nPhiBinsTempEB; ++mod)
+  {
+    for(int j = 0; j < nEtaBinsEB; ++j)
+    {
+      TString histoName;
+      histoName=Form("EB_template_%d_%d",mod,j);
+      TH1F* temp = new TH1F(histoName,"",2200,0.2,1.6);
+      (h_template_EB.at(mod)).push_back(temp);
+    }
+  }
+  
+  std::cout << ">>> Initialize EE template" << std::endl;
+  for(int mod = 0; mod < nPhiBinsTempEE; ++mod)
+  {
+    for(int j = 0; j < nEtaBinsEE; ++j)
+    {
+      TString histoName;
+      histoName=Form("EE_template_%d_%d",mod,j);
+      TH1F* temp = new TH1F(histoName,"",2200,0.,2.);
+      (h_template_EE.at(mod)).push_back(temp);
+    }
+  }
+  
   
   TH1F** h_phi_data_EB = new TH1F*[nEtaBinsEB];
   TH1F** h_phi_mc_EB   = new TH1F*[nEtaBinsEB];
   TH1F** h_phi_data_EE = new TH1F*[nEtaBinsEE];
   TH1F** h_phi_mc_EE   = new TH1F*[nEtaBinsEE];
 
-  for (Int_t index = 0; index < nEtaBinsEB ; index++){
+  for(int index = 0; index < nEtaBinsEB; ++index)
+  {
     TString name;
-    name=Form("h_phi_data_EB_%d",index);
+    name=Form("EB_h_phi_data_%d",index);
     h_phi_data_EB[index]= new TH1F(name,"h_phi_data",100,-TMath::Pi(),TMath::Pi());
-    name=Form("h_phi_mc_EB_%d",index);
+    name=Form("EB_h_phi_mc_%d",index);
     h_phi_mc_EB[index]= new TH1F(name,"h_phi_mc",100,-TMath::Pi(),TMath::Pi());
-   }
-
-  for(Int_t index = 0; index < nEtaBinsEE ; index++){
+  }
+  
+  for(int index = 0; index < nEtaBinsEE; ++index)
+  {
     TString name;
-    name=Form("h_phi_data_EE_%d",index);
+    name=Form("EE_h_phi_data_%d",index);
     h_phi_data_EE[index] = new TH1F(name,"h_phi_data",100,-TMath::Pi(),TMath::Pi());
-    name=Form("h_phi_mc_EE_%d",index);
+    name=Form("EE_h_phi_mc_%d",index);
     h_phi_mc_EE[index] =  new TH1F(name,"h_phi_mc",100,-TMath::Pi(),TMath::Pi());
   }
-
   
-  TH1F* h_et_data  = new TH1F("h_et_data","h_et_data",100,0,100);
-  TH1F* h_et_mc    = new TH1F("h_et_mc","h_et_mc",100,0,100);
-
-
+  TH1F* h_et_data = new TH1F("h_et_data","h_et_data",100,0.,100.);
+  TH1F* h_et_mc   = new TH1F("h_et_mc",  "h_et_mc",  100,0.,100.);
+  
+  
+  
   // Initialize endcap geometry
   TEndcapRings *eRings = new TEndcapRings(); 
-
+  
   // Map for conversion (ix,iy) into Eta for EE
   TH2F * mapConversionEEp = new TH2F ("mapConversionEEp","mapConversionEEp",101,1,101,101,1,101);
   TH2F * mapConversionEEm = new TH2F ("mapConversionEEm","mapConversionEEm",101,1,101,101,1,101);
-
   
-  for(int ix =0; ix<mapConversionEEp->GetNbinsX(); ix++){
-      for(int iy =0; iy<mapConversionEEp->GetNbinsY(); iy++){
-        mapConversionEEp->SetBinContent(ix+1,iy+1,0);
-        mapConversionEEm->SetBinContent(ix+1,iy+1,0);
-
-       }
-   }
-
+  for(int ix =0; ix<mapConversionEEp->GetNbinsX(); ix++)
+    for(int iy =0; iy<mapConversionEEp->GetNbinsY(); iy++)
+    {
+      mapConversionEEp->SetBinContent(ix+1,iy+1,0);
+      mapConversionEEm->SetBinContent(ix+1,iy+1,0);
+    }
+  
+  
+  
+  // fill MC templates
+  std::vector<int> refIdEB;
+  refIdEB.assign(nPhiBinsEB,0);
+  
+  std::vector<int> refIdEE;
+  refIdEE.assign(nPhiBinsEE,0);
+  
+  for(int iphi = 0; iphi < nPhiBinsEB; ++iphi)
+  {
+    float phi = hPhiBinEB->GetBinCenter(iphi+1);
+    
+    phi = 2.*TMath::Pi() + phi + TMath::Pi()*10./180.;
+    phi -= int(phi/2./TMath::Pi()) * 2.*TMath::Pi();
+    
+    int modPhi = int(phi/(2.*TMath::Pi()/nPhiBinsTempEB));
+    if( modPhi == nPhiBinsTempEB ) modPhi = 0;
+    refIdEB.at(iphi) = modPhi;
+  }
+  
+  for(int iphi = 0; iphi < nPhiBinsEE; ++iphi)
+  {
+    float phi = hPhiBinEE->GetBinCenter(iphi+1);
+    
+    phi = 2.*TMath::Pi() + phi + TMath::Pi()*10./180.;
+    phi -= int(phi/2./TMath::Pi()) * 2.*TMath::Pi();
+    
+    int modPhi = int(phi/(2.*TMath::Pi()/nPhiBinsTempEE));
+    if( modPhi == nPhiBinsTempEE ) modPhi = 0;
+    refIdEE.at(iphi) = modPhi;
+  }
+  
+  
+    
+  
+  
   
   //**************************** loop on MC, make refernce and fit dist
-  float ww = 1;
-  float var = 0;
+  
+  float var = 0.;
   std::cout << "Loop in MC events " << endl; 
-  for(int entry = 0; entry < ntu_MC->GetEntries(); ++entry) {
+  for(int entry = 0; entry < ntu_MC->GetEntries(); ++entry)
+  {
     if( entry%10000 == 0 ) std::cout << "reading saved entry " << entry << "\r" << std::flush;
-    //    if (entry>1000) break;
-
+    //if( entry > 1000 ) break;
+    
     ntu_MC->GetEntry(entry);
     
-    if (isW==1) continue;
-    if( fabs(scEta) > etaMax ) continue;
+    if( isW == 1 )               continue;
+    if( fabs(scEta)  > etaMax )  continue;
     if( fabs(scEta2) > eta2Max ) continue;
-    float R9 = scE3x3/scEne;
-    if ( R9 < r9min || R9 > r9max ) continue; 
-
+    if( scEt  < 20. ) continue;
+    if( scEt2 < 20. ) continue;
+    
+    
     //--- PU weights
-    if (usePUweights) ww = w[npu];
- 
-    //--- set ieta for the Endcaps
-    int iphi,ieta;
-
-    if(ele1_iz==0){
-
-       var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg2/scEne2))/91.19;
-
-       int modPhi = int (ele1_iphi/(360./nPhiBinsTempEB));
-       int modEta  = templIndexEB(ele1_ieta);
-       
-       if(modEta == -1) continue;
-       if(modPhi == nPhiBinsTempEB) h_template_EB[0][modEta] ->  Fill(var,ww);
-       else h_template_EB[modPhi][modEta]->Fill(var,ww);
-
-       // fill MC histos in eta bins
-       //int PhibinEB = int (ele2_iphi/(360./nPhiBinsEB)); 
-       int PhibinEB = hPhiBinEB->FindBin(scPhi) - 1 ; 
- 
-       if(PhibinEB==nPhiBinsEB){ h_EoP_EB[0][modEta]-> Fill(var,ww);  // This is MC 
-                                 h_phi_mc_EB[modEta]->Fill(scPhi,ww);}
-       else{ h_EoP_EB[PhibinEB][modEta] -> Fill(var,ww);  // This is MC
-             std::pair<int,int> temp;
-             temp.first=modPhi; temp.second=modEta;
-             refIdEB.at(PhibinEB)=temp; 
-             h_phi_mc_EB[modEta]->Fill(scPhi,ww);}     
-    }
-
-    else{ 
-          var = (mZ * sqrt(pTK/scEne))/91.19;
-
-          iphi = eRings->GetEndcapIphi(ele1_ix,ele1_iy,ele1_iz);
-          ieta = eRings->GetEndcapIeta(ele1_ix,ele1_iy,ele1_iz);
-
-          if(ele1_iz==1)mapConversionEEp-> SetBinContent(ele1_ix,ele1_iy,scEta);
-          if(ele1_iz==-1)mapConversionEEm-> SetBinContent(ele1_ix,ele1_iy,scEta);
-  
-          int modPhi = int (iphi/(360./nPhiBinsTempEE));
-          int modEta =  templIndexEE(ieta);
-          if(modEta == -1) continue;
-
-          if(modPhi==nPhiBinsTempEE) h_template_EE[0][modEta] ->  Fill(var,ww);
-          else h_template_EE[modPhi][modEta] ->  Fill(var,ww);
-
-          // fill MC histos in eta bins
-          //int PhibinEE = int (iphi/(360./nPhiBinsEE)); 
-	  int PhibinEE = hPhiBinEE->FindBin(scPhi) - 1 ;
-          if(PhibinEE==nPhiBinsEE){ h_EoP_EE[0][modEta] -> Fill(var,ww);  // This is MC
-                                    h_phi_mc_EE[modEta]->Fill(scPhi,ww);}
-          else{
-               h_EoP_EE[PhibinEE][modEta] -> Fill(var,ww);  // This is MC
-               std::pair<int,int> temp;
-               temp.first=modPhi; temp.second=modEta;
-               refIdEE.at(PhibinEE)=temp; 
-               h_phi_mc_EE[modEta]->Fill(scPhi,ww);}
-        }
-
- 
-    if(ele2_iz==0){
-
-       var = (mZ  * sqrt(pTK2/scEne2)* sqrt(scEneReg/scEne))/91.19;
- 
-       int modPhi = int (ele2_iphi/(360./nPhiBinsTempEB));
-       int modEta  = templIndexEB(ele2_ieta);
-       if(modEta == -1) continue;
-       if(modPhi == nPhiBinsTempEB) h_template_EB[0][modEta] ->  Fill(var,ww);
-       else h_template_EB[modPhi][modEta]->Fill(var,ww);
-
-       // fill MC histos in eta bins
-       //int PhibinEB = int (ele2_iphi/(360./nPhiBinsEB)); 
-       int PhibinEB = hPhiBinEB->FindBin(scPhi) - 1 ; 
-
-       if(PhibinEB==nPhiBinsEB){ h_EoP_EB[0][modEta]-> Fill(var,ww);  // This is MC 
-                                 h_phi_mc_EB[modEta]->Fill(scPhi2,ww);}
-       else{ h_EoP_EB[PhibinEB][modEta] -> Fill(var,ww);  // This is MC
-             std::pair<int,int> temp;
-             temp.first=modPhi; temp.second=modEta;
-             refIdEB.at(PhibinEB)=temp; 
-             h_phi_mc_EB[modEta]->Fill(scPhi2,ww);}     
-    }
-
-    else{ 
-          var = (mZ *sqrt(pTK2/scEne2))/91.19;    /// use the momentum for ele1
-          if(ele2_iz==1)mapConversionEEp-> SetBinContent(ele2_ix,ele2_iy,scEta2);
-          if(ele2_iz==-1)mapConversionEEm-> SetBinContent(ele2_ix,ele2_iy,scEta2);
- 
-          iphi = eRings->GetEndcapIphi(ele2_ix,ele2_iy,ele2_iz);
-          ieta = eRings->GetEndcapIeta(ele2_ix,ele2_iy,ele2_iz);
-
-          int modPhi = int (iphi/(360./nPhiBinsTempEE));
-          int modEta =  templIndexEE(ieta);
-          if(modEta == -1) continue;
-
-
-          if(modPhi==nPhiBinsTempEE) h_template_EE[0][modEta] ->  Fill(var,ww);
-          else h_template_EE[modPhi][modEta] ->  Fill(var,ww);
-
-          // fill MC histos in eta bins
-          //int PhibinEE = int (iphi/(360./nPhiBinsEE)); 
-	  int PhibinEE = hPhiBinEE->FindBin(scPhi) - 1 ; 
-          if(PhibinEE==nPhiBinsEE){ h_EoP_EE[0][modEta] -> Fill(var,ww);  // This is MC
-                                    h_phi_mc_EE[modEta]->Fill(scPhi2,ww);}
-          else{
-               h_EoP_EE[PhibinEE][modEta] -> Fill(var,ww);  // This is MC
-               std::pair<int,int> temp;
-               temp.first=modPhi; temp.second=modEta;
-               refIdEE.at(PhibinEE)=temp; 
-               h_phi_mc_EE[modEta]->Fill(scPhi2,ww);}
-
-        }
-    h_et_mc ->Fill(scEt,ww);
-  } 
-
-  // loop on events in Data
-  std::cout << "Loop in Data events " << endl; 
-
-  for(int entry = 0; entry < ntu_DA->GetEntries(); ++entry) {
-    if( entry%10000 == 0 ) std::cout << "reading saved entry " << entry << "\r" << std::flush;
-
-    ntu_DA->GetEntry(entry);
-
-    if (isW==1) continue;
-    if ( fabs(scEta) > etaMax) continue;
-    if ( fabs(scEta2) > eta2Max) continue;
-
-    float R9 = scE3x3/scEne;
-    if ( R9 < r9min || R9 > r9max ) continue; 
-
-    //--- set ieta for the Endcaps
-    int iphi,ieta;
-     
-    if(ele1_iz==0 && ele2_iz==0) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEB))/91.19;
-    if(ele1_iz==0 && ele2_iz==1) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEEP))/91.19;
-    if(ele1_iz==0 && ele2_iz==-1) var = (mZ *sqrt(pTK/scEne)* sqrt(scEneReg2/scEne2)*sqrt(rescaleFactorEB*rescaleFactorEEM))/91.19;
-
-    if(ele1_iz==1 && ele2_iz==0) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEP*rescaleFactorEB))/91.19;   
-    if(ele1_iz==1 && ele2_iz==1)var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEP*rescaleFactorEEP))/91.19;   
-    if(ele1_iz==1 && ele2_iz==-1) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEP*rescaleFactorEEM))/91.19;
-   
-    if(ele1_iz==-1 && ele2_iz==0) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEM*rescaleFactorEB))/91.19;   
-    if(ele1_iz==-1 && ele2_iz==1)var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEM*rescaleFactorEEP))/91.19;   
-    if(ele1_iz==-1 && ele2_iz==-1) var = (mZ  * sqrt(pTK/scEne) *sqrt(rescaleFactorEEM*rescaleFactorEEM))/91.19;
-
-
-
-    if(ele1_iz==0){
-
-      //int PhibinEB = int (ele1_iphi/(360./nPhiBinsEB)); 
-       int PhibinEB = hPhiBinEB->FindBin(scPhi) - 1 ; 
-       int modEta =  templIndexEB(ele1_ieta);
-       if(modEta == -1) continue;
-
-       if(PhibinEB==nPhiBinsEB){ h_EoC_EB[0][modEta]-> Fill(var);  // This is DATA
-                                 h_phi_data_EB[modEta]->Fill(scPhi);
-                          }
-       else{h_EoC_EB[PhibinEB][modEta] -> Fill(var);  // This is DATA
-            h_Phi_EB[PhibinEB][modEta]->Fill((double) ele1_iphi);
-                         
-            h_phi_data_EB[modEta]->Fill(scPhi);}
+    float ww = 1.;
+    if( usePUweights ) ww *= w[npu];
+    
+    
+    
+    //--- set the mass for ele1
+    var = ( mZ * sqrt(pTK/scEne) * sqrt(scEneReg2/scEne2) ) / 91.19;
+    // simulate e+/e- asymmetry
+    //if( charge > 0 ) ww *= 1.*(6/5);
+    //else             ww *= 1.*(4/5);
+    
+    // MC - BARREL - ele1
+    if( ele1_iz == 0 )
+    {
+      // fill MC templates
+      int modPhi = int(iphiSeed/(360./nPhiBinsTempEB));
+      if( modPhi == nPhiBinsTempEB ) modPhi = 0;
       
-     }
-    else{  iphi = eRings->GetEndcapIphi(ele1_ix,ele1_iy,ele1_iz); 
-           ieta = eRings->GetEndcapIeta(ele1_ix,ele1_iy,ele1_iz);
-           //int PhibinEE = int (iphi/(360./nPhiBinsEE));
-	   int PhibinEE = hPhiBinEE->FindBin(scPhi) - 1 ; 
-           int modEta =  templIndexEE(ieta);
-           if(modEta == -1) continue;
-           if(ele1_iz==1)mapConversionEEp-> SetBinContent(ele1_ix,ele1_iy,scEta);
-           if(ele1_iz==-1)mapConversionEEm-> SetBinContent(ele1_ix,ele1_iy,scEta);
-
-           if(PhibinEE==nPhiBinsEE){
-                              h_EoC_EE[0][modEta] -> Fill(var);  // This is DATA
-                              h_phi_data_EE[modEta] ->Fill(scPhi);}
-           else{
-                  h_EoC_EE[PhibinEE][modEta] -> Fill(var);  // This is DATA
-                  h_Phi_EE[PhibinEE][modEta] -> Fill((double) iphi); 
-                  h_phi_data_EE[modEta] ->Fill(scPhi);}
-           
-        }
-     
-    if(ele2_iz!=0) var = (mZ * sqrt(pTK2/scEne2))/91.19;    /// use the momentum for ele1
-    if(ele2_iz==0) var = (mZ * sqrt(pTK2/scEne2)* sqrt(scEneReg/scEne))/91.19;
-
-    if(ele2_iz==0){
-
-      //int PhibinEB = int (ele2_iphi/(360./nPhiBinsEB));
-       int PhibinEB = hPhiBinEB->FindBin(scPhi) - 1 ;  
-       int modEta =  templIndexEB(ele2_ieta);
-       if(modEta == -1) continue;
-
-       if(PhibinEB==nPhiBinsEB){ h_EoC_EB[0][modEta]-> Fill(var);  // This is DATA
-                                 h_phi_data_EB[modEta]->Fill(scPhi2);
-                          }
-       else{h_EoC_EB[PhibinEB][modEta] -> Fill(var);  // This is DATA
-            h_Phi_EB[PhibinEB][modEta]->Fill((double) ele2_iphi);
-            h_phi_data_EB[modEta]->Fill(scPhi2);}
+      int modEta = templIndexEB(eleEta);
+      if( modEta == -1 ) continue;
       
-     }
-    else{     
-           iphi = eRings->GetEndcapIphi(ele2_ix,ele2_iy,ele2_iz); 
-           ieta = eRings->GetEndcapIeta(ele2_ix,ele2_iy,ele2_iz); 
-           if(ele2_iz==1)mapConversionEEp-> SetBinContent(ele2_ix,ele2_iy,scEta2);
-           if(ele2_iz==-1)mapConversionEEm-> SetBinContent(ele2_ix,ele2_iy,scEta2);
-
-           //int PhibinEE = int (iphi/(360./nPhiBinsEE));
-	   int PhibinEE = hPhiBinEE->FindBin(scPhi) - 1 ;  
-           int modEta =  templIndexEE(ieta);
-           if(modEta == -1) continue;
-
-           if(PhibinEE==nPhiBinsEE){
-                              h_EoC_EE[0][modEta] -> Fill(var);  // This is DATA
-                              h_phi_data_EE[modEta] ->Fill(scPhi2);}
-           else{
-                  h_EoC_EE[PhibinEE][modEta] -> Fill(var);  // This is DATA
-                  h_Phi_EE[PhibinEE][modEta] -> Fill((double) iphi); 
-                  h_phi_data_EE[modEta] ->Fill(scPhi2);}
-           
-        }
-
-   
-    h_et_data ->Fill(scEt);
-
-  }
-
-  std::cout << "End loop: Analyze events " << endl; 
+      (h_template_EB.at(modPhi)).at(modEta) -> Fill(var,ww);
+      
+      
+      // fill MC histos in eta bins
+      int PhibinEB = hPhiBinEB->FindBin(elePhi) - 1;
+      if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
+      
+      (h_EoP_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is MC
+      h_phi_mc_EB[modEta] -> Fill(scPhi,ww);
+    }
     
-  // draw results   
-  TGraphErrors** g_EoP_EB   = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_EoC_EB   = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_Rat_EB   = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_EoP_EE   = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_EoC_EE   = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_Rat_EE   = new TGraphErrors*[nEtaBinsEB];
- 
-  /// Template binned Functions  
-  histoFunc ***templateHistoFuncEB= new histoFunc** [nPhiBinsTempEB]; 
-  histoFunc ***templateHistoFuncEE= new histoFunc** [nPhiBinsTempEE]; 
-
-  for (int mod=0; mod<nPhiBinsTempEB;mod++) {
-    templateHistoFuncEB[mod]= new histoFunc* [nEtaBinsEB];
-    for (int j=0; j<nEtaBinsEB; j++){
-     h_template_EB[mod][j] -> Rebin(rebinEB);
-     templateHistoFuncEB[mod][j] = new histoFunc(h_template_EB[mod][j]);
-   }
- }
-
- for (int mod=0; mod<nPhiBinsTempEE;mod++) {
-    templateHistoFuncEE[mod]= new histoFunc* [nEtaBinsEE];
-    for (int j=0; j<nEtaBinsEE; j++){
-    h_template_EE[mod][j] -> Rebin(rebinEE);
-    templateHistoFuncEE[mod][j] = new histoFunc(h_template_EE[mod][j]);
-  }
-}
-  // Template Fit in EB
-
- for(int j=0; j<nEtaBinsEB; j++){
-   
-   g_EoP_EB[j]= new TGraphErrors();
-   g_EoC_EB[j]= new TGraphErrors();
-   g_Rat_EB[j]= new TGraphErrors();
- }
-
- TRandom3 *rand = new TRandom3 ();
- 
- for(int i = 0; i < nPhiBinsEB; ++i){
-   
-   f_EoP_EB[i] = new TF1*[nEtaBinsEB];
-   f_EoC_EB[i] = new TF1*[nEtaBinsEB];
-
-    for(int j=0; j<nEtaBinsEB; j++){
- 
-    h_EoP_EB[i][j] -> Rebin(rebinEB);    
-    h_EoC_EB[i][j] -> Rebin(rebinEB);    
-   
-    std::pair<int,int> mod = refIdEB.at(i); 
+    // MC - ENDCAP - ele1
+    else
+    { 
+      int iphi = eRings->GetEndcapIphi(ele1_ix,ele1_iy,ele1_iz);
+      
+      if( ele1_iz ==  1 )mapConversionEEp -> SetBinContent(ele1_ix,ele1_iy,scEta);
+      if( ele1_iz == -1 )mapConversionEEm -> SetBinContent(ele1_ix,ele1_iy,scEta);
+      
+      
+      // fill MC templates
+      int modPhi = int (iphi/(360./nPhiBinsTempEE));
+      if( modPhi == nPhiBinsTempEE ) modPhi = 0;
+      
+      int modEta =  templIndexEE(eleEta);
+      if( modEta == -1 ) continue;
+      
+      (h_template_EE.at(modPhi)).at(modEta) -> Fill(var,ww);
+      
+      
+      // fill MC histos in eta bins
+      int PhibinEE = hPhiBinEE->FindBin(elePhi) - 1;
+      if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
+      
+      (h_EoP_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is MC
+      h_phi_mc_EE[modEta] -> Fill(scPhi,ww);
+    }
     
-    // define the fitting function
-    // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
     
-    char funcName[50];
-    sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EB",i,j,mod.first,mod.second);
-    f_EoP_EB[i][j] = new TF1(funcName, templateHistoFuncEB[mod.first][mod.second], 0.4, 1.4, 3, "histoFunc");
-
-    f_EoP_EB[i][j] -> SetParName(0,"Norm"); 
-    f_EoP_EB[i][j] -> SetParName(1,"Scale factor"); 
-
-    f_EoP_EB[i][j] -> SetLineWidth(1); 
-    f_EoP_EB[i][j] -> SetLineColor(kRed+2); 
-    f_EoP_EB[i][j] -> SetNpx(10000);
-    h_EoP_EB[i][j] -> Sumw2();
-
-    h_EoP_EB[i][j] -> Scale(1*h_EoC_EB[i][j]->GetEntries()/h_EoP_EB[i][j]->GetEntries());
-
-    // uncorrected    
-    double xNorm = h_EoP_EB[i][j]->Integral()/h_template_EB[mod.first][mod.second]->Integral() *
-                   h_EoP_EB[i][j]->GetBinWidth(1)/h_template_EB[mod.first][mod.second]->GetBinWidth(1); 
-
-
-    f_EoP_EB[i][j] -> FixParameter(0, xNorm);
-    f_EoP_EB[i][j] -> FixParameter(2, 0.);
     
-    TFitResultPtr rp;
-    int fStatus; 
-    std::cout << "***** Fitting MC EB ";
-    for (int trial=0;trial<100;trial++) {
-
-      f_EoP_EB[i][j] -> SetParameter(1, rand->Uniform(0.95,1.05));
-      rp = h_EoP_EB[i][j] -> Fit(funcName, "QRWL+");
-      fStatus = rp;
-      if (fStatus !=4 && f_EoP_EB[i][j]->GetParError(1)!=0.) break;
-      else if(trial==99) cout <<" No good Fit "<<endl;
-     }
-   
-    
-    //float flPhi = h_Phi_EB[i][j]->GetMean(); 
-    float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i);
-    if(i==0) g_EoP_EB[j] -> SetPoint(i, 0. , pow(f_EoP_EB[i][j]->GetParameter(1),2));
-    else  g_EoP_EB[j] -> SetPoint(i, flPhi , pow(f_EoP_EB[i][j]->GetParameter(1),2));
-
-    g_EoP_EB[j] -> SetPointError(i, 0., 2*f_EoP_EB[i][j]->GetParError(1));
+    //--- set the mass for ele2
+    var = ( mZ * sqrt(pTK2/scEne2) * sqrt(scEneReg/scEne) ) / 91.19;
+    // simulate e+/e- asymmetry
+    //if( charge > 0 ) ww *= 1.*(6/5);
+    //else             ww *= 1.*(4/5);
         
-    //ratio preparation
-    float rat = f_EoP_EB[i][j]->GetParameter(1);
-    float era = f_EoP_EB[i][j]->GetParError(1); 
-    
-    xNorm = h_EoC_EB[i][j]->Integral()/h_template_EB[mod.first][mod.second]->Integral() *
-            h_EoC_EB[i][j]->GetBinWidth(1)/h_template_EB[mod.first][mod.second]->GetBinWidth(1); 
-
-    sprintf(funcName,"f_EoC_%d_%d_Ref_%d_%d_EB",i,j,mod.first,mod.second);
-    
-    f_EoC_EB[i][j] = new TF1(funcName, templateHistoFuncEB[mod.first][mod.second], 0.4, 1.4, 3, "histoFunc");
-
-    f_EoC_EB[i][j] -> SetParName(0,"Norm"); 
-    f_EoC_EB[i][j] -> SetParName(1,"Scale factor"); 
-
-    f_EoC_EB[i][j] -> SetLineWidth(1); 
-    f_EoC_EB[i][j] -> SetLineColor(kGreen+2); 
-    f_EoC_EB[i][j] -> SetNpx(10000);
-
-    f_EoC_EB[i][j] -> FixParameter(0, xNorm);
-    f_EoC_EB[i][j] -> FixParameter(2, 0.);
-    
-    std::cout << "***** Fitting DATA EB ";
-    for (int trial=0;trial<100;trial++) {
-
-      f_EoC_EB[i][j] -> SetParameter(1, rand->Uniform(0.95,1.05));
-      rp = h_EoC_EB[i][j] -> Fit(funcName, "QR+");
-      fStatus = rp;
-      if (fStatus !=4 && f_EoC_EB[i][j]->GetParError(1)!=0) break;
-      else if(trial==99) cout <<" No good Fit "<<endl;
+    // MC - BARREL - ele2 
+    if( ele2_iz == 0)
+    {
+       // fill MC templates
+       int modPhi = int (iphiSeed2/(360./nPhiBinsTempEB));
+       if( modPhi == nPhiBinsTempEB ) modPhi = 0;
+       
+       int modEta  = templIndexEB(eleEta2);
+       if(modEta == -1) continue;
+       
+       (h_template_EB.at(modPhi)).at(modEta)->Fill(var,ww);
+       
+       
+       // fill MC histos in eta bins
+       int PhibinEB = hPhiBinEB->FindBin(elePhi2) - 1;
+       if( PhibinEB==nPhiBinsEB ) PhibinEB = 0;
+       
+       (h_EoP_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww); // This is MC
+       h_phi_mc_EB[modEta]->Fill(scPhi2,ww);
     }
     
-    if(i==0) g_EoC_EB[j] -> SetPoint(i, 0., pow(f_EoC_EB[i][j]->GetParameter(1),2));
-    else g_EoC_EB[j] -> SetPoint(i, flPhi, pow(f_EoC_EB[i][j]->GetParameter(1),2));
- 
-    g_EoC_EB[j] -> SetPointError(i, 0., 2*f_EoC_EB[i][j]->GetParError(1));
-
-    //ratio finalization
-    rat /= f_EoC_EB[i][j]->GetParameter(1);
-    era = rat*sqrt(era*era+f_EoC_EB[i][j]->GetParError(1)*f_EoC_EB[i][j]->GetParError(1)); 
+    // MC - ENDCAP - ele2
+    else
+    { 
+      if( ele2_iz ==  1 ) mapConversionEEp -> SetBinContent(ele2_ix,ele2_iy,scEta2);
+      if( ele2_iz == -1 ) mapConversionEEm -> SetBinContent(ele2_ix,ele2_iy,scEta2);
+      
+      int iphi = eRings->GetEndcapIphi(ele2_ix,ele2_iy,ele2_iz);
+      
+      
+      // fill MC templates
+      int modPhi = int (iphi/(360./nPhiBinsTempEE));
+      if( modPhi == nPhiBinsTempEE ) modPhi = 0;
+      
+      int modEta =  templIndexEE(eleEta2);
+      if(modEta == -1) continue;
+      
+      (h_template_EE.at(modPhi)).at(modEta) ->  Fill(var,ww);
+      
+      
+      // fill MC histos in eta bins
+      int PhibinEE = hPhiBinEE->FindBin(elePhi2) - 1;
+      if(PhibinEE==nPhiBinsEE) PhibinEE = 0;
+      
+      (h_EoP_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is MC
+      h_phi_mc_EE[modEta]->Fill(scPhi2,ww);
+    }
     
-    if(i==0) g_Rat_EB[j] -> SetPoint(i, 0. , rat);
-    else  g_Rat_EB[j] -> SetPoint(i, flPhi , rat);
-
-    g_Rat_EB[j] -> SetPointError(i,  0. , era); 
-    g_Rat_EB[j]->SetLineColor(kBlue+2); 
+    h_et_mc ->Fill(scEt, ww);
+    h_et_mc ->Fill(scEt2,ww);
   }
- }
-
- // Template Fit in EE
- for(int j=0; j<nEtaBinsEE; j++){
-   
-   g_EoP_EE[j]= new TGraphErrors();
-   g_EoC_EE[j]= new TGraphErrors();
-   g_Rat_EE[j]= new TGraphErrors();
- }
-
- for(int i = 0; i < nPhiBinsEE; ++i){
-   
-   f_EoP_EE[i]=new TF1*[nEtaBinsEE];
-   f_EoC_EE[i]=new TF1*[nEtaBinsEE];
-
-    for(int j=0; j<nEtaBinsEE; j++){
-    h_EoP_EE[i][j] -> Rebin(rebinEE);    
-    h_EoC_EE[i][j] -> Rebin(rebinEE);    
+  
+  
+  
+  
+  
+  
+  //**************************** loop on DATA
+  
+  std::cout << "Loop in Data events " << endl; 
+  
+  for(int entry = 0; entry < ntu_DA->GetEntries(); ++entry)
+  {
+    if( entry%10000 == 0 ) std::cout << "reading saved entry " << entry << "\r" << std::flush;
     
-    // define the fitting function
-    // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
-    std::pair<int,int> mod = refIdEE.at(i); 
+    ntu_DA->GetEntry(entry);
     
-    char funcName[50];
-    sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EE",i,j,mod.first,mod.second);
-    f_EoP_EE[i][j] = new TF1(funcName, templateHistoFuncEE[mod.first][mod.second], 0.3, 1.4, 3, "histoFunc");
-
-    f_EoP_EE[i][j] -> SetParName(0,"Norm"); 
-    f_EoP_EE[i][j] -> SetParName(1,"Scale factor"); 
-
-    f_EoP_EE[i][j] -> SetLineWidth(1); 
-    f_EoP_EE[i][j] -> SetLineColor(kRed+2); 
-    f_EoP_EE[i][j] -> SetNpx(10000);
-    f_EoP_EE[i][j] -> SetNpx(10000);
-    h_EoP_EE[i][j] -> Sumw2();
-
-    h_EoP_EE[i][j] -> Scale(1*h_EoC_EE[i][j]->GetEntries()/h_EoP_EE[i][j]->GetEntries());
+    if( isW == 1 )               continue;
+    if( fabs(scEta)  > etaMax )  continue;
+    if( fabs(scEta2) > eta2Max ) continue;
+    if( scEt  < 20. ) continue;
+    if( scEt2 < 20. ) continue;    
     
-    // uncorrected    
-    double xNorm = h_EoP_EE[i][j]->Integral()/h_template_EE[mod.first][mod.second]->Integral() *
-                   h_EoP_EE[i][j]->GetBinWidth(1)/h_template_EE[mod.first][mod.second]->GetBinWidth(1); 
-
-    f_EoP_EE[i][j] -> FixParameter(0, xNorm);
-    f_EoP_EE[i][j] -> FixParameter(2, 0.);
     
-    TFitResultPtr rp;
-    int fStatus; 
-    std::cout << "***** Fitting MC EE ";
-
-    for (int trial=0;trial<100;trial++) {
-      f_EoP_EE[i][j] -> SetParameter(1, rand->Uniform(0.95,1.05));
-      rp = h_EoP_EE[i][j] -> Fit(funcName, "QRWL+");
-      fStatus = rp;
-      if (fStatus !=4 && f_EoP_EE[i][j]->GetParError(1)!=0.) break;
-      else if(trial==99) cout <<" No good Fit "<<endl;
+    float ww = 1.;
+    
+    
+    
+    //--- set the mass for ele1
+    if( ele1_iz == 0 ) var = ( mZ * sqrt(pTK/scEne) * sqrt(scEneReg2/scEne2) * rescaleFactorEB(eleEta) ) / 91.19;
+    else               var = ( mZ * sqrt(pTK/scEne) * sqrt(scEneReg2/scEne2) * rescaleFactorEE(eleEta) ) / 91.19;
+    // simulate e+/e- asymmetry
+    //if( charge > 0 ) ww *= 1.*(6/5);
+    //else             ww *= 1.*(4/5);
+    
+    // DATA - BARREL - ele1
+    if( ele1_iz == 0 )
+    {
+      int PhibinEB = hPhiBinEB->FindBin(elePhi) - 1;
+      if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
+      
+      int modEta = templIndexEB(eleEta);
+      if(modEta == -1) continue;
+      
+      (h_EoC_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is DATA
+      (h_Phi_EB.at(PhibinEB)).at(modEta) -> Fill(elePhi);
+      h_phi_data_EB[modEta]->Fill(elePhi);
     }
     
-    //float flPhi = h_Phi_EE[i][j]->GetMean(); 
-    float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i);
-    if(i==0) g_EoP_EE[j] -> SetPoint(i, 0. , pow(f_EoP_EE[i][j]->GetParameter(1),2));
-    else g_EoP_EE[j] -> SetPoint(i, flPhi , pow(f_EoP_EE[i][j]->GetParameter(1),2));
-
-    g_EoP_EE[j] -> SetPointError(i, 0., 2*f_EoP_EE[i][j]->GetParError(1));
-
-    //ratio preparation
-    float rat = f_EoP_EE[i][j]->GetParameter(1);
-    float era = f_EoP_EE[i][j]->GetParError(1); 
-     
-    // corrected    
-    xNorm = h_EoC_EE[i][j]->Integral()/h_template_EE[mod.first][mod.second]->Integral() *
-            h_EoC_EE[i][j]->GetBinWidth(1)/h_template_EE[mod.first][mod.second]->GetBinWidth(1); 
-    
-    sprintf(funcName,"f_EoC_%d_%d_Ref_%d_%d_EE",i,j,mod.first,mod.second);
-    f_EoC_EE[i][j] = new TF1(funcName, templateHistoFuncEE[mod.first][mod.second], 0.3, 1.4, 3, "histoFunc");
-
-    f_EoC_EE[i][j] -> SetParName(0,"Norm"); 
-    f_EoC_EE[i][j] -> SetParName(1,"Scale factor"); 
-
-    f_EoC_EE[i][j] -> SetLineWidth(1); 
-    f_EoC_EE[i][j] -> SetLineColor(kGreen+2); 
-    f_EoC_EE[i][j] -> SetNpx(10000);
-
-    f_EoC_EE[i][j] -> FixParameter(0, xNorm);
-    f_EoC_EE[i][j] -> FixParameter(2, 0.);
-    
-    std::cout << "***** Fitting DATA EE ";
-    for (int trial=0;trial<100;trial++) {
-   
-      f_EoC_EE[i][j] -> SetParameter(1, rand->Uniform(0.95,1.05));
-      rp = h_EoC_EE[i][j] -> Fit(funcName, "QR+");
-      if (fStatus !=4 && f_EoC_EE[i][j]->GetParError(1)!=0.) break;
-      else if(trial==99) cout <<" No good Fit "<<endl;
+    // DATA - ENDCAP - ele1
+    else
+    {
+      if( ele1_iz ==  1 ) mapConversionEEp -> SetBinContent(ele1_ix,ele1_iy,scEta);
+      if( ele1_iz == -1 ) mapConversionEEm -> SetBinContent(ele1_ix,ele1_iy,scEta);
+      
+      int PhibinEE = hPhiBinEE->FindBin(elePhi) - 1;
+      if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
+      
+      int modEta = templIndexEE(eleEta);
+      if( modEta == -1 ) continue;
+      
+      (h_EoC_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is DATA
+      (h_Phi_EE.at(PhibinEE)).at(modEta) -> Fill(elePhi); 
+      h_phi_data_EE[modEta] -> Fill(elePhi);
     }
-
-    if(i==0) g_EoC_EE[j] -> SetPoint(i, 0., pow(f_EoC_EE[i][j]->GetParameter(1),2));
-    else g_EoC_EE[j] -> SetPoint(i, flPhi, pow(f_EoC_EE[i][j]->GetParameter(1),2));
-    g_EoC_EE[j] -> SetPointError(i, 0., 2*f_EoC_EE[i][j]->GetParError(1));
-
-    //ratio finalization
-    rat /= f_EoC_EE[i][j]->GetParameter(1);
-    era = rat*sqrt(era*era+f_EoC_EE[i][j]->GetParError(1)*f_EoC_EE[i][j]->GetParError(1)); 
     
-    if(i==0) g_Rat_EE[j] -> SetPoint(i, 0. , rat);
-    else  g_Rat_EE[j] -> SetPoint(i, flPhi , rat);
-    g_Rat_EE[j] -> SetPointError(i,  0. , era);
- 
-    g_Rat_EE[j]->SetLineColor(kBlue+2); 
+    
+    
+    //--- set the mass for ele2
+    if( ele2_iz == 0 ) var = ( mZ * sqrt(pTK2/scEne2) * sqrt(scEneReg/scEne) * rescaleFactorEB(eleEta2) ) / 91.19;
+    else               var = ( mZ * sqrt(pTK2/scEne2) * sqrt(scEneReg/scEne) * rescaleFactorEE(eleEta2) ) / 91.19;
+    // simulate e+/e- asymmetry
+    //if( charge2 > 0 ) ww *= 1.*(6/5);
+    //else              ww *= 1.*(4/5);
+        
+    // DATA - BARREL - ele2
+    if( ele2_iz == 0 )
+    {
+      int PhibinEB = hPhiBinEB->FindBin(elePhi2) - 1;
+      if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
+      
+      int modEta = templIndexEB(eleEta2);
+      if( modEta == -1 ) continue;
+      
+      (h_EoC_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is DATA
+      (h_Phi_EB.at(PhibinEB)).at(modEta) -> Fill(elePhi2);
+      h_phi_data_EB[modEta] -> Fill(elePhi2);
+    }
+    else
+    {     
+      if( ele2_iz ==  1 ) mapConversionEEp -> SetBinContent(ele2_ix,ele2_iy,scEta2);
+      if( ele2_iz == -1 ) mapConversionEEm -> SetBinContent(ele2_ix,ele2_iy,scEta2);
+      
+      int PhibinEE = hPhiBinEE->FindBin(elePhi2) - 1;
+      if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
+      
+      int modEta = templIndexEE(eleEta2);
+      if( modEta == -1 ) continue;
+      
+      (h_EoC_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is DATA
+      (h_Phi_EE.at(PhibinEE)).at(modEta) -> Fill(elePhi2); 
+      h_phi_data_EE[modEta] ->Fill(elePhi2);
+    }
+    
+    h_et_data ->Fill(scEt);
+    h_et_data ->Fill(scEt2);
   }
- }
-  // Output 
-
+  
+  std::cout << "End loop: Analyze events " << endl; 
+  
+  
+  
+  
+  
+  
+  //----------------
+  // Initializations
+  
+  // initialize TGraphs
   TFile* o = new TFile(outputFile.c_str(),"RECREATE");
+  
+  TGraphErrors** g_EoP_EB = new TGraphErrors*[nEtaBinsEB];
+  TGraphErrors** g_EoC_EB = new TGraphErrors*[nEtaBinsEB];
+  TGraphErrors** g_Rat_EB = new TGraphErrors*[nEtaBinsEB];
+  
+  for(int j = 0; j < nEtaBinsEB; ++j)
+  {
+    g_EoP_EB[j] = new TGraphErrors();
+    g_EoC_EB[j] = new TGraphErrors();
+    g_Rat_EB[j] = new TGraphErrors();
+  }
+  
+  TGraphErrors** g_EoP_EE = new TGraphErrors*[nEtaBinsEB];
+  TGraphErrors** g_EoC_EE = new TGraphErrors*[nEtaBinsEB];
+  TGraphErrors** g_Rat_EE = new TGraphErrors*[nEtaBinsEB];
+ 
+  for(int j = 0; j < nEtaBinsEE; ++j)
+  {
+    g_EoP_EE[j]= new TGraphErrors();
+    g_EoC_EE[j]= new TGraphErrors();
+    g_Rat_EE[j]= new TGraphErrors();
+  }
+  
+  // initialize template functions  
+  std::vector<std::vector<histoFunc*> > templateHistoFuncEB(nPhiBinsTempEB);
+  std::vector<std::vector<histoFunc*> > templateHistoFuncEE(nPhiBinsTempEE);
+  
+  for(int mod = 0; mod < nPhiBinsTempEB; ++mod)
+  {
+    for(int j = 0; j < nEtaBinsEB; ++j)
+    {
+      (h_template_EB.at(mod)).at(j) -> Rebin(rebinEB);
+      (templateHistoFuncEB.at(mod)).push_back( new histoFunc((h_template_EB.at(mod)).at(j)) );
+    }
+  }
+  
+  for(int mod = 0; mod < nPhiBinsTempEE; ++mod)
+  {
+    for(int j = 0; j < nEtaBinsEE; ++j)
+    {
+      (h_template_EE.at(mod)).at(j) -> Rebin(rebinEE);
+      (templateHistoFuncEE.at(mod)).push_back( new histoFunc((h_template_EE.at(mod)).at(j)) );
+    }
+  }
+  
+  
+  
+  
+  
+  
+  //-------------------
+  // Template Fit in EB
+  
+  TRandom3* rand = new TRandom3();
+  
+  for(int i = 0; i < nPhiBinsEB; ++i)
+  {
+    for(int j = 0; j < nEtaBinsEB; ++j)
+    {
+      std::cout << "ciao1 " << i << "," << j << std::endl;
+      std::cout << "ciao2 " << (h_EoP_EB.at(i)).at(j)->Integral() << std::endl;
+      (h_EoP_EB.at(i)).at(j) -> Rebin(rebinEB);
+      std::cout << "ciao3 " << (h_EoC_EB.at(i)).at(j)->Integral() << std::endl;
+      (h_EoC_EB.at(i)).at(j) -> Rebin(rebinEB);    
+      
+      
+      // define the fitting function
+      // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
+      std::cout << "ciao1" << std::endl;
+      char funcName[50];
+      sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EB",i,j,refIdEB.at(i),j);
+      (f_EoP_EB.at(i)).push_back( new TF1(funcName, (templateHistoFuncEB.at(refIdEB.at(i))).at(j), 0.85, 1.1, 3, "histoFunc") );
+      
+      (f_EoP_EB.at(i)).at(j) -> SetParName(0,"Norm"); 
+      (f_EoP_EB.at(i)).at(j) -> SetParName(1,"Scale factor"); 
+      
+      (f_EoP_EB.at(i)).at(j) -> SetLineWidth(1); 
+      (f_EoP_EB.at(i)).at(j) -> SetLineColor(kRed+2); 
+      (f_EoP_EB.at(i)).at(j) -> SetNpx(10000);
+      
+      (h_EoP_EB.at(i)).at(j) -> Scale(1*(h_EoC_EB.at(i)).at(j)->GetEntries()/(h_EoP_EB.at(i)).at(j)->GetEntries());
+      std::cout << "ciao2" << std::endl;      
+      // uncorrected    
+      double xNorm = (h_EoP_EB.at(i)).at(j)->Integral()/(h_template_EB.at(refIdEB.at(i))).at(j)->Integral() *
+                     (h_EoP_EB.at(i)).at(j)->GetBinWidth(1)/(h_template_EB.at(refIdEB.at(i))).at(j)->GetBinWidth(1); 
+      
+      
+      (f_EoP_EB.at(i)).at(j) -> FixParameter(0, xNorm);
+      (f_EoP_EB.at(i)).at(j) -> FixParameter(2, 0.);
+      
+      TFitResultPtr rp;
+      int fStatus; 
+      std::cout << "***** Fitting MC EB " << i << "," << j << std::endl;
+      for (int trial=0;trial<10;trial++)
+      {
+        (f_EoP_EB.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
+        rp = (h_EoP_EB.at(i)).at(j) -> Fit(funcName, "QRWL+");
+        fStatus = rp;
+        if (fStatus !=4 && (f_EoP_EB.at(i)).at(j)->GetParError(1)!=0.) break;
+        else if(trial==9) cout <<" No good Fit "<<endl;
+      }
+      
+            std::cout << "ciao3" << std::endl;
+      //float flPhi = h_Phi_EB[i][j]->GetMean(); 
+      float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i);
+      if(i==0) g_EoP_EB[j] -> SetPoint(i, 0.,    pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
+      else     g_EoP_EB[j] -> SetPoint(i, flPhi, pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
+      
+      g_EoP_EB[j] -> SetPointError(i, 0., 2*(f_EoP_EB.at(i)).at(j)->GetParError(1));
+      
+      //ratio preparation
+      float rat = (f_EoP_EB.at(i)).at(j)->GetParameter(1);
+      float era = (f_EoP_EB.at(i)).at(j)->GetParError(1); 
+      
+      xNorm = (h_EoC_EB.at(i)).at(j)->Integral()/(h_template_EB.at(refIdEB.at(i))).at(j)->Integral() *
+              (h_EoC_EB.at(i)).at(j)->GetBinWidth(1)/(h_template_EB.at(refIdEB.at(i))).at(j)->GetBinWidth(1); 
+      
+      sprintf(funcName,"f_EoC_%d_%d_Ref_%d_%d_EB",i,j,refIdEB.at(i),i);
+      
+      (f_EoC_EB.at(i)).push_back( new TF1(funcName, (templateHistoFuncEB.at(refIdEB.at(i))).at(j), 0.85, 1.1, 3, "histoFunc") );
+      
+      (f_EoC_EB.at(i)).at(j) -> SetParName(0,"Norm"); 
+      (f_EoC_EB.at(i)).at(j) -> SetParName(1,"Scale factor"); 
+      
+      (f_EoC_EB.at(i)).at(j) -> SetLineWidth(1); 
+      (f_EoC_EB.at(i)).at(j) -> SetLineColor(kGreen+2); 
+      (f_EoC_EB.at(i)).at(j) -> SetNpx(10000);
+      
+      (f_EoC_EB.at(i)).at(j) -> FixParameter(0, xNorm);
+      (f_EoC_EB.at(i)).at(j) -> FixParameter(2, 0.);
+      
+      std::cout << "***** Fitting DATA EB " << i << "," << j << std::endl;
+      for (int trial=0;trial<10;trial++)
+      {
+        (f_EoC_EB.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
+        rp = (h_EoC_EB.at(i)).at(j) -> Fit(funcName, "QR+");
+        fStatus = rp;
+        if (fStatus !=4 && (f_EoC_EB.at(i)).at(j)->GetParError(1)!=0) break;
+        else if(trial==9) cout <<" No good Fit "<<endl;
+      }
+      
+      if(i==0) g_EoC_EB[j] -> SetPoint(i, 0., pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
+      else g_EoC_EB[j] -> SetPoint(i, flPhi, pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
+            std::cout << "ciao4" << std::endl;
+      g_EoC_EB[j] -> SetPointError(i, 0., 2*(f_EoC_EB.at(i)).at(j)->GetParError(1));
+      
+      //ratio finalization
+      rat /= (f_EoC_EB.at(i)).at(j)->GetParameter(1);
+      era = rat*sqrt(era*era+(f_EoC_EB.at(i)).at(j)->GetParError(1)*(f_EoC_EB.at(i)).at(j)->GetParError(1)); 
+      
+      if(i==0) g_Rat_EB[j] -> SetPoint(i, 0.,    rat);
+      else     g_Rat_EB[j] -> SetPoint(i, flPhi, rat);
+      
+      g_Rat_EB[j] -> SetPointError(i,  0. , era); 
+      g_Rat_EB[j]->SetLineColor(kBlue+2); 
+      std::cout << "ciao5" << std::endl;
+    }
+  }
+  
+  
+  
+  //-------------------
+  // Template Fit in EE
+  
+  for(int i = 0; i < nPhiBinsEE; ++i)
+  {
+    for(int j = 0; j < nEtaBinsEE; ++j)
+    {
+      (h_EoP_EE.at(i)).at(j) -> Rebin(rebinEE);
+      (h_EoC_EE.at(i)).at(j) -> Rebin(rebinEE);    
+      
+      
+      // define the fitting function
+      // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
+      
+      char funcName[50];
+      sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EE",i,j,refIdEE.at(i),j);
+      (f_EoP_EE.at(i)).push_back( new TF1(funcName, (templateHistoFuncEE.at(refIdEE.at(i))).at(j), 0.7, 1.1, 3, "histoFunc") );
+      
+      (f_EoP_EE.at(i)).at(j) -> SetParName(0,"Norm"); 
+      (f_EoP_EE.at(i)).at(j) -> SetParName(1,"Scale factor"); 
+      
+      (f_EoP_EE.at(i)).at(j) -> SetLineWidth(1); 
+      (f_EoP_EE.at(i)).at(j) -> SetLineColor(kRed+2); 
+      (f_EoP_EE.at(i)).at(j) -> SetNpx(10000);
+      (f_EoP_EE.at(i)).at(j) -> SetNpx(10000);
+      
+      (h_EoP_EE.at(i)).at(j) -> Scale(1*(h_EoC_EE.at(i)).at(j)->GetEntries()/(h_EoP_EE.at(i)).at(j)->GetEntries());
+      
+      // uncorrected    
+      double xNorm = (h_EoP_EE.at(i)).at(j)->Integral()/(h_template_EE.at(refIdEE.at(i))).at(j)->Integral() *
+                     (h_EoP_EE.at(i)).at(j)->GetBinWidth(1)/(h_template_EE.at(refIdEE.at(i))).at(j)->GetBinWidth(1); 
+      
+      (f_EoP_EE.at(i)).at(j) -> FixParameter(0, xNorm);
+      (f_EoP_EE.at(i)).at(j) -> FixParameter(2, 0.);
+      
+      TFitResultPtr rp;
+      int fStatus; 
+      std::cout << "***** Fitting MC EE " << i << "," << j << std::endl;
+      
+      for (int trial=0;trial<10;trial++)
+      {
+        (f_EoP_EE.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
+        rp = (h_EoP_EE.at(i)).at(j) -> Fit(funcName, "QRWL+");
+        fStatus = rp;
+        if (fStatus !=4 && (f_EoP_EE.at(i)).at(j)->GetParError(1)!=0.) break;
+        else if(trial==9) cout <<" No good Fit "<<endl;
+      }
+      
+      //float flPhi = h_Phi_EE[i][j]->GetMean(); 
+      float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i);
+      if(i==0) g_EoP_EE[j] -> SetPoint(i, 0.,    pow((f_EoP_EE.at(i)).at(j)->GetParameter(1),2));
+      else     g_EoP_EE[j] -> SetPoint(i, flPhi, pow((f_EoP_EE.at(i)).at(j)->GetParameter(1),2));
+      
+      g_EoP_EE[j] -> SetPointError(i, 0., 2*(f_EoP_EE.at(i)).at(j)->GetParError(1));
+      
+      //ratio preparation
+      float rat = (f_EoP_EE.at(i)).at(j)->GetParameter(1);
+      float era = (f_EoP_EE.at(i)).at(j)->GetParError(1); 
+      
+      // corrected    
+      xNorm = (h_EoC_EE.at(i)).at(j)->Integral()/(h_template_EE.at(refIdEE.at(i))).at(j)->Integral() *
+              (h_EoC_EE.at(i)).at(j)->GetBinWidth(1)/(h_template_EE.at(refIdEE.at(i))).at(j)->GetBinWidth(1); 
+      
+      sprintf(funcName,"f_EoC_%d_%d_Ref_%d_%d_EE",i,j,refIdEE.at(i),j);
+      (f_EoC_EE.at(i)).push_back( new TF1(funcName, (templateHistoFuncEE.at(refIdEE.at(i))).at(j), 0.7, 1.1, 3, "histoFunc") );
+      
+      (f_EoC_EE.at(i)).at(j) -> SetParName(0,"Norm"); 
+      (f_EoC_EE.at(i)).at(j) -> SetParName(1,"Scale factor"); 
+      
+      (f_EoC_EE.at(i)).at(j) -> SetLineWidth(1); 
+      (f_EoC_EE.at(i)).at(j) -> SetLineColor(kGreen+2); 
+      (f_EoC_EE.at(i)).at(j) -> SetNpx(10000);
+      
+      (f_EoC_EE.at(i)).at(j) -> FixParameter(0, xNorm);
+      (f_EoC_EE.at(i)).at(j) -> FixParameter(2, 0.);
+      
+      std::cout << "***** Fitting DATA EE " << i << "," << j << std::endl;
+      for (int trial=0;trial<10;trial++)
+      {
+        (f_EoC_EE.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
+        rp = (h_EoC_EE.at(i)).at(j) -> Fit(funcName, "QR+");
+        if (fStatus !=4 && (f_EoC_EE.at(i)).at(j)->GetParError(1)!=0.) break;
+        else if(trial==9) cout <<" No good Fit "<<endl;
+      }
+      
+      if(i==0) g_EoC_EE[j] -> SetPoint(i, 0., pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
+      else g_EoC_EE[j] -> SetPoint(i, flPhi, pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
+      g_EoC_EE[j] -> SetPointError(i, 0., 2*(f_EoC_EE.at(i)).at(j)->GetParError(1));
+      
+      //ratio finalization
+      rat /= (f_EoC_EE.at(i)).at(j)->GetParameter(1);
+      era = rat*sqrt(era*era+(f_EoC_EE.at(i)).at(j)->GetParError(1)*(f_EoC_EE.at(i)).at(j)->GetParError(1)); 
+      
+      if(i==0) g_Rat_EE[j] -> SetPoint(i, 0.,    rat);
+      else     g_Rat_EE[j] -> SetPoint(i, flPhi, rat);
+      g_Rat_EE[j] -> SetPointError(i,  0. , era);
+      
+      g_Rat_EE[j]->SetLineColor(kBlue+2); 
+    }
+  }
+  
+  
+  
+  
+  
+  
+  //-------
+  // Output
+   
   o -> cd();
   
-  for(int i=0; i<nEtaBinsEB ; i++){
-  TString Name;
-  Name = Form("g_EoP_EB_%d",i);
-  if(g_EoP_EB[i]->GetN()!=0) g_EoP_EB[i] -> Write(Name);
-  Name = Form("g_EoC_EB_%d",i);
-  if(g_EoC_EB[i]->GetN()!=0) g_EoC_EB[i] -> Write(Name);
-  Name = Form("g_Rat_EB_%d",i);
-  if(g_Rat_EB[i]->GetN()!=0) g_Rat_EB[i] -> Write(Name);
+  for(int j = 0; j < nEtaBinsEB; ++j)
+  {
+    TString Name;
+    Name = Form("g_EoP_EB_%d",j);
+    if(g_EoP_EB[j]->GetN()!=0) g_EoP_EB[j] -> Write(Name);
+    Name = Form("g_EoC_EB_%d",j);
+    if(g_EoC_EB[j]->GetN()!=0) g_EoC_EB[j] -> Write(Name);
+    Name = Form("g_Rat_EB_%d",j);
+    if(g_Rat_EB[j]->GetN()!=0) g_Rat_EB[j] -> Write(Name);
   }
-
-  for(int i=0; i<nEtaBinsEE ; i++){
-  TString Name;
-  Name = Form("g_EoP_EE_%d",i);
-  if(g_EoP_EE[i]->GetN()!=0) g_EoP_EE[i] -> Write(Name);
-  Name = Form("g_EoC_EE_%d",i);
-  if(g_EoC_EE[i]->GetN()!=0) g_EoC_EE[i] -> Write(Name);
-  Name = Form("g_Rat_EE_%d",i);
-  if(g_Rat_EE[i]->GetN()!=0) g_Rat_EE[i] -> Write(Name);
+  
+  for(int j = 0; j < nEtaBinsEE; ++j)
+  {
+    TString Name;
+    Name = Form("g_EoP_EE_%d",j);
+    if(g_EoP_EE[j]->GetN()!=0) g_EoP_EE[j] -> Write(Name);
+    Name = Form("g_EoC_EE_%d",j);
+    if(g_EoC_EE[j]->GetN()!=0) g_EoC_EE[j] -> Write(Name);
+    Name = Form("g_Rat_EE_%d",j);
+    if(g_Rat_EE[j]->GetN()!=0) g_Rat_EE[j] -> Write(Name);
   }
-
-  for (int imod = 0; imod<nPhiBinsTempEB; imod++){
-    for (int imod2 = 0; imod2<nEtaBinsEB; imod2++){
-    if(h_template_EB[imod][imod2]->GetEntries()!=0) h_template_EB[imod][imod2]->Write();
-   }
+  
+  for(int mod = 0; mod<nPhiBinsTempEB; ++mod)
+    for(int j = 0; j<nEtaBinsEB; ++j)
+    {
+      if( h_template_EB[mod][j] -> GetEntries() != 0 ) h_template_EB[mod][j] -> Write();
+    }
+  
+  for(int mod = 0; mod<nPhiBinsTempEE; ++mod)
+    for(int j = 0; j<nEtaBinsEE; ++j)
+    {
+      if( h_template_EE[mod][j] -> GetEntries() != 0 ) h_template_EE[mod][j] -> Write();
+    }
+  
+  for(int i = 0; i<nPhiBinsEB; ++i)
+    for(int j = 0; j<nEtaBinsEB; ++j)
+    {
+      if( (h_EoP_EB.at(i)).at(j) -> GetEntries() != 0 ) (h_EoP_EB.at(i)).at(j) -> Write();
+      if( (h_EoC_EB.at(i)).at(j) -> GetEntries() != 0 ) (h_EoC_EB.at(i)).at(j) -> Write();
+    }
+  
+  for(int i = 0; i<nPhiBinsEE; ++i)
+    for(int j = 0; j<nEtaBinsEE; ++j)
+    {
+      if( (h_EoP_EE.at(i)).at(j) -> GetEntries() != 0 ) (h_EoP_EE.at(i)).at(j) -> Write();
+      if( (h_EoC_EE.at(i)).at(j) -> GetEntries() != 0 ) (h_EoC_EE.at(i)).at(j) -> Write();
+    }
+  
+  for(int j =0; j< nEtaBinsEB; ++j)
+  {
+    if( h_phi_mc_EB[j]   -> GetEntries() !=0 ) h_phi_mc_EB[j]   -> Write();
+    if( h_phi_data_EB[j] -> GetEntries() !=0 ) h_phi_data_EB[j] -> Write();
   }
-
-  for (int imod = 0; imod<nPhiBinsTempEE; imod++){
-    for(int imod2 = 0; imod2<nEtaBinsEE; imod2++){
-     if(h_template_EE[imod][imod2]->GetEntries()!=0) h_template_EE[imod][imod2]->Write();
-   }
+  
+  for(int j =0; j< nEtaBinsEE; ++j)
+  {
+    if( h_phi_mc_EE[j]   -> GetEntries() !=0 ) h_phi_mc_EE[j]   -> Write(); 
+    if( h_phi_data_EE[j] -> GetEntries() !=0 ) h_phi_data_EE[j] -> Write();
   }
- 
-  for (int imod = 0; imod<nPhiBinsEB; imod++){
-   for(int imod2 = 0; imod2<nEtaBinsEB; imod2++){
-    if(h_EoP_EB[imod][imod2]->GetEntries()!=0) h_EoP_EB[imod][imod2]->Write();
-   }
-  }
-
-  for (int imod = 0; imod<nPhiBinsEB; imod++){
-   for(int imod2 = 0; imod2<nEtaBinsEB; imod2++){
-    if(h_EoC_EB[imod][imod2]->GetEntries()!=0) h_EoC_EB[imod][imod2]->Write();
-   }
-  }
-
-  for (int imod = 0; imod<nPhiBinsEE; imod++){
-   for(int imod2 = 0; imod2<nEtaBinsEE; imod2++){
-    if(h_EoP_EE[imod][imod2]->GetEntries()!=0) h_EoP_EE[imod][imod2]->Write();
-   }
-  }
-
- 
-  for (int imod = 0; imod<nPhiBinsEE; imod++){
-   for(int imod2 = 0; imod2<nEtaBinsEE; imod2++){
-    if(h_EoC_EE[imod][imod2]->GetEntries()!=0) h_EoC_EE[imod][imod2]->Write();
-   }
-  }
-
-  for(int imod =0; imod< nEtaBinsEB; imod++){
-   if(h_phi_mc_EB[imod]->GetEntries()!=0) h_phi_mc_EB[imod]->Write();
-   if(h_phi_data_EB[imod]->GetEntries()!=0) h_phi_data_EB[imod]->Write();
-  }
-
-  for(int imod =0; imod< nEtaBinsEE; imod++){
-   if(h_phi_mc_EE[imod]->GetEntries()!=0) h_phi_mc_EE[imod]->Write(); 
-    if(h_phi_data_EE[imod]->GetEntries()!=0) h_phi_data_EE[imod]->Write();
-  }
-
-
-h_et_mc->Write();
-h_et_data->Write();
-
-mapConversionEEp -> Write();
-mapConversionEEm -> Write();
-
-
-o -> Close();
-
-return 0;
+  
+  h_et_mc->Write();
+  h_et_data->Write();
+  
+  mapConversionEEp -> Write();
+  mapConversionEEm -> Write();
+  
+  o -> Close();
+  
+  
+  
+  return 0;
 }
