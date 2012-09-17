@@ -978,8 +978,8 @@ int main(int argc, char** argv)
         else if(trial==9) cout <<" No good Fit "<<endl;
       }
       
-      if(i==0) g_EoC_EE[j] -> SetPoint(i, 0., pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
-      else g_EoC_EE[j] -> SetPoint(i, flPhi, pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
+      if(i==0) g_EoC_EE[j] -> SetPoint(i, 0.,    pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
+      else     g_EoC_EE[j] -> SetPoint(i, flPhi, pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
       g_EoC_EE[j] -> SetPointError(i, 0., 2*(f_EoC_EE.at(i)).at(j)->GetParError(1));
       
       //ratio finalization
