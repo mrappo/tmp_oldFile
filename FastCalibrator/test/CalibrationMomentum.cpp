@@ -47,20 +47,30 @@ bool IsEtaGap(float eta)
   return false;
 }
 
-int templIndexEB(float eta)
+int templIndexEB(float eta, float charge)
 {
   float feta = fabs(eta);
-  if( feta <= 0.4375 )                   return 0;
-  if( feta >  0.4375 && feta <= 0.7875 ) return 0;
-  if( feta >  0.7875 && feta <= 1.1375 ) return 0;
-  if( feta >  1.1375 && feta <= 1.4875 ) return 0;
+  if( charge > 0 )
+  {
+    if( feta <= 0.4375 )                   return 0;
+    if( feta >  0.4375 && feta <= 0.7875 ) return 0;
+    if( feta >  0.7875 && feta <= 1.1375 ) return 0;
+    if( feta >  1.1375 && feta <= 1.4875 ) return 0;
+  }
+  else
+  {
+    if( feta <= 0.4375 )                   return 0;
+    if( feta >  0.4375 && feta <= 0.7875 ) return 0;
+    if( feta >  0.7875 && feta <= 1.1375 ) return 0;
+    if( feta >  1.1375 && feta <= 1.4875 ) return 0;  
+  }
   return -1;
 }
 
-int templIndexEE(float eta)
+int templIndexEE(float eta, float charge)
 {
   float feta = fabs(eta);
-  if( eta < 0 )
+  if( charge > 0 )
   {
     if( feta > 1.4875 && feta <= 2.0000) return 0;
     if( feta > 2.0000 && feta <= 2.5000) return 0;
@@ -171,7 +181,7 @@ int main(int argc, char** argv)
   //----- NTUPLES--------------------
   TChain *ntu_DA = new TChain(TreeName.c_str());
   TChain *ntu_MC = new TChain(TreeName.c_str());
-
+  
   if(!FillChain(*ntu_DA, infileDATA.c_str())) return 1;
   if(!FillChain(*ntu_MC, infileMC.c_str()))   return 1;
   
@@ -481,7 +491,7 @@ int main(int argc, char** argv)
       int modPhi = int(iphiSeed/(360./nPhiBinsTempEB));
       if( modPhi == nPhiBinsTempEB ) modPhi = 0;
       
-      int modEta = templIndexEB(eleEta);
+      int modEta = templIndexEB(eleEta,charge);
       if( modEta == -1 ) continue;
       
       (h_template_EB.at(modPhi)).at(modEta) -> Fill(var,ww);
@@ -508,7 +518,7 @@ int main(int argc, char** argv)
       int modPhi = int (iphi/(360./nPhiBinsTempEE));
       if( modPhi == nPhiBinsTempEE ) modPhi = 0;
       
-      int modEta =  templIndexEE(eleEta);
+      int modEta =  templIndexEE(eleEta,charge);
       if( modEta == -1 ) continue;
       
       (h_template_EE.at(modPhi)).at(modEta) -> Fill(var,ww);
@@ -537,7 +547,7 @@ int main(int argc, char** argv)
        int modPhi = int (iphiSeed2/(360./nPhiBinsTempEB));
        if( modPhi == nPhiBinsTempEB ) modPhi = 0;
        
-       int modEta  = templIndexEB(eleEta2);
+       int modEta  = templIndexEB(eleEta2,charge2);
        if(modEta == -1) continue;
        
        (h_template_EB.at(modPhi)).at(modEta)->Fill(var,ww);
@@ -564,7 +574,7 @@ int main(int argc, char** argv)
       int modPhi = int (iphi/(360./nPhiBinsTempEE));
       if( modPhi == nPhiBinsTempEE ) modPhi = 0;
       
-      int modEta =  templIndexEE(eleEta2);
+      int modEta =  templIndexEE(eleEta2,charge2);
       if(modEta == -1) continue;
       
       (h_template_EE.at(modPhi)).at(modEta) ->  Fill(var,ww);
@@ -621,7 +631,7 @@ int main(int argc, char** argv)
       int PhibinEB = hPhiBinEB->FindBin(elePhi) - 1;
       if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
       
-      int modEta = templIndexEB(eleEta);
+      int modEta = templIndexEB(eleEta,charge);
       if(modEta == -1) continue;
       
       (h_EoC_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is DATA
@@ -638,7 +648,7 @@ int main(int argc, char** argv)
       int PhibinEE = hPhiBinEE->FindBin(elePhi) - 1;
       if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
       
-      int modEta = templIndexEE(eleEta);
+      int modEta = templIndexEE(eleEta,charge);
       if( modEta == -1 ) continue;
       
       (h_EoC_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is DATA
@@ -661,7 +671,7 @@ int main(int argc, char** argv)
       int PhibinEB = hPhiBinEB->FindBin(elePhi2) - 1;
       if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
       
-      int modEta = templIndexEB(eleEta2);
+      int modEta = templIndexEB(eleEta2,charge2);
       if( modEta == -1 ) continue;
       
       (h_EoC_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is DATA
@@ -676,7 +686,7 @@ int main(int argc, char** argv)
       int PhibinEE = hPhiBinEE->FindBin(elePhi2) - 1;
       if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
       
-      int modEta = templIndexEE(eleEta2);
+      int modEta = templIndexEE(eleEta2,charge2);
       if( modEta == -1 ) continue;
       
       (h_EoC_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is DATA
@@ -759,16 +769,17 @@ int main(int argc, char** argv)
   {
     for(int j = 0; j < nEtaBinsEB; ++j)
     {
-      std::cout << "ciao1 " << i << "," << j << std::endl;
-      std::cout << "ciao2 " << (h_EoP_EB.at(i)).at(j)->Integral() << std::endl;
+      float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i+1);
+
+      std::cout << "***** Fitting MC EB " << flPhi << " (" << i << "," << j << "):   ";
+      
+      
       (h_EoP_EB.at(i)).at(j) -> Rebin(rebinEB);
-      std::cout << "ciao3 " << (h_EoC_EB.at(i)).at(j)->Integral() << std::endl;
       (h_EoC_EB.at(i)).at(j) -> Rebin(rebinEB);    
       
       
       // define the fitting function
       // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
-      std::cout << "ciao1" << std::endl;
       char funcName[50];
       sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EB",i,j,refIdEB.at(i),j);
       (f_EoP_EB.at(i)).push_back( new TF1(funcName, (templateHistoFuncEB.at(refIdEB.at(i))).at(j), 0.85, 1.1, 3, "histoFunc") );
@@ -781,7 +792,7 @@ int main(int argc, char** argv)
       (f_EoP_EB.at(i)).at(j) -> SetNpx(10000);
       
       (h_EoP_EB.at(i)).at(j) -> Scale(1*(h_EoC_EB.at(i)).at(j)->GetEntries()/(h_EoP_EB.at(i)).at(j)->GetEntries());
-      std::cout << "ciao2" << std::endl;      
+      
       // uncorrected    
       double xNorm = (h_EoP_EB.at(i)).at(j)->Integral()/(h_template_EB.at(refIdEB.at(i))).at(j)->Integral() *
                      (h_EoP_EB.at(i)).at(j)->GetBinWidth(1)/(h_template_EB.at(refIdEB.at(i))).at(j)->GetBinWidth(1); 
@@ -792,23 +803,31 @@ int main(int argc, char** argv)
       
       TFitResultPtr rp;
       int fStatus; 
-      std::cout << "***** Fitting MC EB " << i << "," << j << std::endl;
       for (int trial=0;trial<10;trial++)
       {
         (f_EoP_EB.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
         rp = (h_EoP_EB.at(i)).at(j) -> Fit(funcName, "QRWL+");
         fStatus = rp;
-        if (fStatus !=4 && (f_EoP_EB.at(i)).at(j)->GetParError(1)!=0.) break;
-        else if(trial==9) cout <<" No good Fit "<<endl;
+        if(fStatus !=4 && (f_EoP_EB.at(i)).at(j)->GetParError(1) != 0. )
+	{ 
+	  std::cout << "fit OK    ";
+          
+          if( i== 0 ) g_EoP_EB[j] -> SetPoint(i, 0.,    pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
+          else        g_EoP_EB[j] -> SetPoint(i, flPhi, pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
+          g_EoP_EB[j] -> SetPointError(i, 0., 2*(f_EoP_EB.at(i)).at(j)->GetParError(1));
+          
+          break;
+	}
+        else if( trial == 9 )
+        {
+          std::cout << "fit BAD   ";
+          
+          if( i== 0 ) g_EoP_EB[j] -> SetPoint(i, 0.,    1.);
+          else        g_EoP_EB[j] -> SetPoint(i, flPhi, 1.);
+          g_EoP_EB[j] -> SetPointError(i, 0., 0.01);
+	}
       }
       
-            std::cout << "ciao3" << std::endl;
-      //float flPhi = h_Phi_EB[i][j]->GetMean(); 
-      float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i);
-      if(i==0) g_EoP_EB[j] -> SetPoint(i, 0.,    pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
-      else     g_EoP_EB[j] -> SetPoint(i, flPhi, pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
-      
-      g_EoP_EB[j] -> SetPointError(i, 0., 2*(f_EoP_EB.at(i)).at(j)->GetParError(1));
       
       //ratio preparation
       float rat = (f_EoP_EB.at(i)).at(j)->GetParameter(1);
@@ -831,20 +850,32 @@ int main(int argc, char** argv)
       (f_EoC_EB.at(i)).at(j) -> FixParameter(0, xNorm);
       (f_EoC_EB.at(i)).at(j) -> FixParameter(2, 0.);
       
-      std::cout << "***** Fitting DATA EB " << i << "," << j << std::endl;
+      std::cout << "***** Fitting DATA EB (" << i << "," << j << "):   ";
       for (int trial=0;trial<10;trial++)
       {
         (f_EoC_EB.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
         rp = (h_EoC_EB.at(i)).at(j) -> Fit(funcName, "QR+");
         fStatus = rp;
-        if (fStatus !=4 && (f_EoC_EB.at(i)).at(j)->GetParError(1)!=0) break;
-        else if(trial==9) cout <<" No good Fit "<<endl;
+        if( fStatus !=4 && (f_EoC_EB.at(i)).at(j)->GetParError(1) != 0 )
+        {
+	  std::cout << "fit OK    ";
+          
+          if( i== 0 ) g_EoC_EB[j] -> SetPoint(i,    0., pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
+          else        g_EoC_EB[j] -> SetPoint(i, flPhi, pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
+          g_EoC_EB[j] -> SetPointError(i, 0., 2*(f_EoC_EB.at(i)).at(j)->GetParError(1));
+          
+          break;
+	}
+        else if( trial == 9 )
+        {
+	  std::cout << "fit BAD   ";
+          
+          if( i== 0 ) g_EoC_EB[j] -> SetPoint(i,    0., 1.);
+          else        g_EoC_EB[j] -> SetPoint(i, flPhi, 1.);
+          g_EoC_EB[j] -> SetPointError(i, 0., 0.01);
+	}
       }
       
-      if(i==0) g_EoC_EB[j] -> SetPoint(i, 0., pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
-      else g_EoC_EB[j] -> SetPoint(i, flPhi, pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
-            std::cout << "ciao4" << std::endl;
-      g_EoC_EB[j] -> SetPointError(i, 0., 2*(f_EoC_EB.at(i)).at(j)->GetParError(1));
       
       //ratio finalization
       rat /= (f_EoC_EB.at(i)).at(j)->GetParameter(1);
@@ -855,7 +886,8 @@ int main(int argc, char** argv)
       
       g_Rat_EB[j] -> SetPointError(i,  0. , era); 
       g_Rat_EB[j]->SetLineColor(kBlue+2); 
-      std::cout << "ciao5" << std::endl;
+      
+      std::cout << std::endl;
     }
   }
   
