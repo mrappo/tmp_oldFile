@@ -770,9 +770,6 @@ int main(int argc, char** argv)
     for(int j = 0; j < nEtaBinsEB; ++j)
     {
       float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i+1);
-
-      std::cout << "***** Fitting MC EB " << flPhi << " (" << i << "," << j << "):   ";
-      
       
       (h_EoP_EB.at(i)).at(j) -> Rebin(rebinEB);
       (h_EoC_EB.at(i)).at(j) -> Rebin(rebinEB);    
@@ -801,9 +798,11 @@ int main(int argc, char** argv)
       (f_EoP_EB.at(i)).at(j) -> FixParameter(0, xNorm);
       (f_EoP_EB.at(i)).at(j) -> FixParameter(2, 0.);
       
+      
+      std::cout << "***** Fitting MC EB " << flPhi << " (" << i << "," << j << "):   ";
       TFitResultPtr rp;
       int fStatus; 
-      for (int trial=0;trial<10;trial++)
+      for(int trial = 0; trial < 10; ++trial)
       {
         (f_EoP_EB.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
         rp = (h_EoP_EB.at(i)).at(j) -> Fit(funcName, "QRWL+");
@@ -812,8 +811,7 @@ int main(int argc, char** argv)
 	{ 
 	  std::cout << "fit OK    ";
           
-          if( i== 0 ) g_EoP_EB[j] -> SetPoint(i, 0.,    pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
-          else        g_EoP_EB[j] -> SetPoint(i, flPhi, pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
+          g_EoP_EB[j] -> SetPoint(i, flPhi, pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
           g_EoP_EB[j] -> SetPointError(i, 0., 2*(f_EoP_EB.at(i)).at(j)->GetParError(1));
           
           break;
@@ -822,8 +820,7 @@ int main(int argc, char** argv)
         {
           std::cout << "fit BAD   ";
           
-          if( i== 0 ) g_EoP_EB[j] -> SetPoint(i, 0.,    1.);
-          else        g_EoP_EB[j] -> SetPoint(i, flPhi, 1.);
+          g_EoP_EB[j] -> SetPoint(i, flPhi, 1.);
           g_EoP_EB[j] -> SetPointError(i, 0., 0.01);
 	}
       }
@@ -850,8 +847,9 @@ int main(int argc, char** argv)
       (f_EoC_EB.at(i)).at(j) -> FixParameter(0, xNorm);
       (f_EoC_EB.at(i)).at(j) -> FixParameter(2, 0.);
       
+      
       std::cout << "***** Fitting DATA EB (" << i << "," << j << "):   ";
-      for (int trial=0;trial<10;trial++)
+      for(int trial = 0; trial < 10; ++trial)
       {
         (f_EoC_EB.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
         rp = (h_EoC_EB.at(i)).at(j) -> Fit(funcName, "QR+");
@@ -860,8 +858,7 @@ int main(int argc, char** argv)
         {
 	  std::cout << "fit OK    ";
           
-          if( i== 0 ) g_EoC_EB[j] -> SetPoint(i,    0., pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
-          else        g_EoC_EB[j] -> SetPoint(i, flPhi, pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
+          g_EoC_EB[j] -> SetPoint(i, flPhi, pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
           g_EoC_EB[j] -> SetPointError(i, 0., 2*(f_EoC_EB.at(i)).at(j)->GetParError(1));
           
           break;
@@ -870,8 +867,7 @@ int main(int argc, char** argv)
         {
 	  std::cout << "fit BAD   ";
           
-          if( i== 0 ) g_EoC_EB[j] -> SetPoint(i,    0., 1.);
-          else        g_EoC_EB[j] -> SetPoint(i, flPhi, 1.);
+          g_EoC_EB[j] -> SetPoint(i, flPhi, 1.);
           g_EoC_EB[j] -> SetPointError(i, 0., 0.01);
 	}
       }
@@ -900,6 +896,8 @@ int main(int argc, char** argv)
   {
     for(int j = 0; j < nEtaBinsEE; ++j)
     {
+      float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i);
+      
       (h_EoP_EE.at(i)).at(j) -> Rebin(rebinEE);
       (h_EoC_EE.at(i)).at(j) -> Rebin(rebinEE);    
       
@@ -928,25 +926,35 @@ int main(int argc, char** argv)
       (f_EoP_EE.at(i)).at(j) -> FixParameter(0, xNorm);
       (f_EoP_EE.at(i)).at(j) -> FixParameter(2, 0.);
       
+      
+      std::cout << "***** Fitting MC EE " << flPhi << " (" << i << "," << j << "):   ";
       TFitResultPtr rp;
       int fStatus; 
-      std::cout << "***** Fitting MC EE " << i << "," << j << std::endl;
-      
-      for (int trial=0;trial<10;trial++)
+      for(int trial = 0; trial < 10; ++trial)
       {
         (f_EoP_EE.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
         rp = (h_EoP_EE.at(i)).at(j) -> Fit(funcName, "QRWL+");
         fStatus = rp;
-        if (fStatus !=4 && (f_EoP_EE.at(i)).at(j)->GetParError(1)!=0.) break;
-        else if(trial==9) cout <<" No good Fit "<<endl;
+        
+        if( fStatus !=4 && (f_EoP_EE.at(i)).at(j)->GetParError(1) != 0. )
+        {
+	  std::cout << "fit OK    ";
+          
+          g_EoP_EE[j] -> SetPoint(i, flPhi, pow((f_EoP_EE.at(i)).at(j)->GetParameter(1),2));
+          g_EoP_EE[j] -> SetPointError(i, 0., 2*(f_EoP_EE.at(i)).at(j)->GetParError(1));
+
+          break;
+	}
+        else if( trial == 9 )
+        {
+	  std::cout << "fit BAD   ";
+          
+          g_EoP_EE[j] -> SetPoint(i, flPhi, 1.);
+          g_EoP_EE[j] -> SetPointError(i, 0., 0.03);
+	}
       }
       
-      //float flPhi = h_Phi_EE[i][j]->GetMean(); 
-      float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i);
-      if(i==0) g_EoP_EE[j] -> SetPoint(i, 0.,    pow((f_EoP_EE.at(i)).at(j)->GetParameter(1),2));
-      else     g_EoP_EE[j] -> SetPoint(i, flPhi, pow((f_EoP_EE.at(i)).at(j)->GetParameter(1),2));
       
-      g_EoP_EE[j] -> SetPointError(i, 0., 2*(f_EoP_EE.at(i)).at(j)->GetParError(1));
       
       //ratio preparation
       float rat = (f_EoP_EE.at(i)).at(j)->GetParameter(1);
@@ -969,29 +977,40 @@ int main(int argc, char** argv)
       (f_EoC_EE.at(i)).at(j) -> FixParameter(0, xNorm);
       (f_EoC_EE.at(i)).at(j) -> FixParameter(2, 0.);
       
-      std::cout << "***** Fitting DATA EE " << i << "," << j << std::endl;
-      for (int trial=0;trial<10;trial++)
+
+      std::cout << "***** Fitting DATA EE " << flPhi << " (" << i << "," << j << "):   ";
+      for(int trial = 0; trial < 10; ++trial)
       {
         (f_EoC_EE.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
         rp = (h_EoC_EE.at(i)).at(j) -> Fit(funcName, "QR+");
-        if (fStatus !=4 && (f_EoC_EE.at(i)).at(j)->GetParError(1)!=0.) break;
-        else if(trial==9) cout <<" No good Fit "<<endl;
+        if( fStatus !=4 && (f_EoC_EE.at(i)).at(j)->GetParError(1) != 0. )
+        {
+	  std::cout << "fit OK    ";
+          
+          g_EoC_EE[j] -> SetPoint(i, flPhi, pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
+          g_EoC_EE[j] -> SetPointError(i, 0., 2*(f_EoC_EE.at(i)).at(j)->GetParError(1));
+          
+          break;
+	}
+        else if( trial == 9 )
+        {
+          g_EoC_EE[j] -> SetPoint(i, flPhi, 1.);
+          g_EoC_EE[j] -> SetPointError(i, 0., 0.03);        
+        }
       }
       
-      if(i==0) g_EoC_EE[j] -> SetPoint(i, 0.,    pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
-      else     g_EoC_EE[j] -> SetPoint(i, flPhi, pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
-      g_EoC_EE[j] -> SetPointError(i, 0., 2*(f_EoC_EE.at(i)).at(j)->GetParError(1));
       
       //ratio finalization
       rat /= (f_EoC_EE.at(i)).at(j)->GetParameter(1);
       era = rat*sqrt(era*era+(f_EoC_EE.at(i)).at(j)->GetParError(1)*(f_EoC_EE.at(i)).at(j)->GetParError(1)); 
       
-      if(i==0) g_Rat_EE[j] -> SetPoint(i, 0.,    rat);
-      else     g_Rat_EE[j] -> SetPoint(i, flPhi, rat);
+      g_Rat_EE[j] -> SetPoint(i, flPhi, rat);
       g_Rat_EE[j] -> SetPointError(i,  0. , era);
       
       g_Rat_EE[j]->SetLineColor(kBlue+2); 
     }
+    
+    std::cout << std::endl;
   }
   
   

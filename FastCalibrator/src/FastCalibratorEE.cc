@@ -97,66 +97,71 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain = tree;
   fCurrent = -1;
   fChain->SetMakeClass(1);
-
-  fChain->SetBranchAddress("runId", &runId, &b_runId);
-  fChain->SetBranchAddress("lumiId", &lumiId, &b_lumiId);
-  fChain->SetBranchAddress("eventId", &eventId, &b_eventId);
-  fChain->SetBranchAddress("isW", &isW, &b_isW);
-  fChain->SetBranchAddress("isZ", &isZ, &b_isZ);
   
-  fChain->SetBranchAddress("ele1_recHit_E", &ele1_recHit_E, &b_ele1_recHit_E);
-  fChain->SetBranchAddress("ele1_recHit_hashedIndex", &ele1_recHit_hashedIndex, &b_ele1_recHit_hashedIndex);
-  fChain->SetBranchAddress("ele1_recHit_iphiORiy", &ele1_recHit_iphiORiy, &b_ele1_recHit_iphiORiy);
-  fChain->SetBranchAddress("ele1_recHit_ietaORix", &ele1_recHit_ietaORix, &b_ele1_recHit_ietaORix);
-  fChain->SetBranchAddress("ele1_recHit_flag", &ele1_recHit_flag, &b_ele1_recHit_flag);
- 
-  fChain->SetBranchAddress("ele1_scERaw", &ele1_scERaw, &b_ele1_scERaw);
-  fChain->SetBranchAddress("ele1_scE", &ele1_scE, &b_ele1_scE);
-  fChain->SetBranchAddress("ele1_scEta", &ele1_scEta, &b_ele1_scEta);
-  fChain->SetBranchAddress("ele1_scPhi", &ele1_scPhi, &b_ele1_scPhi);
-  fChain->SetBranchAddress("ele1_es", &ele1_es, &b_ele1_es);
-  fChain->SetBranchAddress("ele1_e3x3", &ele1_e3x3, &b_ele1_e3x3);
-  fChain->SetBranchAddress("ele1_tkP", &ele1_tkP, &b_ele1_tkP);
-  fChain->SetBranchAddress("ele1_fbrem", &ele1_fbrem, &b_ele1_fbrem);
-  fChain->SetBranchAddress("ele1_EOverP", &ele1_EOverP, &b_ele1_EOverP);
-  fChain->SetBranchAddress("ele1_isEB", &ele1_isEB, &b_ele1_isEB);
-  fChain->SetBranchAddress("ele1_isEBEEGap", &ele1_isEBEEGap, &b_ele1_isEBEEGap);
-  fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
-  fChain->SetBranchAddress("ele1_DR ", &ele1_DR , &b_ele1_DR);
-  fChain->SetBranchAddress("ele1_scERaw_PUcleaned", &ele1_scERaw_PUcleaned, &b_ele1_scERaw_PUcleaned);
-  fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
-
-  fChain->SetBranchAddress("ele1_isEBEtaGap", &ele1_isEBEtaGap, &b_ele1_isEBEtaGap);
-  fChain->SetBranchAddress("ele1_isEBPhiGap", &ele1_isEBPhiGap, &b_ele1_isEBPhiGap);
-  fChain->SetBranchAddress("ele1_isEEDeeGap", &ele1_isEEDeeGap, &b_ele1_isEEDeeGap);
-  fChain->SetBranchAddress("ele1_isEERingGap", &ele1_isEERingGap, &b_ele1_isEERingGap);
+  fChain->SetBranchStatus("*", 0);
   
-  fChain->SetBranchAddress("ele2_recHit_E", &ele2_recHit_E, &b_ele2_recHit_E);
-  fChain->SetBranchAddress("ele2_recHit_hashedIndex", &ele2_recHit_hashedIndex, &b_ele2_recHit_hashedIndex);
-  fChain->SetBranchAddress("ele2_recHit_iphiORiy", &ele2_recHit_iphiORiy, &b_ele2_recHit_iphiORiy);
-  fChain->SetBranchAddress("ele2_recHit_ietaORix", &ele2_recHit_ietaORix, &b_ele2_recHit_ietaORix);
-  fChain->SetBranchAddress("ele2_recHit_flag", &ele2_recHit_flag, &b_ele2_recHit_flag);
-   
-  fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
-  fChain->SetBranchAddress("ele2_scE", &ele2_scE, &b_ele2_scE);
-  fChain->SetBranchAddress("ele2_scEta", &ele2_scEta, &b_ele2_scEta);
-  fChain->SetBranchAddress("ele2_scPhi", &ele2_scPhi, &b_ele2_scPhi);
-  fChain->SetBranchAddress("ele2_es", &ele2_es, &b_ele2_es);
-  fChain->SetBranchAddress("ele2_e3x3", &ele2_e3x3, &b_ele2_e3x3);
-  fChain->SetBranchAddress("ele2_tkP", &ele2_tkP, &b_ele2_tkP);
-  fChain->SetBranchAddress("ele2_fbrem", &ele2_fbrem, &b_ele2_fbrem);
-  fChain->SetBranchAddress("ele2_EOverP", &ele2_EOverP, &b_ele2_EOverP);
-  fChain->SetBranchAddress("ele2_isEB", &ele2_isEB, &b_ele2_isEB);
-  fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
-  fChain->SetBranchAddress("ele2_DR ", &ele2_DR , &b_ele2_DR);
-  fChain->SetBranchAddress("ele2_scERaw_PUcleaned", &ele2_scERaw_PUcleaned, &b_ele2_scERaw_PUcleaned);
-  fChain->SetBranchAddress("ele2_scE_regression", &ele2_scE_regression, &b_ele2_scE_regression);
-
-  fChain->SetBranchAddress("ele2_isEBEEGap", &ele2_isEBEEGap, &b_ele2_isEBEEGap);
-  fChain->SetBranchAddress("ele2_isEBEtaGap", &ele2_isEBEtaGap, &b_ele2_isEBEtaGap);
-  fChain->SetBranchAddress("ele2_isEBPhiGap", &ele2_isEBPhiGap, &b_ele2_isEBPhiGap);
-  fChain->SetBranchAddress("ele2_isEEDeeGap", &ele2_isEEDeeGap, &b_ele2_isEEDeeGap);
-  fChain->SetBranchAddress("ele2_isEERingGap", &ele2_isEERingGap, &b_ele2_isEERingGap);
+  fChain->SetBranchStatus("runId", 1);   fChain->SetBranchAddress("runId", &runId, &b_runId);
+  fChain->SetBranchStatus("lumiId", 1);  fChain->SetBranchAddress("lumiId", &lumiId, &b_lumiId);
+  fChain->SetBranchStatus("eventId", 1); fChain->SetBranchAddress("eventId", &eventId, &b_eventId);
+  fChain->SetBranchStatus("isW", 1);     fChain->SetBranchAddress("isW", &isW, &b_isW);
+  fChain->SetBranchStatus("isZ", 1);     fChain->SetBranchAddress("isZ", &isZ, &b_isZ);
+  
+  // ele1
+  fChain->SetBranchStatus("ele1_recHit_E", 1);           fChain->SetBranchAddress("ele1_recHit_E", &ele1_recHit_E, &b_ele1_recHit_E);
+  fChain->SetBranchStatus("ele1_recHit_hashedIndex", 1); fChain->SetBranchAddress("ele1_recHit_hashedIndex", &ele1_recHit_hashedIndex, &b_ele1_recHit_hashedIndex);
+  fChain->SetBranchStatus("ele1_recHit_iphiORiy", 1);    fChain->SetBranchAddress("ele1_recHit_iphiORiy", &ele1_recHit_iphiORiy, &b_ele1_recHit_iphiORiy);
+  fChain->SetBranchStatus("ele1_recHit_ietaORix", 1);    fChain->SetBranchAddress("ele1_recHit_ietaORix", &ele1_recHit_ietaORix, &b_ele1_recHit_ietaORix);
+  fChain->SetBranchStatus("ele1_recHit_flag", 1);        fChain->SetBranchAddress("ele1_recHit_flag", &ele1_recHit_flag, &b_ele1_recHit_flag);
+  
+  fChain->SetBranchStatus("ele1_eta", 1);            fChain->SetBranchAddress("ele1_eta", &ele1_eta, &b_ele1_eta);
+  fChain->SetBranchStatus("ele1_phi", 1);            fChain->SetBranchAddress("ele1_phi", &ele1_phi, &b_ele1_phi);
+  fChain->SetBranchStatus("ele1_scERaw", 1);         fChain->SetBranchAddress("ele1_scERaw", &ele1_scERaw, &b_ele1_scERaw);
+  fChain->SetBranchStatus("ele1_scE", 1);            fChain->SetBranchAddress("ele1_scE", &ele1_scE, &b_ele1_scE);
+  fChain->SetBranchStatus("ele1_scEta", 1);          fChain->SetBranchAddress("ele1_scEta", &ele1_scEta, &b_ele1_scEta);
+  fChain->SetBranchStatus("ele1_es", 1);             fChain->SetBranchAddress("ele1_es", &ele1_es, &b_ele1_es);
+  fChain->SetBranchStatus("ele1_e3x3", 1);           fChain->SetBranchAddress("ele1_e3x3", &ele1_e3x3, &b_ele1_e3x3);
+  fChain->SetBranchStatus("ele1_tkP", 1);            fChain->SetBranchAddress("ele1_tkP", &ele1_tkP, &b_ele1_tkP);
+  fChain->SetBranchStatus("ele1_fbrem", 1);          fChain->SetBranchAddress("ele1_fbrem", &ele1_fbrem, &b_ele1_fbrem);
+  fChain->SetBranchStatus("ele1_EOverP", 1);         fChain->SetBranchAddress("ele1_EOverP", &ele1_EOverP, &b_ele1_EOverP);
+  fChain->SetBranchStatus("ele1_isEB", 1);           fChain->SetBranchAddress("ele1_isEB", &ele1_isEB, &b_ele1_isEB);
+  fChain->SetBranchStatus("ele1_isEBEEGap", 1);      fChain->SetBranchAddress("ele1_isEBEEGap", &ele1_isEBEEGap, &b_ele1_isEBEEGap);
+  fChain->SetBranchStatus("ele1_E_true", 1);         fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
+  fChain->SetBranchStatus("ele1_DR ", 1);            fChain->SetBranchAddress("ele1_DR ", &ele1_DR , &b_ele1_DR);
+  fChain->SetBranchStatus("ele1_scE_regression", 1); fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
+  
+  fChain->SetBranchStatus("ele1_isEBEtaGap", 1);  fChain->SetBranchAddress("ele1_isEBEtaGap", &ele1_isEBEtaGap, &b_ele1_isEBEtaGap);
+  fChain->SetBranchStatus("ele1_isEBPhiGap", 1);  fChain->SetBranchAddress("ele1_isEBPhiGap", &ele1_isEBPhiGap, &b_ele1_isEBPhiGap);
+  fChain->SetBranchStatus("ele1_isEEDeeGap", 1);  fChain->SetBranchAddress("ele1_isEEDeeGap", &ele1_isEEDeeGap, &b_ele1_isEEDeeGap);
+  fChain->SetBranchStatus("ele1_isEERingGap", 1); fChain->SetBranchAddress("ele1_isEERingGap", &ele1_isEERingGap, &b_ele1_isEERingGap);
+  
+  // ele2 
+  fChain->SetBranchStatus("ele2_recHit_E", 1);           fChain->SetBranchAddress("ele2_recHit_E", &ele2_recHit_E, &b_ele2_recHit_E);
+  fChain->SetBranchStatus("ele2_recHit_hashedIndex", 1); fChain->SetBranchAddress("ele2_recHit_hashedIndex", &ele2_recHit_hashedIndex, &b_ele2_recHit_hashedIndex);
+  fChain->SetBranchStatus("ele2_recHit_iphiORiy", 1);    fChain->SetBranchAddress("ele2_recHit_iphiORiy", &ele2_recHit_iphiORiy, &b_ele2_recHit_iphiORiy);
+  fChain->SetBranchStatus("ele2_recHit_ietaORix", 1);    fChain->SetBranchAddress("ele2_recHit_ietaORix", &ele2_recHit_ietaORix, &b_ele2_recHit_ietaORix);
+  fChain->SetBranchStatus("ele2_recHit_flag", 1);        fChain->SetBranchAddress("ele2_recHit_flag", &ele2_recHit_flag, &b_ele2_recHit_flag);
+  
+  fChain->SetBranchStatus("ele2_eta", 1);            fChain->SetBranchAddress("ele2_eta", &ele2_eta, &b_ele2_eta);
+  fChain->SetBranchStatus("ele2_phi", 1);            fChain->SetBranchAddress("ele2_phi", &ele2_phi, &b_ele2_phi);
+  fChain->SetBranchStatus("ele2_scERaw", 1);         fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
+  fChain->SetBranchStatus("ele2_scE", 1);            fChain->SetBranchAddress("ele2_scE", &ele2_scE, &b_ele2_scE);
+  fChain->SetBranchStatus("ele2_scEta", 1);          fChain->SetBranchAddress("ele2_scEta", &ele2_scEta, &b_ele2_scEta);
+  fChain->SetBranchStatus("ele2_es", 1);             fChain->SetBranchAddress("ele2_es", &ele2_es, &b_ele2_es);
+  fChain->SetBranchStatus("ele2_e3x3", 1);           fChain->SetBranchAddress("ele2_e3x3", &ele2_e3x3, &b_ele2_e3x3);
+  fChain->SetBranchStatus("ele2_tkP", 1);            fChain->SetBranchAddress("ele2_tkP", &ele2_tkP, &b_ele2_tkP);
+  fChain->SetBranchStatus("ele2_fbrem", 1);          fChain->SetBranchAddress("ele2_fbrem", &ele2_fbrem, &b_ele2_fbrem);
+  fChain->SetBranchStatus("ele2_EOverP", 1);         fChain->SetBranchAddress("ele2_EOverP", &ele2_EOverP, &b_ele2_EOverP);
+  fChain->SetBranchStatus("ele2_isEB", 1);           fChain->SetBranchAddress("ele2_isEB", &ele2_isEB, &b_ele2_isEB);
+  fChain->SetBranchStatus("ele2_E_true", 1);         fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
+  fChain->SetBranchStatus("ele2_DR ", 1);            fChain->SetBranchAddress("ele2_DR ", &ele2_DR , &b_ele2_DR);
+  fChain->SetBranchStatus("ele2_scE_regression", 1); fChain->SetBranchAddress("ele2_scE_regression", &ele2_scE_regression, &b_ele2_scE_regression);
+  
+  fChain->SetBranchStatus("ele2_isEBEEGap", 1);   fChain->SetBranchAddress("ele2_isEBEEGap", &ele2_isEBEEGap, &b_ele2_isEBEEGap);
+  fChain->SetBranchStatus("ele2_isEBEtaGap", 1);  fChain->SetBranchAddress("ele2_isEBEtaGap", &ele2_isEBEtaGap, &b_ele2_isEBEtaGap);
+  fChain->SetBranchStatus("ele2_isEBPhiGap", 1);  fChain->SetBranchAddress("ele2_isEBPhiGap", &ele2_isEBPhiGap, &b_ele2_isEBPhiGap);
+  fChain->SetBranchStatus("ele2_isEEDeeGap", 1);  fChain->SetBranchAddress("ele2_isEEDeeGap", &ele2_isEEDeeGap, &b_ele2_isEEDeeGap);
+  fChain->SetBranchStatus("ele2_isEERingGap", 1); fChain->SetBranchAddress("ele2_isEERingGap", &ele2_isEERingGap, &b_ele2_isEERingGap);
+  
   Notify();
 }
 
@@ -328,7 +333,8 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int ir_seed   = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring 
      //int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
      int momScaleIndex = 0;
-     if ( iz_seed > 0 ) momScaleIndex = 1;
+     ///NOTA ANDREA !!!!!!! QUI CORREGGERE SE VOGLIAMO FARE TANTE REGIONI IN ETA
+     //if ( iz_seed > 0 ) momScaleIndex = 1;
      
      pSub = 0.; //NOTALEO : test dummy
       
@@ -339,7 +345,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      { 
        pIn = ele1_tkP;
        //NOTALEO
-       pIn *= myMomentumScale[momScaleIndex] -> Eval( ele1_scPhi );
+       pIn *= myMomentumScale[momScaleIndex] -> Eval( ele1_phi );
      }
      else
      { 
@@ -413,7 +419,8 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed); /// Seed ring
      //int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
      int momScaleIndex = 0;
-     if ( iz_seed > 0 ) momScaleIndex = 1;
+     ///NOTA ANDREA !!!!!!! QUI CORREGGERE SE VOGLIAMO FARE TANTE REGIONI IN ETA
+     //if ( iz_seed > 0 ) momScaleIndex = 1;
      
      pSub = 0.; //NOTALEO : test dummy
      bool skipElectron = false;
@@ -421,7 +428,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      if(!isMCTruth)
      {
        pIn = ele2_tkP;
-       pIn *= myMomentumScale[momScaleIndex] -> Eval( ele2_scPhi );
+       pIn *= myMomentumScale[momScaleIndex] -> Eval( ele2_phi );
      }
      else
      { 
@@ -613,7 +620,8 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
         int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
         //int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
         int momScaleIndex = 0;
-        if ( iz_seed > 0 ) momScaleIndex = 1;
+        ///NOTA ANDREA !!!!!!! QUI CORREGGERE SE VOGLIAMO FARE TANTE REGIONI IN ETA
+        //if ( iz_seed > 0 ) momScaleIndex = 1;
 
         pSub = 0.; //NOTALEO : test dummy
       
@@ -621,7 +629,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
          if(!isMCTruth) 
          {
            pIn = ele1_tkP;
-           pIn *= myMomentumScale[momScaleIndex] -> Eval( ele1_scPhi );
+           pIn *= myMomentumScale[momScaleIndex] -> Eval( ele1_phi );
          }
          else{
            pIn = ele1_E_true;
@@ -784,14 +792,15 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           int ir_seed = eRings -> GetEndcapRing(ix_seed,iy_seed,iz_seed);
           //int iphi_seed = eRings -> GetEndcapIphi(ix_seed,iy_seed,iz_seed); /// Seed phi
           int momScaleIndex = 0;
-          if ( iz_seed > 0 ) momScaleIndex = 1;
+          ///NOTA ANDREA !!!!!!! QUI CORREGGERE SE VOGLIAMO FARE TANTE REGIONI IN ETA
+          //if ( iz_seed > 0 ) momScaleIndex = 1;
             
           pSub = 0.; //NOTALEO : test dummy
           /// Option for MCTruth Analysis
           if(!isMCTruth)  
 	  {
             pIn = ele2_tkP;
-            pIn *= myMomentumScale[momScaleIndex] -> Eval( ele2_scPhi );
+            pIn *= myMomentumScale[momScaleIndex] -> Eval( ele2_phi );
           }
           else
           {
