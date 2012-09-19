@@ -390,6 +390,7 @@ int main (int argc, char **argv)
      double xphi,yphi;
      if(modEta == -1) continue;
      g_EoC_EE[modEta]->GetPoint(int(iPhi/(360./PhiProjectionEEm->GetN())),xphi,yphi);
+     yphi = 1.;
      mapMomentumCorrected[0]->SetBinContent(ix,iy,hcmap[0]->GetBinContent(ix,iy)*yphi);
    }
   }
