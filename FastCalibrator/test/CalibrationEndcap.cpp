@@ -111,9 +111,8 @@ int main (int argc, char **argv)
 
   std::string outputTxt = gConfigParser -> readStringOption("Output::outputTxt");
   std::string fileType = gConfigParser -> readStringOption("Output::fileType");
-  std::string dirName = gConfigParser -> readStringOption("Output::dirName");
-  bool printPlots = gConfigParser -> readBoolOption("Output::printPlots");
-
+  std::string fileName  = gConfigParser -> readStringOption("Output::fileName");
+  
   TApplication* theApp = new TApplication("Application",&argc, argv);
   
   /// imput file with full statistic normlized to the mean in a ring
@@ -403,6 +402,7 @@ int main (int argc, char **argv)
      if(modEta == -1) continue;
      double xphi,yphi; 
      g_EoC_EE[modEta]->GetPoint(int(iPhi/(360./PhiProjectionEEp->GetN())),xphi,yphi);
+     yphi = 1.;
      mapMomentumCorrected[1]->SetBinContent(ix,iy,hcmap[1]->GetBinContent(ix,iy)*yphi);
    }
   }
@@ -575,126 +575,149 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
   ///-----------------------------------------------------------------
   ///--- Draw plots
   ///-----------------------------------------------------------------
+  TFile* outFile = new TFile(fileName.c_str(),"RECREATE");
+  outFile -> cd();
+  
   TCanvas *cEEP[15];
   TCanvas *cEEM[15];
   TCanvas *cAll[15];
-
+  
+  
   /// --- plot 0 : map of coefficients 
-  cEEM[0] = new TCanvas("cmapEEM","cmapEEM");
-  cEEM[0] -> cd();
-  cEEM[0]->SetLeftMargin(0.1); 
-  cEEM[0]->SetRightMargin(0.13); 
-  cEEM[0]->SetGridx();
-  cEEM[0]->SetGridy();
+  //cEEM[0] = new TCanvas("cmapEEM","cmapEEM");
+  //cEEM[0] -> cd();
+  //cEEM[0]->SetLeftMargin(0.1); 
+  //cEEM[0]->SetRightMargin(0.13); 
+  //cEEM[0]->SetGridx();
+  //cEEM[0]->SetGridy();
+  
   hcmap[0]->GetXaxis() -> SetLabelSize(0.03);
   hcmap[0]->GetXaxis() ->SetTitle("ix");
   hcmap[0]->GetYaxis() ->SetTitle("iy");
   hcmap[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
-  hcmap[0]->Draw("colz");
- 
-  cEEP[0] = new TCanvas("cmapEEP","cmapEEP");
-  cEEP[0] -> cd();
-  cEEP[0]->SetLeftMargin(0.1); 
-  cEEP[0]->SetRightMargin(0.13); 
-  cEEP[0]->SetGridx();
-  cEEP[0]->SetGridy();
-  //  hcmap[1]->GetXaxis()->SetNdivisions(1020);
+  //hcmap[0]->Draw("colz");
+  hcmap[0]->Write();
+  
+  
+  //cEEP[0] = new TCanvas("cmapEEP","cmapEEP");
+  //cEEP[0] -> cd();
+  //cEEP[0]->SetLeftMargin(0.1); 
+  //cEEP[0]->SetRightMargin(0.13); 
+  //cEEP[0]->SetGridx();
+  //cEEP[0]->SetGridy();
+  
+  //hcmap[1]->GetXaxis()->SetNdivisions(1020);
   hcmap[1]->GetXaxis() -> SetLabelSize(0.03);
   hcmap[1]->GetXaxis() ->SetTitle("ix");
   hcmap[1]->GetYaxis() ->SetTitle("iy");
   hcmap[1]->GetZaxis() ->SetRangeUser(0.8,1.2);
-  hcmap[1]->Draw("colz");
- 
- 
+  //hcmap[1]->Draw("colz");
+  hcmap[1]->Write();
+  
+  
   /// --- plot 1 : ring precision vs ieta
-  cEEP[1] = new TCanvas("csigmaEEP","csigmaEEP");
-  cEEP[1]->SetGridx();
-  cEEP[1]->SetGridy();
+  //cEEP[1] = new TCanvas("csigmaEEP","csigmaEEP");
+  //cEEP[1]->SetGridx();
+  //cEEP[1]->SetGridy();
+  
   sigma_vs_ring[1]->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.20);
   sigma_vs_ring[1]->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
   sigma_vs_ring[1]->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
   sigma_vs_ring[1]->GetHistogram()->GetXaxis()-> SetTitle("ring");
-  sigma_vs_ring[1]->Draw("ap");
+  //sigma_vs_ring[1]->Draw("ap");
   if (evalStat){
-    statprecision_vs_ring[1]->Draw("psame");
-    sigma_vs_ring[1]->Draw("psame");
+    //statprecision_vs_ring[1]->Draw("psame");
+    //sigma_vs_ring[1]->Draw("psame");
+    statprecision_vs_ring[1]->Write("statprecision_vs_ring_EEp");
+    sigma_vs_ring[1]->Write("sigma_vs_ring_EEp");
     TLegend * leg = new TLegend(0.6,0.7,0.89, 0.89);
     leg->SetFillColor(0);
     leg->AddEntry(statprecision_vs_ring[1],"statistical precision", "LP");
     leg->AddEntry(sigma_vs_ring[1],"spread", "LP");
-    leg->Draw("same");
+    //leg->Draw("same");
   }
-
-  cEEM[1] = new TCanvas("csigmaEEM","csigmaEEM");
-  cEEM[1]->SetGridx();
-  cEEM[1]->SetGridy();
+  
+  
+  //cEEM[1] = new TCanvas("csigmaEEM","csigmaEEM");
+  //cEEM[1]->SetGridx();
+  //cEEM[1]->SetGridy();
+  
   sigma_vs_ring[0]->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.20);
   sigma_vs_ring[0]->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
   sigma_vs_ring[0]->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
   sigma_vs_ring[0]->GetHistogram()->GetXaxis()-> SetTitle("ring");
-  sigma_vs_ring[0]->Draw("ap");
+  //sigma_vs_ring[0]->Draw("ap");
   if (evalStat){
-    statprecision_vs_ring[0]->Draw("psame");
-    sigma_vs_ring[0]->Draw("psame");
+    //statprecision_vs_ring[0]->Draw("psame");
+    //sigma_vs_ring[0]->Draw("psame");
+    statprecision_vs_ring[0]->Write("statprecision_vs_ring_EEm");
+    sigma_vs_ring[0]->Write("sigma_vs_ring_EEm");
     TLegend * leg = new TLegend(0.6,0.7,0.89, 0.89);
     leg->SetFillColor(0);
     leg->AddEntry(statprecision_vs_ring[0],"statistical precision", "LP");
     leg->AddEntry(sigma_vs_ring[0],"spread", "LP");
-    leg->Draw("same");
+    //leg->Draw("same");
   }
-
-
+  
+  
   /// --- plot 2 : statistical precision vs ieta
-
   if (evalStat){
-    
-    cEEP[2] = new TCanvas("cresidualP","cresidualP");
-    cEEP[2]->SetGridx();
-    cEEP[2]->SetGridy();
+    //cEEP[2] = new TCanvas("cresidualP","cresidualP");
+    //cEEP[2]->SetGridx();
+    //cEEP[2]->SetGridy();
     residual_vs_ring[1]->GetHistogram()->GetYaxis()-> SetRangeUser(0.0001,0.10);
     residual_vs_ring[1]->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
     residual_vs_ring[1]->GetHistogram()->GetYaxis()-> SetTitle("residual spread");
     residual_vs_ring[1]->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
-    residual_vs_ring[1]->Draw("ap");
-   
-    cEEM[2] = new TCanvas("cresidualM","cresidualM");
-    cEEM[2]->SetGridx();
-    cEEM[2]->SetGridy();
+    //residual_vs_ring[1]->Draw("ap");
+    residual_vs_ring[1]->Write("residual_vs_ring_EEp");
+    
+    //cEEM[2] = new TCanvas("cresidualM","cresidualM");
+    //cEEM[2]->SetGridx();
+    //cEEM[2]->SetGridy();
     residual_vs_ring[0]->GetHistogram()->GetYaxis()-> SetRangeUser(0.0001,0.10);
     residual_vs_ring[0]->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
     residual_vs_ring[0]->GetHistogram()->GetYaxis()-> SetTitle("residual spread");
     residual_vs_ring[0]->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
-    residual_vs_ring[0]->Draw("ap");
- 
-    cAll[0] = new TCanvas("csigmaFolded","csigmaFolded");
-    cAll[0]->SetGridx();
-    cAll[0]->SetGridy();
+    //residual_vs_ring[0]->Draw("ap");
+    residual_vs_ring[0]->Write("residual_vs_ring_EEm");
+    
+     
+    //cAll[0] = new TCanvas("csigmaFolded","csigmaFolded");
+    //cAll[0]->SetGridx();
+    //cAll[0]->SetGridy();
+    
     sigma_vs_ring[2]->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.20);
     sigma_vs_ring[2]->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
     sigma_vs_ring[2]->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
     sigma_vs_ring[2]->GetHistogram()->GetXaxis()-> SetTitle("ring");
-    sigma_vs_ring[2]->Draw("ap");
+    //sigma_vs_ring[2]->Draw("ap");
     if (evalStat){
-    statprecision_vs_ring[2]->Draw("psame");
-    sigma_vs_ring[2]->Draw("psame");
-    TLegend * leg = new TLegend(0.6,0.7,0.89, 0.89);
-    leg->SetFillColor(0);
-    leg->AddEntry(statprecision_vs_ring[2],"statistical precision", "LP");
-    leg->AddEntry(sigma_vs_ring[2],"spread", "LP");
-    leg->Draw("same");
+      //statprecision_vs_ring[2]->Draw("psame");
+      //sigma_vs_ring[2]->Draw("psame");
+      statprecision_vs_ring[2]->Write("statprecision_vs_ring");
+      sigma_vs_ring[2]->Write("sigma_vs_ring");
+      TLegend * leg = new TLegend(0.6,0.7,0.89, 0.89);
+      leg->SetFillColor(0);
+      leg->AddEntry(statprecision_vs_ring[2],"statistical precision", "LP");
+      leg->AddEntry(sigma_vs_ring[2],"spread", "LP");
+      //leg->Draw("same");
     }
-
-    cAll[1] = new TCanvas("cresidualFolded","cresidualFolded");
-    cAll[1]->SetGridx();
-    cAll[1]->SetGridy();
+    
+    
+    //cAll[1] = new TCanvas("cresidualFolded","cresidualFolded");
+    //cAll[1]->SetGridx();
+    //cAll[1]->SetGridy();
+    
     residual_vs_ring[2]->GetHistogram()->GetYaxis()-> SetRangeUser(0.0001,0.10);
     residual_vs_ring[2]->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
     residual_vs_ring[2]->GetHistogram()->GetYaxis()-> SetTitle("residual spread");
     residual_vs_ring[2]->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
-    residual_vs_ring[2]->Draw("ap");
- 
-   /// save precision for MC comparison
-
+    //residual_vs_ring[2]->Draw("ap");
+    residual_vs_ring[2]->Write("residual_vs_ring");
+    
+    
+    /// save precision for MC comparison
     if(isMC==true)
     {
      TFile * output = new TFile ("output/StatPrec_MC_R9_EE.root","RECREATE");
@@ -709,158 +732,183 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
      output->Close();
     }
    }
-  
+   
+  outFile -> cd();
    /// Orignal projection plot
-   cEEM[3] = new TCanvas("PhiProjectionEEM","PhiProjectionEEM");
-   cEEM[3]->SetGridx();
-   cEEM[3]->SetGridy();
+   //cEEM[3] = new TCanvas("PhiProjectionEEM","PhiProjectionEEM");
+   //cEEM[3]->SetGridx();
+   //cEEM[3]->SetGridy();
+   
    PhiProjectionEEm->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
    PhiProjectionEEm->GetHistogram()->GetXaxis()-> SetRangeUser(0,200);
    PhiProjectionEEm->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEm->GetHistogram()->GetXaxis()-> SetTitle("#phi");
-   PhiProjectionEEm->Draw("apl");
-  
-   cEEP[3] = new TCanvas("PhiProjectionEEP","PhiProjectionEEP");
-   cEEP[3]->SetGridx();
-   cEEP[3]->SetGridy();
+   //PhiProjectionEEm->Draw("apl");
+   PhiProjectionEEm->Write("PhiProjectionEEm");
+   
+   
+   //cEEP[3] = new TCanvas("PhiProjectionEEP","PhiProjectionEEP");
+   //cEEP[3]->SetGridx();
+   //cEEP[3]->SetGridy();
+   
    PhiProjectionEEp->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
    PhiProjectionEEp->GetHistogram()->GetXaxis()-> SetRangeUser(0,200);
    PhiProjectionEEp->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEp->GetHistogram()->GetXaxis()-> SetTitle("#phi");
-   PhiProjectionEEp->Draw("apl");
-
-   cAll[2]= new TCanvas("PhiProjectionSame","PhiProjectionSame");
-   cAll[2]->SetGridx();
-   cAll[2]->SetGridy();
-   PhiProjectionEEp->Draw("apl");
-   PhiProjectionEEm->Draw("plsame");
+   //PhiProjectionEEp->Draw("apl");
+   PhiProjectionEEp->Write("PhiProjectionEEp");
+   
+   
+   //cAll[2]= new TCanvas("PhiProjectionSame","PhiProjectionSame");
+   //cAll[2]->SetGridx();
+   //cAll[2]->SetGridy();
+   
+   //PhiProjectionEEp->Draw("apl");
+   //PhiProjectionEEm->Draw("plsame");
    TLegend * leg2 = new TLegend(0.6,0.7,0.89, 0.89);
    leg2->SetFillColor(0);
    leg2->AddEntry(PhiProjectionEEm,"EE- Projection", "LP");
    leg2->AddEntry(PhiProjectionEEp,"EE+ Projection", "LP");
-   leg2->Draw("same");
+   //leg2->Draw("same");
    
-
+   
    /// Map corrected
-   cEEM[4] = new TCanvas("cmapCorrectedEEM","cmapCorrectedEEM");
-   cEEM[4] -> cd();
-   cEEM[4]->SetLeftMargin(0.1); 
-   cEEM[4]->SetRightMargin(0.13); 
-   cEEM[4]->SetGridx();
-   cEEM[4]->SetGridy();
+   //cEEM[4] = new TCanvas("cmapCorrectedEEM","cmapCorrectedEEM");
+   //cEEM[4] -> cd();
+   //cEEM[4]->SetLeftMargin(0.1); 
+   //cEEM[4]->SetRightMargin(0.13); 
+   //cEEM[4]->SetGridx();
+   //cEEM[4]->SetGridy();
    hcmapFinalEE[0]->GetXaxis() -> SetLabelSize(0.03);
    hcmapFinalEE[0]->GetXaxis() ->SetTitle("ix");
    hcmapFinalEE[0]->GetYaxis() ->SetTitle("iy");
    hcmapFinalEE[0]->GetZaxis() ->SetRangeUser(0.8,1.2);
-   hcmapFinalEE[0]->Draw("colz");
-
-   cEEP[4] = new TCanvas("cmapCorrectedEEP","cmapCorrectedEEP");
-   cEEP[4] -> cd();
-   cEEP[4]->SetLeftMargin(0.1); 
-   cEEP[4]->SetRightMargin(0.13); 
-   cEEP[4]->SetGridx();
-   cEEP[4]->SetGridy();
+   //hcmapFinalEE[0]->Draw("colz");
+   hcmapFinalEE[0]->Write();
+   
+   
+   //cEEP[4] = new TCanvas("cmapCorrectedEEP","cmapCorrectedEEP");
+   //cEEP[4] -> cd();
+   //cEEP[4]->SetLeftMargin(0.1); 
+   //cEEP[4]->SetRightMargin(0.13); 
+   //cEEP[4]->SetGridx();
+   //cEEP[4]->SetGridy();
    hcmapFinalEE[1]->GetXaxis() -> SetLabelSize(0.03);
    hcmapFinalEE[1]->GetXaxis() ->SetTitle("ix");
    hcmapFinalEE[1]->GetYaxis() ->SetTitle("iy");
    hcmapFinalEE[1]->GetZaxis() ->SetRangeUser(0.8,1.2);
-   hcmapFinalEE[1]->Draw("colz");
-
+   //hcmapFinalEE[1]->Draw("colz");
+   hcmapFinalEE[1]->Write();
+   
+   
    /// Projection after correction
-   cEEM[5] = new TCanvas("PhiProjectionEEM_Corrected","PhiProjectionEEM_Corrected");
-   cEEM[5]->SetGridx();
-   cEEM[5]->SetGridy();
+   //cEEM[5] = new TCanvas("PhiProjectionEEM_Corrected","PhiProjectionEEM_Corrected");
+   //cEEM[5]->SetGridx();
+   //cEEM[5]->SetGridy();
    PhiProjectionEEm_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
    PhiProjectionEEm_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(100,200);
    PhiProjectionEEm_Corrected->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEm_Corrected->GetHistogram()->GetXaxis()-> SetTitle("#phi");
-   PhiProjectionEEm_Corrected->Draw("apl");
-  
-   cEEP[5] = new TCanvas("PhiProjectionEEP_Corrected","PhiProjectionEEP_Corrected");
-   cEEP[5]->SetGridx();
-   cEEP[5]->SetGridy();
+   //PhiProjectionEEm_Corrected->Draw("apl");
+   PhiProjectionEEm_Corrected->Write("PhiProjectionEEm_Corrected");
+   
+   
+   //cEEP[5] = new TCanvas("PhiProjectionEEP_Corrected","PhiProjectionEEP_Corrected");
+   //cEEP[5]->SetGridx();
+   //cEEP[5]->SetGridy();
    PhiProjectionEEp_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.93,1.07);
    PhiProjectionEEp_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(0,200);
    PhiProjectionEEp_Corrected->GetHistogram()->GetYaxis()-> SetTitle("#bar{IC}");
    PhiProjectionEEp_Corrected->GetHistogram()->GetXaxis()-> SetTitle("#phi");
-   PhiProjectionEEp_Corrected->Draw("apl");
-
-   cAll[3] = new TCanvas("PhiProjectionSame_Corrected","PhiProjectionSame_Corrected");
-   cAll[3]->SetGridx();
-   cAll[3]->SetGridy();
-   PhiProjectionEEp_Corrected->Draw("apl");
-   PhiProjectionEEm_Corrected->Draw("plsame");
+   //PhiProjectionEEp_Corrected->Draw("apl");
+   PhiProjectionEEp_Corrected->Write("PhiProjectionEEp_Corrected");
+   
+   
+   //cAll[3] = new TCanvas("PhiProjectionSame_Corrected","PhiProjectionSame_Corrected");
+   //cAll[3]->SetGridx();
+   //cAll[3]->SetGridy();
+   //PhiProjectionEEp_Corrected->Draw("apl");
+   //PhiProjectionEEm_Corrected->Draw("plsame");
    TLegend * leg3 = new TLegend(0.6,0.7,0.89, 0.89);
    leg3->SetFillColor(0);
    leg3->AddEntry(PhiProjectionEEm,"EE- Projection Corrected", "LP");
    leg3->AddEntry(PhiProjectionEEp,"EE+ Projection Corrected", "LP");
-   leg3->Draw("same");
-
- 
-   cAll[4] = new TCanvas("ProfileEEm","ProfileEEm");
-   cAll[4]->SetGridx();
-   cAll[4]->SetGridy();
+   //leg3->Draw("same");
+   
+   
+   //cAll[4] = new TCanvas("ProfileEEm","ProfileEEm");
+   //cAll[4]->SetGridx();
+   //cAll[4]->SetGridy();
    ProfileEEm->GetXaxis()->SetTitle("#bar{IC}");
    ProfileEEm->SetLineColor(kBlack);
    ProfileEEm->SetMarkerSize(0.8);
    ProfileEEmCorrected->SetLineColor(kRed);
    ProfileEEmCorrected->SetMarkerSize(0.8);
    ProfileEEmCorrected->SetLineWidth(2);
-   ProfileEEmCorrected->Draw();
-   ProfileEEm->Draw("same");
+   //ProfileEEmCorrected->Draw();
+   //ProfileEEm->Draw("same");
+   ProfileEEmCorrected->Write();
+   ProfileEEm->Write();
    
    TLegend * leg4 = new TLegend(0.6,0.7,0.89, 0.89);
    leg4->SetFillColor(0);
    leg4->AddEntry(ProfileEEm,"EE- Projection ", "LP");
    leg4->AddEntry(ProfileEEmCorrected,"EE- Projection Corrected ", "LP");
-   leg4->Draw("same");
-  
-   cAll[5] = new TCanvas("ProfileEEp","ProfileEEp");
-   cAll[5]->SetGridx();
-   cAll[5]->SetGridy();
+   //leg4->Draw("same");
+   
+   
+   //cAll[5] = new TCanvas("ProfileEEp","ProfileEEp");
+   //cAll[5]->SetGridx();
+   //cAll[5]->SetGridy();
    ProfileEEp->GetXaxis()->SetTitle("#bar{IC}");
    ProfileEEp->SetLineColor(kBlack);
    ProfileEEp->SetMarkerSize(0.8);
    ProfileEEpCorrected->SetLineColor(kBlue);
    ProfileEEpCorrected->SetMarkerSize(0.8);
    ProfileEEpCorrected->SetLineWidth(2);
-   ProfileEEpCorrected->Draw();
-   ProfileEEp->Draw("same");
-  
+   //ProfileEEpCorrected->Draw();
+   //ProfileEEp->Draw("same");
+   ProfileEEpCorrected->Write();
+   ProfileEEp->Write();
+   
    TLegend * leg5 = new TLegend(0.6,0.7,0.89, 0.89);
    leg5->SetFillColor(0);
    leg5->AddEntry(ProfileEEp,"EE+ Projection ", "LP");
    leg5->AddEntry(ProfileEEpCorrected,"EE+ Projection Corrected ", "LP");
-   leg5->Draw("same");
-
+   //leg5->Draw("same");
+   
+   
    /// new Precision and residual:
-
-   cAll[6] = new TCanvas("csigmaFoldedCorrected","csigmaFoldedCorrected");
-   cAll[6]->SetGridx();
-   cAll[6]->SetGridy();
+   //cAll[6] = new TCanvas("csigmaFoldedCorrected","csigmaFoldedCorrected");
+   //cAll[6]->SetGridx();
+   //cAll[6]->SetGridy();
    sigma_vs_ringCorrected[2]->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.20);
    sigma_vs_ringCorrected[2]->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
    sigma_vs_ringCorrected[2]->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
    sigma_vs_ringCorrected[2]->GetHistogram()->GetXaxis()-> SetTitle("ring");
-   sigma_vs_ringCorrected[2]->Draw("ap");
+   //sigma_vs_ringCorrected[2]->Draw("ap");
    if (evalStat){
-    statprecision_vs_ring[2]->Draw("psame");
-    sigma_vs_ringCorrected[2]->Draw("psame");
-    TLegend * leg6 = new TLegend(0.6,0.7,0.89, 0.89);
-    leg6->SetFillColor(0);
-    leg6->AddEntry(statprecision_vs_ring[2],"statistical precision", "LP");
-    leg6->AddEntry(sigma_vs_ringCorrected[2],"spread corrected", "LP");
-    leg6->Draw("same");
+     //statprecision_vs_ring[2]->Draw("psame");
+     //sigma_vs_ringCorrected[2]->Draw("psame");
+     statprecision_vs_ring[2]->Write();
+     sigma_vs_ringCorrected[2]->Write();
+     TLegend * leg6 = new TLegend(0.6,0.7,0.89, 0.89);
+     leg6->SetFillColor(0);
+     leg6->AddEntry(statprecision_vs_ring[2],"statistical precision", "LP");
+     leg6->AddEntry(sigma_vs_ringCorrected[2],"spread corrected", "LP");
+     //leg6->Draw("same");
    }
-
-   cAll[7] = new TCanvas("cresidualFoldedCorrected","cresidualFoldedCorrected");
-   cAll[7]->SetGridx();
-   cAll[7]->SetGridy();
+   
+   
+   //cAll[7] = new TCanvas("cresidualFoldedCorrected","cresidualFoldedCorrected");
+   //cAll[7]->SetGridx();
+   //cAll[7]->SetGridy();
    residual_vs_ringCorrected[2]->GetHistogram()->GetYaxis()-> SetRangeUser(0.0001,0.10);
    residual_vs_ringCorrected[2]->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
    residual_vs_ringCorrected[2]->GetHistogram()->GetYaxis()-> SetTitle("residual spread");
    residual_vs_ringCorrected[2]->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
-   residual_vs_ringCorrected[2]->Draw("ap");
+   //residual_vs_ringCorrected[2]->Draw("ap");
+   residual_vs_ringCorrected[2]->Write("residual_vs_ringCorrected");
  
    /// IC constant set:
 
@@ -940,54 +988,62 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
           tempAll->SetPointError(i,statprecision_vs_ring[2]->GetErrorX(i),statprecision_vs_ring[2]->GetErrorY(i));}
    
    }
-
    
-    cEEM[7] = new TCanvas("UncertaintyEEM","UncertaintyEEM");
-    cEEM[7]->SetGridx();
-    cEEM[7]->SetGridy();
+   
+    outFile -> cd();
+    
+    //cEEM[7] = new TCanvas("UncertaintyEEM","UncertaintyEEM");
+    //cEEM[7]->SetGridx();
+    //cEEM[7]->SetGridy();
+    
     tempEEM->GetHistogram()->GetYaxis()-> SetRangeUser(0.0001,0.10);
     tempEEM->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
     tempEEM->GetHistogram()->GetYaxis()-> SetTitle("Total Error");
     tempEEM->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
-    tempEEM->Draw("ap");
-    statprecision_vs_ring[0]->Draw("psame");
+    //tempEEM->Draw("ap");
+    tempEEM->Write("tempEEM");
+    //statprecision_vs_ring[0]->Draw("psame");
     TLegend * leg7 = new TLegend(0.6,0.7,0.89, 0.89);
     leg7->SetFillColor(0);
     leg7->AddEntry(statprecision_vs_ring[0],"statistical precision EEM", "LP");
     leg7->AddEntry(tempEEM,"Statistical + Systematic MC ", "LP");
-    leg7->Draw("same");
-  
+    //leg7->Draw("same");
     
-    cEEP[7] = new TCanvas("UncertaintyEEP","UncertaintyEEP");
-    cEEP[7]->SetGridx();
-    cEEP[7]->SetGridy();
+    
+    //cEEP[7] = new TCanvas("UncertaintyEEP","UncertaintyEEP");
+    //cEEP[7]->SetGridx();
+    //cEEP[7]->SetGridy();
+    
     tempEEP->GetHistogram()->GetYaxis()-> SetRangeUser(0.0001,0.10);
     tempEEP->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
     tempEEP->GetHistogram()->GetYaxis()-> SetTitle("Total Error");
     tempEEP->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
-    tempEEP->Draw("ap");
-    statprecision_vs_ring[1]->Draw("psame");
+    //tempEEP->Draw("ap");
+    tempEEP->Write("tempEEP");
+    //statprecision_vs_ring[1]->Draw("psame");
     TLegend * leg8 = new TLegend(0.6,0.7,0.89, 0.89);
     leg8->SetFillColor(0);
     leg8->AddEntry(statprecision_vs_ring[1],"statistical precision EEP", "LP");
     leg8->AddEntry(tempEEP,"Statistical + Systematic MC ", "LP");
-    leg8->Draw("same");
-  
-
-    cAll[8] = new TCanvas("UncertaintyAll","UncertaintyAll");
-    cAll[8]->SetGridx();
-    cAll[8]->SetGridy();
+    //leg8->Draw("same");
+    
+        
+    //cAll[8] = new TCanvas("UncertaintyAll","UncertaintyAll");
+    //cAll[8]->SetGridx();
+    //cAll[8]->SetGridy();
+    
     tempAll->GetHistogram()->GetYaxis()-> SetRangeUser(0.0001,0.10);
     tempAll->GetHistogram()->GetXaxis()-> SetRangeUser(0,40);
     tempAll->GetHistogram()->GetYaxis()-> SetTitle("Total Error");
     tempAll->GetHistogram()->GetXaxis()-> SetTitle("i#eta");
-    tempAll->Draw("ap");
-    statprecision_vs_ring[2]->Draw("psame");
+    //tempAll->Draw("ap");
+    tempAll->Write("tempAll");
+    //statprecision_vs_ring[2]->Draw("psame");
     TLegend * leg9 = new TLegend(0.6,0.7,0.89, 0.89);
     leg9->SetFillColor(0);
     leg9->AddEntry(statprecision_vs_ring[2],"statistical precision folded", "LP");
     leg9->AddEntry(tempEEP,"Statistical + Systematic MC ", "LP");
-    leg9->Draw("same");
+    //leg9->Draw("same");
   
 
   if(isMC == false)
@@ -1073,24 +1129,26 @@ for( int i=0; i<PhiProjectionEEm->GetN(); i++){
   }
   
   
-  cEEP[8] = new TCanvas("Warning_EEP","Warning_EEP");
-  cEEP[8]->SetGridx();
-  cEEP[8]->SetGridy();
+  //cEEP[8] = new TCanvas("Warning_EEP","Warning_EEP");
+  //cEEP[8]->SetGridx();
+  //cEEP[8]->SetGridy();
   warning_Map_EEP->GetXaxis() -> SetLabelSize(0.03);
-  warning_Map_EEP->Draw("COLZ");
+  //warning_Map_EEP->Draw("COLZ");
   warning_Map_EEP->GetXaxis() ->SetTitle("ix");
   warning_Map_EEP->GetYaxis() ->SetTitle("iy");
   warning_Map_EEP->GetZaxis() ->SetRangeUser(0.85,1.15);
 
-  cEEM[8] = new TCanvas("Warning_EEM","Warning_EEM");
-  cEEM[8]->SetGridx();
-  cEEM[8]->SetGridy();
+  //cEEM[8] = new TCanvas("Warning_EEM","Warning_EEM");
+  //cEEM[8]->SetGridx();
+  //cEEM[8]->SetGridy();
   warning_Map_EEM->GetXaxis() -> SetLabelSize(0.03);
-  warning_Map_EEM->Draw("COLZ");
+  //warning_Map_EEM->Draw("COLZ");
   warning_Map_EEM->GetXaxis() ->SetTitle("ix");
   warning_Map_EEM->GetYaxis() ->SetTitle("iy");
   warning_Map_EEM->GetZaxis() ->SetRangeUser(0.85,1.15);
-
+  
+  outFile -> Close();
+  
   theApp->Run();
   
   return 0;

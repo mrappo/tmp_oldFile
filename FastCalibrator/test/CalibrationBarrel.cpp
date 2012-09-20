@@ -1,3 +1,4 @@
+
 /// Stand-alone program for Normalize IC EB by the mean on a eta ring + skipping xtal near dead channels and TT
 /// in the normalization procedure
 /// Folded Plots for Spread IC, Statistical Precision and spread
@@ -249,7 +250,7 @@ int main(int argc, char **argv){
      if(modEta==-1) continue;
      g_EoC_EB[modEta]->GetPoint(int((iPhi-1)/(360./g_EoC_EB[0]->GetN())),xPhi,yValue);
      //NOTALEO: turn off the momentum correction
-     yValue = 1;
+     //yValue = 1;
      //yValue = yValue*yValue*yValue;
      hcmapMomentumCorrected->SetBinContent(iPhi,iEta,hcmap->GetBinContent(iPhi,iEta)*yValue);
    }
@@ -529,101 +530,101 @@ int main(int argc, char **argv){
   TCanvas *c[30];
   
   
-  c[0] = new TCanvas("hspreadEB","hspreadEB");
-  c[0]->SetLeftMargin(0.1); 
-  c[0]->SetRightMargin(0.13); 
-  c[0]->SetGridx();
+  //c[0] = new TCanvas("hspreadEB","hspreadEB");
+  //c[0]->SetLeftMargin(0.1); 
+  //c[0]->SetRightMargin(0.13); 
+  //c[0]->SetGridx();
   
   h_scale_EB->GetXaxis()->SetNdivisions(1020);
   h_scale_EB->GetXaxis() -> SetLabelSize(0.03);
   h_scale_EB->GetXaxis() ->SetTitle("i#phi");
   h_scale_EB->GetYaxis() ->SetTitle("i#eta");
   h_scale_EB->GetZaxis() ->SetRangeUser(0.9,1.1);
-  h_scale_EB->Draw("COLZ");
+  //h_scale_EB->Draw("COLZ");
   h_scale_EB->Write();
   
   
-  c[1] = new TCanvas("hcmap","hcmap normalized");
-  c[1]->SetGridx();
-  c[1]->SetGridy();
+  //c[1] = new TCanvas("hcmap","hcmap normalized");
+  //c[1]->SetGridx();
+  //c[1]->SetGridy();
   hcmap->GetXaxis()->SetNdivisions(1020);
   hcmap->GetXaxis() -> SetLabelSize(0.03);
   hcmap->GetXaxis() ->SetTitle("i#phi");
   hcmap->GetYaxis() ->SetTitle("i#eta");
   hcmap->GetZaxis() ->SetRangeUser(0.9,1.1);
-  hcmap->Draw("colz");
+  //hcmap->Draw("colz");
   hcmap->Write();
   
   
-  c[2] = new TCanvas("csigmaFold","csigmaFold");
-  c[2]->SetGridx();
-  c[2]->SetGridy();
+  //c[2] = new TCanvas("csigmaFold","csigmaFold");
+  //c[2]->SetGridx();
+  //c[2]->SetGridy();
   
   sigma_vs_EtaFold->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.10);
   sigma_vs_EtaFold->GetHistogram()->GetXaxis()-> SetRangeUser(0,85);
   sigma_vs_EtaFold->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
   sigma_vs_EtaFold->GetHistogram()->GetXaxis()-> SetTitle("|i#eta|");
   if (evalStat){
-    statprecision_vs_EtaFold->Draw("ap");
-    sigma_vs_EtaFold->Draw("psame");
+    //statprecision_vs_EtaFold->Draw("ap");
+    //sigma_vs_EtaFold->Draw("psame");
     statprecision_vs_EtaFold->Write("statprecision_vs_EtaFold");
     sigma_vs_EtaFold->Write("sigma_vs_EtaFold");
     TLegend * leg = new TLegend(0.6,0.7,0.89, 0.89);
     leg->SetFillColor(0);
     leg->AddEntry(statprecision_vs_EtaFold,"statistical precision", "LP");
     leg->AddEntry(sigma_vs_EtaFold,"spread", "LP");
-    leg->Draw("same");
+    //leg->Draw("same");
   }
   
   
-  c[3] = new TCanvas("cresidualFold","cresidualFold");
-  c[3]->SetGridx();
-  c[3]->SetGridy();
+  //c[3] = new TCanvas("cresidualFold","cresidualFold");
+  //c[3]->SetGridx();
+  //c[3]->SetGridy();
   residual_vs_EtaFold->GetHistogram()->GetYaxis()-> SetRangeUser(0.0001,0.05);
   residual_vs_EtaFold->GetHistogram()->GetXaxis()-> SetRangeUser(0,85);
   residual_vs_EtaFold->GetHistogram()->GetYaxis()-> SetTitle("residual spread");
   residual_vs_EtaFold->GetHistogram()->GetXaxis()-> SetTitle("|i#eta|");
-  residual_vs_EtaFold->Draw("ap");
+  //residual_vs_EtaFold->Draw("ap");
   residual_vs_EtaFold->Write("residual_vs_EtaFold");
   
   
-  c[4] = new TCanvas("ICPhiProjection","ICPhiProjection");
-  c[4]->SetGridx();
-  c[4]->SetGridy();
+  //c[4] = new TCanvas("ICPhiProjection","ICPhiProjection");
+  //c[4]->SetGridx();
+  //c[4]->SetGridy();
   phiProjection->GetYaxis()->SetRangeUser(0.97,1.03);
   phiProjection->GetXaxis()-> SetRangeUser(0,360);
   phiProjection->GetYaxis()-> SetTitle("#bar{IC}");
   phiProjection->GetXaxis()-> SetTitle("i#phi");
-  phiProjection->Draw("ap");
+  //phiProjection->Draw("ap");
   phiProjection->Write("phiProjection");
   
   
-  c[5] = new TCanvas("ICPhiProjectionCorrected","ICPhiProjectionCorrected");
-  c[5]->SetGridx();
-  c[5]->SetGridy();
+  //c[5] = new TCanvas("ICPhiProjectionCorrected","ICPhiProjectionCorrected");
+  //c[5]->SetGridx();
+  //c[5]->SetGridy();
   phiCorrection->GetYaxis()->SetRangeUser(0.97,1.03);
   phiCorrection->GetXaxis()-> SetRangeUser(0,360);
   phiCorrection->GetYaxis()-> SetTitle("#bar{IC}");
   phiCorrection->GetXaxis()-> SetTitle("i#phi");
-  phiCorrection->Draw("ap");
+  //phiCorrection->Draw("ap");
   phiCorrection->Write("phiCorrection");
   
   
-  c[6] = new TCanvas("hcmapcorrected","hcmapcorrected");
-  c[6]->SetGridx();
-  c[6]->SetGridy();
+  //c[6] = new TCanvas("hcmapcorrected","hcmapcorrected");
+  //c[6]->SetGridx();
+  //c[6]->SetGridy();
   hcmapMomentumCorrected->GetXaxis()->SetNdivisions(1020);
   hcmapMomentumCorrected->GetXaxis() -> SetLabelSize(0.03);
   hcmapMomentumCorrected->GetXaxis() ->SetTitle("i#phi");
   hcmapMomentumCorrected->GetYaxis() ->SetTitle("i#eta");
   hcmapMomentumCorrected->GetZaxis() ->SetRangeUser(0.9,1.1);
-  hcmapMomentumCorrected->Draw("colz");
+  //hcmapMomentumCorrected->Draw("colz");
   hcmapMomentumCorrected->Write();
   
   
-  c[7] = new TCanvas("cphimeanfold_crack_EB+","cphimeanfold_crack_EB+");
-  c[7]->SetGridx();
-  c[7]->SetGridy();
+  //c[7] = new TCanvas("cphimeanfold_crack_EB+","cphimeanfold_crack_EB+");
+  //c[7]->SetGridx();
+  //c[7]->SetGridy();
   
   TLegend * legg1 = new TLegend(0.75,0.75,0.89, 0.89);
   legg1->AddEntry(ic_vs_PhiFold_crack_EBp,"EB+","LP");
@@ -635,15 +636,15 @@ int main(int argc, char **argv){
   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
   ic_vs_PhiFold_crack_EBp->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
   ic_vs_PhiFold_crack_EBp->GetHistogram()->SetTitle("EB+");
-  ic_vs_PhiFold_crack_EBp->Draw("ap");
+  //ic_vs_PhiFold_crack_EBp->Draw("ap");
   ic_vs_PhiFold_crack_EBp->Write("ic_vs_PhiFold_crack_EBp");
-  legg1->Draw("same");
+  //legg1->Draw("same");
   
   
-  c[8] = new TCanvas("cphimeanfold_crack_EB-","cphimeanfold_crackEB-");
-  c[8]->cd();
-  c[8]->SetGridx();
-  c[8]->SetGridy();
+  //c[8] = new TCanvas("cphimeanfold_crack_EB-","cphimeanfold_crackEB-");
+  //c[8]->cd();
+  //c[8]->SetGridx();
+  //c[8]->SetGridy();
   
   TLegend * legg2 = new TLegend(0.75,0.75,0.89, 0.89);
   legg2->AddEntry(ic_vs_PhiFold_crack_EBm,"EB-","LP");
@@ -655,9 +656,9 @@ int main(int argc, char **argv){
   ic_vs_PhiFold_crack_EBm->GetHistogram()->SetTitle("EB-");
   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetYaxis()-> SetTitle("<IC>");
   ic_vs_PhiFold_crack_EBm->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
-  ic_vs_PhiFold_crack_EBm->Draw("ap");
+  //ic_vs_PhiFold_crack_EBm->Draw("ap");
   ic_vs_PhiFold_crack_EBm->Write("ic_vs_PhiFold_crack_EBm");
-  legg2->Draw("same");
+  //legg2->Draw("same");
   
  /* TGraphErrors *ic_vs_PhiFold_crack_EBm_reflect = new TGraphErrors();
   ic_vs_PhiFold_crack_EBm_reflect->SetMarkerStyle(20);
@@ -694,88 +695,88 @@ int main(int argc, char **argv){
    */
    
    
-   c[9] = new TCanvas("hcmap_crackcorrected","hcmap_crackcorrected");
-   c[9]->SetLeftMargin(0.1); 
-   c[9]->SetRightMargin(0.13); 
-   c[9]->SetGridx();
+   //c[9] = new TCanvas("hcmap_crackcorrected","hcmap_crackcorrected");
+   //c[9]->SetLeftMargin(0.1); 
+   //c[9]->SetRightMargin(0.13); 
+   //c[9]->SetGridx();
    
    hcmap_crackcorrected->GetXaxis()->SetNdivisions(1020);
    hcmap_crackcorrected->GetXaxis() -> SetLabelSize(0.03);
    hcmap_crackcorrected->GetXaxis() ->SetTitle("i#phi");
    hcmap_crackcorrected->GetYaxis() ->SetTitle("i#eta");
    hcmap_crackcorrected->GetZaxis() ->SetRangeUser(0.9,1.1);
-   hcmap_crackcorrected->Draw("COLZ");
+   //hcmap_crackcorrected->Draw("COLZ");
    hcmap_crackcorrected->Write();
    
    
-   c[10] = new TCanvas("hcmapFinal","hcmapFinal");
-   c[10]->SetLeftMargin(0.1); 
-   c[10]->SetRightMargin(0.13); 
-   c[10]->SetGridx();
+   //c[10] = new TCanvas("hcmapFinal","hcmapFinal");
+   //c[10]->SetLeftMargin(0.1); 
+   //c[10]->SetRightMargin(0.13); 
+   //c[10]->SetGridx();
    
    hcmapFinal->GetXaxis()->SetNdivisions(1020);
    hcmapFinal->GetXaxis() -> SetLabelSize(0.03);
    hcmapFinal->GetXaxis() ->SetTitle("i#phi");
    hcmapFinal->GetYaxis() ->SetTitle("i#eta");
    hcmapFinal->GetZaxis() ->SetRangeUser(0.9,1.1);
-   hcmapFinal->Draw("COLZ");
+   //hcmapFinal->Draw("COLZ");
    hcmapFinal->Write();
    
    
-   c[11] = new TCanvas("cphimeanfold_corrected_EB+","cphimeanfold_crack_EB+");
-   c[11]->SetGridx();
-   c[11]->SetGridy();
+   //c[11] = new TCanvas("cphimeanfold_corrected_EB+","cphimeanfold_crack_EB+");
+   //c[11]->SetGridx();
+   //c[11]->SetGridy();
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->SetTitle(" Mean IC EB+");
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->GetYaxis()-> SetRangeUser(0.95,1.05);
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->GetYaxis()-> SetTitle("mean IC");
    ic_vs_PhiFold_corrected_EBp->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
-   ic_vs_PhiFold_corrected_EBp->Draw("ap");
+   //ic_vs_PhiFold_corrected_EBp->Draw("ap");
    ic_vs_PhiFold_corrected_EBp->Write("ic_vs_PhiFold_corrected_EBp");
    
    
-   c[12] = new TCanvas("cphimeanfold_corrected_EB-","cphimeanfold_crack_EB-");
-   c[12]->SetGridx();
-   c[12]->SetGridy();
+   //c[12] = new TCanvas("cphimeanfold_corrected_EB-","cphimeanfold_crack_EB-");
+   //c[12]->SetGridx();
+   //c[12]->SetGridy();
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->SetTitle(" Mean IC EB-");
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->GetYaxis()-> SetRangeUser(0.95,1.05);
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->GetXaxis()-> SetRangeUser(0.5,20.5);
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->GetYaxis()-> SetTitle("mean IC");
    ic_vs_PhiFold_corrected_EBm->GetHistogram()->GetXaxis()-> SetTitle("i#phi%20");
-   ic_vs_PhiFold_corrected_EBm->Draw("ap");
+   //ic_vs_PhiFold_corrected_EBm->Draw("ap");
    ic_vs_PhiFold_corrected_EBm->Write("ic_vs_PhiFold_corrected_EBm");
    
    
-   c[13] = new TCanvas("PhiProjection_crackcorrected","PhiProjection_crackcorrected");
-   c[13]->SetGridx();
-   c[13]->SetGridy();
+   //c[13] = new TCanvas("PhiProjection_crackcorrected","PhiProjection_crackcorrected");
+   //c[13]->SetGridx();
+   //c[13]->SetGridy();
    PhiProjection_CrackCorrection->GetHistogram()->GetYaxis()-> SetRangeUser(0.97,1.03);
    PhiProjection_CrackCorrection->GetHistogram()->GetXaxis()-> SetRangeUser(0,360);
    PhiProjection_CrackCorrection->GetHistogram()->GetYaxis()-> SetTitle("Mean IC");
    PhiProjection_CrackCorrection->GetHistogram()->GetXaxis()-> SetTitle("i#phi");
-   PhiProjection_CrackCorrection->Draw("ap");
+   //PhiProjection_CrackCorrection->Draw("ap");
    PhiProjection_CrackCorrection->Write("PhiProjection_CrackCorrection");
    
    
-   c[14] = new TCanvas("PhiProjection_same","PhiProjection_same");
-   c[14]->SetGridx();
-   c[14]->SetGridy();
+   //c[14] = new TCanvas("PhiProjection_same","PhiProjection_same");
+   //c[14]->SetGridx();
+   //c[14]->SetGridy();
    PhiProjection_CrackCorrection->GetXaxis()->SetRangeUser(100,200);
-   PhiProjection_CrackCorrection->Draw("ap");
-   phiProjection->Draw("psame");
+   //PhiProjection_CrackCorrection->Draw("ap");
+   //phiProjection->Draw("psame");
    PhiProjection_CrackCorrection->Write("PhiProjection_CrackCorrection");
    phiProjection->Write("phiProjection");
    
    
-   c[15] = new TCanvas("Profile1","Profile1");
-   c[15]->SetGridx();
-   c[15]->SetGridy();
+   //c[15] = new TCanvas("Profile1","Profile1");
+   //c[15]->SetGridx();
+   //c[15]->SetGridy();
    
    TLegend * legg3 = new TLegend(0.75,0.75,0.89, 0.89);
    legg3->AddEntry(phiProjection,"Original IC","LP");
    legg3->AddEntry(PhiProjection_CrackCorrection,"IC Crack Corrected","LP");
    legg3->SetFillColor(0);
-   legg3->Draw("same");
+   //legg3->Draw("same");
    
    Profile1->GetXaxis()->SetTitle("#bar{IC}");
    Profile1->SetLineColor(kBlack);
@@ -785,21 +786,21 @@ int main(int argc, char **argv){
    Profile2->SetMarkerSize(0.8);
    Profile2->SetLineWidth(2);
    
-   Profile1->Draw();
-   Profile2->Draw("same");
+   //Profile1->Draw();
+   //Profile2->Draw("same");
    Profile1->Write();
    Profile2->Write();
    
    
-   c[16] = new TCanvas("Profile2","Profile2");
-   c[16]->SetGridx();
-   c[16]->SetGridy();
+   //c[16] = new TCanvas("Profile2","Profile2");
+   //c[16]->SetGridx();
+   //c[16]->SetGridy();
    
    TLegend * legg4 = new TLegend(0.75,0.75,0.89, 0.89);
    legg4->AddEntry(Profile1,"Original IC","LP");
    legg4->AddEntry(Profile2,"IC Momentum Corrected","LP");
    legg4->SetFillColor(0);
-   legg4->Draw("same");
+   //legg4->Draw("same");
    
    Profile1->GetXaxis()->SetTitle("#bar{IC}");
    Profile1->SetLineColor(kBlack);
@@ -822,50 +823,50 @@ int main(int argc, char **argv){
    Profile3->Fit("fgaus","QRME");
    cout<<" Mean Values : Corrected Crack = "<<Profile3->GetMean()<<" RMS "<<Profile3->GetRMS()<<endl;
    
-   Profile1->Draw();
-   Profile3->Draw("same");
+   //Profile1->Draw();
+   //Profile3->Draw("same");
    
    TLegend * legg5 = new TLegend(0.75,0.75,0.89, 0.89);
    legg5->AddEntry(Profile1,"Original IC","LP");
    legg5->AddEntry(Profile3,"IC Crack Corrected","LP");
    legg5->SetFillColor(0);
-   legg5->Draw("same");
+   //legg5->Draw("same");
    
    Profile1->Write();
    Profile3->Write();
    
    
-   c[17] = new TCanvas("csigmaFoldCorrected","csigmaFoldCorrected");
-   c[17]->SetGridx();
-   c[17]->SetGridy();
+   //c[17] = new TCanvas("csigmaFoldCorrected","csigmaFoldCorrected");
+   //c[17]->SetGridx();
+   //c[17]->SetGridy();
    
    sigma_vs_EtaFold_corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.07);
    sigma_vs_EtaFold_corrected->GetHistogram()->GetXaxis()-> SetRangeUser(0,85);
    sigma_vs_EtaFold_corrected->GetHistogram()->GetYaxis()-> SetTitle("#sigma_{c}");
    sigma_vs_EtaFold_corrected->GetHistogram()->GetXaxis()-> SetTitle("|i#eta|");
-   sigma_vs_EtaFold_corrected->Draw("ap");
+   //sigma_vs_EtaFold_corrected->Draw("ap");
    sigma_vs_EtaFold_corrected->Write("sigma_vs_EtaFold_corrected");
    if (evalStat){
-    statprecision_vs_EtaFold->Draw("psame");
+     //statprecision_vs_EtaFold->Draw("psame");
     statprecision_vs_EtaFold->Write("statprecision_vs_EtaFold");
     //sigma_vs_EtaFold->Draw("psame");
     TLegend * leg2 = new TLegend(0.6,0.7,0.89, 0.89);
     leg2->SetFillColor(0);
     leg2->AddEntry(statprecision_vs_EtaFold,"statistical precision", "LP");
     leg2->AddEntry(sigma_vs_EtaFold,"spread", "LP");
-    leg2->Draw("same");
+    //leg2->Draw("same");
    }
    
    if(evalStat)
    {
-    c[18] = new TCanvas("cResidualFoldCorrected","cResidualFoldCorrected");
-    c[18]->SetGridx();
-    c[18]->SetGridy();
+     //c[18] = new TCanvas("cResidualFoldCorrected","cResidualFoldCorrected");
+     //c[18]->SetGridx();
+     //c[18]->SetGridy();
     residual_vs_EtaFold_Corrected->GetHistogram()->GetYaxis()-> SetRangeUser(0.00,0.04);
     residual_vs_EtaFold_Corrected->GetHistogram()->GetXaxis()-> SetRangeUser(0,85);
     residual_vs_EtaFold_Corrected->GetHistogram()->GetYaxis()-> SetTitle("residual");
     residual_vs_EtaFold_Corrected->GetHistogram()->GetXaxis()-> SetTitle("|i#eta|");
-    residual_vs_EtaFold_Corrected->Draw("ap");
+    //residual_vs_EtaFold_Corrected->Draw("ap");
     residual_vs_EtaFold_Corrected->Write("residual_vs_EtaFold_Corrected");
    }
    
