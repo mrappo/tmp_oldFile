@@ -125,8 +125,8 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchStatus("ele1_EOverP", 1);         fChain->SetBranchAddress("ele1_EOverP", &ele1_EOverP, &b_ele1_EOverP);
   fChain->SetBranchStatus("ele1_isEB", 1);           fChain->SetBranchAddress("ele1_isEB", &ele1_isEB, &b_ele1_isEB);
   fChain->SetBranchStatus("ele1_isEBEEGap", 1);      fChain->SetBranchAddress("ele1_isEBEEGap", &ele1_isEBEEGap, &b_ele1_isEBEEGap);
-  fChain->SetBranchStatus("ele1_E_true", 1);         fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
-  fChain->SetBranchStatus("ele1_DR ", 1);            fChain->SetBranchAddress("ele1_DR ", &ele1_DR , &b_ele1_DR);
+  //fChain->SetBranchStatus("ele1_E_true", 1);         fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
+  //fChain->SetBranchStatus("ele1_DR ", 1);            fChain->SetBranchAddress("ele1_DR ", &ele1_DR , &b_ele1_DR);
   fChain->SetBranchStatus("ele1_scE_regression", 1); fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
   
   fChain->SetBranchStatus("ele1_isEBEtaGap", 1);  fChain->SetBranchAddress("ele1_isEBEtaGap", &ele1_isEBEtaGap, &b_ele1_isEBEtaGap);
@@ -152,8 +152,8 @@ void FastCalibratorEE::Init(TTree *tree)
   fChain->SetBranchStatus("ele2_fbrem", 1);          fChain->SetBranchAddress("ele2_fbrem", &ele2_fbrem, &b_ele2_fbrem);
   fChain->SetBranchStatus("ele2_EOverP", 1);         fChain->SetBranchAddress("ele2_EOverP", &ele2_EOverP, &b_ele2_EOverP);
   fChain->SetBranchStatus("ele2_isEB", 1);           fChain->SetBranchAddress("ele2_isEB", &ele2_isEB, &b_ele2_isEB);
-  fChain->SetBranchStatus("ele2_E_true", 1);         fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
-  fChain->SetBranchStatus("ele2_DR ", 1);            fChain->SetBranchAddress("ele2_DR ", &ele2_DR , &b_ele2_DR);
+  //fChain->SetBranchStatus("ele2_E_true", 1);         fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
+  //fChain->SetBranchStatus("ele2_DR ", 1);            fChain->SetBranchAddress("ele2_DR ", &ele2_DR , &b_ele2_DR);
   fChain->SetBranchStatus("ele2_scE_regression", 1); fChain->SetBranchAddress("ele2_scE_regression", &ele2_scE_regression, &b_ele2_scE_regression);
   
   fChain->SetBranchStatus("ele2_isEBEEGap", 1);   fChain->SetBranchAddress("ele2_isEBEEGap", &ele2_isEBEEGap, &b_ele2_isEBEEGap);
@@ -251,7 +251,7 @@ void FastCalibratorEE::bookHistos(int nLoops)
 
 ///===== Build E/p for electron 1 and 2
 
-void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration, bool isSaveEPDistribution, bool isR9selection, bool isMCTruth,bool isfbrem)
+void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration, bool isSaveEPDistribution, bool isR9selection, float R9Min, bool isMCTruth,bool isfbrem)
 
 {
   if(iLoop ==0)
@@ -354,16 +354,17 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      }
 
      /// R9, fbrem selection before E/p distribution
-     if(fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele1_scEta)<=1.75) skipElectron = true;
-     if(fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele1_scEta)>1.75 && fabs(ele1_scEta)<=2.0) skipElectron = true;
-     if(fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele1_scEta)>2.0 && fabs(ele1_scEta)<=2.15 ) skipElectron = true;
-     if(fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele1_scEta)>2.15) skipElectron = true;
-
-     if(fabs(ele1_fbrem)>0.4 && isfbrem==true) skipElectron =true;
-     if(!skipElectron)    hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele1_es));
+     if( fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele1_scEta) <= 1.75)                              skipElectron = true;
+     if( fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele1_scEta) >  1.75 && fabs(ele1_scEta) <= 2.00 ) skipElectron = true;
+     if( fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele1_scEta) >  2.00 && fabs(ele1_scEta) <= 2.15 ) skipElectron = true;
+     if( fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele1_scEta) >  2.15)                              skipElectron = true;
      
-  
+     //if( fabs(thisE3x3/thisE) < R9Min && isR9selection == true ) skipElectron = true;
+
+     if( fabs(ele1_fbrem) > 0.4 && isfbrem == true ) skipElectron =true;
+     if( !skipElectron ) hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele1_es));
   }
+  
   ///=== Second medium electron from Z only Endcaps
   if ( ele2_isEB == 0 && (( useW == 1 && isW == 1 ) || ( useZ == 1 && isZ == 1 )) ){
 
@@ -435,15 +436,18 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
        pIn = ele2_E_true;
        if(fabs(ele2_DR)>0.1) skipElectron = true; /// No macthing beetween gen ele and reco ele
      }
+     
      /// R9 and fbrem selection
-     if(fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele2_scEta)<=1.75) skipElectron = true;
-     if(fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele2_scEta)>1.75 && fabs(ele2_scEta)<=2.0) skipElectron = true;
-     if(fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele2_scEta)>2.0 && fabs(ele2_scEta)<=2.15 ) skipElectron = true;
-     if(fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele2_scEta)>2.15) skipElectron = true;
- 
-     if ( fabs(ele2_fbrem)>0.4 && isfbrem==true) skipElectron =true;
+     if( fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele2_scEta) <= 1.75 )                             skipElectron = true;
+     if( fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele2_scEta) >  1.75 && fabs(ele2_scEta) <= 2.00 ) skipElectron = true;
+     if( fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele2_scEta) >  2.00 && fabs(ele2_scEta) <= 2.15 ) skipElectron = true;
+     if( fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele2_scEta) >  2.15 )                             skipElectron = true;
+     
+     //if( fabs(thisE3x3/thisE) < R9Min && isR9selection == true ) skipElectron = true;
+     
+     if( fabs(ele2_fbrem) > 0.4 && isfbrem == true ) skipElectron =true;
+     
      if(!skipElectron) hC_EoP_ir_ele -> Fill(ir_seed,thisE/(pIn-ele2_es));
-  
   }
   
   
@@ -467,7 +471,7 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 
 /// L3 Loop method ----> Calibration Loop function
 void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution,
-			    bool isEPselection, bool isR9selection, bool isMCTruth, bool isfbrem, std::map<int, std::vector<std::pair<int, int> > > jsonMap)
+			    bool isEPselection, bool isR9selection, float R9Min, bool isMCTruth, bool isfbrem, std::map<int, std::vector<std::pair<int, int> > > jsonMap)
 {
    if (fChain == 0) return;
    
@@ -514,7 +518,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
     std::vector<float> theDenominator_EEM(m_regions+1, 0.);
     
     ///==== build E/p distribution ele 1 and 2
-    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,isMCTruth,isfbrem);
+    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,R9Min,isMCTruth,isfbrem);
     
     // define map with events
     std::map<std::pair<int,std::pair<int,int> >,int> eventsMap;
@@ -549,7 +553,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           else eventsMap[eventRUNandLSandID] = 1;
         }
         
-        //if( skipEvent == true ) continue;
+        if( skipEvent == true ) continue;
         
         
         
@@ -642,96 +646,116 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
        if ( fabs(thisE/(ele1_tkP-ele1_es) - 1) > 0.7 && isEPselection==true) skipElectron = true; /// Take the correct E/p pdf to weight events in the calib procedure
        
        /// R9 and fbrem selection
-       if(fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele1_scEta)<=1.75) skipElectron = true;
-       if(fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele1_scEta)>1.75 && fabs(ele1_scEta)<=2.0) skipElectron = true;
-       if(fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele1_scEta)>2.0 && fabs(ele1_scEta)<=2.15 ) skipElectron = true;
-       if(fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele1_scEta)>2.15) skipElectron = true;
+       if( fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele1_scEta) <= 1.75 )                             skipElectron = true;
+       if( fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele1_scEta) >  1.75 && fabs(ele1_scEta) <= 2.00 ) skipElectron = true;
+       if( fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele1_scEta) >  2.00 && fabs(ele1_scEta) <= 2.15 ) skipElectron = true;
+       if( fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele1_scEta) >  2.15 )                             skipElectron = true;
+       
+       //if( fabs(thisE3x3/thisE) < R9Min && isR9selection == true ) skipElectron = true;
+       
+       if( fabs(ele1_fbrem) > 0.4 && isfbrem == true ) skipElectron =true;
+       
+       if( thisE/(pIn-ele1_es) < EoPHisto->GetXaxis()->GetXmin() ||
+           thisE/(pIn-ele1_es) > EoPHisto->GetXaxis()->GetXmax() ) skipElectron=true;
  
-       if ( fabs(ele1_fbrem)>0.4 && isfbrem==true) skipElectron =true;
-       if ( thisE/(pIn-ele1_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele1_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
- 
-         if ( !skipElectron ) {
-                  
-          for ( unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++ ) {
-           
-	    //if(ele1_recHit_flag -> at(iRecHit) >= 4) continue;
-         
-           int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
-           float thisIC = 1.;
-         
-           if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
-  
-           /// Fill the occupancy map JUST for the first Loop
-           if ( iLoop == 0 ) {
-                     h_occupancy_hashedIndex_EE -> Fill(thisIndex);
-                     if ( GetZsideFromHashedIndex(thisIndex) < 0 )
-                       h_occupancy_EEM -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
-                     else h_occupancy_EEP -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
-                          
+         if( !skipElectron )
+         {
+           for( unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++)
+           {
+             //if(ele1_recHit_flag -> at(iRecHit) >= 4) continue;
+             
+             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
+             float thisIC = 1.;
+             
+             if( iLoop > 0 ) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
+             
+             /// Fill the occupancy map JUST for the first Loop
+             if( iLoop == 0 )
+             {
+               h_occupancy_hashedIndex_EE -> Fill(thisIndex);
+               if ( GetZsideFromHashedIndex(thisIndex) < 0 ) h_occupancy_EEM -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
+               else                                          h_occupancy_EEP -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
              }
-
-            ///Use full statistic
-            if ( splitStat == 0) {
-             
-                if(thisCaliBlock == 0) {
-                
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
-                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
- 
-                
-                }
-                
-                if(thisCaliBlock == 1) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
-                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
-              }
-             
-              }
-             
-             
-          /// use evens    
-          if ( splitStat == 1 && jentry%2 == 0 ) {
-                  
-                if(thisCaliBlock == 0) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
-                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
+            
+             ///Use full statistic
+             if( splitStat == 0 )
+             {
+               if(thisCaliBlock == 0)
+               {
+                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
+                 theNumerator_EEM[thisIndex]   += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC / 
+                                                  thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                 theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC / 
+                                                  thisE*EoPHisto->GetBinContent(EoPbin);
                }
-                
-                if(thisCaliBlock == 1) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
-                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
-              }
-            }
+               
+               if( thisCaliBlock == 1 )
+               {
+                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
+                 theNumerator_EEP[thisIndex]   += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC / 
+                                                  thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                 theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC / 
+                                                  thisE*EoPHisto->GetBinContent(EoPbin);
+               }
+	     }
              
-           /// use odd    
-           if ( splitStat == -1 && jentry%2 != 0 ) {
-                  
-                if(thisCaliBlock == 0) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
-                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);}
-                
-                if(thisCaliBlock == 1) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
-                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
-              }
-            }
-            }
-          }
-          ///Fill EoP
-           if (thisCaliBlock != -1) hC_EoP -> Fill(iLoop, thisE/(pIn-ele1_es));
+             
+             /// use evens    
+             if( splitStat == 1 && jentry%2 == 0 )
+             {
+               if( thisCaliBlock == 0 )
+               {
+                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
+                 theNumerator_EEM[thisIndex]   += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                 theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*EoPHisto->GetBinContent(EoPbin);
+               }
+               
+               if(thisCaliBlock == 1)
+               {
+                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
+                 theNumerator_EEP[thisIndex]   += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                 theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*EoPHisto->GetBinContent(EoPbin);
+               }
+             }
+             
+             /// use odd    
+             if( splitStat == -1 && jentry%2 != 0 )
+             {
+               if(thisCaliBlock == 0)
+               {
+                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
+                 theNumerator_EEM[thisIndex]   += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                 theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*EoPHisto->GetBinContent(EoPbin);
+               }
+               
+               if(thisCaliBlock == 1)
+               {
+                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele1_es));
+                 theNumerator_EEP[thisIndex]   += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                 theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*EoPHisto->GetBinContent(EoPbin);
+               }
+             }
+           }
+         }
+         
+         ///Fill EoP
+         if( thisCaliBlock != -1 ) hC_EoP -> Fill(iLoop, thisE/(pIn-ele1_es));
+        }
         
-        }  
-         skipElectron = false;     
-      
+        skipElectron = false;     
+        
+        
 	/// Medium ele from Z only Endcap
-        if ( ele2_isEB == 0 && ( useZ == 1 && isZ == 1 ) ) {
-          
+        if( ele2_isEB == 0 && ( useZ == 1 && isZ == 1 ) )
+        {
           /// SCL energy containment correction
           FdiEta = ele2_scE/(ele2_scERaw+ele2_es);
          
@@ -743,8 +767,8 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
 
          
           /// Cycle on the all the recHits of the Event: to get the old IC and the corrected SC energy
-          for (unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {
-            
+          for(unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ )
+          {
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
            
@@ -752,21 +776,18 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
             
             //if( ele2_recHit_flag -> at(iRecHit) < 4 )
             thisE += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
-
-              
+            
             //if(ele2_recHit_E -> at(iRecHit) > E_seed && ele2_recHit_flag -> at(iRecHit) < 4)
             if(ele2_recHit_E -> at(iRecHit) > E_seed)
-             {
+            {
               E_seed=ele2_recHit_E -> at(iRecHit);
               iseed=iRecHit;
               seed_hashedIndex=ele2_recHit_hashedIndex -> at(iRecHit);
- 
-             }
-          
+            }
           }
           
-          for (unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {
-            
+          for (unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ )
+          {
             float thisIC = 1.;
             int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
             
@@ -778,9 +799,8 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
             if(fabs(ele2_recHit_ietaORix->at(iRecHit)-ele2_recHit_ietaORix->at(iseed))<=1 && 
                fabs(ele2_recHit_iphiORiy->at(iRecHit)-ele2_recHit_iphiORiy->at(iseed))<=1)
               thisE3x3+=theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC;
-                 
-              }
-
+	  }                
+          
           /// find the zside
           int thisCaliBlock = -1;
           if (GetZsideFromHashedIndex(ele2_recHit_hashedIndex -> at(iseed)) < 0) thisCaliBlock = 0;
@@ -794,7 +814,7 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           int momScaleIndex = 0;
           ///NOTA ANDREA !!!!!!! QUI CORREGGERE SE VOGLIAMO FARE TANTE REGIONI IN ETA
           //if ( iz_seed > 0 ) momScaleIndex = 1;
-            
+          
           pSub = 0.; //NOTALEO : test dummy
           /// Option for MCTruth Analysis
           if(!isMCTruth)  
@@ -809,166 +829,178 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
           }
 
           TH1F* EoPHisto = hC_EoP_ir_ele->GetHisto(ir_seed); /// Use correct pdf for reweight events in the L3 procedure
+          
           /// E/p and R9 selections
           if ( fabs(thisE/(pIn-ele2_es) - 1) > 0.7 && isEPselection==true) skipElectron = true;
+          
           /// R9 and fbrem selection
-          if(fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele2_scEta)<=1.75) skipElectron = true;
-          if(fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele2_scEta)>1.75 && fabs(ele2_scEta)<=2.0) skipElectron = true;
-          if(fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele2_scEta)>2.0 && fabs(ele2_scEta)<=2.15 ) skipElectron = true;
-          if(fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele2_scEta)>2.15) skipElectron = true;
-         
-          if ( fabs(ele2_fbrem)>0.4 && isfbrem==true) skipElectron =true;
-
-          if ( thisE/(pIn-ele2_es) < EoPHisto->GetXaxis()->GetXmin() || thisE/(pIn-ele2_es) > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
- 
-         if ( !skipElectron ) {
-                  
-          for ( unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {
+          if( fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele2_scEta) <= 1.75 )                             skipElectron = true;
+          if( fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele2_scEta) >  1.75 && fabs(ele2_scEta) <= 2.00 ) skipElectron = true;
+          if( fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele2_scEta) >  2.00 && fabs(ele2_scEta) <= 2.15 ) skipElectron = true;
+          if( fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele2_scEta) >  2.15 )                             skipElectron = true;
+          
+          //if( fabs(thisE3x3/thisE) < R9Min && isR9selection == true ) skipElectron = true;
+          
+          if( fabs(ele2_fbrem) > 0.4 && isfbrem == true) skipElectron =true;
+          
+          if( thisE/(pIn-ele2_es) < EoPHisto->GetXaxis()->GetXmin() ||
+              thisE/(pIn-ele2_es) > EoPHisto->GetXaxis()->GetXmax() ) skipElectron=true;
            
-	    //if(ele2_recHit_flag -> at(iRecHit) >= 4) continue;
-         
-           int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
-           float thisIC = 1.;
+          if( !skipElectron )
+          {
+            for( unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ )
+            {
+              //if(ele2_recHit_flag -> at(iRecHit) >= 4) continue;
               
-           if (iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
-  
-           /// Fill the occupancy map JUST for the first Loop
-           if ( iLoop == 0 ) {
-                     h_occupancy_hashedIndex_EE -> Fill(thisIndex);
-                     if ( GetZsideFromHashedIndex(thisIndex) < 0 ) 
-                       h_occupancy_EEM -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
-                     else h_occupancy_EEP -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
-             }
-
-            /// Use full statistic
-            if ( splitStat == 0) {
-             
-                if(thisCaliBlock == 0) {
+              int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
+              float thisIC = 1.;
+              
+              if(iLoop > 0) thisIC = h_scale_hashedIndex_EE -> GetBinContent(thisIndex+1);
                 
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
-                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
- 
-                
+              /// Fill the occupancy map JUST for the first Loop
+              if ( iLoop == 0 )
+              {
+                h_occupancy_hashedIndex_EE -> Fill(thisIndex);
+                if( GetZsideFromHashedIndex(thisIndex) < 0 ) h_occupancy_EEM -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
+                else                                         h_occupancy_EEP -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
+              }
+              
+              /// Use full statistic
+              if( splitStat == 0)
+              {
+                if(thisCaliBlock == 0)
+                {
+                  int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
+                  theNumerator_EEM[thisIndex]   += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                   thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                  theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                   thisE*EoPHisto->GetBinContent(EoPbin);
                 }
                 
-                if(thisCaliBlock == 1) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
-                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
+                if( thisCaliBlock == 1 )
+                {
+                  int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
+                  theNumerator_EEP[thisIndex]   += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                   thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                  theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC / 
+                                                   thisE*EoPHisto->GetBinContent(EoPbin);
+                }
               }
-             
-              }
-             
-             
-          /// use evens    
-          if ( splitStat == 1 && jentry%2 == 0 ) {
-                  
-                if(thisCaliBlock == 0) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
-                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
+              
+              
+              /// use evens    
+              if( splitStat == 1 && jentry%2 == 0 )
+              {
+                if( thisCaliBlock == 0 )
+                {
+                  int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
+                  theNumerator_EEM[thisIndex]   += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                   thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                  theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                   thisE*EoPHisto->GetBinContent(EoPbin);
                }
-                
-                if(thisCaliBlock == 1) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
-                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
-              }
-            }
+               
+               if( thisCaliBlock == 1 )
+               {
+                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
+                 theNumerator_EEP[thisIndex]   += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                 theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*EoPHisto->GetBinContent(EoPbin);
+               }
+             }
              
-           /// use odd    
-           if ( splitStat == -1 && jentry%2 != 0 ) {
-                  
-                if(thisCaliBlock == 0) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
-                theNumerator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);}
+             /// use odd    
+             if( splitStat == -1 && jentry%2 != 0 )
+             {
+               if(thisCaliBlock == 0)
+               {
+                 int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
+                 theNumerator_EEM[thisIndex]   += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*(pIn-pSub-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                 theDenominator_EEM[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                  thisE*EoPHisto->GetBinContent(EoPbin);}
                 
-                if(thisCaliBlock == 1) {
-                int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
-                theNumerator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
-                theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC/thisE*EoPHisto->GetBinContent(EoPbin);
+                if( thisCaliBlock == 1 )
+                {
+                  int EoPbin = EoPHisto->FindBin(thisE/(pIn-pSub-ele2_es));
+                  theNumerator_EEP[thisIndex]   += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                   thisE*(pIn-pSub-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                  theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*thisIC /
+                                                   thisE*EoPHisto->GetBinContent(EoPbin);
+                }
               }
-            }
             }
           }
-          //Fill EoP
-           if (thisCaliBlock != -1) hC_EoP -> Fill(iLoop, thisE/(pIn-ele2_es));
           
+          //Fill EoP
+          if( thisCaliBlock != -1 ) hC_EoP -> Fill(iLoop, thisE/(pIn-ele2_es));
         }
-   }  
-    ///  End Cycle on the events
+    } ///  End Cycle on the events
        
     std::cout << ">>>>> [L3][endOfLoop] entering..." << std::endl;
-  
+      
     TH1F auxiliary_IC_EEM("auxiliary_IC_EEM","auxiliary_IC_EEM",50,0.2,1.9);
     TH1F auxiliary_IC_EEP("auxiliary_IC_EEP","auxiliary_IC_EEP",50,0.2,1.9);
-
+    
     ///Fill the histo of IntercalibValues before the solve
-    for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
-
-      if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
-   
+    for( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ )
+    {
+      if( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 )
+      {
         int thisCaliBlock = -1;
-        if (GetZsideFromHashedIndex(iIndex) < 0) thisCaliBlock = 0;
+        if( GetZsideFromHashedIndex(iIndex) < 0 ) thisCaliBlock = 0;
         else thisCaliBlock = 1;
         
-        float thisIntercalibConstant =1. ;
-
-        if(thisCaliBlock == 0 && theDenominator_EEM[iIndex] != 0.){ 
-            thisIntercalibConstant = theNumerator_EEM[iIndex]/theDenominator_EEM[iIndex];}
-        else{
-             if(thisCaliBlock == 1 && theDenominator_EEP[iIndex] != 0.)
-             thisIntercalibConstant = theNumerator_EEP[iIndex]/theDenominator_EEP[iIndex];}
-
+        float thisIntercalibConstant = 1.;
+        
+        if( thisCaliBlock == 0 && theDenominator_EEM[iIndex] != 0. ) thisIntercalibConstant = theNumerator_EEM[iIndex] / theDenominator_EEM[iIndex];
+        if( thisCaliBlock == 1 && theDenominator_EEP[iIndex] != 0. ) thisIntercalibConstant = theNumerator_EEP[iIndex] / theDenominator_EEP[iIndex];
+        
         float oldIntercalibConstant = 1.;
-        if ( iLoop > 0 ) oldIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
+        if( iLoop > 0 ) oldIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
         h_scale_hashedIndex_EE -> SetBinContent(iIndex+1, thisIntercalibConstant*oldIntercalibConstant);
-              
-        if ( thisCaliBlock == 0 ) {
+        
+        if( thisCaliBlock == 0 )
+        {
           hC_IntercalibValues_EEM -> Fill (iLoop, thisIntercalibConstant);
           hC_PullFromScalib_EEM -> Fill(iLoop,(thisIntercalibConstant*oldIntercalibConstant-1./theScalibration[iIndex]));
           hC_scale_EEM -> Fill(iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisIntercalibConstant*oldIntercalibConstant);
-     
-          auxiliary_IC_EEM.Fill(thisIntercalibConstant);
           
+          auxiliary_IC_EEM.Fill(thisIntercalibConstant);
         }
-        else {
-                 if( thisCaliBlock == 1)
-                 {
-                  hC_IntercalibValues_EEP -> Fill (iLoop, thisIntercalibConstant);
-                  hC_PullFromScalib_EEP -> Fill(iLoop,(thisIntercalibConstant*oldIntercalibConstant-1./theScalibration[iIndex]));
-                  hC_scale_EEP -> Fill(iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisIntercalibConstant*oldIntercalibConstant);
-  
-                  auxiliary_IC_EEP.Fill(thisIntercalibConstant);}
-         }
-
-
+        if( thisCaliBlock == 1)
+        {
+          hC_IntercalibValues_EEP -> Fill (iLoop, thisIntercalibConstant);
+          hC_PullFromScalib_EEP -> Fill(iLoop,(thisIntercalibConstant*oldIntercalibConstant-1./theScalibration[iIndex]));
+          hC_scale_EEP -> Fill(iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisIntercalibConstant*oldIntercalibConstant);
+          
+          auxiliary_IC_EEP.Fill(thisIntercalibConstant);
         }
-      
       }
-   
+    }
+    
     g_ICmeanVsLoop_EEM -> SetPoint(iLoop, iLoop, auxiliary_IC_EEM.GetMean());
     g_ICmeanVsLoop_EEM -> SetPointError(iLoop, 0.,auxiliary_IC_EEM.GetMeanError());
     
     g_ICrmsVsLoop_EEM -> SetPoint(iLoop, iLoop, auxiliary_IC_EEM . GetRMS());
     g_ICrmsVsLoop_EEM -> SetPointError(iLoop, 0., auxiliary_IC_EEM . GetRMSError());
-
+    
     g_ICmeanVsLoop_EEP -> SetPoint(iLoop, iLoop, auxiliary_IC_EEP . GetMean());
     g_ICmeanVsLoop_EEP -> SetPointError(iLoop, 0., auxiliary_IC_EEP . GetMeanError());
     
     g_ICrmsVsLoop_EEP -> SetPoint(iLoop, iLoop, auxiliary_IC_EEP . GetRMS());
     g_ICrmsVsLoop_EEP -> SetPointError(iLoop, 0., auxiliary_IC_EEP . GetRMSError());
     
-   }
-   /// End of Calibration Loops
+   } /// End of Calibration Loops
+   
+   
    
    ///Fill the histo of IntercalibValues after the loops at last step
-   for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
-           
-     if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
-        
+   for( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ )
+   {
+     if( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 )
+     {
        int thisCaliBlock = -1;
        if (GetZsideFromHashedIndex(iIndex) < 0) thisCaliBlock = 0;
        else thisCaliBlock = 1;
@@ -976,46 +1008,44 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
        int thisIx = GetIxFromHashedIndex(iIndex);
        int thisIy = GetIyFromHashedIndex(iIndex);
        int thisIz = GetZsideFromHashedIndex(iIndex); /// Ix, Iy and Iz info for each xtal
-
+       
        float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1); /// Final IC value
-       if ( thisCaliBlock == 0 ) 
-         h_scale_EEM -> Fill (thisIx, thisIy, thisIntercalibConstant);
-       else
-         h_scale_EEP -> Fill (thisIx, thisIy, thisIntercalibConstant);
-
-       if ( thisCaliBlock == 0 )
+       if ( thisCaliBlock == 0 ) h_scale_EEM -> Fill (thisIx, thisIy, thisIntercalibConstant);
+       else                      h_scale_EEP -> Fill (thisIx, thisIy, thisIntercalibConstant);
+       
+       if( thisCaliBlock == 0 )
        {
          ///Vectors for IC Normalization
          IxValues_EEM.push_back(thisIx);
          IyValues_EEM.push_back(thisIy);
          ICValues_EEM.push_back(thisIntercalibConstant);
        }
-       else{
-             IxValues_EEP.push_back(thisIx);
-             IyValues_EEP.push_back(thisIy);
-             ICValues_EEP.push_back(thisIntercalibConstant);
-           }
-
+       else
+       {
+         IxValues_EEP.push_back(thisIx);
+         IyValues_EEP.push_back(thisIy);
+         ICValues_EEP.push_back(thisIntercalibConstant);
+       }
+       
        int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz); /// Endcap ring  xtal belongs to
        if(thisIz >0)
        {
-        SumIC_Ring_EEP.at(thisIr) = SumIC_Ring_EEP.at(thisIr) + thisIntercalibConstant;
-        Sumxtal_Ring_EEP.at(thisIr) = Sumxtal_Ring_EEP.at(thisIr) + 1;
+         SumIC_Ring_EEP.at(thisIr) = SumIC_Ring_EEP.at(thisIr) + thisIntercalibConstant;
+         Sumxtal_Ring_EEP.at(thisIr) = Sumxtal_Ring_EEP.at(thisIr) + 1;
        }
-       else{
-              SumIC_Ring_EEM.at(thisIr) = SumIC_Ring_EEM.at(thisIr) + thisIntercalibConstant;
-              Sumxtal_Ring_EEM.at(thisIr) = Sumxtal_Ring_EEM.at(thisIr) + 1;
-           }
-               
+       else
+       {
+         SumIC_Ring_EEM.at(thisIr) = SumIC_Ring_EEM.at(thisIr) + thisIntercalibConstant;
+         Sumxtal_Ring_EEM.at(thisIr) = Sumxtal_Ring_EEM.at(thisIr) + 1;
        }
-
-      
+     }
    }
-   /// IC Normaliztion trough the mean value of each ring
-   for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
    
-    if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
-        
+   /// IC Normaliztion trough the mean value of each ring
+   for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ )
+   {
+     if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 )
+     {
        int thisCaliBlock = -1;
        if (GetZsideFromHashedIndex(iIndex) < 0) thisCaliBlock = 0;
        else thisCaliBlock = 1;
@@ -1023,24 +1053,24 @@ void FastCalibratorEE::Loop(int nentries, int useZ, int useW, int splitStat, int
        int thisIx = GetIxFromHashedIndex(iIndex);
        int thisIy = GetIyFromHashedIndex(iIndex);
        int thisIz = GetZsideFromHashedIndex(iIndex);
-
-       int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz);
-
-       float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
-     
        
-       if(thisIz > 0)
+       int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz);
+       
+       float thisIntercalibConstant = h_scale_hashedIndex_EE -> GetBinContent (iIndex+1);
+       
+       if( thisIz > 0 )
        {
-          if(Sumxtal_Ring_EEP.at(thisIr) != 0 && SumIC_Ring_EEP.at(thisIr)!= 0)
-          h_scale_meanOnring_EEP->Fill(thisIx,thisIy,thisIntercalibConstant/(SumIC_Ring_EEP.at(thisIr)/Sumxtal_Ring_EEP.at(thisIr)));
+         if(Sumxtal_Ring_EEP.at(thisIr) != 0 && SumIC_Ring_EEP.at(thisIr)!= 0)
+         h_scale_meanOnring_EEP->Fill(thisIx,thisIy,thisIntercalibConstant/(SumIC_Ring_EEP.at(thisIr)/Sumxtal_Ring_EEP.at(thisIr)));
        }
-       else{
-            if(Sumxtal_Ring_EEM.at(thisIr) != 0 && SumIC_Ring_EEM.at(thisIr) != 0)
-            h_scale_meanOnring_EEM->Fill(thisIx,thisIy,thisIntercalibConstant/(SumIC_Ring_EEM.at(thisIr)/Sumxtal_Ring_EEM.at(thisIr)));
-           }
+       else
+       {
+         if(Sumxtal_Ring_EEM.at(thisIr) != 0 && SumIC_Ring_EEM.at(thisIr) != 0)
+         h_scale_meanOnring_EEM->Fill(thisIx,thisIy,thisIntercalibConstant/(SumIC_Ring_EEM.at(thisIr)/Sumxtal_Ring_EEM.at(thisIr)));
        }
+     }
    }
-    
+
 }
 
 /// Save in the output  

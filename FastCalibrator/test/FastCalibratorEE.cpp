@@ -41,6 +41,7 @@ int main (int argc, char ** argv)
   bool isSaveEPDistribution = gConfigParser -> readBoolOption("Input::isSaveEPDistribution");
   bool isEPselection = gConfigParser -> readBoolOption("Input::isEPselection");
   bool isR9selection = gConfigParser -> readBoolOption("Input::isR9selection");
+  float R9Min = gConfigParser -> readFloatOption("Input::R9Min");
   bool isMCTruth = gConfigParser -> readBoolOption("Input::isMCTruth");
   bool isfbrem = gConfigParser -> readBoolOption("Input::isfbrem");
   std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
@@ -111,7 +112,7 @@ int main (int argc, char ** argv)
      FastCalibratorEE analyzer(albero, g_EoC_EE, outEPDistribution);
      analyzer.bookHistos(nLoops);
      analyzer.AcquireDeadXtal(DeadXtal);
-     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
+     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
      analyzer.saveHistos(f1);
     }
     else
@@ -119,7 +120,7 @@ int main (int argc, char ** argv)
      FastCalibratorEE analyzer(albero, g_EoC_EE);
      analyzer.bookHistos(nLoops);
      analyzer.AcquireDeadXtal(DeadXtal);  
-     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
+     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
      analyzer.saveHistos(f1);
     }
    
@@ -224,14 +225,14 @@ int main (int argc, char ** argv)
     FastCalibratorEE analyzer_even(albero, g_EoC_EE);
     analyzer_even.bookHistos(nLoops);
     analyzer_even.AcquireDeadXtal(DeadXtal);
-    analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
+    analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
     analyzer_even.saveHistos(f1);
   
     /// Run on even
     FastCalibratorEE analyzer_odd(albero, g_EoC_EE);
     analyzer_odd.bookHistos(nLoops);
     analyzer_odd.AcquireDeadXtal(DeadXtal);
-    analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,isMCTruth,isfbrem,jsonMap);
+    analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
     analyzer_odd.saveHistos(f2);
     
   }
