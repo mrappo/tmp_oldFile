@@ -34,9 +34,9 @@ ROOTGLIBS     = $(shell root-config --glibs)
 ARCHL = -m64
 
 CXX  =  c++
-CXXFLAGS  =  -Wall -O -fPIC -I$(HDR) $(ROOTCFLAGS) -L/opt/exp_soft/cms/mylib_sl5/
+CXXFLAGS  =  -Wall -O -fPIC -I$(HDR) $(ROOTCFLAGS)
 CPP  =  c++
-CPPFLAGS  = -Wall $(ARCHL) -I$(HDR) $(ROOTCFLAGS) -L/opt/exp_soft/cms/mylib_sl5/
+CPPFLAGS  = -Wall $(ARCHL) -I$(HDR) $(ROOTCFLAGS)
 
 LD       =  c++
 LDFLAGS  =  -rdynamic -shared $(ARCHL)

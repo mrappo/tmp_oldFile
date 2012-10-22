@@ -39,74 +39,104 @@ using namespace std;
 bool IsEtaGap(float eta)
 {
   float feta = fabs(eta);
-  if( fabs(feta - 0 )<3) return true;
-  if( fabs(feta - 25)<3) return true;
-  if( fabs(feta - 45)<3) return true;
-  if( fabs(feta - 65)<3) return true;
-  if( fabs(feta - 85)<3) return true;
+  if( fabs(feta - 0 ) < 3 ) return true;
+  if( fabs(feta - 25) < 3 ) return true;
+  if( fabs(feta - 45) < 3 ) return true;
+  if( fabs(feta - 65) < 3 ) return true;
+  if( fabs(feta - 85) < 3 ) return true;
   return false;
 }
 
-int templIndexEB(float eta, float charge)
+int templIndexEB(const float& eta, const float& charge, const float& R9)
 {
-  float feta = fabs(eta);
+  return 0;
+  
+  /*
+  if( R9 > 0.94 ) return 0;
+  if( R9 < 0.94 ) return 1;
+  return -1;
+  */
+  
+  /*
   if( charge > 0 )
   {
-    if( feta <= 0.4375 )                   return 0;
-    if( feta >  0.4375 && feta <= 0.7875 ) return 0;
-    if( feta >  0.7875 && feta <= 1.1375 ) return 0;
-    if( feta >  1.1375 && feta <= 1.4875 ) return 0;
+    if( fabs(eta) <= 0.4375                        ) return 0;
+    if( fabs(eta) >  0.4375 && fabs(eta) <= 0.7875 ) return 0;
+    if( fabs(eta) >  0.7875 && fabs(eta) <= 1.1375 ) return 0;
+    if( fabs(eta) >  1.1375 && fabs(eta) <= 1.4875 ) return 0;
   }
   else
   {
-    if( feta <= 0.4375 )                   return 0;
-    if( feta >  0.4375 && feta <= 0.7875 ) return 0;
-    if( feta >  0.7875 && feta <= 1.1375 ) return 0;
-    if( feta >  1.1375 && feta <= 1.4875 ) return 0;  
+    if( fabs(eta) <= 0.4375                        ) return 1;
+    if( fabs(eta) >  0.4375 && fabs(eta) <= 0.7875 ) return 1;
+    if( fabs(eta) >  0.7875 && fabs(eta) <= 1.1375 ) return 1;
+    if( fabs(eta) >  1.1375 && fabs(eta) <= 1.4875 ) return 1;  
   }
   return -1;
+  */
+  
+  /*
+  if( charge > 0 )
+  {
+    if( R9 > 0.94 ) return 0;
+    if( R9 < 0.94 ) return 1;
+  }
+  else
+  {
+    if( R9 > 0.94 ) return 2;
+    if( R9 < 0.94 ) return 3;
+  }
+  return -1;
+  */
 }
 
-int templIndexEE(float eta, float charge)
+int templIndexEE(const float& eta, const float& charge, const float& R9)
 {
-  float feta = fabs(eta);
+  return 0;
+  
+  /*
+  if( R9 > 0.94 ) return 0;
+  if( R9 < 0.94 ) return 1;
+  return -1;
+  */
+  
+  /*
   if( charge > 0 )
   {
-    if( feta > 1.4875 && feta <= 2.0000) return 0;
-    if( feta > 2.0000 && feta <= 2.5000) return 0;
+    if( fabs(eta) > 1.4875 && fabs(eta) <= 2.0000) return 0;
+    if( fabs(eta) > 2.0000 && fabs(eta) <= 2.5000) return 0;
   }
   else
   {
-    if( feta > 1.4875 && feta <= 2.0000) return 0;
-    if( feta > 2.0000 && feta <= 2.5000) return 0;
+    if( fabs(eta) > 1.4875 && fabs(eta) <= 2.0000) return 1;
+    if( fabs(eta) > 2.0000 && fabs(eta) <= 2.5000) return 1;
   }
   return -1;
+  */
+  
+  /*
+  if( charge > 0 )
+  {
+    if( R9 > 0.94 ) return 0;
+    if( R9 < 0.94 ) return 1;
+  }
+  else
+  {
+    if( R9 > 0.94 ) return 2;
+    if( R9 < 0.94 ) return 3;
+  }
+  return -1;
+  */
 }
 
 float rescaleFactorEB(float eta)
 {
-  float feta = fabs(eta);
-  if( feta <= 0.4375 )                   return 1.;
-  if( feta >  0.4375 && feta <= 0.7875 ) return 1.;
-  if( feta >  0.7875 && feta <= 1.1375 ) return 1.;
-  if( feta >  1.1375 && feta <= 1.4875 ) return 1.;
-  return -1.;
+  return 1.;
 }
 
 float rescaleFactorEE(float eta)
 {
-  float feta = fabs(eta);
-  if( eta < 0 )
-  {
-    if( feta > 1.4875 && feta <= 2.0000) return 1.;
-    if( feta > 2.0000 && feta <= 2.5000) return 1.;
-  }
-  else
-  {
-    if( feta > 1.4875 && feta <= 2.0000) return 1.;
-    if( feta > 2.0000 && feta <= 2.5000) return 1.;
-  }
-  return -1.;
+  return 1.;
 }
 
 
@@ -195,8 +225,8 @@ int main(int argc, char** argv)
   float scEta2, scPhi2;
   float eleEta,  elePhi;
   float eleEta2, elePhi2;
-  float scEne,  scEneReg,  scEt;
-  float scEne2, scEneReg2, scEt2;
+  float scEne,  scEneReg,  scEt,  scERaw,  e3x3,  R9;
+  float scEne2, scEneReg2, scEt2, scERaw2, e3x32, R92;
   float charge, charge2;
   float pTK,pTK2; 
   int iphiSeed,  ele1_ix, ele1_iy, ele1_iz; 
@@ -220,6 +250,10 @@ int main(int argc, char** argv)
   ntu_DA->SetBranchStatus("ele2_scE_regression", 1); ntu_DA->SetBranchAddress("ele2_scE_regression", &scEneReg2);
   ntu_DA->SetBranchStatus("ele1_scEt", 1);           ntu_DA->SetBranchAddress("ele1_scEt",&scEt);
   ntu_DA->SetBranchStatus("ele2_scEt", 1);           ntu_DA->SetBranchAddress("ele2_scEt",&scEt2);
+  ntu_DA->SetBranchStatus("ele1_scERaw", 1);         ntu_DA->SetBranchAddress("ele1_scERaw", &scERaw);
+  ntu_DA->SetBranchStatus("ele2_scERaw", 1);         ntu_DA->SetBranchAddress("ele2_scERaw", &scERaw2);
+  ntu_DA->SetBranchStatus("ele1_e3x3", 1);           ntu_DA->SetBranchAddress("ele1_e3x3", &e3x3);
+  ntu_DA->SetBranchStatus("ele2_e3x3", 1);           ntu_DA->SetBranchAddress("ele2_e3x3", &e3x32);
   ntu_DA->SetBranchStatus("ele1ele2_scM", 1);        ntu_DA->SetBranchAddress("ele1ele2_scM", &mZ);
   ntu_DA->SetBranchStatus("ele1_charge", 1);         ntu_DA->SetBranchAddress("ele1_charge", &charge);
   ntu_DA->SetBranchStatus("ele2_charge", 1);         ntu_DA->SetBranchAddress("ele2_charge", &charge2);
@@ -233,6 +267,7 @@ int main(int argc, char** argv)
   ntu_DA->SetBranchStatus("ele2_seedIy", 1);         ntu_DA->SetBranchAddress("ele2_seedIy", &ele2_iy);
   ntu_DA->SetBranchStatus("ele1_seedZside", 1);      ntu_DA->SetBranchAddress("ele1_seedZside", &ele1_iz);
   ntu_DA->SetBranchStatus("ele2_seedZside", 1);      ntu_DA->SetBranchAddress("ele2_seedZside", &ele2_iz);
+  
   
   // Set branch addresses for MC
   ntu_MC->SetBranchStatus("*",0);
@@ -251,6 +286,10 @@ int main(int argc, char** argv)
   ntu_MC->SetBranchStatus("ele2_scE_regression", 1);  ntu_MC->SetBranchAddress("ele2_scE_regression", &scEneReg2);
   ntu_MC->SetBranchStatus("ele1_scEt", 1);            ntu_MC->SetBranchAddress("ele1_scEt",&scEt);
   ntu_MC->SetBranchStatus("ele2_scEt", 1);            ntu_MC->SetBranchAddress("ele2_scEt",&scEt2);
+  ntu_MC->SetBranchStatus("ele1_scERaw", 1);          ntu_MC->SetBranchAddress("ele1_scERaw", &scERaw);
+  ntu_MC->SetBranchStatus("ele2_scERaw", 1);          ntu_MC->SetBranchAddress("ele2_scERaw", &scERaw2);
+  ntu_MC->SetBranchStatus("ele1_e3x3", 1);            ntu_MC->SetBranchAddress("ele1_e3x3", &e3x3);
+  ntu_MC->SetBranchStatus("ele2_e3x3", 1);            ntu_MC->SetBranchAddress("ele2_e3x3", &e3x32);
   ntu_MC->SetBranchStatus("ele1ele2_scM", 1);         ntu_MC->SetBranchAddress("ele1ele2_scM", &mZ);
   ntu_MC->SetBranchStatus("ele1_charge", 1);          ntu_MC->SetBranchAddress("ele1_charge", &charge);
   ntu_MC->SetBranchStatus("ele2_charge", 1);          ntu_MC->SetBranchAddress("ele2_charge", &charge2);
@@ -264,8 +303,10 @@ int main(int argc, char** argv)
   ntu_MC->SetBranchStatus("ele2_seedIy", 1);          ntu_MC->SetBranchAddress("ele2_seedIy", &ele2_iy);
   ntu_MC->SetBranchStatus("ele1_seedZside", 1);       ntu_MC->SetBranchAddress("ele1_seedZside", &ele1_iz);
   ntu_MC->SetBranchStatus("ele2_seedZside", 1);       ntu_MC->SetBranchAddress("ele2_seedZside", &ele2_iz);
-  ntu_MC->SetBranchStatus("PUit_NumInteractions", 1); ntu_MC->SetBranchAddress("PUit_NumInteractions", &npu);
-
+  if(usePUweights)
+  {
+    ntu_MC->SetBranchStatus("PUit_NumInteractions", 1); ntu_MC->SetBranchAddress("PUit_NumInteractions", &npu);
+  }
   
   
   
@@ -471,6 +512,9 @@ int main(int argc, char** argv)
     if( scEt  < 20. ) continue;
     if( scEt2 < 20. ) continue;
     
+    R9  = e3x3  / scERaw;
+    R92 = e3x32 / scERaw2;
+    
     
     //--- PU weights
     float ww = 1.;
@@ -491,7 +535,7 @@ int main(int argc, char** argv)
       int modPhi = int(iphiSeed/(360./nPhiBinsTempEB));
       if( modPhi == nPhiBinsTempEB ) modPhi = 0;
       
-      int modEta = templIndexEB(eleEta,charge);
+      int modEta = templIndexEB(eleEta,charge,R9);
       if( modEta == -1 ) continue;
       
       (h_template_EB.at(modPhi)).at(modEta) -> Fill(var,ww);
@@ -518,7 +562,7 @@ int main(int argc, char** argv)
       int modPhi = int (iphi/(360./nPhiBinsTempEE));
       if( modPhi == nPhiBinsTempEE ) modPhi = 0;
       
-      int modEta =  templIndexEE(eleEta,charge);
+      int modEta =  templIndexEE(eleEta,charge,R9);
       if( modEta == -1 ) continue;
       
       (h_template_EE.at(modPhi)).at(modEta) -> Fill(var,ww);
@@ -547,7 +591,7 @@ int main(int argc, char** argv)
        int modPhi = int (iphiSeed2/(360./nPhiBinsTempEB));
        if( modPhi == nPhiBinsTempEB ) modPhi = 0;
        
-       int modEta  = templIndexEB(eleEta2,charge2);
+       int modEta  = templIndexEB(eleEta2,charge2,R92);
        if(modEta == -1) continue;
        
        (h_template_EB.at(modPhi)).at(modEta)->Fill(var,ww);
@@ -574,7 +618,7 @@ int main(int argc, char** argv)
       int modPhi = int (iphi/(360./nPhiBinsTempEE));
       if( modPhi == nPhiBinsTempEE ) modPhi = 0;
       
-      int modEta =  templIndexEE(eleEta2,charge2);
+      int modEta =  templIndexEE(eleEta2,charge2,R92);
       if(modEta == -1) continue;
       
       (h_template_EE.at(modPhi)).at(modEta) ->  Fill(var,ww);
@@ -613,7 +657,9 @@ int main(int argc, char** argv)
     if( scEt  < 20. ) continue;
     if( scEt2 < 20. ) continue;    
     
-    
+    R9  = e3x3  / scERaw;
+    R92 = e3x32 / scERaw2;
+        
     float ww = 1.;
     
     
@@ -631,7 +677,7 @@ int main(int argc, char** argv)
       int PhibinEB = hPhiBinEB->FindBin(elePhi) - 1;
       if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
       
-      int modEta = templIndexEB(eleEta,charge);
+      int modEta = templIndexEB(eleEta,charge,R9);
       if(modEta == -1) continue;
       
       (h_EoC_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is DATA
@@ -648,7 +694,7 @@ int main(int argc, char** argv)
       int PhibinEE = hPhiBinEE->FindBin(elePhi) - 1;
       if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
       
-      int modEta = templIndexEE(eleEta,charge);
+      int modEta = templIndexEE(eleEta,charge,R9);
       if( modEta == -1 ) continue;
       
       (h_EoC_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is DATA
@@ -671,7 +717,7 @@ int main(int argc, char** argv)
       int PhibinEB = hPhiBinEB->FindBin(elePhi2) - 1;
       if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
       
-      int modEta = templIndexEB(eleEta2,charge2);
+      int modEta = templIndexEB(eleEta2,charge2,R92);
       if( modEta == -1 ) continue;
       
       (h_EoC_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is DATA
@@ -686,7 +732,7 @@ int main(int argc, char** argv)
       int PhibinEE = hPhiBinEE->FindBin(elePhi2) - 1;
       if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
       
-      int modEta = templIndexEE(eleEta2,charge2);
+      int modEta = templIndexEE(eleEta2,charge2,R92);
       if( modEta == -1 ) continue;
       
       (h_EoC_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is DATA

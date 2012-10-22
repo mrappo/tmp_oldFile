@@ -331,7 +331,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
          }
          
      /// R9 Selection    
-     if ( fabs(thisE3x3/thisE) < R9Min && isR9selection == true) skipElectron = true;
+     if( fabs(thisE3x3/thisE) < R9Min && isR9selection == true ) skipElectron = true;
      
      /// Save electron E/p in a chain of histogramm each for eta bin
      if(!skipElectron)    hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/pIn);
@@ -408,7 +408,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      }
      
      ///R9 Selection
-     if ( fabs(thisE3x3/thisE) < R9Min && isR9selection==true) skipElectron = true;
+     if( fabs(thisE3x3/thisE) < R9Min && isR9selection==true ) skipElectron = true;
      /// Save E/p electron information
      if(!skipElectron) hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/pIn);
   
@@ -613,10 +613,10 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           TH1F* EoPHisto = hC_EoP_eta_ele->GetHisto(eta_seed+85);
           
 	  /// Basic selection on E/p or R9 if you want to apply
-          if ( fabs(thisE/pIn  - 1) > 0.3 && isEPselection==true) skipElectron = true;
-          if ( fabs(thisE3x3/thisE) < R9Min && isR9selection==true) skipElectron = true;
-          if ( thisE/pIn  < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn  > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
-	  if ( !skipElectron) {
+          if( fabs(thisE/pIn  - 1) > 0.3 && isEPselection == true ) skipElectron = true;
+          if( fabs(thisE3x3/thisE) < R9Min && isR9selection == true ) skipElectron = true;
+          if( thisE/pIn < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn > EoPHisto->GetXaxis()->GetXmax()) skipElectron = true;
+	  if( !skipElectron) {
           
             /// Now cycle on the all the recHits and update the numerator and denominator
             for ( unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++ ) {
@@ -735,11 +735,11 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           TH1F* EoPHisto = hC_EoP_eta_ele->GetHisto(eta_seed+85);
           
           /// discard electrons with bad E/P or R9
-          if ( thisE/pIn  < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn  > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
-          if ( fabs(thisE/pIn  - 1) > 0.3 && isEPselection==true) skipElectron = true;
-          if ( fabs(thisE3x3/thisE) < R9Min && isR9selection==true) skipElectron = true;
+          if( thisE/pIn  < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn  > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
+          if( fabs(thisE/pIn  - 1) > 0.3 && isEPselection == true ) skipElectron = true;
+          if( fabs(thisE3x3/thisE) < R9Min && isR9selection == true ) skipElectron = true;
           
-          if ( !skipElectron ) {
+          if( !skipElectron ){
           
             /// Now cycle on the all the recHits and update the numerator and denominator
             for ( unsigned int iRecHit = 0; iRecHit < ele2_recHit_E->size(); iRecHit++ ) {

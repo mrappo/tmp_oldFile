@@ -354,10 +354,10 @@ void FastCalibratorEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      }
 
      /// R9, fbrem selection before E/p distribution
-     if( fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele1_scEta) <= 1.75)                              skipElectron = true;
+     if( fabs(thisE3x3/thisE) < 0.80 && isR9selection == true && fabs(ele1_scEta) <= 1.75 )                             skipElectron = true;
      if( fabs(thisE3x3/thisE) < 0.88 && isR9selection == true && fabs(ele1_scEta) >  1.75 && fabs(ele1_scEta) <= 2.00 ) skipElectron = true;
      if( fabs(thisE3x3/thisE) < 0.92 && isR9selection == true && fabs(ele1_scEta) >  2.00 && fabs(ele1_scEta) <= 2.15 ) skipElectron = true;
-     if( fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele1_scEta) >  2.15)                              skipElectron = true;
+     if( fabs(thisE3x3/thisE) < 0.94 && isR9selection == true && fabs(ele1_scEta) >  2.15 )                             skipElectron = true;
      
      //if( fabs(thisE3x3/thisE) < R9Min && isR9selection == true ) skipElectron = true;
 

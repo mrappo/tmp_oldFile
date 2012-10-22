@@ -31,7 +31,7 @@ void CombineMomentumCalibration()
   gStyle->SetOptFit(1); 
   gStyle->SetPalette(1); 
   gROOT->ForceStyle();
-
+  
   TFile *f1 = TFile::Open("output/MomentumCalibrationTest2011.root");
   TFile *f2 = TFile::Open("output/MomentumCalibrationTest2012.root");
   TFile *f3 = new TFile("output/MomentumCalibrationCombined_2011-2012ABC.root","RECREATE");

@@ -152,8 +152,9 @@ bool FillChain(TChain& chain, const std::string& inputFileList)
   {
     inFile >> buffer;
     if(!inFile.good()) break;
+    if( buffer.at(0) == '#' ) continue;
     chain.Add(buffer.c_str());
-    //std::cout << ">>> ntupleUtils::FillChain - treeName = " << chain.GetName() << " from file " << buffer << std::endl;
+    std::cout << ">>> ntupleUtils::FillChain - treeName = " << chain.GetName() << " from file " << buffer << std::endl;
   }
 
   return true;
