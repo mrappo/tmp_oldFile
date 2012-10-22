@@ -177,8 +177,8 @@ class FastCalibratorEE
     
     virtual void     Init(TTree *tree);
 
-    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool,bool,std::map<int, std::vector<std::pair<int, int> > >);
-    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool,bool);
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,float,bool,bool,std::map<int, std::vector<std::pair<int, int> > >);
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,float,bool,bool);
 
     virtual Bool_t   Notify();
     

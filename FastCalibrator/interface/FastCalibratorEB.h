@@ -183,13 +183,13 @@ class FastCalibratorEB {
     
     virtual void     Init(TTree *tree);
     
-    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,bool,std::map<int, std::vector<std::pair<int, int> > >);
+    virtual void     Loop(int, int, int, int, int,bool,bool,bool,bool,float,bool,std::map<int, std::vector<std::pair<int, int> > >);
     
     virtual Bool_t   Notify();
     
     virtual void     Show(Long64_t entry = -1);
     
-    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,bool);
+    virtual void     BuildEoPeta_ele(int,int,int,int,std::vector<float>,bool,bool,float,bool);
     
     virtual void     saveEoPeta(TFile * f2);
     

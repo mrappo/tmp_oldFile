@@ -39,9 +39,9 @@ CLHEPLIBS     =  $(shell clhep-config --libs)
 ARCHL = -m64
 
 CXX  =  c++
-CXXFLAGS  =  -Wall -O -fPIC -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) -L/opt/exp_soft/cms/mylib_sl5/
+CXXFLAGS  =  -Wall -O -fPIC -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) -L/gwteraw/cmssw/slc5_amd64_gcc462/external/gcc/4.6.2/lib64/
 CPP  =  c++
-CPPFLAGS  = -Wall $(ARCHL) -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) -L/opt/exp_soft/cms/mylib_sl5/
+CPPFLAGS  = -Wall $(ARCHL) -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) -L/gwteraw/cmssw/slc5_amd64_gcc462/external/gcc/4.6.2/lib64/
 
 LD       =  c++
 LDFLAGS  =  -rdynamic -shared $(ARCHL)

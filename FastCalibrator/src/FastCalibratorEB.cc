@@ -108,8 +108,8 @@ void FastCalibratorEB::Init(TTree *tree)
   fChain->SetBranchStatus("ele1_recHit_ietaORix", 1);    fChain->SetBranchAddress("ele1_recHit_ietaORix", &ele1_recHit_ietaORix, &b_ele1_recHit_ietaORix);
   fChain->SetBranchStatus("ele1_recHit_iphiORiy", 1);    fChain->SetBranchAddress("ele1_recHit_iphiORiy", &ele1_recHit_iphiORiy, &b_ele1_recHit_iphiORiy);
   fChain->SetBranchStatus("ele1_recHit_flag", 1);        fChain->SetBranchAddress("ele1_recHit_flag", &ele1_recHit_flag, &b_ele1_recHit_flag);
-  fChain->SetBranchStatus("ele1_E_true", 1);             fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
-  fChain->SetBranchStatus("ele1_DR", 1);                 fChain->SetBranchAddress("ele1_DR", &ele1_DR, &b_ele1_DR);
+  //fChain->SetBranchStatus("ele1_E_true", 1);             fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
+  //fChain->SetBranchStatus("ele1_DR", 1);                 fChain->SetBranchAddress("ele1_DR", &ele1_DR, &b_ele1_DR);
   //fChain->SetBranchStatus("ele1_charge", 1);             fChain->SetBranchAddress("ele1_charge", &ele1_charge, &b_ele1_charge);
 
   fChain->SetBranchStatus("ele1_eta", 1);            fChain->SetBranchAddress("ele1_eta", &ele1_eta, &b_ele1_eta);
@@ -136,8 +136,8 @@ void FastCalibratorEB::Init(TTree *tree)
   fChain->SetBranchStatus("ele2_recHit_iphiORiy", 1);    fChain->SetBranchAddress("ele2_recHit_iphiORiy", &ele2_recHit_iphiORiy, &b_ele2_recHit_iphiORiy);
   fChain->SetBranchStatus("ele2_recHit_ietaORix", 1);    fChain->SetBranchAddress("ele2_recHit_ietaORix", &ele2_recHit_ietaORix, &b_ele2_recHit_ietaORix);
   fChain->SetBranchStatus("ele2_recHit_flag", 1);        fChain->SetBranchAddress("ele2_recHit_flag", &ele2_recHit_flag, &b_ele2_recHit_flag);
-  fChain->SetBranchStatus("ele2_E_true", 1);             fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
-  fChain->SetBranchStatus("ele2_DR", 1);                 fChain->SetBranchAddress("ele2_DR", &ele2_DR, &b_ele2_DR);
+  //fChain->SetBranchStatus("ele2_E_true", 1);             fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
+  //fChain->SetBranchStatus("ele2_DR", 1);                 fChain->SetBranchAddress("ele2_DR", &ele2_DR, &b_ele2_DR);
   //fChain->SetBranchStatus("ele2_charge", 1);             fChain->SetBranchAddress("ele2_charge", &ele2_charge, &b_ele2_charge);
   
   fChain->SetBranchStatus("ele2_eta", 1);            fChain->SetBranchAddress("ele2_eta", &ele2_eta, &b_ele2_eta);
@@ -234,7 +234,7 @@ void FastCalibratorEB::bookHistos(int nLoops)
 
 //! Build E/p distribution for both ele1 and ele2 
 
-void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration,bool isSaveEPDistribution,bool isR9selection, bool isMCTruth){
+void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, std::vector<float> theScalibration, bool isSaveEPDistribution, bool isR9selection, float R9Min, bool isMCTruth){
 
   if(iLoop ==0)  
   {
@@ -331,7 +331,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
          }
          
      /// R9 Selection    
-     if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection == true) skipElectron = true;
+     if ( fabs(thisE3x3/thisE) < R9Min && isR9selection == true) skipElectron = true;
      
      /// Save electron E/p in a chain of histogramm each for eta bin
      if(!skipElectron)    hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/pIn);
@@ -408,7 +408,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      }
      
      ///R9 Selection
-     if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
+     if ( fabs(thisE3x3/thisE) < R9Min && isR9selection==true) skipElectron = true;
      /// Save E/p electron information
      if(!skipElectron) hC_EoP_eta_ele -> Fill(eta_seed+85,thisE/pIn);
   
@@ -436,7 +436,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
 /// Calibration Loop over the ntu events
 
 void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int nLoops, bool isMiscalib,bool isSaveEPDistribution,
-                            bool isEPselection,bool isR9selection, bool isMCTruth, std::map<int, std::vector<std::pair<int, int> > > jsonMap){
+                            bool isEPselection,bool isR9selection, float R9Min, bool isMCTruth, std::map<int, std::vector<std::pair<int, int> > > jsonMap){
    if (fChain == 0) return;
    
    /// Define the number of crystal you want to calibrate
@@ -501,7 +501,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
     std::cout << "Number of analyzed events = " << nentries << std::endl;
     
     ///==== build E/p distribution ele 1 and 2
-    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,isMCTruth); 
+    BuildEoPeta_ele(iLoop,nentries,useW,useZ,theScalibration,isSaveEPDistribution,isR9selection,R9Min,isMCTruth); 
     
     // define map with events
     std::map<std::pair<int,std::pair<int,int> >,int> eventsMap;
@@ -534,7 +534,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           else eventsMap[eventRUNandLSandID] = 1;
         }
         
-        //if( skipEvent == true ) continue;
+        if( skipEvent == true ) continue;
         
         
         
@@ -614,7 +614,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           
 	  /// Basic selection on E/p or R9 if you want to apply
           if ( fabs(thisE/pIn  - 1) > 0.3 && isEPselection==true) skipElectron = true;
-          if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
+          if ( fabs(thisE3x3/thisE) < R9Min && isR9selection==true) skipElectron = true;
           if ( thisE/pIn  < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn  > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
 	  if ( !skipElectron) {
           
@@ -737,7 +737,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           /// discard electrons with bad E/P or R9
           if ( thisE/pIn  < EoPHisto->GetXaxis()->GetXmin() || thisE/pIn  > EoPHisto->GetXaxis()->GetXmax()) skipElectron=true;
           if ( fabs(thisE/pIn  - 1) > 0.3 && isEPselection==true) skipElectron = true;
-          if ( fabs(thisE3x3/thisE) < 0.9 && isR9selection==true) skipElectron = true;
+          if ( fabs(thisE3x3/thisE) < R9Min && isR9selection==true) skipElectron = true;
           
           if ( !skipElectron ) {
           
