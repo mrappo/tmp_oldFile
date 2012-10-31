@@ -58,11 +58,14 @@ int TEndcapRings::GetEndcapIeta(int ix, int iy, int iz)
 
 int TEndcapRings::GetEndcapIphi(int ix, int iy, int iz)
 {
-  double iX = ix-50.;
-  double iY = iy-50.;
-  int iPhi;
-  if( iY >= 0 ) iPhi =  90 + int( TMath::ATan(iY/iX)*360. / (2.*TMath::Pi()) );
-  else          iPhi = 270 + int( TMath::ATan(iY/iX)*360. / (2.*TMath::Pi()) );
+  double iX = ix-50.5;
+  double iY = iy-50.5;
+  int iPhi = -1;
+  
+  if( iX > 0 && iY > 0 ) iPhi =  int(       10 + TMath::ATan(iY/iX)*360. / (2.*TMath::Pi()) ) % 360 + 1;
+  if( iX < 0 && iY > 0 ) iPhi =  int( 180 + 10 + TMath::ATan(iY/iX)*360. / (2.*TMath::Pi()) ) % 360 + 1;
+  if( iX < 0 && iY < 0 ) iPhi =  int( 180 + 10 + TMath::ATan(iY/iX)*360. / (2.*TMath::Pi()) ) % 360 + 1;
+  if( iX > 0 && iY < 0 ) iPhi =  int( 360 + 10 + TMath::ATan(iY/iX)*360. / (2.*TMath::Pi()) ) % 360 + 1;
   
   return iPhi;
 }

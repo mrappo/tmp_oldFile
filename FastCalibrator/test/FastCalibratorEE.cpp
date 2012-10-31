@@ -21,15 +21,17 @@ int main (int argc, char ** argv)
   /// Parse the config file
   parseConfigFile (argv[1]) ;
 
-//   std::string inputFile       = gConfigParser -> readStringOption("Input::inputFile");
+  //std::string inputFile = gConfigParser -> readStringOption("Input::inputFile");
   std::string inputList = gConfigParser -> readStringOption("Input::inputList");
   std::string inputTree = gConfigParser -> readStringOption("Input::inputTree");
   
-  std::string inputFileDeadXtal ="NULL";
-  try{
+  std::string inputFileDeadXtal = "NULL";
+  try
+  {
     inputFileDeadXtal = gConfigParser -> readStringOption("Input::inputFileDeadXtal");
   }
-  catch( char const* exceptionString ){
+  catch( char const* exceptionString )
+  {
     std::cerr << " exception = " << exceptionString << std::endl;
   }
   
