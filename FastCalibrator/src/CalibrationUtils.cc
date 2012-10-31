@@ -1,227 +1,45 @@
 #include "CalibrationUtils.h"
-/////////////////////////////////////////////////////////// 
 
-bool CheckxtalIC_EB (TH2F* h_scale_EB,int iPhi, int iEta ){
-  if(h_scale_EB->GetBinContent(iPhi,iEta) ==0) return false;
+
+
+
+
+
+///////////////////////////////////////////////////////////////
+// check if a xtal confines with a bad xtal or lies in a bad TT
+///////////////////////////////////////////////////////////////
+
+bool CheckxtalIC_EB(TH2F* h_scale_EB, int iPhi, int iEta)
+{
+  if( h_scale_EB->GetBinContent(iPhi,iEta) == 0 ) return false;
   
-  int bx= h_scale_EB->GetNbinsX();
-  int by= h_scale_EB->GetNbinsY();
-
-  if((iPhi<bx && h_scale_EB->GetBinContent(iPhi+1,iEta) ==0) || (h_scale_EB->GetBinContent(iPhi-1,iEta)==0 && iPhi>1)) return false;
-
-  if((iEta<by && h_scale_EB->GetBinContent(iPhi,iEta+1) ==0 && iEta!=85 ) || (h_scale_EB->GetBinContent(iPhi,iEta-1)==0 && iEta>1 && iEta!=87)) return false;
-
-  if((iPhi<bx && h_scale_EB->GetBinContent(iPhi+1,iEta+1) ==0 && iEta!=85 && iEta<by) || ( h_scale_EB->GetBinContent(iPhi-1,iEta-1)==0 && iEta>1 && iEta!=87 && iPhi>1)) return false;
- 
-  if((h_scale_EB->GetBinContent(iPhi+1,iEta-1) ==0 && iEta>1 && iEta!=87 && iPhi<bx) || ( h_scale_EB->GetBinContent(iPhi-1,iEta+1)==0 && iPhi>1 && iEta!=85 && iEta<by )) return false;
-
+  int bx = h_scale_EB->GetNbinsX();
+  int by = h_scale_EB->GetNbinsY();
+  
+  if( (iPhi<bx && h_scale_EB->GetBinContent(iPhi+1,iEta)==0) ||
+      (iPhi>1  && h_scale_EB->GetBinContent(iPhi-1,iEta)==0) ) return false;
+  
+  if( (iEta!=85 && iEta<by && h_scale_EB->GetBinContent(iPhi,iEta+1)==0) ||
+      (iEta!=87 && iEta>1  && h_scale_EB->GetBinContent(iPhi,iEta-1)==0) ) return false;
+  
+  if( (iEta!=85 && iEta<by && iPhi<bx && h_scale_EB->GetBinContent(iPhi+1,iEta+1)==0) ||
+      (iEta!=87 && iEta>1  && iPhi>1  && h_scale_EB->GetBinContent(iPhi-1,iEta-1)==0) ) return false;
+  
+  if( (iEta!=87 && iEta>1  && iPhi<bx && h_scale_EB->GetBinContent(iPhi+1,iEta-1)==0) ||
+      (iEta!=85 && iEta<by && iPhi>1  && h_scale_EB->GetBinContent(iPhi-1,iEta+1)==0) ) return false;
+  
   return true;
 }
 
-/////////////////////////////////////////////////////////
-
-bool CheckxtalTT_EB (int iPhi, int iEta, const std::vector<std::pair<int,int> >& TT_centre ){
- for(unsigned int k =0; k<TT_centre.size(); k++){
-   if(fabs(iPhi-TT_centre.at(k).second)<5 && fabs(iEta-86-TT_centre.at(k).first)<5) return false;
- }
- return true;
-}
-
-//////////////////////////////////////////////////////////////////
-void InitializeDeadTT_EB(std::vector<std::pair<int,int> >& TT_centre){
- TT_centre.push_back(std::pair<int,int> (58,49));
- TT_centre.push_back(std::pair<int,int> (53,109));
- TT_centre.push_back(std::pair<int,int> (8,114));
- TT_centre.push_back(std::pair<int,int> (83,169));
- TT_centre.push_back(std::pair<int,int> (53,174));
- TT_centre.push_back(std::pair<int,int> (63,194));
- TT_centre.push_back(std::pair<int,int> (83,224));
- TT_centre.push_back(std::pair<int,int> (73,344));
- TT_centre.push_back(std::pair<int,int> (83,358));
- TT_centre.push_back(std::pair<int,int> (-13,18));
- TT_centre.push_back(std::pair<int,int> (-18,23));
- TT_centre.push_back(std::pair<int,int> (-8,53));
- TT_centre.push_back(std::pair<int,int> (-3,63));
- TT_centre.push_back(std::pair<int,int> (-53,128));
- TT_centre.push_back(std::pair<int,int> (-53,183));
- TT_centre.push_back(std::pair<int,int> (-83,193));
- TT_centre.push_back(std::pair<int,int> (-74,218));
- TT_centre.push_back(std::pair<int,int> (-8,223));
- TT_centre.push_back(std::pair<int,int> (-68,303));
- TT_centre.push_back(std::pair<int,int> (-43,328));
+bool CheckxtalTT_EB(int iPhi, int iEta, const std::vector<std::pair<int,int> >& TT_centre)
+{
+  for(unsigned int k = 0; k < TT_centre.size(); ++k)
+    if( (fabs(iPhi-TT_centre.at(k).second) < 5) && (fabs(iEta-86-TT_centre.at(k).first) < 5) ) return false;
+  
+  return true;
 }
 
 
-void InitializeDeadTT_EB2012(std::vector<std::pair<int,int> >& TT_centre){
- TT_centre.push_back(std::pair<int,int> (58,49));
- TT_centre.push_back(std::pair<int,int> (53,109));
- TT_centre.push_back(std::pair<int,int> (8,114));
- TT_centre.push_back(std::pair<int,int> (83,169));
- TT_centre.push_back(std::pair<int,int> (53,174));
- TT_centre.push_back(std::pair<int,int> (63,194));
- TT_centre.push_back(std::pair<int,int> (83,224));
- TT_centre.push_back(std::pair<int,int> (73,344));
- TT_centre.push_back(std::pair<int,int> (83,358));
- TT_centre.push_back(std::pair<int,int> (-13,18));
- TT_centre.push_back(std::pair<int,int> (-18,23));
- TT_centre.push_back(std::pair<int,int> (-8,53));
- TT_centre.push_back(std::pair<int,int> (-3,63));
- TT_centre.push_back(std::pair<int,int> (-53,128));
- TT_centre.push_back(std::pair<int,int> (-53,183));
- TT_centre.push_back(std::pair<int,int> (-83,193));
- TT_centre.push_back(std::pair<int,int> (-74,218));
- TT_centre.push_back(std::pair<int,int> (-8,223));
- TT_centre.push_back(std::pair<int,int> (-68,303));
- TT_centre.push_back(std::pair<int,int> (-43,328));
- TT_centre.push_back(std::pair<int,int> (-23,167));
-
-}
-
-
-///////////////////////////////////////////////////////////////////
-void NormalizeIC_EB(TH2F* h_scale_EB, TH2F* hcmap, const std::vector< std::pair<int,int> > & TT_centre, bool skip){
-
- /// Mean over phi corrected skipping dead channel 
-  for (int iEta = 1 ; iEta < h_scale_EB->GetNbinsY()+1; iEta ++){
-   float SumIC = 0;
-   int numIC = 0;
-   
-   for(int iPhi = 1 ; iPhi < h_scale_EB->GetNbinsX()+1 ; iPhi++){
-    bool isGood = CheckxtalIC_EB(h_scale_EB,iPhi,iEta);
-    bool isGoodTT = CheckxtalTT_EB(iPhi,iEta,TT_centre);
- 
-     if(isGood && isGoodTT){
-      SumIC = SumIC + h_scale_EB->GetBinContent(iPhi,iEta);
-      numIC ++ ;
-     }
-   }
-
-   ///fede: skip bad channels and bad TTs
-   for (int iPhi = 1; iPhi< h_scale_EB->GetNbinsX()+1  ; iPhi++){ 
-     if(numIC==0 || SumIC==0) continue;
-     if(!skip){ hcmap->SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(SumIC/numIC)); continue;}
-     bool isGood = CheckxtalIC_EB(h_scale_EB,iPhi,iEta);
-     bool isGoodTT = CheckxtalTT_EB(iPhi,iEta,TT_centre);
-     if (!isGood || !isGoodTT) continue;
-     hcmap->SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(SumIC/numIC));
-   }
-  }
-}
-
-///////////////////////////////////////////////////////////////////////
-void BookSpreadHistos_EB(TH2F* hcmap, TH1F **hspreadEtaFold, const int & ringGroupSize,const int & nEtaRing){
-
- char hname[100];
- int nStep = 0;
- int nbins = 500;
-
- /// Spread histos folding EB+ and EB-
- for (int jbin = 1; jbin < hcmap-> GetNbinsY()+1; jbin++){
-  if (jbin < nEtaRing+1 && (jbin-1)%ringGroupSize == 0 ) {
-      nStep++;
-      sprintf(hname,"hspread_ringGroup_ietaFolded%02d",nStep);
-      hspreadEtaFold[nStep-1]= new TH1F(hname, hname, nbins/2,0.5,1.5);
-   }
-   if (jbin > nEtaRing+1 && (jbin-2)%ringGroupSize == 0 ) {
-      nStep++;
-   }
-
-   for (int ibin = 1; ibin < hcmap-> GetNbinsX()+1; ibin++){
-      float ic = hcmap->GetBinContent(ibin,jbin);
-   if (ic>0 && ic<2 )    {
-        if (nStep <= nEtaRing) hspreadEtaFold[nStep-1]->Fill(ic);
-        else                   hspreadEtaFold[nEtaRing*2-nStep]->Fill(ic);
-      }
-    }
-  }
-}  
-
-/////////////////////////////////////////////////////////////////////////
-void BookSpreadStatHistos_EB(TH2F* hcmap2,TH2F* hcmap3,TH1F **hstatprecisionEtaFold,const int & ringGroupSize,const int & nEtaRing){
-
- char hname[100];
- int nStep = 0;
- int nbins = 500;
-
-  for (int jbin = 1; jbin < hcmap2-> GetNbinsY()+1; jbin++){
-    if (jbin < nEtaRing+1 && (jbin-1)%ringGroupSize == 0 ) {
-       nStep++;
-       sprintf(hname,"hstatprecision_ringGroup_ietaFolded%02d",nStep);
-       hstatprecisionEtaFold[nStep-1]= new TH1F(hname, hname, nbins,-0.5,0.5);
-    }
-    if (jbin > nEtaRing+1 && (jbin-2)%ringGroupSize == 0 ) {
-       nStep++;
-    }
-
-    for (int ibin = 1; ibin < hcmap2-> GetNbinsX()+1; ibin++){
-       float ic1 = hcmap2->GetBinContent(ibin,jbin);
-       float ic2 = hcmap3->GetBinContent(ibin,jbin);
-    if (ic1>0 && ic1<2 && ic2>0 && ic2 <2 )    {
-        if (nStep <= nEtaRing) hstatprecisionEtaFold[nStep-1]->Fill((ic1-ic2)/(ic1+ic2));
-        else             hstatprecisionEtaFold[nEtaRing*2-nStep]->Fill((ic1-ic2)/(ic1+ic2));
-       }
-     }
-   }
-
-}
-///////////////////////////////////////////////////////////////////////////////
-void PhiProfile(TGraphErrors *phiProjection, TGraphErrors **MomentumScale, TH2F* hcmap){
-
-  std::vector<double> vectSum;
-  std::vector<double> vectCounter;
- 
-  vectCounter.assign(MomentumScale[0]->GetN(),0.);
-  vectSum.assign(MomentumScale[0]->GetN(),0.);
-
-  for(int iPhi =1; iPhi<hcmap->GetNbinsX()+1; iPhi++){
-   for(int iEta =1; iEta<hcmap->GetNbinsY()+1; iEta++){
-
-    if(hcmap->GetBinContent(iPhi,iEta)==0) continue;
-    unsigned int Phi = int((iPhi-1)/(360./MomentumScale[0]->GetN()));
-    if(Phi != vectCounter.size()){
-      vectSum.at(Phi)=vectSum.at(Phi)+hcmap->GetBinContent(iPhi,iEta);
-      vectCounter.at(Phi)=vectCounter.at(Phi)+1;}
-    else{
-           vectSum.at(0)=vectSum.at(0)+hcmap->GetBinContent(iPhi,iEta);
-           vectCounter.at(0)=vectCounter.at(0)+1;}
-           
-   }
-  }
-
- for(unsigned int i=0; i<vectCounter.size();i++){
-  phiProjection->SetPoint(i,i,vectSum.at(i)/vectCounter.at(i));
-  phiProjection->SetPointError(i,0.,0.002);
- }
-
-}
-
-////////////////////////////////////////////////////////////////////////////
-void ResidualSpread (TGraphErrors *statprecision, TGraphErrors *Spread, TGraphErrors *Residual){
-
- for (int i= 0; i < statprecision-> GetN(); i++){
-      double spread, espread;
-      double stat, estat;
-      double residual, eresidual;
-      double xdummy,ex;
-      Spread->GetPoint(i, xdummy, spread);
-      espread = Spread-> GetErrorY(i);
-      statprecision->GetPoint(i, xdummy, stat);
-      estat = statprecision-> GetErrorY(i);
-      ex = statprecision-> GetErrorX(i);
-      if (spread > stat ){
-	residual  = sqrt( spread*spread - stat*stat );
-	eresidual = sqrt( pow(spread*espread,2) + pow(stat*estat,2))/residual;
-      }
-      else {
-	residual = 0;
-	eresidual = 0;
-      }
-      Residual->SetPoint(i,xdummy, residual);
-      Residual->SetPointError(i,ex,eresidual);
-    }
- }
-
-////////////////////////////////////////////////////////////// 
 
 bool CheckxtalIC_EE(TH2F* h_scale_EE,int ix, int iy, int ir)
 {
@@ -245,130 +63,567 @@ bool CheckxtalIC_EE(TH2F* h_scale_EE,int ix, int iy, int ir)
   return true;
 }
 
-////////////////////////////////////////////////////////////////
-bool CheckxtalTT_EE(int ix, int iy, int ir, const std::vector<std::pair<int,int> >& TT_centre ){
- for( unsigned int k =0; k<TT_centre.size(); k++){
-   if(fabs(ix-TT_centre.at(k).first)<4 && fabs(iy-TT_centre.at(k).second)<4) return false;
-
- }
- return true;
-}
-
-//////////////////////////////////////////////////////////////////
-void InitializeDeadTTEEP(std::vector<std::pair<int,int> >& TT_centre){
- TT_centre.push_back(std::pair<int,int> (78,78));
- TT_centre.push_back(std::pair<int,int> (83,28));
- TT_centre.push_back(std::pair<int,int> (83,23));
-}
-
-//////////////////////////////////////////////////////////////////
-void InitializeDeadTTEEP2012(std::vector<std::pair<int,int> >& TT_centre){
- TT_centre.push_back(std::pair<int,int> (78,78));
- TT_centre.push_back(std::pair<int,int> (83,28));
- TT_centre.push_back(std::pair<int,int> (83,23));
- TT_centre.push_back(std::pair<int,int> (91,23));
-}
-
-/////////////////////////////////////////////////////////////////////
-void InitializeDeadTTEEM(std::vector<std::pair<int,int> >& TT_centre){
-
-TT_centre.push_back(std::pair<int,int> (53,28)); 
-
-}
-
-/////////////////////////////////////////////////////////////////////
-void InitializeDeadTTEEM2012(std::vector<std::pair<int,int> >& TT_centre){
-
-TT_centre.push_back(std::pair<int,int> (53,28)); 
-TT_centre.push_back(std::pair<int,int> (29,34));
-TT_centre.push_back(std::pair<int,int> (89,80));
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-void BookSpreadHistos_EE(TH2F** hcmap, TH1F ***hspread, TH1F **hspreadAll,  TEndcapRings *eRings)
+bool CheckxtalTT_EE(int ix, int iy, int ir, const std::vector<std::pair<int,int> >& TT_centre)
 {
-  char hname[100];
-  int nbins = 200;
+  for( unsigned int k =0; k<TT_centre.size(); k++)
+    if( (fabs(ix-TT_centre.at(k).first) < 4) && (fabs(iy-TT_centre.at(k).second) < 4) ) return false;
   
-  for(int k = 0; k < 2; k++)
-    for(int iring = 0; iring < 40 ; iring++)
+  return true;
+}
+
+
+
+
+
+
+//-------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////
+// normalize the IC of each eta ring to the average IC of that ring
+///////////////////////////////////////////////////////////////////
+
+void NormalizeIC_EB(TH2F* h_scale_EB, TH2F* hcmap_EB, const std::vector< std::pair<int,int> > & TT_centre, bool skip)
+{
+  // mean over phi corrected skipping dead channel 
+  for(int iEta = 1; iEta <= h_scale_EB->GetNbinsY(); ++iEta)
+  {
+    float sumIC = 0.;
+    int numIC = 0;
+    
+    for(int iPhi = 1; iPhi <= h_scale_EB->GetNbinsX() ; ++iPhi)
     {
-      if( k==0 )
+      bool isGood = CheckxtalIC_EB(h_scale_EB,iPhi,iEta);
+      bool isGoodTT = CheckxtalTT_EB(iPhi,iEta,TT_centre);
+      
+      if( isGood && isGoodTT )
       {
-        sprintf(hname,"hspreadAll_ring%02d",iring);
-        hspreadAll[iring] = new TH1F(hname, hname, nbins,0.,2.);
-        sprintf(hname,"hspreadEEM_ring%02d",iring);
-        hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
+        sumIC += h_scale_EB -> GetBinContent(iPhi,iEta);
+        ++numIC;
+      }
+    }
+    
+    // normalize IC skipping bad channels and bad TTs
+    for(int iPhi = 1; iPhi <= h_scale_EB->GetNbinsX(); ++iPhi)
+    { 
+      if( numIC == 0 || sumIC == 0 ) continue;
+      
+      if( !skip )
+      {
+        hcmap_EB -> SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(sumIC/numIC));
+        continue;
       }
       else
       {
-        sprintf(hname,"hspreadEEP_ring%02d",iring);
-        hspread[k][iring] = new TH1F(hname, hname, nbins,0.,2.);
+        bool isGood = CheckxtalIC_EB(h_scale_EB,iPhi,iEta);
+        bool isGoodTT = CheckxtalTT_EB(iPhi,iEta,TT_centre);
+        if( !isGood || !isGoodTT ) continue;
+        hcmap_EB -> SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(sumIC/numIC));
       }
     }
-  
-  /// spread all distribution, spread for EE+ and EE- and comparison with the MC truth
-  for (int k = 0; k < 2 ; k++)
-    for (int ix = 1; ix < hcmap[k]->GetNbinsX()+1; ix++)
-      for (int iy = 1; iy < hcmap[k]->GetNbinsY()+1; iy++)
-      {
-        int ring = eRings -> GetEndcapRing(ix,iy,k);
-        if( ring == -1 ) continue;
-        
-        int mybin = hcmap[k] -> FindBin(ix,iy);
-        float ic = hcmap[k] -> GetBinContent(mybin);
-        
-        if( ic>0 )
-        {
-          hspread[k][ring]->Fill(ic);
-          hspreadAll[ring]->Fill(ic);
-        }
-      }
+  }
 }
 
-/////////////////////////////////////////////////////////////////
-void BookSpreadStatHistos_EE(TH2F** hcmap2,TH2F** hcmap3, TH1F ***hstatprecision, TH1F **hstatprecisionAll,  TEndcapRings *eRings)
+
+
+/////////////////////////////////////////////////////////////////////////
+void NormalizeIC_EE(TH2F* h_scale_EEM, TH2F* h_scale_EEP,
+                    TH2F* hcmap_EEM, TH2F* hcmap_EEP,
+                    const std::vector< std::pair<int,int> >& TT_centre_EEM,
+                    const std::vector< std::pair<int,int> >& TT_centre_EEP,
+                    TEndcapRings* eRings, bool skip)
 {
-  char hname[100];
-  int nbins = 200;
+  std::map<int,TH2F*> h_scale_EE;
+  std::map<int,TH2F*> hcmap_EE;
   
-  /// stat precision histos for each EE ring
-  for(int k = 0; k < 2; k++)
-    for(int iring = 0; iring < 40 ; iring ++)
-    {
-      if (k==0)
-      {
-        sprintf(hname,"hstatprecisionAll_ring%02d",iring);
-        hstatprecisionAll[iring] = new TH1F(hname, hname, nbins,-1.3,1.3);
-        sprintf(hname,"hstatprecisionEEM_ring%02d",iring);
-        hstatprecision[k][iring] = new TH1F(hname, hname, nbins,-1.3,1.3);
-      }
-      else
-      {
-        sprintf(hname,"hstatprecisionEEP_ring%02d",iring);
-        hstatprecision[k][iring] = new TH1F(hname, hname, nbins,-1.3,1.3);
-      }
-    }
+  h_scale_EE[0] = h_scale_EEM;
+  h_scale_EE[1] = h_scale_EEP;
+  
+  hcmap_EE[0] = hcmap_EEM;
+  hcmap_EE[1] = hcmap_EEP;
   
   
-  for(int k = 0; k < 2 ; k++)
-    for(int ix = 1; ix < hcmap2[k]->GetNbinsX()+1; ix++)
-      for(int iy = 1; iy < hcmap2[k]->GetNbinsY()+1; iy++)
+  
+  std::map<int,std::vector<float> > sumIC;
+  std::map<int,std::vector<int> > numIC;
+  
+  (sumIC[0]).assign(40,0.);
+  (sumIC[1]).assign(40,0.);
+  
+  (numIC[0]).assign(40,0);
+  (numIC[1]).assign(40,0);
+  
+  
+  
+  // mean over phi corrected skipping dead channel 
+  for(int k = 0; k < 2; ++k)
+    for(int ix = 1; ix <= h_scale_EE[k] -> GetNbinsX(); ++ix)
+      for(int iy = 1; iy <= h_scale_EE[k] -> GetNbinsY(); ++iy)
       {
         int ring = eRings->GetEndcapRing(ix,iy,k);
         if( ring == -1 ) continue;
         
-        int mybin = hcmap2[k] -> FindBin(ix,iy);
-        float ic1 = hcmap2[k]->GetBinContent(mybin);
-        float ic2 = hcmap3[k]->GetBinContent(mybin);
-        if ( ic1>0 && ic2>0 )
+        bool isGood = CheckxtalIC_EE(h_scale_EE[k],ix,iy,ring);
+        bool isGoodTT;
+        if( k == 0 ) isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEM);
+        else         isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEP);
+        
+        if( isGoodTT && isGood )
         {
-          hstatprecision[k][ring]->Fill((ic1-ic2)/(ic1+ic2)); /// sigma (diff/sum) gives the stat. precision on teh entire sample
-          hstatprecisionAll[ring]->Fill((ic1-ic2)/(ic1+ic2));
+          (sumIC[k]).at(ring) += h_scale_EE[k]->GetBinContent(ix,iy);
+          (numIC[k]).at(ring) += 1;
         }
       }
+  
+  // normalize IC skipping bad channels and bad TTs  
+  for(int k = 0; k < 2; ++k)
+    for(int ix = 1; ix <= h_scale_EE[k]->GetNbinsX(); ++ix)
+      for(int iy = 1; iy <= h_scale_EE[k]->GetNbinsY(); ++iy)
+      {
+        int ring = eRings->GetEndcapRing(ix,iy,k);
+        if( ring == -1 ) continue;
+        
+        if( !skip )
+        {
+          if( ring > 33 )
+          {
+            hcmap_EE[k] -> Fill(ix,iy,0.);
+            continue;
+          }
+          else
+          {
+            if( (numIC[k]).at(ring) != 0 && (sumIC[k]).at(ring) != 0 )
+              hcmap_EE[k] -> Fill(ix,iy,h_scale_EE[k]->GetBinContent(ix,iy)/((sumIC[k]).at(ring)/(numIC[k]).at(ring)));
+          }
+        }
+        
+        if( skip )
+        {
+          bool isGood = CheckxtalIC_EE(h_scale_EE[k],ix,iy,ring);
+          bool isGoodTT;
+          
+          if( k == 0 ) isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEM);
+          else         isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEP);
+          
+          if( isGood && isGoodTT )
+          {
+            if( ring > 33 )
+            {
+              hcmap_EE[k] -> Fill(ix,iy,0.);
+              continue;
+            }
+            else
+            {
+              if( (numIC[k]).at(ring) != 0 && (sumIC[k]).at(ring) != 0 )
+                hcmap_EE[k] -> Fill(ix,iy,h_scale_EE[k]->GetBinContent(ix,iy)/((sumIC[k]).at(ring)/(numIC[k]).at(ring)));
+            }
+          }
+        }
+      }
+  
 }
+
+
+
+
+
+
+
+//-------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////
+void BookSpreadHistos_EB(TH1F* h_spread, std::vector<TH1F*>& h_spread_vsEta, TGraphErrors* g_spread_vsEta, const int& etaRingWidth,
+                         const std::string& name, const int& nBins_spread, const float& spreadMin, const float& spreadMax,
+                         TH2F* hcmap, TH2F* hcmap2)
+{
+  char histoName[100];
+  char funcName[100];
+  
+  
+  // define the number of eta rings
+  int nEtaRings = 85/etaRingWidth;
+  if( 85%etaRingWidth > 0 ) nEtaRings += 1;
+  
+  // initialize the histograms
+  for(int etaRing = 0; etaRing < nEtaRings; ++etaRing)
+  {
+    int etaMin = 1 + etaRing * etaRingWidth;
+    
+    sprintf(histoName,"h_%s%02d",name.c_str(),etaMin);
+    h_spread_vsEta.push_back( new TH1F(histoName,"",nBins_spread,spreadMin,spreadMax) );
+  }
+  
+  
+  // spread histos folding EB+ and EB-
+  for(int jbin = 1; jbin <= hcmap->GetNbinsY(); ++jbin)
+  {
+    float etaRingMin = hcmap->GetYaxis()->GetBinLowEdge(jbin);
+    int etaRing = int( (fabs(etaRingMin) - 1.)/etaRingWidth );
+    if( etaRing == -1 ) continue;
+    
+    
+    for(int ibin = 1; ibin <= hcmap->GetNbinsX(); ++ibin)
+    {
+      if( hcmap2 == NULL )
+      {
+        float IC = hcmap->GetBinContent(ibin,jbin);
+        if( IC > 0. && IC < 2. )
+        {
+          h_spread -> Fill(IC);
+          h_spread_vsEta.at(etaRing) -> Fill(IC);
+	}
+      }
+      else
+      {
+        float IC1 = hcmap  -> GetBinContent(ibin,jbin);
+        float IC2 = hcmap2 -> GetBinContent(ibin,jbin);
+        if( IC1 > 0. && IC1 < 2. && IC2 > 0. && IC2 < 2. )
+        {
+          h_spread -> Fill((IC1-IC2)/(IC1+IC2));
+          h_spread_vsEta.at(etaRing) -> Fill((IC1-IC2)/(IC1+IC2));
+        }
+      }
+    }
+  }
+  
+  
+  // fit the global spread
+  sprintf(funcName,"f_%s",name.c_str());
+  TF1* fgaus = new TF1(funcName,"gaus",spreadMin,spreadMax);
+  
+  fgaus -> SetNpx(10000);
+  if( hcmap2 == NULL ) fgaus -> SetLineColor(kBlue+2);
+  else                 fgaus -> SetLineColor(kRed+2);
+  
+  float center = 0.5*(spreadMin+spreadMax);
+  fgaus -> SetParameter(1,h_spread->GetMean());
+  fgaus -> SetParameter(2,h_spread->GetRMS());
+  h_spread -> Fit(funcName,"QLS+","",center-h_spread->GetRMS(),center+h_spread->GetRMS());
+  
+  
+  // fill the TGraph
+  g_spread_vsEta -> SetMarkerStyle(20);
+  g_spread_vsEta -> SetMarkerSize(1);
+  g_spread_vsEta -> GetYaxis() -> SetRangeUser(0.,0.05);
+  if( hcmap2 == NULL ) g_spread_vsEta -> SetMarkerColor(kBlue+2);
+  else                 g_spread_vsEta -> SetMarkerColor(kRed+2);
+  
+  for(int etaRing = 0; etaRing < nEtaRings; ++etaRing)
+  {
+    int etaMin = 1 + etaRing * etaRingWidth;  
+    
+    sprintf(funcName,"f_%s%02d",name.c_str(),etaMin);
+    fgaus = new TF1(funcName,"gaus",spreadMin,spreadMax);
+    
+    fgaus -> SetNpx(10000);
+    if( hcmap2 == NULL ) fgaus -> SetLineColor(kBlue+2);
+    else                 fgaus -> SetLineColor(kRed+2);
+    
+    fgaus -> SetParameter(1,h_spread_vsEta[etaRing]->GetMean());
+    fgaus -> SetParameter(2,h_spread_vsEta[etaRing]->GetRMS());
+    h_spread_vsEta[etaRing] -> Fit(funcName,"QLS+","",center-3.*h_spread_vsEta[etaRing]->GetRMS(),center+3.*h_spread_vsEta[etaRing]->GetRMS());
+    
+    g_spread_vsEta -> SetPoint(etaRing,etaMin,fgaus->GetParameter(2));
+    g_spread_vsEta -> SetPointError(etaRing,0.5*etaRingWidth,fgaus->GetParError(2));
+  }
+}
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+void PhiProfile(TH1F* h_phiAvgICSpread, TGraphErrors* g_avgIC_vsPhi, const int& phiRegionWidth,
+                TH2F* hcmap, TEndcapRings* eRings)
+{
+  // define the number of phi regions
+  int nPhiRegions = 360/phiRegionWidth;
+  if( 360%phiRegionWidth > 0 ) nPhiRegions += 1;
+  
+  std::vector<TH1F*> h_IC_vsPhi(nPhiRegions);
+  for(int i = 0; i < nPhiRegions; ++i)
+  {  
+    char histoName[50];
+    sprintf(histoName,"h_IC_vsPhi%03d",i);
+    h_IC_vsPhi.at(i) = new TH1F(histoName,"",1000,0.,2.);
+  }
+  
+  
+  for(int ibin = 1; ibin <= hcmap->GetNbinsX(); ++ibin)
+    for(int jbin = 1; jbin <= hcmap->GetNbinsY(); ++jbin)
+    {
+      float IC = hcmap->GetBinContent(ibin,jbin);
+      if( IC <= 0. || IC >= 2. ) continue;
+      
+      float phiRegionMin = hcmap->GetXaxis()->GetBinLowEdge(ibin);
+      if( eRings != NULL ) phiRegionMin = eRings -> GetEndcapIphi(ibin,jbin,1);
+      
+      int phiRegion = int( (fabs(phiRegionMin) - 1.)/phiRegionWidth );
+      
+      h_IC_vsPhi.at(phiRegion) -> Fill(IC);
+    }
+  
+  
+  for(int i = 0; i < nPhiRegions; ++i)
+  {
+    int phiMin = 1 + i * phiRegionWidth;
+    
+    h_phiAvgICSpread -> Fill(h_IC_vsPhi.at(i)->GetMean());
+    
+    g_avgIC_vsPhi -> SetPoint(i,phiMin,h_IC_vsPhi.at(i)->GetMean());
+    g_avgIC_vsPhi -> SetPointError(i,0.5*phiRegionWidth,h_IC_vsPhi.at(i)->GetMeanError());
+  }
+  
+  
+  TF1* fgaus = new TF1("f_phiAvgICSpread","gaus",0.,2.);
+  fgaus -> SetNpx(10000);
+  fgaus -> SetLineColor(kBlack);
+  
+  fgaus -> SetParameter(1,h_phiAvgICSpread->GetMean());
+  fgaus -> SetParameter(2,h_phiAvgICSpread->GetRMS());
+  h_phiAvgICSpread -> Fit("f_phiAvgICSpread","QLS+","",1.-3.*h_phiAvgICSpread->GetRMS(),1.+3.*h_phiAvgICSpread->GetRMS());
+  
+  
+  
+  for(int i = 0; i < nPhiRegions; ++i)
+  {  
+    delete h_IC_vsPhi.at(i);
+  }
+}
+
+
+
+void PhiFoldProfile_EB(TGraphErrors* g_avgIC_vsPhiFold_EBM, TGraphErrors* g_avgIC_vsPhiFold_EBP, const int& phiRegionWidth,
+                       TH2F* hcmap)
+{
+  // define the number of phi regions
+  int nPhiRegions = 20/phiRegionWidth;
+  if( 20%phiRegionWidth > 0 ) nPhiRegions += 1;
+  
+  std::vector<TH1F*> h_IC_vsPhiFold_EBM(nPhiRegions);
+  std::vector<TH1F*> h_IC_vsPhiFold_EBP(nPhiRegions);
+  for(int i = 0; i < nPhiRegions; ++i)
+  {  
+    char histoName[50];
+    sprintf(histoName,"h_IC_vsPhiFold_EBM_%03d",i);
+    h_IC_vsPhiFold_EBM.at(i) = new TH1F(histoName,"",1000,0.,2.);
+    sprintf(histoName,"h_IC_vsPhiFold_EBP_%03d",i);
+    h_IC_vsPhiFold_EBP.at(i) = new TH1F(histoName,"",1000,0.,2.);
+  }
+  
+  
+  for(int ibin = 1; ibin <= hcmap->GetNbinsX(); ++ibin)
+    for(int jbin = 1; jbin <= hcmap->GetNbinsY(); ++jbin)
+    {
+      float IC = hcmap->GetBinContent(ibin,jbin);
+      if( IC <= 0. || IC >= 2. ) continue;
+      
+      float phiRegionMin = hcmap->GetXaxis()->GetBinLowEdge(ibin);
+      int phiRegion = int( (fabs(phiRegionMin) - 1.)/phiRegionWidth ) % 20;
+      
+      float etaBinCenter = hcmap->GetYaxis()->GetBinCenter(jbin);
+      
+      if( etaBinCenter < 0. ) h_IC_vsPhiFold_EBM.at(phiRegion) -> Fill(IC);
+      if( etaBinCenter > 0. ) h_IC_vsPhiFold_EBP.at(phiRegion) -> Fill(IC);
+    }
+  
+  
+  for(int i = 0; i < nPhiRegions; ++i)
+  {
+    int phiMin = 1 + i * phiRegionWidth;
+    
+    g_avgIC_vsPhiFold_EBM -> SetPoint(i,phiMin,h_IC_vsPhiFold_EBM.at(i)->GetMean());
+    g_avgIC_vsPhiFold_EBM -> SetPointError(i,0.5*phiRegionWidth,h_IC_vsPhiFold_EBM.at(i)->GetMeanError());
+    
+    g_avgIC_vsPhiFold_EBP -> SetPoint(i,phiMin,h_IC_vsPhiFold_EBP.at(i)->GetMean());
+    g_avgIC_vsPhiFold_EBP -> SetPointError(i,0.5*phiRegionWidth,h_IC_vsPhiFold_EBP.at(i)->GetMeanError());
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////
+void ResidualSpread(TGraphErrors* g_stat, TGraphErrors* g_spread, TGraphErrors* g_residual)
+{
+  g_residual -> SetMarkerStyle(20);
+  g_residual -> SetMarkerSize(1);
+  g_residual -> SetMarkerColor(kGreen+2);
+  
+  
+  for(int i = 0; i < g_stat->GetN(); ++i)
+  {
+    double spread, espread;
+    double stat, estat;
+    double residual, eresidual;
+    double x,ex;
+    
+    ex = g_stat-> GetErrorX(i);
+    
+    g_stat -> GetPoint(i,x,stat);
+    estat = g_stat-> GetErrorY(i);
+    
+    g_spread -> GetPoint(i,x,spread);
+    espread = g_spread -> GetErrorY(i);
+    
+    if( spread > stat )
+    {
+      residual  = sqrt( pow(spread,2) - pow(stat,2) );
+      eresidual = sqrt( pow(spread*espread,2) + pow(stat*estat,2) ) / residual;
+    }
+    else
+    {
+      residual = 0;
+      eresidual = 0;
+    }
+    
+    g_residual -> SetPoint(i,x,residual);
+    g_residual -> SetPointError(i,ex,eresidual);
+  }
+}
+
+////////////////////////////////////////////////////////////// 
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+void BookSpreadHistos_EE(std::map<int,TH1F*>& h_spread, std::map<int,std::vector<TH1F*> >& h_spread_vsEta, std::map<int,TGraphErrors*>& g_spread_vsEta,
+                         TEndcapRings* eRings, const int& etaRingWidth,
+                         const std::string& name, const int& nBins_spread, const float& spreadMin, const float& spreadMax,
+                         std::map<int,TH2F*>& hcmap, std::map<int,TH2F*>& hcmap2)
+{
+  char histoName[100];
+  char funcName[100];
+  
+  
+  // define the number of eta rings
+  int nEtaRings = 39/etaRingWidth;
+  if( 39%etaRingWidth > 0 ) nEtaRings += 1;
+  
+  
+  // initialize the histograms (EE-, all EE, EE+)
+  for(int k = -1; k <= 1; ++k)
+    for(int etaRing = 0; etaRing < nEtaRings; ++etaRing)
+    {
+      int etaMin = 0 + etaRing * etaRingWidth;
+      
+      if( k == -1 )
+      {
+        sprintf(histoName,"h_%s%02d_EEM",name.c_str(),etaMin);
+        h_spread_vsEta[k].push_back( new TH1F(histoName,"",nBins_spread,spreadMin,spreadMax) );
+      }
+      if( k == 0 )
+      {
+        sprintf(histoName,"h_%s%02d_EE",name.c_str(),etaMin);
+        h_spread_vsEta[k].push_back( new TH1F(histoName,"",nBins_spread,spreadMin,spreadMax) );
+      }
+      if( k == 1 )
+      {
+        sprintf(histoName,"h_%s%02d_EEP",name.c_str(),etaMin);
+        h_spread_vsEta[k].push_back( new TH1F(histoName,"",nBins_spread,spreadMin,spreadMax) );
+      }
+    }
+  
+  
+  // spread histos
+  for(int k = -1; k <= 1; ++k)
+  {
+    if( k == 0 ) continue;
+    
+    for(int ibin = 1; ibin <= hcmap[k]->GetNbinsX(); ++ibin)
+      for(int jbin = 1; jbin <= hcmap[k]->GetNbinsY(); ++jbin)
+      {
+        int etaRing = eRings -> GetEndcapRing(ibin,jbin,k);
+        if( etaRing == -1 ) continue;
+        
+        if( (hcmap2[-1] == NULL) && (hcmap2[1] == NULL) )
+        {
+          float IC = hcmap[k]->GetBinContent(ibin,jbin);
+          if( IC > 0. && IC < 2. )
+          {
+            h_spread[k] -> Fill(IC);
+            h_spread_vsEta[k].at(etaRing) -> Fill(IC);
+            
+            h_spread[0] -> Fill(IC);
+            h_spread_vsEta[0].at(etaRing) -> Fill(IC);
+          }
+        }
+        
+        else
+        {
+          float IC1 = hcmap[k]  -> GetBinContent(ibin,jbin);
+          float IC2 = hcmap2[k] -> GetBinContent(ibin,jbin);
+          if( IC1 > 0. && IC1 < 2. && IC2 > 0. && IC2 < 2. )
+          {
+            h_spread[k] -> Fill((IC1-IC2)/(IC1+IC2));
+            h_spread_vsEta[k].at(etaRing) -> Fill((IC1-IC2)/(IC1+IC2));
+            
+            h_spread[0] -> Fill((IC1-IC2)/(IC1+IC2));
+            h_spread_vsEta[0].at(etaRing) -> Fill((IC1-IC2)/(IC1+IC2));
+          }
+        }
+      }
+  }
+  
+  
+  
+  // fit the global spread
+  for(int k = -1; k <= 1; ++k)
+  {
+    if( k == -1 ) sprintf(funcName,"f_%s_EEM",name.c_str());
+    if( k == 0 )  sprintf(funcName,"f_%s_EE", name.c_str());
+    if( k == +1 ) sprintf(funcName,"f_%s_EEP",name.c_str());
+    
+    TF1* fgaus = new TF1(funcName,"gaus",spreadMin,spreadMax);
+    
+    fgaus -> SetNpx(10000);
+    if( (hcmap2[-1] == NULL) && (hcmap2[1] == NULL) ) fgaus -> SetLineColor(kBlue+2);
+    else                                              fgaus -> SetLineColor(kBlue+2);
+    
+    float center = 0.5*(spreadMin+spreadMax);
+    fgaus -> SetParameter(1,h_spread[k]->GetMean());
+    fgaus -> SetParameter(2,h_spread[k]->GetRMS());
+    h_spread[k] -> Fit(funcName,"QLS+","",center-h_spread[k]->GetRMS(),center+h_spread[k]->GetRMS());
+    
+    
+    // fill the TGraph
+    g_spread_vsEta[k] -> SetMarkerStyle(20);
+    g_spread_vsEta[k] -> SetMarkerSize(1);
+    g_spread_vsEta[k] -> GetYaxis() -> SetRangeUser(0.,0.05);
+    if( (hcmap2[-1] == NULL) && (hcmap2[1] == NULL) )g_spread_vsEta[k] -> SetMarkerColor(kBlue+2);
+    else                                             g_spread_vsEta[k] -> SetMarkerColor(kRed+2);
+    
+    for(int etaRing = 0; etaRing < nEtaRings; ++etaRing)
+    {
+      if( (h_spread_vsEta[k])[etaRing]->Integral() == 0 ) continue;
+      
+      int etaMin = etaRing * etaRingWidth;
+      
+      sprintf(funcName,"f_%s%02d",name.c_str(),etaMin);
+      fgaus = new TF1(funcName,"gaus",spreadMin,spreadMax);
+      
+      fgaus -> SetNpx(10000);
+      if( (hcmap2[-1] == NULL) && (hcmap2[1] == NULL) ) fgaus -> SetLineColor(kBlue+2);
+      else                                              fgaus -> SetLineColor(kRed+2);
+      
+      fgaus -> SetParameter(1,(h_spread_vsEta[k])[etaRing]->GetMean());
+      fgaus -> SetParameter(2,(h_spread_vsEta[k])[etaRing]->GetRMS());
+      (h_spread_vsEta[k])[etaRing] -> Fit(funcName,"QLS+","",center-3.*(h_spread_vsEta[k])[etaRing]->GetRMS(),center+3.*(h_spread_vsEta[k])[etaRing]->GetRMS());
+      
+      g_spread_vsEta[k] -> SetPoint(etaRing,etaMin,fgaus->GetParameter(2));
+      g_spread_vsEta[k] -> SetPointError(etaRing,0.5*etaRingWidth,fgaus->GetParError(2));
+    }
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 void PhiProfileEE(TGraphErrors *phiProjection, TGraphErrors **MomentumScale, TH2F* hcmap,TEndcapRings *eRings, const int & iz)
@@ -392,91 +647,94 @@ void PhiProfileEE(TGraphErrors *phiProjection, TGraphErrors **MomentumScale, TH2
     phiProjection -> SetPoint(i,int(i*(360./MomentumScale[0]->GetN())),vectSum.at(i)/vectCounter.at(i));
 }
 
-/////////////////////////////////////////////////////////////////////////
-void NormalizeIC_EE(TH2F** hcmap, TH2F** hcmap2,
-                    const std::vector< std::pair<int,int> > & TT_centre_EEP,
-                    const std::vector< std::pair<int,int> > & TT_centre_EEM,
-                    TEndcapRings *eRings, bool skip)
+
+
+
+
+
+//-------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+////////////////////////////
+// define the list of bad TT 
+////////////////////////////
+
+void InitializeDeadTT_EB(std::vector<std::pair<int,int> >& TT_centre)
 {
-  std::vector<float> SumIC_Ring_EEP,SumIC_Ring_EEM,Sumxtal_Ring_EEP,Sumxtal_Ring_EEM;
-  
-  SumIC_Ring_EEP.assign(40,0);
-  SumIC_Ring_EEM.assign(40,0);
-  
-  Sumxtal_Ring_EEP.assign(40,0);
-  Sumxtal_Ring_EEM.assign(40,0);
-  
-  
-  /// Mean over phi corrected skipping dead channel 
-  
-  for(int k=0; k<2; k++)
-    for( int ix = 0; ix < hcmap[k]->GetNbinsX()+1; ix++)
-      for(int iy = 0; iy < hcmap[k]->GetNbinsY()+1; iy++)
-      {
-        int ring = eRings->GetEndcapRing(ix,iy,k);
-        if( ring == -1 ) continue;
-        
-        bool isGood = CheckxtalIC_EE(hcmap[k],ix,iy,ring);
-        bool isGoodTT;
-        if(k==0) isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEM);
-        else     isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEP);
-        
-        if( k!=0 && isGoodTT && isGood )
-        {
-          SumIC_Ring_EEP.at(ring) = SumIC_Ring_EEP.at(ring) + hcmap[k]->GetBinContent(ix,iy);
-          Sumxtal_Ring_EEP.at(ring) = Sumxtal_Ring_EEP.at(ring) + 1.;
-        }
-        if( k==0 && isGoodTT && isGood )
-        {
-          SumIC_Ring_EEM.at(ring) = SumIC_Ring_EEM.at(ring) + hcmap[k]->GetBinContent(ix,iy);
-          Sumxtal_Ring_EEM.at(ring) = Sumxtal_Ring_EEM.at(ring) + 1.;
-        }
-      }
-  
-  
-  for(int k=0; k<2; k++)
-    for( int ix = 0; ix < hcmap[k]->GetNbinsX()+1; ix++ )
-      for(int iy = 0; iy < hcmap[k]->GetNbinsY()+1; iy++ )
-      {
-        int ring = eRings->GetEndcapRing(ix,iy,k);
-        if( ring == -1 ) continue;
-                
-        if( !skip )
-        {
-          if( k!=0 )
-          {
-            if( ring>33 ){ hcmap2[k]->Fill(ix,iy,0.);continue; }
-            if( Sumxtal_Ring_EEP.at(ring) != 0 && SumIC_Ring_EEP.at(ring)!= 0 )
-              hcmap2[k] -> Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEP.at(ring)/Sumxtal_Ring_EEP.at(ring)));
-          } 
-          if( k==0 )
-          {
-            if( ring>33 ){ hcmap2[k]->Fill(ix,iy,0.);continue; }
-            if( Sumxtal_Ring_EEM.at(ring) != 0 && SumIC_Ring_EEM.at(ring) != 0 )
-              hcmap2[k] -> Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEM.at(ring)/Sumxtal_Ring_EEM.at(ring)));
-          }
-        }
-        if( skip )
-        {
-          bool isGood = CheckxtalIC_EE(hcmap[k],ix,iy,ring);
-          bool isGoodTT;
-          
-          if( k==0 ) isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEM);
-          else       isGoodTT = CheckxtalTT_EE(ix,iy,ring,TT_centre_EEP);
-          
-          if( k!=0 && isGood && isGoodTT )
-          {
-            if(ring>33){ hcmap2[k]->Fill(ix,iy,0.);continue; }
-            if(Sumxtal_Ring_EEP.at(ring) != 0 && SumIC_Ring_EEP.at(ring)!= 0)
-              hcmap2[k] -> Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEP.at(ring)/Sumxtal_Ring_EEP.at(ring)));
-          } 
-          if( k==0 && isGood && isGoodTT)
-          {
-            if( ring>33 ){ hcmap2[k]->Fill(ix,iy,0.);continue; }
-            if( Sumxtal_Ring_EEM.at(ring) != 0 && SumIC_Ring_EEM.at(ring) != 0 )
-              hcmap2[k] -> Fill(ix,iy,hcmap[k]->GetBinContent(ix,iy)/(SumIC_Ring_EEM.at(ring)/Sumxtal_Ring_EEM.at(ring)));
-          }
-        }
-      }
-  
+  TT_centre.push_back(std::pair<int,int> (58,49));
+  TT_centre.push_back(std::pair<int,int> (53,109));
+  TT_centre.push_back(std::pair<int,int> (8,114));
+  TT_centre.push_back(std::pair<int,int> (83,169));
+  TT_centre.push_back(std::pair<int,int> (53,174));
+  TT_centre.push_back(std::pair<int,int> (63,194));
+  TT_centre.push_back(std::pair<int,int> (83,224));
+  TT_centre.push_back(std::pair<int,int> (73,344));
+  TT_centre.push_back(std::pair<int,int> (83,358));
+  TT_centre.push_back(std::pair<int,int> (-13,18));
+  TT_centre.push_back(std::pair<int,int> (-18,23));
+  TT_centre.push_back(std::pair<int,int> (-8,53));
+  TT_centre.push_back(std::pair<int,int> (-3,63));
+  TT_centre.push_back(std::pair<int,int> (-53,128));
+  TT_centre.push_back(std::pair<int,int> (-53,183));
+  TT_centre.push_back(std::pair<int,int> (-83,193));
+  TT_centre.push_back(std::pair<int,int> (-74,218));
+  TT_centre.push_back(std::pair<int,int> (-8,223));
+  TT_centre.push_back(std::pair<int,int> (-68,303));
+  TT_centre.push_back(std::pair<int,int> (-43,328));
+}
+
+void InitializeDeadTT_EB2012(std::vector<std::pair<int,int> >& TT_centre)
+{
+  TT_centre.push_back(std::pair<int,int> (58,49));
+  TT_centre.push_back(std::pair<int,int> (53,109));
+  TT_centre.push_back(std::pair<int,int> (8,114));
+  TT_centre.push_back(std::pair<int,int> (83,169));
+  TT_centre.push_back(std::pair<int,int> (53,174));
+  TT_centre.push_back(std::pair<int,int> (63,194));
+  TT_centre.push_back(std::pair<int,int> (83,224));
+  TT_centre.push_back(std::pair<int,int> (73,344));
+  TT_centre.push_back(std::pair<int,int> (83,358));
+  TT_centre.push_back(std::pair<int,int> (-13,18));
+  TT_centre.push_back(std::pair<int,int> (-18,23));
+  TT_centre.push_back(std::pair<int,int> (-8,53));
+  TT_centre.push_back(std::pair<int,int> (-3,63));
+  TT_centre.push_back(std::pair<int,int> (-53,128));
+  TT_centre.push_back(std::pair<int,int> (-53,183));
+  TT_centre.push_back(std::pair<int,int> (-83,193));
+  TT_centre.push_back(std::pair<int,int> (-74,218));
+  TT_centre.push_back(std::pair<int,int> (-8,223));
+  TT_centre.push_back(std::pair<int,int> (-68,303));
+  TT_centre.push_back(std::pair<int,int> (-43,328));
+  TT_centre.push_back(std::pair<int,int> (-23,167));
+}
+
+void InitializeDeadTTEEP(std::vector<std::pair<int,int> >& TT_centre)
+{
+  TT_centre.push_back(std::pair<int,int> (78,78));
+  TT_centre.push_back(std::pair<int,int> (83,28));
+  TT_centre.push_back(std::pair<int,int> (83,23));
+}
+
+void InitializeDeadTTEEM(std::vector<std::pair<int,int> >& TT_centre)
+{
+  TT_centre.push_back(std::pair<int,int> (53,28)); 
+}
+
+void InitializeDeadTTEEP2012(std::vector<std::pair<int,int> >& TT_centre)
+{
+  TT_centre.push_back(std::pair<int,int> (78,78));
+  TT_centre.push_back(std::pair<int,int> (83,28));
+  TT_centre.push_back(std::pair<int,int> (83,23));
+  TT_centre.push_back(std::pair<int,int> (91,23));
+}
+
+void InitializeDeadTTEEM2012(std::vector<std::pair<int,int> >& TT_centre)
+{
+  TT_centre.push_back(std::pair<int,int> (53,28));
+  TT_centre.push_back(std::pair<int,int> (29,34));
+  TT_centre.push_back(std::pair<int,int> (89,80));
 }

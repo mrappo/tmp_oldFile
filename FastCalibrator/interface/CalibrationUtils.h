@@ -33,14 +33,16 @@ void InitializeDeadTT_EB2012(std::vector<std::pair<int,int> >& TT_centre);
 void NormalizeIC_EB(TH2F* h_scale_EB, TH2F* hcmap,const std::vector< std::pair<int,int> > & TT_centre, bool skip = true);
 
 /// Book spread Histos
-void BookSpreadHistos_EB(TH2F* hcmap, TH1F **hspreadEtaFold, const int & ringGroupSize,const int & nEtaRing);
-
-/// Book spread stat Histos
-void BookSpreadStatHistos_EB(TH2F* hcmap2,TH2F* hcmap3,TH1F **hstatprecisionEtaFold,const int & ringGroupSize,const int & nEtaRing);
+void BookSpreadHistos_EB(TH1F* h_spread, std::vector<TH1F*>& h_spread_vsEtaFold, TGraphErrors* g_spread_vsEtaFold, const int& etaRingWidth,
+                         const std::string& name, const int& nBins_spread, const float& spreadMin, const float& spreadMax,
+                         TH2F* hcmap, TH2F* hcmap2 = NULL);
 
 /// Phi Projection EB
-void PhiProfile(TGraphErrors *phiProjection, TGraphErrors **MomentumScale, TH2F* hcmap);
+void PhiProfile(TH1F* h_phiAvgICSpread, TGraphErrors* g_avgIC_vsPhi, const int& phiRegionWidth,
+                TH2F* hcmap, TEndcapRings* eRings = NULL);
 
+void PhiFoldProfile_EB(TGraphErrors* g_avgIC_vsPhiFold_EBM, TGraphErrors* g_avgIC_vsPhiFold_EBP, const int& phiRegionWidth,
+                       TH2F* hcmap);
 
 /// Residual Spread 
 void ResidualSpread (TGraphErrors *statprecision, TGraphErrors *Spread, TGraphErrors *Residual);
@@ -64,10 +66,13 @@ void InitializeDeadTTEEM(std::vector<std::pair<int,int> >& TT_centre);
 void InitializeDeadTTEEM2012(std::vector<std::pair<int,int> >& TT_centre);
 
 /// Normalize in function of ring
-void NormalizeIC_EE(TH2F** hcmap, TH2F** hcmap2, const std::vector< std::pair<int,int> > & TT_centre_EEP,const  std::vector< std::pair<int,int> > & TT_centre_EEM, TEndcapRings *eRings, bool skip = true);
+void NormalizeIC_EE(TH2F* h_scale_EEM, TH2F* h_scale_EEP, TH2F* hcmap_EEM, TH2F* hcmap_EEP, const std::vector< std::pair<int,int> > & TT_centre_EEM, const  std::vector< std::pair<int,int> > & TT_centre_EEP, TEndcapRings *eRings, bool skip = true);
 
 /// Book spread  Histos
-void BookSpreadHistos_EE(TH2F** hcmap, TH1F ***hspread, TH1F **hspreadAll,  TEndcapRings *eRings);
+void BookSpreadHistos_EE(std::map<int,TH1F*>& h_spread, std::map<int,std::vector<TH1F*> >& h_spread_vsEtaFold, std::map<int,TGraphErrors*>& g_spread_vsEtaFold,
+                         TEndcapRings* eRings, const int& etaRingWidth,
+                         const std::string& name, const int& nBins_spread, const float& spreadMin, const float& spreadMax,
+                         std::map<int,TH2F*>& hcmap, std::map<int,TH2F*>& hcmap2);
 
 /// Book spread stat Histos
 void BookSpreadStatHistos_EE(TH2F** hcmap2,TH2F** hcmap3, TH1F ***hstatprecision, TH1F **hstatprecisionAll,  TEndcapRings *eRings);
