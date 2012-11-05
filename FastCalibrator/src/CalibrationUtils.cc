@@ -738,3 +738,194 @@ void InitializeDeadTTEEM2012(std::vector<std::pair<int,int> >& TT_centre)
   TT_centre.push_back(std::pair<int,int> (29,34));
   TT_centre.push_back(std::pair<int,int> (89,80));
 }
+
+
+
+
+
+
+int GetNRegionsEB(const std::string& type)
+{
+  if( type == "R9"          ) return 2;
+  
+  if( type == "charge"      ) return 2;
+  
+  if( type == "eta1"        ) return 1;
+  if( type == "eta2"        ) return 2;
+  if( type == "eta4"        ) return 4;
+  
+  if( type == "absEta2"     ) return 2;
+  
+  if( type == "eta2_charge" ) return 4;
+  
+  if( type == "absEta2_charge" ) return 4;
+  
+  return 0;
+}
+
+int templIndexEB(const std::string& type, const float& eta, const float& charge, const float& R9)
+{
+  if( type == "R9" )
+  {
+    if( R9  < 0.94 ) return 0;
+    if( R9 >= 0.94 ) return 1;
+  }
+  
+  
+  if( type == "charge" )
+  {
+    if( charge < 0. ) return 0;
+    if( charge > 0. ) return 1;
+  }
+  
+  
+  if( type == "eta1" )
+  {
+    return 0;
+  }
+  if( type == "eta2" )
+  {
+    if( eta  < 0. ) return 0;
+    if( eta >= 0. ) return 1;
+  }
+  if( type == "eta4" )
+  {
+    if( (eta  < -1.)               ) return 0;
+    if( (eta >= -1.) && (eta < 0.) ) return 1;
+    if( (eta >=  0.) && (eta < 1.) ) return 2;
+    if( (eta >=  1.)               ) return 3;
+  }
+  
+  
+  if( type == "absEta2" )
+  {
+    if( fabs(eta)  < 1. ) return 0;
+    if( fabs(eta) >= 1. ) return 1;
+  }
+  
+  
+  if( type == "eta2_charge" )
+  {
+    if( eta  < 0. )
+    {
+      if( charge < 0. ) return 0;
+      if( charge > 0. ) return 1;    
+    }
+    if( eta >= 0. )
+    {
+      if( charge < 0. ) return 2;
+      if( charge > 0. ) return 3;    
+    }
+  }
+  
+  if( type == "absEta2_charge" )
+  {
+    if( fabs(eta)  < 1. )
+    {
+      if( charge < 0. ) return 0;
+      if( charge > 0. ) return 1;    
+    }
+    if( fabs(eta) >= 1. )
+    {
+      if( charge < 0. ) return 2;
+      if( charge > 0. ) return 3;    
+    }
+  }
+  
+  return -1;
+}
+
+
+
+int GetNRegionsEE(const std::string& type)
+{
+  if( type == "R9"          ) return 2;
+  
+  if( type == "charge"      ) return 2;
+  
+  if( type == "eta1"        ) return 1;
+  if( type == "eta2"        ) return 2;
+  if( type == "eta4"        ) return 4;
+  
+  if( type == "absEta2"     ) return 2;
+  
+  if( type == "eta2_charge" ) return 4;
+  
+  if( type == "absEta2_charge" ) return 4;
+  
+  return 0;
+}
+
+int templIndexEE(const std::string& type, const float& eta, const float& charge, const float& R9)
+{
+  if( type == "R9" )
+  {
+    if( R9  < 0.94 ) return 0;
+    if( R9 >= 0.94 ) return 1;
+  }
+  
+  
+  if( type == "charge" )
+  {
+    if( charge < 0. ) return 0;
+    if( charge > 0. ) return 1;
+  }
+  
+  
+  if( type == "eta1" )
+  {
+    return 0;
+  }
+  if( type == "eta2" )
+  {
+    if( eta  < 0. ) return 0;
+    if( eta >= 0. ) return 1;
+  }
+  if( type == "eta4" )
+  {
+    if( (eta  < -2.)                     ) return 0;
+    if( (eta >= -2.)   && (eta < -1.479) ) return 1;
+    if( (eta >= 1.479) && (eta < 2.)     ) return 2;
+    if( (eta >= 2.)                      ) return 3;
+  }
+  
+  
+  if( type == "absEta2" )
+  {
+    if( fabs(eta)  < 2. ) return 0;
+    if( fabs(eta) >= 2. ) return 1;
+  }
+  
+  
+  if( type == "eta2_charge" )
+  {
+    if( eta  < 0. )
+    {
+      if( charge < 0. ) return 0;
+      if( charge > 0. ) return 1;    
+    }
+    if( eta >= 0. )
+    {
+      if( charge < 0. ) return 2;
+      if( charge > 0. ) return 3;    
+    }
+  }
+  
+  
+  if( type == "absEta2_charge" )
+  {
+    if( fabs(eta)  < 2. )
+    {
+      if( charge < 0. ) return 0;
+      if( charge > 0. ) return 1;    
+    }
+    if( fabs(eta) >= 2. )
+    {
+      if( charge < 0. ) return 2;
+      if( charge > 0. ) return 3;    
+    }
+  }
+  
+  
+  return -1;
+}

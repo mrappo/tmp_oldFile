@@ -15,7 +15,7 @@
 
 ///==== Default constructor Contructor 
 
-FastCalibratorEB::FastCalibratorEB(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, TString outEPDistribution):
+FastCalibratorEB::FastCalibratorEB(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, const std::string& typeEB, TString outEPDistribution):
 outEPDistribution_p(outEPDistribution)
 {
   // if parameter tree is not specified (or zero), connect the file
@@ -32,7 +32,7 @@ outEPDistribution_p(outEPDistribution)
 
   // Set my momentum scale using the input graphs
   myMomentumScale = inputMomentumScale;
-
+  myTypeEB = typeEB;
 }
 
 ///==== deconstructor
@@ -112,6 +112,7 @@ void FastCalibratorEB::Init(TTree *tree)
   //fChain->SetBranchStatus("ele1_DR", 1);                 fChain->SetBranchAddress("ele1_DR", &ele1_DR, &b_ele1_DR);
   //fChain->SetBranchStatus("ele1_charge", 1);             fChain->SetBranchAddress("ele1_charge", &ele1_charge, &b_ele1_charge);
 
+  fChain->SetBranchStatus("ele1_charge", 1);         fChain->SetBranchAddress("ele1_charge", &ele1_charge, &b_ele1_charge);
   fChain->SetBranchStatus("ele1_eta", 1);            fChain->SetBranchAddress("ele1_eta", &ele1_eta, &b_ele1_eta);
   fChain->SetBranchStatus("ele1_phi", 1);            fChain->SetBranchAddress("ele1_phi", &ele1_phi, &b_ele1_phi);
   fChain->SetBranchStatus("ele1_scERaw", 1);         fChain->SetBranchAddress("ele1_scERaw", &ele1_scERaw, &b_ele1_scERaw);
@@ -140,6 +141,7 @@ void FastCalibratorEB::Init(TTree *tree)
   //fChain->SetBranchStatus("ele2_DR", 1);                 fChain->SetBranchAddress("ele2_DR", &ele2_DR, &b_ele2_DR);
   //fChain->SetBranchStatus("ele2_charge", 1);             fChain->SetBranchAddress("ele2_charge", &ele2_charge, &b_ele2_charge);
   
+  fChain->SetBranchStatus("ele2_charge", 1);         fChain->SetBranchAddress("ele2_charge", &ele2_charge, &b_ele2_charge);
   fChain->SetBranchStatus("ele2_eta", 1);            fChain->SetBranchAddress("ele2_eta", &ele2_eta, &b_ele2_eta);
   fChain->SetBranchStatus("ele2_phi", 1);            fChain->SetBranchAddress("ele2_phi", &ele2_phi, &b_ele2_phi);
   fChain->SetBranchStatus("ele2_scERaw", 1);         fChain->SetBranchAddress("ele2_scERaw", &ele2_scERaw, &b_ele2_scERaw);
@@ -318,12 +320,12 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      pSub = 0.; //NOTALEO : test dummy
      bool skipElectron = false;
    
-    ///! different E/p if I am using MCThruth informations or not
+     ///! different E/p if I am using MCThruth informations or not
      if(!isMCTruth)  
      {
-      pIn = ele1_tkP;
-      //NOTALEO
-      pIn *= myMomentumScale[0] -> Eval( ele1_phi );
+       pIn = ele1_tkP;
+       int regionId = templIndexEB(myTypeEB,ele1_eta,ele1_charge,thisE3x3/thisE);
+       pIn *= myMomentumScale[regionId] -> Eval( ele1_phi );
      }
      else{
            pIn = ele1_E_true;
@@ -396,11 +398,11 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      bool skipElectron = false;
    
      /// MCTruth analysis option
-     
      if(!isMCTruth)  
        {
-	       pIn = ele2_tkP;
-         pIn *= myMomentumScale[0] -> Eval( ele2_phi );
+         pIn = ele2_tkP;
+	 int regionId = templIndexEB(myTypeEB,ele2_eta,ele2_charge,thisE3x3/thisE);
+         pIn *= myMomentumScale[regionId] -> Eval( ele2_phi );
        }
      else{
        pIn = ele2_E_true;
@@ -600,8 +602,9 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
 	  ///! if MCTruth Analysis
           if(!isMCTruth)  
 	  {
-           pIn = ele1_tkP;
-           pIn *= myMomentumScale[0] -> Eval( ele1_phi );
+            pIn = ele1_tkP;
+	    int regionId = templIndexEB(myTypeEB,ele1_eta,ele1_charge,thisE3x3/thisE);
+            pIn *= myMomentumScale[regionId] -> Eval( ele1_phi );
           }
           else{
            pIn = ele1_E_true;
@@ -724,8 +727,9 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           ///! Option for MCTruth analysis 
           if(!isMCTruth)  
           {
-           pIn = ele2_tkP;
-           pIn *= myMomentumScale[0] -> Eval( ele2_phi );
+            pIn = ele2_tkP;
+	    int regionId = templIndexEB(myTypeEB,ele2_eta,ele2_charge,thisE3x3/thisE);
+            pIn *= myMomentumScale[regionId] -> Eval( ele2_phi );
           }
           else{
            pIn = ele2_E_true;

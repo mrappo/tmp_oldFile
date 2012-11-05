@@ -5,8 +5,9 @@
 
 #include "ConfigParser.h"
 #include "ntpleUtils.h"
+#include "CalibrationUtils.h"
 
-/// Code used for Run IC procedure on EB/
+
 
 int main (int argc, char ** argv) 
 {
@@ -22,8 +23,8 @@ int main (int argc, char ** argv)
   parseConfigFile (argv[1]) ;
  
   //std::string inputFile       = gConfigParser -> readStringOption("Input::inputFile");
-  std::string inputList       = gConfigParser -> readStringOption("Input::inputList");
-  std::string inputTree       = gConfigParser -> readStringOption("Input::inputTree");
+  std::string inputList = gConfigParser -> readStringOption("Input::inputList");
+  std::string inputTree = gConfigParser -> readStringOption("Input::inputTree");
   
   std::string inputFileDeadXtal = "NULL";
   try
@@ -46,29 +47,31 @@ int main (int argc, char ** argv)
   float R9Min = gConfigParser -> readFloatOption("Input::R9Min");
   bool isMCTruth = gConfigParser -> readBoolOption("Input::isMCTruth");
   std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
-  int nEtaBinsEB = gConfigParser -> readIntOption("Input::nEtaBinsEB");
   
-  std::string outputFile      = gConfigParser -> readStringOption("Output::outputFile");
-
- 
+  std::string typeEB = gConfigParser -> readStringOption("Input::typeEB");
+  std::string typeEE = gConfigParser -> readStringOption("Input::typeEE");
+  int nRegionsEB = GetNRegionsEB(typeEB);
   
-  int numberOfEvents       = gConfigParser -> readIntOption("Options::numberOfEvents");
-  int useZ                 = gConfigParser -> readIntOption("Options::useZ");
-  int useW                 = gConfigParser -> readIntOption("Options::useW");
-  int splitStat            = gConfigParser -> readIntOption("Options::splitStat");
-  int nLoops               = gConfigParser -> readIntOption("Options::nLoops");
+  std::string outputFile = gConfigParser -> readStringOption("Output::outputFile");
+  
+  int numberOfEvents = gConfigParser -> readIntOption("Options::numberOfEvents");
+  int useZ = gConfigParser -> readIntOption("Options::useZ");
+  int useW = gConfigParser -> readIntOption("Options::useW");
+  int splitStat = gConfigParser -> readIntOption("Options::splitStat");
+  int nLoops = gConfigParser -> readIntOption("Options::nLoops");
   
   /// open ntupla of data or MC
   TChain * albero = new TChain (inputTree.c_str());
   FillChain(*albero,inputList); 
 
   /// open calibration momentum graph
-  TFile *f4 = new TFile(inputMomentumScale.c_str());
+  TFile* f4 = new TFile((inputMomentumScale+"_"+typeEB+"_"+typeEE+".root").c_str());
   std::vector<TGraphErrors*> g_EoC_EB;
-
-  for (int i =0 ; i< nEtaBinsEB ; i++){
-    TString Name = Form ("g_EoC_EB_%d",i);
-    g_EoC_EB.push_back ( (TGraphErrors*)f4->Get(Name) );
+  
+  for(int i = 0; i < nRegionsEB; ++i)
+  {
+    TString Name = Form("g_EoC_EB_%d",i);
+    g_EoC_EB.push_back( (TGraphErrors*)(f4->Get(Name)) );
   }
   
   ///Use the whole sample statistics if numberOfEvents < 0
@@ -107,19 +110,19 @@ int main (int argc, char ** argv)
 
     if(isSaveEPDistribution == true)
     {
-     FastCalibratorEB analyzer(albero, g_EoC_EB, outEPDistribution);
-     analyzer.bookHistos(nLoops);
-     analyzer.AcquireDeadXtal(DeadXtal);
-     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,jsonMap);
-     analyzer.saveHistos(f1);
+      FastCalibratorEB analyzer(albero, g_EoC_EB, typeEB, outEPDistribution);
+      analyzer.bookHistos(nLoops);
+      analyzer.AcquireDeadXtal(DeadXtal);
+      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,jsonMap);
+      analyzer.saveHistos(f1);
     }
     else
     {
-     FastCalibratorEB analyzer(albero, g_EoC_EB);
-     analyzer.bookHistos(nLoops);
-     analyzer.AcquireDeadXtal(DeadXtal);
-     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,jsonMap);
-     analyzer.saveHistos(f1);
+      FastCalibratorEB analyzer(albero, g_EoC_EB, typeEB);
+      analyzer.bookHistos(nLoops);
+      analyzer.AcquireDeadXtal(DeadXtal);
+      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,jsonMap);
+      analyzer.saveHistos(f1);
     }
    
   }
@@ -197,14 +200,14 @@ int main (int argc, char ** argv)
     TString DeadXtal = Form("%s",inputFileDeadXtal.c_str());
      
     /// Run on odd
-    FastCalibratorEB analyzer_even(albero, g_EoC_EB);
+    FastCalibratorEB analyzer_even(albero, g_EoC_EB, typeEB);
     analyzer_even.bookHistos(nLoops);
     analyzer_even.AcquireDeadXtal(DeadXtal);
     analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,jsonMap);
     analyzer_even.saveHistos(f1);
   
     /// Run on even
-    FastCalibratorEB analyzer_odd(albero, g_EoC_EB);
+    FastCalibratorEB analyzer_odd(albero, g_EoC_EB, typeEB);
     analyzer_odd.bookHistos(nLoops);
     analyzer_odd.AcquireDeadXtal(DeadXtal);
     analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,jsonMap);

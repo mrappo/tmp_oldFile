@@ -23,6 +23,7 @@
 #include "Math/PtEtaPhiM4D.h"
 #include "Math/LorentzVector.h"
 
+#include "CalibrationUtils.h"
 #include "readJSONFile.h"
 #include "TEndcapRings.h"
 
@@ -30,7 +31,8 @@ class FastCalibratorEE
 {
   public :
     std::vector<TGraphErrors*> myMomentumScale;
-
+    std::string myTypeEE;
+    
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t           fCurrent; //!current Tree number in a TChain
     
@@ -49,6 +51,7 @@ class FastCalibratorEE
     std::vector<int>     *ele1_recHit_iphiORiy;
     std::vector<int>     *ele1_recHit_flag;   
     
+    Float_t         ele1_charge;
     Float_t         ele1_eta;
     Float_t         ele1_phi;
     Float_t         ele1_scERaw;
@@ -77,6 +80,7 @@ class FastCalibratorEE
     std::vector<int>     *ele2_recHit_ietaORix;
     std::vector<int>     *ele2_recHit_flag;
     
+    Float_t         ele2_charge;
     Float_t         ele2_eta;
     Float_t         ele2_phi;
     Float_t         ele2_scERaw;
@@ -111,6 +115,7 @@ class FastCalibratorEE
     TBranch        *b_ele1_recHit_hashedIndex;   //!
     TBranch        *b_ele1_recHit_flag;
     
+    TBranch        *b_ele1_charge;   //!
     TBranch        *b_ele1_eta;   //!
     TBranch        *b_ele1_phi;   //!
     TBranch        *b_ele1_scERaw;   //!
@@ -139,6 +144,7 @@ class FastCalibratorEE
     TBranch        *b_ele2_recHit_ietaORix;   //!
     TBranch        *b_ele2_recHit_flag;
     
+    TBranch        *b_ele2_charge;   //!
     TBranch        *b_ele2_eta;   //!
     TBranch        *b_ele2_phi;   //!
     TBranch        *b_ele2_scERaw;   //!
@@ -161,7 +167,7 @@ class FastCalibratorEE
     TBranch        *b_ele2_scERaw_PUcleaned;
 
     ///! Class methods
-    FastCalibratorEE(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, TString outEPDistribution="NULL");
+    FastCalibratorEE(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, const std::string& typeEE, TString outEPDistribution="NULL");
 
     virtual ~FastCalibratorEE();
 

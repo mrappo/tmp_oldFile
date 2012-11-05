@@ -23,12 +23,14 @@
 #include "Math/PtEtaPhiM4D.h"
 #include "Math/LorentzVector.h"
 
+#include "CalibrationUtils.h"
 #include "readJSONFile.h"
 
 class FastCalibratorEB {
   public :
     std::vector<TGraphErrors*> myMomentumScale;
-
+    std::string myTypeEB;
+    
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t           fCurrent; //!current Tree number in a TChain
 
@@ -48,6 +50,7 @@ class FastCalibratorEB {
     std::vector<int>     *ele1_recHit_iphiORiy;
     std::vector<int>     *ele1_recHit_flag;
     
+    Float_t         ele1_charge;
     Float_t         ele1_eta;
     Float_t         ele1_phi;
     Float_t         ele1_scERaw;
@@ -78,6 +81,7 @@ class FastCalibratorEB {
     std::vector<int>     *ele2_recHit_ietaORix;
     std::vector<int>     *ele2_recHit_flag;
     
+    Float_t         ele2_charge;
     Float_t         ele2_eta;
     Float_t         ele2_phi;
     Float_t         ele2_scERaw;
@@ -115,7 +119,7 @@ class FastCalibratorEB {
     TBranch        *b_ele1_recHit_flag;
     TBranch        *b_ele1_scERaw_PUcleaned;
     TBranch        *b_ele1_scE_regression;
-
+    
     TBranch        *b_ele1_eta;   //!
     TBranch        *b_ele1_phi;   //!
     TBranch        *b_ele1_scERaw;   //!
@@ -167,7 +171,7 @@ class FastCalibratorEB {
 
    ///! List of class methods
    
-    FastCalibratorEB(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, TString outEPDistribution="NULL");
+    FastCalibratorEB(TTree *tree, std::vector<TGraphErrors*> & inputMomentumScale, const std::string& typeEB, TString outEPDistribution="NULL");
    
     virtual ~FastCalibratorEB();
     

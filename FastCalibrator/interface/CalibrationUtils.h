@@ -1,3 +1,6 @@
+#ifndef CalibrationUtils_h
+#define CalibrationUtils_h
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -79,3 +82,14 @@ void BookSpreadStatHistos_EE(TH2F** hcmap2,TH2F** hcmap3, TH1F ***hstatprecision
 
 /// Phi Projection EB
 void PhiProfileEE(TGraphErrors *phiProjection, TGraphErrors **MomentumScale, TH2F* hcmap,TEndcapRings *eRings, const int & iz);
+
+
+
+
+int GetNRegionsEB(const std::string& type);
+int templIndexEB(const std::string& type, const float& eta, const float& charge, const float& R9);
+
+int GetNRegionsEE(const std::string& type);
+int templIndexEE(const std::string& type, const float& eta, const float& charge, const float& R9);
+
+#endif

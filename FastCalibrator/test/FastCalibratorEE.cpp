@@ -5,8 +5,9 @@
 
 #include "ConfigParser.h"
 #include "ntpleUtils.h"
+#include "CalibrationUtils.h"
 
-/// Code for Run the IC procedure on EE
+
 
 int main (int argc, char ** argv) 
 {
@@ -47,28 +48,33 @@ int main (int argc, char ** argv)
   bool isMCTruth = gConfigParser -> readBoolOption("Input::isMCTruth");
   bool isfbrem = gConfigParser -> readBoolOption("Input::isfbrem");
   std::string inputMomentumScale =  gConfigParser -> readStringOption("Input::inputMomentumScale");
-  int nEtaBinsEE = gConfigParser -> readIntOption("Input::nEtaBinsEE");
   
-  std::string outputFile      = gConfigParser -> readStringOption("Output::outputFile");
+  std::string typeEB = gConfigParser -> readStringOption("Input::typeEB");
+  std::string typeEE = gConfigParser -> readStringOption("Input::typeEE");
+  int nRegionsEE = GetNRegionsEE(typeEE);
   
-  int numberOfEvents       = gConfigParser -> readIntOption("Options::numberOfEvents");
-  int useZ                 = gConfigParser -> readIntOption("Options::useZ");
-  int useW                 = gConfigParser -> readIntOption("Options::useW");
-  int splitStat            = gConfigParser -> readIntOption("Options::splitStat");
-  int nLoops               = gConfigParser -> readIntOption("Options::nLoops");
-  /// Acquistion input ntuplas
+  std::string outputFile = gConfigParser -> readStringOption("Output::outputFile");
+  
+  int numberOfEvents = gConfigParser -> readIntOption("Options::numberOfEvents");
+  int useZ = gConfigParser -> readIntOption("Options::useZ");
+  int useW = gConfigParser -> readIntOption("Options::useW");
+  int splitStat = gConfigParser -> readIntOption("Options::splitStat");
+  int nLoops = gConfigParser -> readIntOption("Options::nLoops");
+  
+  /// Acquistion input ntuples
   TChain * albero = new TChain (inputTree.c_str());
   FillChain(*albero,inputList); 
   
   /// open calibration momentum graph
-  TFile *f4 = new TFile(inputMomentumScale.c_str());
+  TFile* f4 = new TFile((inputMomentumScale+"_"+typeEB+"_"+typeEE+".root").c_str());
   std::vector<TGraphErrors*> g_EoC_EE;
 
-  for (int i =0 ; i< nEtaBinsEE ; i++){
-    TString Name = Form ("g_EoC_EE_%d",i);
-    g_EoC_EE.push_back ( (TGraphErrors*)f4->Get(Name) );
+  for(int i = 0; i < nRegionsEE; ++i)
+  {
+    TString Name = Form("g_EoC_EE_%d",i);
+    g_EoC_EE.push_back( (TGraphErrors*)(f4->Get(Name)) );
   }
-
+  
   ///Use the whole sample statistics if numberOfEvents < 0
   if ( numberOfEvents < 0 ) numberOfEvents = albero->GetEntries(); 
   
@@ -111,19 +117,19 @@ int main (int argc, char ** argv)
     
     if(isSaveEPDistribution == true)
     {
-     FastCalibratorEE analyzer(albero, g_EoC_EE, outEPDistribution);
-     analyzer.bookHistos(nLoops);
-     analyzer.AcquireDeadXtal(DeadXtal);
-     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
-     analyzer.saveHistos(f1);
+      FastCalibratorEE analyzer(albero, g_EoC_EE, typeEE, outEPDistribution);
+      analyzer.bookHistos(nLoops);
+      analyzer.AcquireDeadXtal(DeadXtal);
+      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
+      analyzer.saveHistos(f1);
     }
     else
     {
-     FastCalibratorEE analyzer(albero, g_EoC_EE);
-     analyzer.bookHistos(nLoops);
-     analyzer.AcquireDeadXtal(DeadXtal);  
-     analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
-     analyzer.saveHistos(f1);
+      FastCalibratorEE analyzer(albero, g_EoC_EE, typeEE);
+      analyzer.bookHistos(nLoops);
+      analyzer.AcquireDeadXtal(DeadXtal);  
+      analyzer.Loop(numberOfEvents, useZ, useW, splitStat, nLoops, isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
+      analyzer.saveHistos(f1);
     }
    
   }
@@ -224,14 +230,14 @@ int main (int argc, char ** argv)
   
      
     /// Run on odd
-    FastCalibratorEE analyzer_even(albero, g_EoC_EE);
+    FastCalibratorEE analyzer_even(albero, g_EoC_EE, typeEE);
     analyzer_even.bookHistos(nLoops);
     analyzer_even.AcquireDeadXtal(DeadXtal);
     analyzer_even.Loop(numberOfEvents, useZ, useW, splitStat, nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);
     analyzer_even.saveHistos(f1);
   
     /// Run on even
-    FastCalibratorEE analyzer_odd(albero, g_EoC_EE);
+    FastCalibratorEE analyzer_odd(albero, g_EoC_EE, typeEE);
     analyzer_odd.bookHistos(nLoops);
     analyzer_odd.AcquireDeadXtal(DeadXtal);
     analyzer_odd.Loop(numberOfEvents, useZ, useW, splitStat*(-1), nLoops,isMiscalib,isSaveEPDistribution,isEPselection,isR9selection,R9Min,isMCTruth,isfbrem,jsonMap);

@@ -1,5 +1,9 @@
 #include "TEndcapRings.h"
+#include "ntpleUtils.h"
+#include "treeReader.h"
+#include "CalibrationUtils.h"
 #include "../CommonTools/histoFunc.h"
+
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -9,6 +13,7 @@
 #include <algorithm>
 #include <math.h>
 #include <vector>
+
 #include "TROOT.h"
 #include "TStyle.h"
 #include "TFile.h"
@@ -23,15 +28,8 @@
 #include "TChain.h"
 #include "TVirtualFitter.h"
 #include "ConfigParser.h"
-#include "ntpleUtils.h"
-#include "treeReader.h"
 #include "TMath.h"
 #include "TRandom3.h"
-
-
-
-
-
 
 using namespace std;
 
@@ -45,98 +43,6 @@ bool IsEtaGap(float eta)
   if( fabs(feta - 65) < 3 ) return true;
   if( fabs(feta - 85) < 3 ) return true;
   return false;
-}
-
-int templIndexEB(const float& eta, const float& charge, const float& R9)
-{
-  return 0;
-  
-  /*
-  if( R9 > 0.94 ) return 0;
-  if( R9 < 0.94 ) return 1;
-  return -1;
-  */
-  
-  /*
-  if( charge > 0 )
-  {
-    if( fabs(eta) <= 0.4375                        ) return 0;
-    if( fabs(eta) >  0.4375 && fabs(eta) <= 0.7875 ) return 0;
-    if( fabs(eta) >  0.7875 && fabs(eta) <= 1.1375 ) return 0;
-    if( fabs(eta) >  1.1375 && fabs(eta) <= 1.4875 ) return 0;
-  }
-  else
-  {
-    if( fabs(eta) <= 0.4375                        ) return 1;
-    if( fabs(eta) >  0.4375 && fabs(eta) <= 0.7875 ) return 1;
-    if( fabs(eta) >  0.7875 && fabs(eta) <= 1.1375 ) return 1;
-    if( fabs(eta) >  1.1375 && fabs(eta) <= 1.4875 ) return 1;  
-  }
-  return -1;
-  */
-  
-  /*
-  if( charge > 0 )
-  {
-    if( R9 > 0.94 ) return 0;
-    if( R9 < 0.94 ) return 1;
-  }
-  else
-  {
-    if( R9 > 0.94 ) return 2;
-    if( R9 < 0.94 ) return 3;
-  }
-  return -1;
-  */
-}
-
-int templIndexEE(const float& eta, const float& charge, const float& R9)
-{
-  return 0;
-  
-  /*
-  if( R9 > 0.94 ) return 0;
-  if( R9 < 0.94 ) return 1;
-  return -1;
-  */
-  
-  /*
-  if( charge > 0 )
-  {
-    if( fabs(eta) > 1.4875 && fabs(eta) <= 2.0000) return 0;
-    if( fabs(eta) > 2.0000 && fabs(eta) <= 2.5000) return 0;
-  }
-  else
-  {
-    if( fabs(eta) > 1.4875 && fabs(eta) <= 2.0000) return 1;
-    if( fabs(eta) > 2.0000 && fabs(eta) <= 2.5000) return 1;
-  }
-  return -1;
-  */
-  
-  /*
-  if( charge > 0 )
-  {
-    if( R9 > 0.94 ) return 0;
-    if( R9 < 0.94 ) return 1;
-  }
-  else
-  {
-    if( R9 > 0.94 ) return 2;
-    if( R9 < 0.94 ) return 3;
-  }
-  return -1;
-  */
-}
-
-float rescaleFactorEB(float eta)
-{
-  return 1.;
-}
-
-float rescaleFactorEE(float eta)
-{
-  return 1.;
 }
 
 
@@ -161,10 +67,10 @@ int main(int argc, char** argv)
   std::string infileMC    = gConfigParser -> readStringOption("Input::infileMC");
   std::string WeightforMC = gConfigParser -> readStringOption("Input::WeightforMC");
   
+  std::string typeEB = gConfigParser -> readStringOption("Input::typeEB");
+  std::string typeEE = gConfigParser -> readStringOption("Input::typeEE");
   int  nPhiBinsEB = gConfigParser -> readIntOption("Input::nPhiBinsEB");
   int  nPhiBinsEE = gConfigParser -> readIntOption("Input::nPhiBinsEE");
-  int  nEtaBinsEB = gConfigParser -> readIntOption("Input::nEtaBinsEB");
-  int  nEtaBinsEE = gConfigParser -> readIntOption("Input::nEtaBinsEE");
   int  nPhiBinsTempEB = gConfigParser -> readIntOption("Input::nPhiBinsTempEB");
   int  nPhiBinsTempEE = gConfigParser -> readIntOption("Input::nPhiBinsTempEE");
   int  rebinEB = gConfigParser -> readIntOption("Input::rebinEB");
@@ -172,15 +78,18 @@ int main(int argc, char** argv)
   bool usePUweights = gConfigParser -> readBoolOption("Input::usePUweights");
   std::string outputFile = gConfigParser -> readStringOption("Output::outputFile");
   
+  int nRegionsEB = GetNRegionsEB(typeEB);
+  int nRegionsEE = GetNRegionsEE(typeEE);
+  
   cout <<" Basic Configuration " <<endl;
   cout <<" Tree Name = "<<TreeName<<endl;
   cout <<" infileDATA = "<<infileDATA<<endl;
   cout <<" infileMC = "<<infileMC<<endl;
   cout <<" WeightforMC = "<<WeightforMC<<endl;
+  cout <<" nRegionsEB = "<<nRegionsEB<<endl;
+  cout <<" nRegionsEE = "<<nRegionsEE<<endl;
   cout <<" nPhiBinsEB = "<<nPhiBinsEB<<endl;
   cout <<" nPhiBinsEE = "<<nPhiBinsEE<<endl;
-  cout <<" nEtaBinsEB = "<<nEtaBinsEB<<endl;
-  cout <<" nEtaBinsEE = "<<nEtaBinsEE<<endl;
   cout <<" nPhiBinsTempEB = "<<nPhiBinsTempEB<<endl;
   cout <<" nPhiBinsTempEE = "<<nPhiBinsTempEE<<endl;
   cout <<" rebinEB = "<<rebinEB<<endl;
@@ -188,6 +97,7 @@ int main(int argc, char** argv)
   cout <<" usePUweights = "<<usePUweights<<endl;
   
   cout << "Making calibration plots for Momentum scale studies "<< endl;
+  
   
   
   //---- variables for selection
@@ -330,7 +240,7 @@ int main(int argc, char** argv)
   std::cout << ">>> Initialize EB histos" << std::endl;
   for(int i = 0; i < nPhiBinsEB; ++i)
   {
-    for(int j = 0; j < nEtaBinsEB; ++j)
+    for(int j = 0; j < nRegionsEB; ++j)
     {
       TString histoName;
       histoName= Form("EB_EoP_%d_%d", i,j);
@@ -359,7 +269,7 @@ int main(int argc, char** argv)
   std::cout << ">>> Initialize EE histos" << std::endl;
   for(int i = 0; i < nPhiBinsEE; ++i)
   {
-    for(int j = 0; j < nEtaBinsEE; ++j)
+    for(int j = 0; j < nRegionsEE; ++j)
     {
       TString histoName;
       histoName= Form("EE_EoP_%d_%d", i,j);
@@ -393,7 +303,7 @@ int main(int argc, char** argv)
   std::cout << ">>> Initialize EB template" << std::endl;
   for(int mod = 0; mod < nPhiBinsTempEB; ++mod)
   {
-    for(int j = 0; j < nEtaBinsEB; ++j)
+    for(int j = 0; j < nRegionsEB; ++j)
     {
       TString histoName;
       histoName=Form("EB_template_%d_%d",mod,j);
@@ -405,7 +315,7 @@ int main(int argc, char** argv)
   std::cout << ">>> Initialize EE template" << std::endl;
   for(int mod = 0; mod < nPhiBinsTempEE; ++mod)
   {
-    for(int j = 0; j < nEtaBinsEE; ++j)
+    for(int j = 0; j < nRegionsEE; ++j)
     {
       TString histoName;
       histoName=Form("EE_template_%d_%d",mod,j);
@@ -415,12 +325,12 @@ int main(int argc, char** argv)
   }
   
   
-  TH1F** h_phi_data_EB = new TH1F*[nEtaBinsEB];
-  TH1F** h_phi_mc_EB   = new TH1F*[nEtaBinsEB];
-  TH1F** h_phi_data_EE = new TH1F*[nEtaBinsEE];
-  TH1F** h_phi_mc_EE   = new TH1F*[nEtaBinsEE];
+  TH1F** h_phi_data_EB = new TH1F*[nRegionsEB];
+  TH1F** h_phi_mc_EB   = new TH1F*[nRegionsEB];
+  TH1F** h_phi_data_EE = new TH1F*[nRegionsEE];
+  TH1F** h_phi_mc_EE   = new TH1F*[nRegionsEE];
 
-  for(int index = 0; index < nEtaBinsEB; ++index)
+  for(int index = 0; index < nRegionsEB; ++index)
   {
     TString name;
     name=Form("EB_h_phi_data_%d",index);
@@ -429,7 +339,7 @@ int main(int argc, char** argv)
     h_phi_mc_EB[index]= new TH1F(name,"h_phi_mc",100,-TMath::Pi(),TMath::Pi());
   }
   
-  for(int index = 0; index < nEtaBinsEE; ++index)
+  for(int index = 0; index < nRegionsEE; ++index)
   {
     TString name;
     name=Form("EE_h_phi_data_%d",index);
@@ -535,18 +445,18 @@ int main(int argc, char** argv)
       int modPhi = int(iphiSeed/(360./nPhiBinsTempEB));
       if( modPhi == nPhiBinsTempEB ) modPhi = 0;
       
-      int modEta = templIndexEB(eleEta,charge,R9);
-      if( modEta == -1 ) continue;
+      int regionId = templIndexEB(typeEB,eleEta,charge,R9);
+      if( regionId == -1 ) continue;
       
-      (h_template_EB.at(modPhi)).at(modEta) -> Fill(var,ww);
+      (h_template_EB.at(modPhi)).at(regionId) -> Fill(var,ww);
       
       
       // fill MC histos in eta bins
       int PhibinEB = hPhiBinEB->FindBin(elePhi) - 1;
       if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
       
-      (h_EoP_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is MC
-      h_phi_mc_EB[modEta] -> Fill(scPhi,ww);
+      (h_EoP_EB.at(PhibinEB)).at(regionId) -> Fill(var,ww);  // This is MC
+      h_phi_mc_EB[regionId] -> Fill(scPhi,ww);
     }
     
     // MC - ENDCAP - ele1
@@ -562,18 +472,18 @@ int main(int argc, char** argv)
       int modPhi = int (iphi/(360./nPhiBinsTempEE));
       if( modPhi == nPhiBinsTempEE ) modPhi = 0;
       
-      int modEta =  templIndexEE(eleEta,charge,R9);
-      if( modEta == -1 ) continue;
+      int regionId =  templIndexEE(typeEE,eleEta,charge,R9);
+      if( regionId == -1 ) continue;
       
-      (h_template_EE.at(modPhi)).at(modEta) -> Fill(var,ww);
+      (h_template_EE.at(modPhi)).at(regionId) -> Fill(var,ww);
       
       
       // fill MC histos in eta bins
       int PhibinEE = hPhiBinEE->FindBin(elePhi) - 1;
       if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
       
-      (h_EoP_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is MC
-      h_phi_mc_EE[modEta] -> Fill(scPhi,ww);
+      (h_EoP_EE.at(PhibinEE)).at(regionId) -> Fill(var,ww);  // This is MC
+      h_phi_mc_EE[regionId] -> Fill(scPhi,ww);
     }
     
     
@@ -591,18 +501,18 @@ int main(int argc, char** argv)
        int modPhi = int (iphiSeed2/(360./nPhiBinsTempEB));
        if( modPhi == nPhiBinsTempEB ) modPhi = 0;
        
-       int modEta  = templIndexEB(eleEta2,charge2,R92);
-       if(modEta == -1) continue;
+       int regionId  = templIndexEB(typeEB,eleEta2,charge2,R92);
+       if(regionId == -1) continue;
        
-       (h_template_EB.at(modPhi)).at(modEta)->Fill(var,ww);
+       (h_template_EB.at(modPhi)).at(regionId)->Fill(var,ww);
        
        
        // fill MC histos in eta bins
        int PhibinEB = hPhiBinEB->FindBin(elePhi2) - 1;
        if( PhibinEB==nPhiBinsEB ) PhibinEB = 0;
        
-       (h_EoP_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww); // This is MC
-       h_phi_mc_EB[modEta]->Fill(scPhi2,ww);
+       (h_EoP_EB.at(PhibinEB)).at(regionId) -> Fill(var,ww); // This is MC
+       h_phi_mc_EB[regionId]->Fill(scPhi2,ww);
     }
     
     // MC - ENDCAP - ele2
@@ -618,18 +528,18 @@ int main(int argc, char** argv)
       int modPhi = int (iphi/(360./nPhiBinsTempEE));
       if( modPhi == nPhiBinsTempEE ) modPhi = 0;
       
-      int modEta =  templIndexEE(eleEta2,charge2,R92);
-      if(modEta == -1) continue;
+      int regionId =  templIndexEE(typeEE,eleEta2,charge2,R92);
+      if(regionId == -1) continue;
       
-      (h_template_EE.at(modPhi)).at(modEta) ->  Fill(var,ww);
+      (h_template_EE.at(modPhi)).at(regionId) ->  Fill(var,ww);
       
       
       // fill MC histos in eta bins
       int PhibinEE = hPhiBinEE->FindBin(elePhi2) - 1;
       if(PhibinEE==nPhiBinsEE) PhibinEE = 0;
       
-      (h_EoP_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is MC
-      h_phi_mc_EE[modEta]->Fill(scPhi2,ww);
+      (h_EoP_EE.at(PhibinEE)).at(regionId) -> Fill(var,ww);  // This is MC
+      h_phi_mc_EE[regionId]->Fill(scPhi2,ww);
     }
     
     h_et_mc ->Fill(scEt, ww);
@@ -665,8 +575,8 @@ int main(int argc, char** argv)
     
     
     //--- set the mass for ele1
-    if( ele1_iz == 0 ) var = ( mZ * sqrt(pTK/scEne) * sqrt(scEneReg2/scEne2) * rescaleFactorEB(eleEta) ) / 91.19;
-    else               var = ( mZ * sqrt(pTK/scEne) * sqrt(scEneReg2/scEne2) * rescaleFactorEE(eleEta) ) / 91.19;
+    if( ele1_iz == 0 ) var = ( mZ * sqrt(pTK/scEne) * sqrt(scEneReg2/scEne2) ) / 91.19;
+    else               var = ( mZ * sqrt(pTK/scEne) * sqrt(scEneReg2/scEne2) ) / 91.19;
     // simulate e+/e- asymmetry
     //if( charge > 0 ) ww *= 1.*(6/5);
     //else             ww *= 1.*(4/5);
@@ -677,12 +587,12 @@ int main(int argc, char** argv)
       int PhibinEB = hPhiBinEB->FindBin(elePhi) - 1;
       if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
       
-      int modEta = templIndexEB(eleEta,charge,R9);
-      if(modEta == -1) continue;
+      int regionId = templIndexEB(typeEB,eleEta,charge,R9);
+      if(regionId == -1) continue;
       
-      (h_EoC_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is DATA
-      (h_Phi_EB.at(PhibinEB)).at(modEta) -> Fill(elePhi);
-      h_phi_data_EB[modEta]->Fill(elePhi);
+      (h_EoC_EB.at(PhibinEB)).at(regionId) -> Fill(var,ww);  // This is DATA
+      (h_Phi_EB.at(PhibinEB)).at(regionId) -> Fill(elePhi);
+      h_phi_data_EB[regionId]->Fill(elePhi);
     }
     
     // DATA - ENDCAP - ele1
@@ -694,19 +604,19 @@ int main(int argc, char** argv)
       int PhibinEE = hPhiBinEE->FindBin(elePhi) - 1;
       if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
       
-      int modEta = templIndexEE(eleEta,charge,R9);
-      if( modEta == -1 ) continue;
+      int regionId = templIndexEE(typeEE,eleEta,charge,R9);
+      if( regionId == -1 ) continue;
       
-      (h_EoC_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is DATA
-      (h_Phi_EE.at(PhibinEE)).at(modEta) -> Fill(elePhi); 
-      h_phi_data_EE[modEta] -> Fill(elePhi);
+      (h_EoC_EE.at(PhibinEE)).at(regionId) -> Fill(var,ww);  // This is DATA
+      (h_Phi_EE.at(PhibinEE)).at(regionId) -> Fill(elePhi); 
+      h_phi_data_EE[regionId] -> Fill(elePhi);
     }
     
     
     
     //--- set the mass for ele2
-    if( ele2_iz == 0 ) var = ( mZ * sqrt(pTK2/scEne2) * sqrt(scEneReg/scEne) * rescaleFactorEB(eleEta2) ) / 91.19;
-    else               var = ( mZ * sqrt(pTK2/scEne2) * sqrt(scEneReg/scEne) * rescaleFactorEE(eleEta2) ) / 91.19;
+    if( ele2_iz == 0 ) var = ( mZ * sqrt(pTK2/scEne2) * sqrt(scEneReg/scEne) ) / 91.19;
+    else               var = ( mZ * sqrt(pTK2/scEne2) * sqrt(scEneReg/scEne) ) / 91.19;
     // simulate e+/e- asymmetry
     //if( charge2 > 0 ) ww *= 1.*(6/5);
     //else              ww *= 1.*(4/5);
@@ -717,12 +627,12 @@ int main(int argc, char** argv)
       int PhibinEB = hPhiBinEB->FindBin(elePhi2) - 1;
       if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
       
-      int modEta = templIndexEB(eleEta2,charge2,R92);
-      if( modEta == -1 ) continue;
+      int regionId = templIndexEB(typeEB,eleEta2,charge2,R92);
+      if( regionId == -1 ) continue;
       
-      (h_EoC_EB.at(PhibinEB)).at(modEta) -> Fill(var,ww);  // This is DATA
-      (h_Phi_EB.at(PhibinEB)).at(modEta) -> Fill(elePhi2);
-      h_phi_data_EB[modEta] -> Fill(elePhi2);
+      (h_EoC_EB.at(PhibinEB)).at(regionId) -> Fill(var,ww);  // This is DATA
+      (h_Phi_EB.at(PhibinEB)).at(regionId) -> Fill(elePhi2);
+      h_phi_data_EB[regionId] -> Fill(elePhi2);
     }
     else
     {     
@@ -732,12 +642,12 @@ int main(int argc, char** argv)
       int PhibinEE = hPhiBinEE->FindBin(elePhi2) - 1;
       if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
       
-      int modEta = templIndexEE(eleEta2,charge2,R92);
-      if( modEta == -1 ) continue;
+      int regionId = templIndexEE(typeEE,eleEta2,charge2,R92);
+      if( regionId == -1 ) continue;
       
-      (h_EoC_EE.at(PhibinEE)).at(modEta) -> Fill(var,ww);  // This is DATA
-      (h_Phi_EE.at(PhibinEE)).at(modEta) -> Fill(elePhi2); 
-      h_phi_data_EE[modEta] ->Fill(elePhi2);
+      (h_EoC_EE.at(PhibinEE)).at(regionId) -> Fill(var,ww);  // This is DATA
+      (h_Phi_EE.at(PhibinEE)).at(regionId) -> Fill(elePhi2); 
+      h_phi_data_EE[regionId] ->Fill(elePhi2);
     }
     
     h_et_data ->Fill(scEt);
@@ -755,24 +665,24 @@ int main(int argc, char** argv)
   // Initializations
   
   // initialize TGraphs
-  TFile* o = new TFile(outputFile.c_str(),"RECREATE");
+  TFile* o = new TFile((outputFile+"_"+typeEB+"_"+typeEE+".root").c_str(),"RECREATE");
   
-  TGraphErrors** g_EoP_EB = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_EoC_EB = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_Rat_EB = new TGraphErrors*[nEtaBinsEB];
+  TGraphErrors** g_EoP_EB = new TGraphErrors*[nRegionsEB];
+  TGraphErrors** g_EoC_EB = new TGraphErrors*[nRegionsEB];
+  TGraphErrors** g_Rat_EB = new TGraphErrors*[nRegionsEB];
   
-  for(int j = 0; j < nEtaBinsEB; ++j)
+  for(int j = 0; j < nRegionsEB; ++j)
   {
     g_EoP_EB[j] = new TGraphErrors();
     g_EoC_EB[j] = new TGraphErrors();
     g_Rat_EB[j] = new TGraphErrors();
   }
   
-  TGraphErrors** g_EoP_EE = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_EoC_EE = new TGraphErrors*[nEtaBinsEB];
-  TGraphErrors** g_Rat_EE = new TGraphErrors*[nEtaBinsEB];
+  TGraphErrors** g_EoP_EE = new TGraphErrors*[nRegionsEB];
+  TGraphErrors** g_EoC_EE = new TGraphErrors*[nRegionsEB];
+  TGraphErrors** g_Rat_EE = new TGraphErrors*[nRegionsEB];
  
-  for(int j = 0; j < nEtaBinsEE; ++j)
+  for(int j = 0; j < nRegionsEE; ++j)
   {
     g_EoP_EE[j]= new TGraphErrors();
     g_EoC_EE[j]= new TGraphErrors();
@@ -785,7 +695,7 @@ int main(int argc, char** argv)
   
   for(int mod = 0; mod < nPhiBinsTempEB; ++mod)
   {
-    for(int j = 0; j < nEtaBinsEB; ++j)
+    for(int j = 0; j < nRegionsEB; ++j)
     {
       (h_template_EB.at(mod)).at(j) -> Rebin(rebinEB);
       (templateHistoFuncEB.at(mod)).push_back( new histoFunc((h_template_EB.at(mod)).at(j)) );
@@ -794,7 +704,7 @@ int main(int argc, char** argv)
   
   for(int mod = 0; mod < nPhiBinsTempEE; ++mod)
   {
-    for(int j = 0; j < nEtaBinsEE; ++j)
+    for(int j = 0; j < nRegionsEE; ++j)
     {
       (h_template_EE.at(mod)).at(j) -> Rebin(rebinEE);
       (templateHistoFuncEE.at(mod)).push_back( new histoFunc((h_template_EE.at(mod)).at(j)) );
@@ -813,7 +723,7 @@ int main(int argc, char** argv)
   
   for(int i = 0; i < nPhiBinsEB; ++i)
   {
-    for(int j = 0; j < nEtaBinsEB; ++j)
+    for(int j = 0; j < nRegionsEB; ++j)
     {
       float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i+1);
       
@@ -940,7 +850,7 @@ int main(int argc, char** argv)
   
   for(int i = 0; i < nPhiBinsEE; ++i)
   {
-    for(int j = 0; j < nEtaBinsEE; ++j)
+    for(int j = 0; j < nRegionsEE; ++j)
     {
       float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i);
       
@@ -1069,61 +979,61 @@ int main(int argc, char** argv)
    
   o -> cd();
   
-  for(int j = 0; j < nEtaBinsEB; ++j)
+  for(int j = 0; j < nRegionsEB; ++j)
   {
     TString Name;
-    Name = Form("g_EoP_EB_%d",j);
-    if(g_EoP_EB[j]->GetN()!=0) g_EoP_EB[j] -> Write(Name);
+    //Name = Form("g_EoP_EB_%d",j);
+    //if(g_EoP_EB[j]->GetN()!=0) g_EoP_EB[j] -> Write(Name);
     Name = Form("g_EoC_EB_%d",j);
     if(g_EoC_EB[j]->GetN()!=0) g_EoC_EB[j] -> Write(Name);
-    Name = Form("g_Rat_EB_%d",j);
-    if(g_Rat_EB[j]->GetN()!=0) g_Rat_EB[j] -> Write(Name);
+    //Name = Form("g_Rat_EB_%d",j);
+    //if(g_Rat_EB[j]->GetN()!=0) g_Rat_EB[j] -> Write(Name);
   }
   
-  for(int j = 0; j < nEtaBinsEE; ++j)
+  for(int j = 0; j < nRegionsEE; ++j)
   {
     TString Name;
-    Name = Form("g_EoP_EE_%d",j);
-    if(g_EoP_EE[j]->GetN()!=0) g_EoP_EE[j] -> Write(Name);
+    //Name = Form("g_EoP_EE_%d",j);
+    //if(g_EoP_EE[j]->GetN()!=0) g_EoP_EE[j] -> Write(Name);
     Name = Form("g_EoC_EE_%d",j);
     if(g_EoC_EE[j]->GetN()!=0) g_EoC_EE[j] -> Write(Name);
-    Name = Form("g_Rat_EE_%d",j);
-    if(g_Rat_EE[j]->GetN()!=0) g_Rat_EE[j] -> Write(Name);
+    //Name = Form("g_Rat_EE_%d",j);
+    //if(g_Rat_EE[j]->GetN()!=0) g_Rat_EE[j] -> Write(Name);
   }
   
   for(int mod = 0; mod<nPhiBinsTempEB; ++mod)
-    for(int j = 0; j<nEtaBinsEB; ++j)
+    for(int j = 0; j<nRegionsEB; ++j)
     {
       if( h_template_EB[mod][j] -> GetEntries() != 0 ) h_template_EB[mod][j] -> Write();
     }
   
   for(int mod = 0; mod<nPhiBinsTempEE; ++mod)
-    for(int j = 0; j<nEtaBinsEE; ++j)
+    for(int j = 0; j<nRegionsEE; ++j)
     {
       if( h_template_EE[mod][j] -> GetEntries() != 0 ) h_template_EE[mod][j] -> Write();
     }
   
   for(int i = 0; i<nPhiBinsEB; ++i)
-    for(int j = 0; j<nEtaBinsEB; ++j)
+    for(int j = 0; j<nRegionsEB; ++j)
     {
-      if( (h_EoP_EB.at(i)).at(j) -> GetEntries() != 0 ) (h_EoP_EB.at(i)).at(j) -> Write();
-      if( (h_EoC_EB.at(i)).at(j) -> GetEntries() != 0 ) (h_EoC_EB.at(i)).at(j) -> Write();
+      //if( (h_EoP_EB.at(i)).at(j) -> GetEntries() != 0 ) (h_EoP_EB.at(i)).at(j) -> Write();
+      //if( (h_EoC_EB.at(i)).at(j) -> GetEntries() != 0 ) (h_EoC_EB.at(i)).at(j) -> Write();
     }
   
   for(int i = 0; i<nPhiBinsEE; ++i)
-    for(int j = 0; j<nEtaBinsEE; ++j)
+    for(int j = 0; j<nRegionsEE; ++j)
     {
-      if( (h_EoP_EE.at(i)).at(j) -> GetEntries() != 0 ) (h_EoP_EE.at(i)).at(j) -> Write();
-      if( (h_EoC_EE.at(i)).at(j) -> GetEntries() != 0 ) (h_EoC_EE.at(i)).at(j) -> Write();
+      //if( (h_EoP_EE.at(i)).at(j) -> GetEntries() != 0 ) (h_EoP_EE.at(i)).at(j) -> Write();
+      //if( (h_EoC_EE.at(i)).at(j) -> GetEntries() != 0 ) (h_EoC_EE.at(i)).at(j) -> Write();
     }
   
-  for(int j =0; j< nEtaBinsEB; ++j)
+  for(int j =0; j< nRegionsEB; ++j)
   {
     if( h_phi_mc_EB[j]   -> GetEntries() !=0 ) h_phi_mc_EB[j]   -> Write();
     if( h_phi_data_EB[j] -> GetEntries() !=0 ) h_phi_data_EB[j] -> Write();
   }
   
-  for(int j =0; j< nEtaBinsEE; ++j)
+  for(int j =0; j< nRegionsEE; ++j)
   {
     if( h_phi_mc_EE[j]   -> GetEntries() !=0 ) h_phi_mc_EE[j]   -> Write(); 
     if( h_phi_data_EE[j] -> GetEntries() !=0 ) h_phi_data_EE[j] -> Write();
