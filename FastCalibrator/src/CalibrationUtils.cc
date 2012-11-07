@@ -746,6 +746,8 @@ void InitializeDeadTTEEM2012(std::vector<std::pair<int,int> >& TT_centre)
 
 int GetNRegionsEB(const std::string& type)
 {
+  if( type == "none"        ) return 1;
+  
   if( type == "R9"          ) return 2;
   
   if( type == "charge"      ) return 2;
@@ -765,6 +767,12 @@ int GetNRegionsEB(const std::string& type)
 
 int templIndexEB(const std::string& type, const float& eta, const float& charge, const float& R9)
 {
+  if( type == "none" )
+  {
+    return 0;
+  }
+  
+  
   if( type == "R9" )
   {
     if( R9  < 0.94 ) return 0;
@@ -839,6 +847,8 @@ int templIndexEB(const std::string& type, const float& eta, const float& charge,
 
 int GetNRegionsEE(const std::string& type)
 {
+  if( type == "none"        ) return 1;
+  
   if( type == "R9"          ) return 2;
   
   if( type == "charge"      ) return 2;
@@ -858,6 +868,12 @@ int GetNRegionsEE(const std::string& type)
 
 int templIndexEE(const std::string& type, const float& eta, const float& charge, const float& R9)
 {
+  if( type == "none" )
+  {
+    return 0;
+  }
+  
+  
   if( type == "R9" )
   {
     if( R9  < 0.94 ) return 0;
