@@ -325,7 +325,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
      {
        pIn = ele1_tkP;
        int regionId = templIndexEB(myTypeEB,ele1_eta,ele1_charge,thisE3x3/thisE);
-       pIn *= myMomentumScale[regionId] -> Eval( ele1_phi );
+       pIn /= myMomentumScale[regionId] -> Eval( ele1_phi );
      }
      else{
            pIn = ele1_E_true;
@@ -402,7 +402,7 @@ void FastCalibratorEB::BuildEoPeta_ele(int iLoop, int nentries , int useW, int u
        {
          pIn = ele2_tkP;
 	 int regionId = templIndexEB(myTypeEB,ele2_eta,ele2_charge,thisE3x3/thisE);
-         pIn *= myMomentumScale[regionId] -> Eval( ele2_phi );
+         pIn /= myMomentumScale[regionId] -> Eval( ele2_phi );
        }
      else{
        pIn = ele2_E_true;
@@ -604,7 +604,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
 	  {
             pIn = ele1_tkP;
 	    int regionId = templIndexEB(myTypeEB,ele1_eta,ele1_charge,thisE3x3/thisE);
-            pIn *= myMomentumScale[regionId] -> Eval( ele1_phi );
+            pIn /= myMomentumScale[regionId] -> Eval( ele1_phi );
           }
           else{
            pIn = ele1_E_true;
@@ -729,7 +729,7 @@ void FastCalibratorEB::Loop(int nentries, int useZ, int useW, int splitStat, int
           {
             pIn = ele2_tkP;
 	    int regionId = templIndexEB(myTypeEB,ele2_eta,ele2_charge,thisE3x3/thisE);
-            pIn *= myMomentumScale[regionId] -> Eval( ele2_phi );
+            pIn /= myMomentumScale[regionId] -> Eval( ele2_phi );
           }
           else{
            pIn = ele2_E_true;

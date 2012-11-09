@@ -29,7 +29,6 @@
 #include "TVirtualFitter.h"
 #include "ConfigParser.h"
 #include "TMath.h"
-#include "TRandom3.h"
 
 using namespace std;
 
@@ -448,14 +447,14 @@ int main(int argc, char** argv)
       int regionId = templIndexEB(typeEB,eleEta,charge,R9);
       if( regionId == -1 ) continue;
       
-      (h_template_EB.at(modPhi)).at(regionId) -> Fill(var,ww);
+      (h_template_EB.at(modPhi)).at(regionId) -> Fill(var*var,ww);
       
       
       // fill MC histos in eta bins
       int PhibinEB = hPhiBinEB->FindBin(elePhi) - 1;
       if( PhibinEB == nPhiBinsEB ) PhibinEB = 0;
       
-      (h_EoP_EB.at(PhibinEB)).at(regionId) -> Fill(var,ww);  // This is MC
+      (h_EoP_EB.at(PhibinEB)).at(regionId) -> Fill(var*var,ww);  // This is MC
       h_phi_mc_EB[regionId] -> Fill(scPhi,ww);
     }
     
@@ -475,14 +474,14 @@ int main(int argc, char** argv)
       int regionId =  templIndexEE(typeEE,eleEta,charge,R9);
       if( regionId == -1 ) continue;
       
-      (h_template_EE.at(modPhi)).at(regionId) -> Fill(var,ww);
+      (h_template_EE.at(modPhi)).at(regionId) -> Fill(var*var,ww);
       
       
       // fill MC histos in eta bins
       int PhibinEE = hPhiBinEE->FindBin(elePhi) - 1;
       if( PhibinEE == nPhiBinsEE ) PhibinEE = 0;
       
-      (h_EoP_EE.at(PhibinEE)).at(regionId) -> Fill(var,ww);  // This is MC
+      (h_EoP_EE.at(PhibinEE)).at(regionId) -> Fill(var*var,ww);  // This is MC
       h_phi_mc_EE[regionId] -> Fill(scPhi,ww);
     }
     
@@ -504,14 +503,14 @@ int main(int argc, char** argv)
        int regionId  = templIndexEB(typeEB,eleEta2,charge2,R92);
        if(regionId == -1) continue;
        
-       (h_template_EB.at(modPhi)).at(regionId)->Fill(var,ww);
+       (h_template_EB.at(modPhi)).at(regionId)->Fill(var*var,ww);
        
        
        // fill MC histos in eta bins
        int PhibinEB = hPhiBinEB->FindBin(elePhi2) - 1;
        if( PhibinEB==nPhiBinsEB ) PhibinEB = 0;
        
-       (h_EoP_EB.at(PhibinEB)).at(regionId) -> Fill(var,ww); // This is MC
+       (h_EoP_EB.at(PhibinEB)).at(regionId) -> Fill(var*var,ww); // This is MC
        h_phi_mc_EB[regionId]->Fill(scPhi2,ww);
     }
     
@@ -531,14 +530,14 @@ int main(int argc, char** argv)
       int regionId =  templIndexEE(typeEE,eleEta2,charge2,R92);
       if(regionId == -1) continue;
       
-      (h_template_EE.at(modPhi)).at(regionId) ->  Fill(var,ww);
+      (h_template_EE.at(modPhi)).at(regionId) ->  Fill(var*var,ww);
       
       
       // fill MC histos in eta bins
       int PhibinEE = hPhiBinEE->FindBin(elePhi2) - 1;
       if(PhibinEE==nPhiBinsEE) PhibinEE = 0;
       
-      (h_EoP_EE.at(PhibinEE)).at(regionId) -> Fill(var,ww);  // This is MC
+      (h_EoP_EE.at(PhibinEE)).at(regionId) -> Fill(var*var,ww);  // This is MC
       h_phi_mc_EE[regionId]->Fill(scPhi2,ww);
     }
     
@@ -590,7 +589,7 @@ int main(int argc, char** argv)
       int regionId = templIndexEB(typeEB,eleEta,charge,R9);
       if(regionId == -1) continue;
       
-      (h_EoC_EB.at(PhibinEB)).at(regionId) -> Fill(var,ww);  // This is DATA
+      (h_EoC_EB.at(PhibinEB)).at(regionId) -> Fill(var*var,ww);  // This is DATA
       (h_Phi_EB.at(PhibinEB)).at(regionId) -> Fill(elePhi);
       h_phi_data_EB[regionId]->Fill(elePhi);
     }
@@ -607,7 +606,7 @@ int main(int argc, char** argv)
       int regionId = templIndexEE(typeEE,eleEta,charge,R9);
       if( regionId == -1 ) continue;
       
-      (h_EoC_EE.at(PhibinEE)).at(regionId) -> Fill(var,ww);  // This is DATA
+      (h_EoC_EE.at(PhibinEE)).at(regionId) -> Fill(var*var,ww);  // This is DATA
       (h_Phi_EE.at(PhibinEE)).at(regionId) -> Fill(elePhi); 
       h_phi_data_EE[regionId] -> Fill(elePhi);
     }
@@ -630,7 +629,7 @@ int main(int argc, char** argv)
       int regionId = templIndexEB(typeEB,eleEta2,charge2,R92);
       if( regionId == -1 ) continue;
       
-      (h_EoC_EB.at(PhibinEB)).at(regionId) -> Fill(var,ww);  // This is DATA
+      (h_EoC_EB.at(PhibinEB)).at(regionId) -> Fill(var*var,ww);  // This is DATA
       (h_Phi_EB.at(PhibinEB)).at(regionId) -> Fill(elePhi2);
       h_phi_data_EB[regionId] -> Fill(elePhi2);
     }
@@ -645,7 +644,7 @@ int main(int argc, char** argv)
       int regionId = templIndexEE(typeEE,eleEta2,charge2,R92);
       if( regionId == -1 ) continue;
       
-      (h_EoC_EE.at(PhibinEE)).at(regionId) -> Fill(var,ww);  // This is DATA
+      (h_EoC_EE.at(PhibinEE)).at(regionId) -> Fill(var*var,ww);  // This is DATA
       (h_Phi_EE.at(PhibinEE)).at(regionId) -> Fill(elePhi2); 
       h_phi_data_EE[regionId] ->Fill(elePhi2);
     }
@@ -719,254 +718,293 @@ int main(int argc, char** argv)
   //-------------------
   // Template Fit in EB
   
-  TRandom3* rand = new TRandom3();
-  
-  for(int i = 0; i < nPhiBinsEB; ++i)
+  if( typeEB != "none" )
   {
-    for(int j = 0; j < nRegionsEB; ++j)
+    for(int i = 0; i < nPhiBinsEB; ++i)
     {
-      float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i+1);
-      
-      (h_EoP_EB.at(i)).at(j) -> Rebin(rebinEB);
-      (h_EoC_EB.at(i)).at(j) -> Rebin(rebinEB);    
-      
-      
-      // define the fitting function
-      // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
-      char funcName[50];
-      sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EB",i,j,refIdEB.at(i),j);
-      (f_EoP_EB.at(i)).push_back( new TF1(funcName, (templateHistoFuncEB.at(refIdEB.at(i))).at(j), 0.85, 1.1, 3, "histoFunc") );
-      
-      (f_EoP_EB.at(i)).at(j) -> SetParName(0,"Norm"); 
-      (f_EoP_EB.at(i)).at(j) -> SetParName(1,"Scale factor"); 
-      
-      (f_EoP_EB.at(i)).at(j) -> SetLineWidth(1); 
-      (f_EoP_EB.at(i)).at(j) -> SetLineColor(kRed+2); 
-      (f_EoP_EB.at(i)).at(j) -> SetNpx(10000);
-      
-      (h_EoP_EB.at(i)).at(j) -> Scale(1*(h_EoC_EB.at(i)).at(j)->GetEntries()/(h_EoP_EB.at(i)).at(j)->GetEntries());
-      
-      // uncorrected    
-      double xNorm = (h_EoP_EB.at(i)).at(j)->Integral()/(h_template_EB.at(refIdEB.at(i))).at(j)->Integral() *
-                     (h_EoP_EB.at(i)).at(j)->GetBinWidth(1)/(h_template_EB.at(refIdEB.at(i))).at(j)->GetBinWidth(1); 
-      
-      
-      (f_EoP_EB.at(i)).at(j) -> FixParameter(0, xNorm);
-      (f_EoP_EB.at(i)).at(j) -> FixParameter(2, 0.);
-      
-      
-      std::cout << "***** Fitting MC EB " << flPhi << " (" << i << "," << j << "):   ";
-      TFitResultPtr rp;
-      int fStatus; 
-      for(int trial = 0; trial < 10; ++trial)
+      for(int j = 0; j < nRegionsEB; ++j)
       {
-        (f_EoP_EB.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
-        rp = (h_EoP_EB.at(i)).at(j) -> Fit(funcName, "QRWL+");
-        fStatus = rp;
-        if(fStatus !=4 && (f_EoP_EB.at(i)).at(j)->GetParError(1) != 0. )
-	{ 
-	  std::cout << "fit OK    ";
-          
-          g_EoP_EB[j] -> SetPoint(i, flPhi, pow((f_EoP_EB.at(i)).at(j)->GetParameter(1),2));
-          g_EoP_EB[j] -> SetPointError(i, 0., 2*(f_EoP_EB.at(i)).at(j)->GetParError(1));
-          
-          break;
-	}
-        else if( trial == 9 )
+        float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i+1);
+        
+        (h_EoP_EB.at(i)).at(j) -> Rebin(rebinEB);
+        (h_EoC_EB.at(i)).at(j) -> Rebin(rebinEB);    
+        
+        
+        // define the fitting function
+        // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
+        char funcName[50];
+        sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EB",i,j,refIdEB.at(i),j);
+        (f_EoP_EB.at(i)).push_back( new TF1(funcName, (templateHistoFuncEB.at(refIdEB.at(i))).at(j), 0.85, 1.1, 3, "histoFunc") );
+        
+        (f_EoP_EB.at(i)).at(j) -> SetParName(0,"Norm"); 
+        (f_EoP_EB.at(i)).at(j) -> SetParName(1,"Scale factor"); 
+        
+        (f_EoP_EB.at(i)).at(j) -> SetLineWidth(1); 
+        (f_EoP_EB.at(i)).at(j) -> SetLineColor(kRed+2); 
+        (f_EoP_EB.at(i)).at(j) -> SetNpx(10000);
+        
+        (h_EoP_EB.at(i)).at(j) -> Scale(1*(h_EoC_EB.at(i)).at(j)->GetEntries()/(h_EoP_EB.at(i)).at(j)->GetEntries());
+        
+        // uncorrected    
+        double xNorm = (h_EoP_EB.at(i)).at(j)->Integral()/(h_template_EB.at(refIdEB.at(i))).at(j)->Integral() *
+                       (h_EoP_EB.at(i)).at(j)->GetBinWidth(1)/(h_template_EB.at(refIdEB.at(i))).at(j)->GetBinWidth(1); 
+        
+        
+        (f_EoP_EB.at(i)).at(j) -> FixParameter(0, xNorm);
+        (f_EoP_EB.at(i)).at(j) -> FixParameter(2, 0.);
+        
+        
+        std::cout << "***** Fitting MC EB " << flPhi << " (" << i << "," << j << "):   ";
+        TFitResultPtr rp;
+        int fStatus; 
+        for(int trial = 0; trial < 10; ++trial)
         {
-          std::cout << "fit BAD   ";
-          
-          g_EoP_EB[j] -> SetPoint(i, flPhi, 1.);
-          g_EoP_EB[j] -> SetPointError(i, 0., 0.01);
-	}
+          (f_EoP_EB.at(i)).at(j) -> SetParameter(1, 0.99);
+          rp = (h_EoP_EB.at(i)).at(j) -> Fit(funcName, "QRWL+");
+          fStatus = rp;
+          if(fStatus !=4 && (f_EoP_EB.at(i)).at(j)->GetParError(1) != 0. )
+	  { 
+	    std::cout << "fit OK    ";
+            
+            double k = (f_EoP_EB.at(i)).at(j)->GetParameter(1);
+            double eee = (f_EoP_EB.at(i)).at(j)->GetParError(1);
+            g_EoP_EB[j] -> SetPoint(i, flPhi, 1./k);
+            g_EoP_EB[j] -> SetPointError(i, 0., eee/k/k);
+            
+            break;
+          }
+          else if( trial == 9 )
+          {
+            std::cout << "fit BAD   ";
+            
+            g_EoP_EB[j] -> SetPoint(i, flPhi, 1.);
+            g_EoP_EB[j] -> SetPointError(i, 0., 0.01);
+          }
+        }
+        
+        
+        //ratio preparation
+        float rat = (f_EoP_EB.at(i)).at(j)->GetParameter(1);
+        float era = (f_EoP_EB.at(i)).at(j)->GetParError(1); 
+        
+        xNorm = (h_EoC_EB.at(i)).at(j)->Integral()/(h_template_EB.at(refIdEB.at(i))).at(j)->Integral() *
+                (h_EoC_EB.at(i)).at(j)->GetBinWidth(1)/(h_template_EB.at(refIdEB.at(i))).at(j)->GetBinWidth(1); 
+        
+        sprintf(funcName,"f_EoC_%d_%d_Ref_%d_%d_EB",i,j,refIdEB.at(i),i);
+        
+        (f_EoC_EB.at(i)).push_back( new TF1(funcName, (templateHistoFuncEB.at(refIdEB.at(i))).at(j), 0.85, 1.1, 3, "histoFunc") );
+        
+        (f_EoC_EB.at(i)).at(j) -> SetParName(0,"Norm"); 
+        (f_EoC_EB.at(i)).at(j) -> SetParName(1,"Scale factor"); 
+        
+        (f_EoC_EB.at(i)).at(j) -> SetLineWidth(1); 
+        (f_EoC_EB.at(i)).at(j) -> SetLineColor(kGreen+2); 
+        (f_EoC_EB.at(i)).at(j) -> SetNpx(10000);
+        
+        (f_EoC_EB.at(i)).at(j) -> FixParameter(0, xNorm);
+        (f_EoC_EB.at(i)).at(j) -> FixParameter(2, 0.);
+        
+        
+        std::cout << "***** Fitting DATA EB (" << i << "," << j << "):   ";
+        for(int trial = 0; trial < 10; ++trial)
+        {
+          (f_EoC_EB.at(i)).at(j) -> SetParameter(1, 0.99);
+          rp = (h_EoC_EB.at(i)).at(j) -> Fit(funcName, "QR+");
+          fStatus = rp;
+          if( fStatus !=4 && (f_EoC_EB.at(i)).at(j)->GetParError(1) != 0 )
+          {
+	    std::cout << "fit OK    ";
+            
+	    double k = (f_EoC_EB.at(i)).at(j)->GetParameter(1);
+	    double eee = (f_EoC_EB.at(i)).at(j)->GetParError(1);
+            g_EoC_EB[j] -> SetPoint(i, flPhi, 1./k);
+            g_EoC_EB[j] -> SetPointError(i, 0., eee/k/k);
+            
+            break;
+          }
+          else if( trial == 9 )
+          {
+            std::cout << "fit BAD   ";
+            
+            g_EoC_EB[j] -> SetPoint(i, flPhi, 1.);
+            g_EoC_EB[j] -> SetPointError(i, 0., 0.01);
+          }
+        }
+        
+        
+        //ratio finalization
+        rat /= (f_EoC_EB.at(i)).at(j)->GetParameter(1);
+        era = rat*sqrt(era*era+(f_EoC_EB.at(i)).at(j)->GetParError(1)*(f_EoC_EB.at(i)).at(j)->GetParError(1)); 
+        
+        if(i==0) g_Rat_EB[j] -> SetPoint(i, 0.,    rat);
+        else     g_Rat_EB[j] -> SetPoint(i, flPhi, rat);
+        
+        g_Rat_EB[j] -> SetPointError(i,  0. , era); 
+        g_Rat_EB[j]->SetLineColor(kBlue+2); 
+        
+        std::cout << std::endl;
       }
-      
-      
-      //ratio preparation
-      float rat = (f_EoP_EB.at(i)).at(j)->GetParameter(1);
-      float era = (f_EoP_EB.at(i)).at(j)->GetParError(1); 
-      
-      xNorm = (h_EoC_EB.at(i)).at(j)->Integral()/(h_template_EB.at(refIdEB.at(i))).at(j)->Integral() *
-              (h_EoC_EB.at(i)).at(j)->GetBinWidth(1)/(h_template_EB.at(refIdEB.at(i))).at(j)->GetBinWidth(1); 
-      
-      sprintf(funcName,"f_EoC_%d_%d_Ref_%d_%d_EB",i,j,refIdEB.at(i),i);
-      
-      (f_EoC_EB.at(i)).push_back( new TF1(funcName, (templateHistoFuncEB.at(refIdEB.at(i))).at(j), 0.85, 1.1, 3, "histoFunc") );
-      
-      (f_EoC_EB.at(i)).at(j) -> SetParName(0,"Norm"); 
-      (f_EoC_EB.at(i)).at(j) -> SetParName(1,"Scale factor"); 
-      
-      (f_EoC_EB.at(i)).at(j) -> SetLineWidth(1); 
-      (f_EoC_EB.at(i)).at(j) -> SetLineColor(kGreen+2); 
-      (f_EoC_EB.at(i)).at(j) -> SetNpx(10000);
-      
-      (f_EoC_EB.at(i)).at(j) -> FixParameter(0, xNorm);
-      (f_EoC_EB.at(i)).at(j) -> FixParameter(2, 0.);
-      
-      
-      std::cout << "***** Fitting DATA EB (" << i << "," << j << "):   ";
-      for(int trial = 0; trial < 10; ++trial)
-      {
-        (f_EoC_EB.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
-        rp = (h_EoC_EB.at(i)).at(j) -> Fit(funcName, "QR+");
-        fStatus = rp;
-        if( fStatus !=4 && (f_EoC_EB.at(i)).at(j)->GetParError(1) != 0 )
-        {
-	  std::cout << "fit OK    ";
-          
-          g_EoC_EB[j] -> SetPoint(i, flPhi, pow((f_EoC_EB.at(i)).at(j)->GetParameter(1),2));
-          g_EoC_EB[j] -> SetPointError(i, 0., 2*(f_EoC_EB.at(i)).at(j)->GetParError(1));
-          
-          break;
-	}
-        else if( trial == 9 )
-        {
-	  std::cout << "fit BAD   ";
-          
-          g_EoC_EB[j] -> SetPoint(i, flPhi, 1.);
-          g_EoC_EB[j] -> SetPointError(i, 0., 0.01);
-	}
-      }
-      
-      
-      //ratio finalization
-      rat /= (f_EoC_EB.at(i)).at(j)->GetParameter(1);
-      era = rat*sqrt(era*era+(f_EoC_EB.at(i)).at(j)->GetParError(1)*(f_EoC_EB.at(i)).at(j)->GetParError(1)); 
-      
-      if(i==0) g_Rat_EB[j] -> SetPoint(i, 0.,    rat);
-      else     g_Rat_EB[j] -> SetPoint(i, flPhi, rat);
-      
-      g_Rat_EB[j] -> SetPointError(i,  0. , era); 
-      g_Rat_EB[j]->SetLineColor(kBlue+2); 
-      
-      std::cout << std::endl;
     }
   }
+  else
+  {
+    for(int i = 0; i < nPhiBinsEB; ++i)
+    {  
+      for(int j = 0; j < nRegionsEB; ++j)
+      {
+        float flPhi = hPhiBinEB->GetXaxis()->GetBinCenter(i+1);
+        g_EoP_EB[j] -> SetPoint(i, flPhi, 1.);
+        g_EoC_EB[j] -> SetPoint(i, flPhi, 1.);
+        g_Rat_EB[j] -> SetPoint(i, flPhi, 1.);
+      }
+    }
+  }
+  
+  
+  
   
   
   
   //-------------------
   // Template Fit in EE
   
-  for(int i = 0; i < nPhiBinsEE; ++i)
+  if( typeEE != "none" )
   {
-    for(int j = 0; j < nRegionsEE; ++j)
+    for(int i = 0; i < nPhiBinsEE; ++i)
     {
-      float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i);
-      
-      (h_EoP_EE.at(i)).at(j) -> Rebin(rebinEE);
-      (h_EoC_EE.at(i)).at(j) -> Rebin(rebinEE);    
-      
-      
-      // define the fitting function
-      // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
-      
-      char funcName[50];
-      sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EE",i,j,refIdEE.at(i),j);
-      (f_EoP_EE.at(i)).push_back( new TF1(funcName, (templateHistoFuncEE.at(refIdEE.at(i))).at(j), 0.7, 1.1, 3, "histoFunc") );
-      
-      (f_EoP_EE.at(i)).at(j) -> SetParName(0,"Norm"); 
-      (f_EoP_EE.at(i)).at(j) -> SetParName(1,"Scale factor"); 
-      
-      (f_EoP_EE.at(i)).at(j) -> SetLineWidth(1); 
-      (f_EoP_EE.at(i)).at(j) -> SetLineColor(kRed+2); 
-      (f_EoP_EE.at(i)).at(j) -> SetNpx(10000);
-      (f_EoP_EE.at(i)).at(j) -> SetNpx(10000);
-      
-      (h_EoP_EE.at(i)).at(j) -> Scale(1*(h_EoC_EE.at(i)).at(j)->GetEntries()/(h_EoP_EE.at(i)).at(j)->GetEntries());
-      
-      // uncorrected    
-      double xNorm = (h_EoP_EE.at(i)).at(j)->Integral()/(h_template_EE.at(refIdEE.at(i))).at(j)->Integral() *
-                     (h_EoP_EE.at(i)).at(j)->GetBinWidth(1)/(h_template_EE.at(refIdEE.at(i))).at(j)->GetBinWidth(1); 
-      
-      (f_EoP_EE.at(i)).at(j) -> FixParameter(0, xNorm);
-      (f_EoP_EE.at(i)).at(j) -> FixParameter(2, 0.);
-      
-      
-      std::cout << "***** Fitting MC EE " << flPhi << " (" << i << "," << j << "):   ";
-      TFitResultPtr rp;
-      int fStatus; 
-      for(int trial = 0; trial < 10; ++trial)
+      for(int j = 0; j < nRegionsEE; ++j)
       {
-        (f_EoP_EE.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
-        rp = (h_EoP_EE.at(i)).at(j) -> Fit(funcName, "QRWL+");
-        fStatus = rp;
+        float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i);
         
-        if( fStatus !=4 && (f_EoP_EE.at(i)).at(j)->GetParError(1) != 0. )
+        (h_EoP_EE.at(i)).at(j) -> Rebin(rebinEE);
+        (h_EoC_EE.at(i)).at(j) -> Rebin(rebinEE);    
+        
+        
+        // define the fitting function
+        // N.B. [0] * ( [1] * f( [1]*(x-[2]) ) )
+        
+        char funcName[50];
+        sprintf(funcName,"f_EoP_%d_%d_Ref_%d_%d_EE",i,j,refIdEE.at(i),j);
+        (f_EoP_EE.at(i)).push_back( new TF1(funcName, (templateHistoFuncEE.at(refIdEE.at(i))).at(j), 0.7, 1.1, 3, "histoFunc") );
+        
+        (f_EoP_EE.at(i)).at(j) -> SetParName(0,"Norm"); 
+        (f_EoP_EE.at(i)).at(j) -> SetParName(1,"Scale factor"); 
+        
+        (f_EoP_EE.at(i)).at(j) -> SetLineWidth(1); 
+        (f_EoP_EE.at(i)).at(j) -> SetLineColor(kRed+2); 
+        (f_EoP_EE.at(i)).at(j) -> SetNpx(10000);
+        (f_EoP_EE.at(i)).at(j) -> SetNpx(10000);
+       
+        (h_EoP_EE.at(i)).at(j) -> Scale(1*(h_EoC_EE.at(i)).at(j)->GetEntries()/(h_EoP_EE.at(i)).at(j)->GetEntries());
+        
+        // uncorrected    
+        double xNorm = (h_EoP_EE.at(i)).at(j)->Integral()/(h_template_EE.at(refIdEE.at(i))).at(j)->Integral() *
+                       (h_EoP_EE.at(i)).at(j)->GetBinWidth(1)/(h_template_EE.at(refIdEE.at(i))).at(j)->GetBinWidth(1); 
+        
+        (f_EoP_EE.at(i)).at(j) -> FixParameter(0, xNorm);
+        (f_EoP_EE.at(i)).at(j) -> FixParameter(2, 0.);
+        
+        
+        std::cout << "***** Fitting MC EE " << flPhi << " (" << i << "," << j << "):   ";
+        TFitResultPtr rp;
+        int fStatus; 
+        for(int trial = 0; trial < 10; ++trial)
         {
-	  std::cout << "fit OK    ";
+          (f_EoP_EE.at(i)).at(j) -> SetParameter(1, 0.99);
+          rp = (h_EoP_EE.at(i)).at(j) -> Fit(funcName, "QRWL+");
+          fStatus = rp;
           
-          g_EoP_EE[j] -> SetPoint(i, flPhi, pow((f_EoP_EE.at(i)).at(j)->GetParameter(1),2));
-          g_EoP_EE[j] -> SetPointError(i, 0., 2*(f_EoP_EE.at(i)).at(j)->GetParError(1));
-
-          break;
-	}
-        else if( trial == 9 )
-        {
-	  std::cout << "fit BAD   ";
-          
-          g_EoP_EE[j] -> SetPoint(i, flPhi, 1.);
-          g_EoP_EE[j] -> SetPointError(i, 0., 0.03);
-	}
-      }
-      
-      
-      
-      //ratio preparation
-      float rat = (f_EoP_EE.at(i)).at(j)->GetParameter(1);
-      float era = (f_EoP_EE.at(i)).at(j)->GetParError(1); 
-      
-      // corrected    
-      xNorm = (h_EoC_EE.at(i)).at(j)->Integral()/(h_template_EE.at(refIdEE.at(i))).at(j)->Integral() *
-              (h_EoC_EE.at(i)).at(j)->GetBinWidth(1)/(h_template_EE.at(refIdEE.at(i))).at(j)->GetBinWidth(1); 
-      
-      sprintf(funcName,"f_EoC_%d_%d_Ref_%d_%d_EE",i,j,refIdEE.at(i),j);
-      (f_EoC_EE.at(i)).push_back( new TF1(funcName, (templateHistoFuncEE.at(refIdEE.at(i))).at(j), 0.7, 1.1, 3, "histoFunc") );
-      
-      (f_EoC_EE.at(i)).at(j) -> SetParName(0,"Norm"); 
-      (f_EoC_EE.at(i)).at(j) -> SetParName(1,"Scale factor"); 
-      
-      (f_EoC_EE.at(i)).at(j) -> SetLineWidth(1); 
-      (f_EoC_EE.at(i)).at(j) -> SetLineColor(kGreen+2); 
-      (f_EoC_EE.at(i)).at(j) -> SetNpx(10000);
-      
-      (f_EoC_EE.at(i)).at(j) -> FixParameter(0, xNorm);
-      (f_EoC_EE.at(i)).at(j) -> FixParameter(2, 0.);
-      
-
-      std::cout << "***** Fitting DATA EE " << flPhi << " (" << i << "," << j << "):   ";
-      for(int trial = 0; trial < 10; ++trial)
-      {
-        (f_EoC_EE.at(i)).at(j) -> SetParameter(1, rand->Uniform(0.95,1.05));
-        rp = (h_EoC_EE.at(i)).at(j) -> Fit(funcName, "QR+");
-        if( fStatus !=4 && (f_EoC_EE.at(i)).at(j)->GetParError(1) != 0. )
-        {
-	  std::cout << "fit OK    ";
-          
-          g_EoC_EE[j] -> SetPoint(i, flPhi, pow((f_EoC_EE.at(i)).at(j)->GetParameter(1),2));
-          g_EoC_EE[j] -> SetPointError(i, 0., 2*(f_EoC_EE.at(i)).at(j)->GetParError(1));
-          
-          break;
-	}
-        else if( trial == 9 )
-        {
-          g_EoC_EE[j] -> SetPoint(i, flPhi, 1.);
-          g_EoC_EE[j] -> SetPointError(i, 0., 0.03);        
+          if( fStatus !=4 && (f_EoP_EE.at(i)).at(j)->GetParError(1) != 0. )
+          {
+            std::cout << "fit OK    ";
+            
+	    double k = (f_EoP_EE.at(i)).at(j)->GetParameter(1);
+	    double eee = (f_EoP_EE.at(i)).at(j)->GetParError(1);
+            g_EoP_EE[j] -> SetPoint(i, flPhi, 1./k);
+            g_EoP_EE[j] -> SetPointError(i, 0., eee/k/k);
+            
+            break;
+          }
+          else if( trial == 9 )
+          {
+            std::cout << "fit BAD   ";
+            
+            g_EoP_EE[j] -> SetPoint(i, flPhi, 1.);
+            g_EoP_EE[j] -> SetPointError(i, 0., 0.03);
+          }
         }
+        
+        //ratio preparation
+        float rat = (f_EoP_EE.at(i)).at(j)->GetParameter(1);
+        float era = (f_EoP_EE.at(i)).at(j)->GetParError(1); 
+        
+        // corrected    
+        xNorm = (h_EoC_EE.at(i)).at(j)->Integral()/(h_template_EE.at(refIdEE.at(i))).at(j)->Integral() *
+                (h_EoC_EE.at(i)).at(j)->GetBinWidth(1)/(h_template_EE.at(refIdEE.at(i))).at(j)->GetBinWidth(1); 
+        
+        sprintf(funcName,"f_EoC_%d_%d_Ref_%d_%d_EE",i,j,refIdEE.at(i),j);
+        (f_EoC_EE.at(i)).push_back( new TF1(funcName, (templateHistoFuncEE.at(refIdEE.at(i))).at(j), 0.7, 1.1, 3, "histoFunc") );
+        
+        (f_EoC_EE.at(i)).at(j) -> SetParName(0,"Norm"); 
+        (f_EoC_EE.at(i)).at(j) -> SetParName(1,"Scale factor"); 
+        
+        (f_EoC_EE.at(i)).at(j) -> SetLineWidth(1); 
+        (f_EoC_EE.at(i)).at(j) -> SetLineColor(kGreen+2); 
+        (f_EoC_EE.at(i)).at(j) -> SetNpx(10000);
+        
+        (f_EoC_EE.at(i)).at(j) -> FixParameter(0, xNorm);
+        (f_EoC_EE.at(i)).at(j) -> FixParameter(2, 0.);
+        
+        
+        std::cout << "***** Fitting DATA EE " << flPhi << " (" << i << "," << j << "):   ";
+        for(int trial = 0; trial < 10; ++trial)
+        {
+          (f_EoC_EE.at(i)).at(j) -> SetParameter(1, 0.99);
+          rp = (h_EoC_EE.at(i)).at(j) -> Fit(funcName, "QR+");
+          if( fStatus !=4 && (f_EoC_EE.at(i)).at(j)->GetParError(1) != 0. )
+          {
+            std::cout << "fit OK    ";
+            
+            double k = (f_EoC_EE.at(i)).at(j)->GetParameter(1);
+            double eee = (f_EoC_EE.at(i)).at(j)->GetParError(1);
+            g_EoC_EE[j] -> SetPoint(i, flPhi, 1./k);
+            g_EoC_EE[j] -> SetPointError(i, 0., eee/k/k);
+            
+            break;
+          }
+          else if( trial == 9 )
+          {
+            g_EoC_EE[j] -> SetPoint(i, flPhi, 1.);
+            g_EoC_EE[j] -> SetPointError(i, 0., 0.03);        
+          }
+        }
+        
+        
+        //ratio finalization
+        rat /= (f_EoC_EE.at(i)).at(j)->GetParameter(1);
+        era = rat*sqrt(era*era+(f_EoC_EE.at(i)).at(j)->GetParError(1)*(f_EoC_EE.at(i)).at(j)->GetParError(1)); 
+        
+        g_Rat_EE[j] -> SetPoint(i, flPhi, rat);
+        g_Rat_EE[j] -> SetPointError(i,  0. , era);
+        
+        g_Rat_EE[j]->SetLineColor(kBlue+2); 
       }
       
-      
-      //ratio finalization
-      rat /= (f_EoC_EE.at(i)).at(j)->GetParameter(1);
-      era = rat*sqrt(era*era+(f_EoC_EE.at(i)).at(j)->GetParError(1)*(f_EoC_EE.at(i)).at(j)->GetParError(1)); 
-      
-      g_Rat_EE[j] -> SetPoint(i, flPhi, rat);
-      g_Rat_EE[j] -> SetPointError(i,  0. , era);
-      
-      g_Rat_EE[j]->SetLineColor(kBlue+2); 
+      std::cout << std::endl;
     }
-    
-    std::cout << std::endl;
+  }
+  else
+  {
+    for(int i = 0; i < nPhiBinsEE; ++i)
+    {  
+      for(int j = 0; j < nRegionsEE; ++j)
+      {
+        float flPhi = hPhiBinEE->GetXaxis()->GetBinCenter(i+1);
+        g_EoP_EE[j] -> SetPoint(i, flPhi, 1.);
+        g_EoC_EE[j] -> SetPoint(i, flPhi, 1.);
+        g_Rat_EE[j] -> SetPoint(i, flPhi, 1.);
+      }
+    }
   }
   
   

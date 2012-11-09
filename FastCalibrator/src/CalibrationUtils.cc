@@ -758,9 +758,9 @@ int GetNRegionsEB(const std::string& type)
   
   if( type == "absEta2"     ) return 2;
   
-  if( type == "eta2_charge" ) return 4;
+  if( type == "eta2-charge" ) return 4;
   
-  if( type == "absEta2_charge" ) return 4;
+  if( type == "absEta2-charge" ) return 4;
   
   return 0;
 }
@@ -812,7 +812,7 @@ int templIndexEB(const std::string& type, const float& eta, const float& charge,
   }
   
   
-  if( type == "eta2_charge" )
+  if( type == "eta2-charge" )
   {
     if( eta  < 0. )
     {
@@ -826,7 +826,7 @@ int templIndexEB(const std::string& type, const float& eta, const float& charge,
     }
   }
   
-  if( type == "absEta2_charge" )
+  if( type == "absEta2-charge" )
   {
     if( fabs(eta)  < 1. )
     {
@@ -859,9 +859,9 @@ int GetNRegionsEE(const std::string& type)
   
   if( type == "absEta2"     ) return 2;
   
-  if( type == "eta2_charge" ) return 4;
+  if( type == "eta2-charge" ) return 4;
   
-  if( type == "absEta2_charge" ) return 4;
+  if( type == "absEta2-charge" ) return 4;
   
   return 0;
 }
@@ -913,7 +913,7 @@ int templIndexEE(const std::string& type, const float& eta, const float& charge,
   }
   
   
-  if( type == "eta2_charge" )
+  if( type == "eta2-charge" )
   {
     if( eta  < 0. )
     {
@@ -928,7 +928,7 @@ int templIndexEE(const std::string& type, const float& eta, const float& charge,
   }
   
   
-  if( type == "absEta2_charge" )
+  if( type == "absEta2-charge" )
   {
     if( fabs(eta)  < 2. )
     {
