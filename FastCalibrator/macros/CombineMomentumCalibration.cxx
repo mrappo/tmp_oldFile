@@ -32,9 +32,9 @@ void CombineMomentumCalibration()
   gStyle->SetPalette(1); 
   gROOT->ForceStyle();
   
-  TFile *f1 = TFile::Open("output/MomentumCalibration2011.root");
-  TFile *f2 = TFile::Open("output/MomentumCalibration2012.root");
-  TFile *f3 = new TFile("output/MomentumCalibrationCombined_2011AB-2012ABC.root","RECREATE");
+  TFile *f1 = TFile::Open("output/MomentumCalibration2011_fede_eta1_eta1.root");
+  TFile *f2 = TFile::Open("output/MomentumCalibration2012_fede_eta1_eta1.root");
+  TFile *f3 = new TFile("output/MomentumCalibrationCombined_2011AB-2012ABC_fede_eta1_eta1.root","RECREATE");
   f3->cd();
   
   double x,y;
@@ -194,7 +194,7 @@ void CombineMomentumCalibration()
   //--------
   // Endcaps
   
-  for(int etaBin = 0; etaBin < nEtaBinsEB; ++etaBin)
+  for(int etaBin = 0; etaBin < nEtaBinsEE; ++etaBin)
   {
     TString Name = Form("g_EoC_EE_%d",etaBin);
     TGraphErrors* g_EoC_EE_1 = (TGraphErrors*)f1->Get(Name);
@@ -228,9 +228,6 @@ void CombineMomentumCalibration()
     yAvg_EE_2 /= nGoodPoints_EE_2;
     std::cout << "*** EE_" << etaBin << "_2 yScale: " << yAvg_EE_2 << std::endl;
     
-    Name= Form("g_Rat_EE_%d",etaBin);
-    TGraphErrors* g_Rat_EE = (TGraphErrors*)f1->Get(Name);
-    
     
     g_EoC_EE_1 -> SetMarkerStyle(20);
     g_EoC_EE_1 -> SetMarkerSize(1);
@@ -242,7 +239,7 @@ void CombineMomentumCalibration()
     g_EoC_EE_2 -> SetMarkerColor(kRed+1);
     g_EoC_EE_2 -> SetLineColor(kRed+1);
     
-    TGraphErrors* g_Diff_EE = (TGraphErrors*)g_Rat_EE->Clone(0);
+    TGraphErrors* g_Diff_EE = (TGraphErrors*)g_EoC_EE_1->Clone(0);
     TGraphErrors* g_Corr_EE = (TGraphErrors*)g_EoC_EE_1->Clone(0);
     
     g_Diff_EE -> SetMarkerStyle(20);
