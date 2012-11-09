@@ -768,9 +768,9 @@ int main(int argc, char **argv)
       
       double x, statPrec;
       if( iEta < 0 )
-        g_stat_vsEta[0] -> GetPoint(int(fabs(h2_final[0]->GetYaxis()->GetBinLowEdge(jbin+85))),x,statPrec);  //mirroring of the folded precision
+        g_stat_vsEta[0] -> GetPoint(int(fabs(iEta+1)),x,statPrec);  //mirroring of the folded precision
       else
-        g_stat_vsEta[0] -> GetPoint(int(fabs(h2_final[0]->GetYaxis()->GetBinLowEdge(jbin-85))),x,statPrec);  //mirroring of the folded precision
+        g_stat_vsEta[0] -> GetPoint(int(fabs(iEta-1)),x,statPrec);  //mirroring of the folded precision
       
       for(int ibin = 1; ibin < h2_final[0]->GetNbinsX()+1; ++ibin)
        {
@@ -819,7 +819,7 @@ int main(int argc, char **argv)
                    << std::fixed << std::setprecision(0) << std::setw(10) << h2_final[iz]->GetYaxis()->GetBinLowEdge(iy)
                    << std::fixed << std::setprecision(0) << std::setw(10) << iz
                    << std::fixed << std::setprecision(6) << std::setw(15) << IC
-                   << std::fixed << std::setprecision(6) << std::setw(15) << sqrt( statPrec*statPrec + sysPrec*sysPrec )
+		   << std::fixed << std::setprecision(6) << std::setw(15) << sqrt( statPrec*statPrec + sysPrec*sysPrec ) 
                    << std::endl;
 	  }
           else
