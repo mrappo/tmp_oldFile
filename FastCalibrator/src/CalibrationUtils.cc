@@ -735,7 +735,7 @@ void InitializeDeadTTEEP2012(std::vector<std::pair<int,int> >& TT_centre)
 void InitializeDeadTTEEM2012(std::vector<std::pair<int,int> >& TT_centre)
 {
   TT_centre.push_back(std::pair<int,int> (53,28));
-  TT_centre.push_back(std::pair<int,int> (29,34));
+  TT_centre.push_back(std::pair<int,int> (28,33));
   TT_centre.push_back(std::pair<int,int> (89,80));
 }
 
