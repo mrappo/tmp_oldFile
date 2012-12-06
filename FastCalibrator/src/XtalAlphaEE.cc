@@ -25,12 +25,7 @@ outEPDistribution_p(outEPDistribution){
   
   // endcap geometry
   eRings = new TEndcapRings();  
- 
-  /// Vector for ring normalization IC
-  SumAlpha_Ring_EEP.assign(40,0);
-  SumAlpha_Ring_EEM.assign(40,0);
-  Sumxtal_Ring_EEP.assign(40,0);
-  Sumxtal_Ring_EEM.assign(40,0);
+  SicCrystal = new TSicCrystals(); 
   
   Init(tree);
 
@@ -120,8 +115,6 @@ void XtalAlphaEE::Init(TTree *tree){
   fChain->SetBranchStatus("ele1_EOverP", 1);         fChain->SetBranchAddress("ele1_EOverP", &ele1_EOverP, &b_ele1_EOverP);
   fChain->SetBranchStatus("ele1_isEB", 1);           fChain->SetBranchAddress("ele1_isEB", &ele1_isEB, &b_ele1_isEB);
   fChain->SetBranchStatus("ele1_isEBEEGap", 1);      fChain->SetBranchAddress("ele1_isEBEEGap", &ele1_isEBEEGap, &b_ele1_isEBEEGap);
-//fChain->SetBranchStatus("ele1_E_true", 1);         fChain->SetBranchAddress("ele1_E_true", &ele1_E_true, &b_ele1_E_true);
-//fChain->SetBranchStatus("ele1_DR ", 1);            fChain->SetBranchAddress("ele1_DR ", &ele1_DR , &b_ele1_DR);
   fChain->SetBranchStatus("ele1_scE_regression", 1); fChain->SetBranchAddress("ele1_scE_regression", &ele1_scE_regression, &b_ele1_scE_regression);
   
   fChain->SetBranchStatus("ele1_seedLaserAlpha", 1);  fChain->SetBranchAddress("ele1_seedLaserAlpha", &ele1_seedLaserAlpha, &b_ele1_seedLaserAlpha);
@@ -153,8 +146,6 @@ void XtalAlphaEE::Init(TTree *tree){
   fChain->SetBranchStatus("ele2_fbrem", 1);          fChain->SetBranchAddress("ele2_fbrem", &ele2_fbrem, &b_ele2_fbrem);
   fChain->SetBranchStatus("ele2_EOverP", 1);         fChain->SetBranchAddress("ele2_EOverP", &ele2_EOverP, &b_ele2_EOverP);
   fChain->SetBranchStatus("ele2_isEB", 1);           fChain->SetBranchAddress("ele2_isEB", &ele2_isEB, &b_ele2_isEB);
-  //fChain->SetBranchStatus("ele2_E_true", 1);         fChain->SetBranchAddress("ele2_E_true", &ele2_E_true, &b_ele2_E_true);
-  //fChain->SetBranchStatus("ele2_DR ", 1);            fChain->SetBranchAddress("ele2_DR ", &ele2_DR , &b_ele2_DR);
   fChain->SetBranchStatus("ele2_scE_regression", 1); fChain->SetBranchAddress("ele2_scE_regression", &ele2_scE_regression, &b_ele2_scE_regression);
   
   fChain->SetBranchStatus("ele2_seedLaserAlpha", 1);  fChain->SetBranchAddress("ele2_seedLaserAlpha", &ele2_seedLaserAlpha, &b_ele2_seedLaserAlpha);
@@ -181,59 +172,94 @@ void XtalAlphaEE::bookHistos(int nLoops){
  
   ///EE+
 
-  hC_AlphaValues_EEP            = new hChain ("AlphaValues_EEP", "AlphaValues_EEP", 400,0.2,1.9, nLoops);
-  hC_AlphaSpreadVsLoop_EEP      = new hChain ("hC_AlphaSpreadVsLoop_EEP", "hC_AlphaSpreadVsLoop_EEP", 40,0,40,nLoops);
-  hC_Alpha_EEP                  = new h2Chain("hC_Alpha_EEP", "hC_Alpha_EEP", 100,1, 101, 100, 1, 101, nLoops );
+  hC_AlphaValues_BTCP_EEP            = new hChain ("AlphaValues_BTCP_EEP", "AlphaValues_BTCP_EEP", 400,0.2,1.9, nLoops);
+  hC_AlphaSpreadVsLoop_BTCP_EEP      = new hChain ("hC_AlphaSpreadVsLoop_BTCP_EEP", "hC_AlphaSpreadVsLoop_BTCP_EEP", 40,0,40,nLoops);
+  hC_Alpha_BTCP_EEP                  = new h2Chain("hC_Alpha_BTCP_EEP", "hC_Alpha_BTCP_EEP", 100,1, 101, 100, 1, 101, nLoops );
+  hC_AlphaValues_SIC_EEP            = new hChain ("AlphaValues_SIC_EEP", "AlphaValues_SIC_EEP", 400,0.2,1.9, nLoops);
+  hC_AlphaSpreadVsLoop_SIC_EEP      = new hChain ("hC_AlphaSpreadVsLoop_SIC_EEP", "hC_AlphaSpreadVsLoop_SIC_EEP", 40,0,40,nLoops);
+  hC_Alpha_SIC_EEP                  = new h2Chain("hC_Alpha_SIC_EEP", "hC_Alpha_SIC_EEP", 100,1, 101, 100, 1, 101, nLoops );
   
   h_Alpha_EEP             = new TH2F("h_Alpha_EEP", "h_Alpha_EEP", 100,1,101,100,1,101);
   h_scalib_EEP            = new TH2F("h_scalib_EEP","h_scalib_EEP",100,1,101,100,1,101);
 
   h_occupancy_EEP         = new TH2F("h_occupancy_EEP", "h_occupancy_EEP", 100,1, 101, 100, 1, 101 );
-  h_Alpha_meanOnring_EEP  = new TH2F ("h_Alpha_meanOnring_EEP", "h_Alpha_meanOnring_EEP",  100,1, 101, 100, 1, 101);
   h_map_Dead_Channels_EEP = new TH2F("h_map_Dead_Channels_EEP","h_map_Dead_Channels_EEP",100,1,101,100,1,101);
 
-  p_AlphaVsIeta_EEP       = new TProfile("p_AlphaVsIeta_EEP","p_AlphaVsIeta_EEP",40,0,40);
-  AlphaSpreadVsIeta_EEP   = new TH1F("AlphaSpreadVsIeta_EEP","AlphaSpreadVsIeta_EEP",40,0,40);
+  p_AlphaVsIeta_BTCP_EEP       = new TProfile("p_AlphaVsIeta_BTCP_EEP","p_AlphaVsIeta_BTCP_EEP",40,0,40);
+  AlphaSpreadVsIeta_BTCP_EEP   = new TH1F("AlphaSpreadVsIeta_BTCP_EEP","AlphaSpreadVsIeta_BTCP_EEP",40,0,40);
     
-  g_AlphameanVsLoop_EEP   = new TGraphErrors();
-  g_AlphameanVsLoop_EEP   -> SetName("g_AlphameanVsLoop_EEP");
-  g_AlphameanVsLoop_EEP   -> SetTitle("g_AlphameanVsLoop_EEP");
+  g_AlphameanVsLoop_BTCP_EEP   = new TGraphErrors();
+  g_AlphameanVsLoop_BTCP_EEP   -> SetName("g_AlphameanVsLoop_BTCP_EEP");
+  g_AlphameanVsLoop_BTCP_EEP   -> SetTitle("g_AlphameanVsLoop_BTCP_EEP");
   
-  g_AlpharmsVsLoop_EEP    = new TGraphErrors();
-  g_AlpharmsVsLoop_EEP    -> SetName("g_AlpharmsVsLoop_EEP");
-  g_AlpharmsVsLoop_EEP    -> SetTitle("g_AlpharmsVsLoop_EEP");
+  g_AlpharmsVsLoop_BTCP_EEP    = new TGraphErrors();
+  g_AlpharmsVsLoop_BTCP_EEP    -> SetName("g_AlpharmsVsLoop_BTCP_EEP");
+  g_AlpharmsVsLoop_BTCP_EEP    -> SetTitle("g_AlpharmsVsLoop_BTCP_EEP");
 
-  g_AlphaSigmaVsLoop_EEP  = new TGraphErrors();
-  g_AlphaSigmaVsLoop_EEP  -> SetName("g_AlpharmsVsLoop_EEP");
-  g_AlphaSigmaVsLoop_EEP  -> SetTitle("g_AlpharmsVsLoop_EEP");
-  
-  ///EE-
+  g_AlphaSigmaVsLoop_BTCP_EEP  = new TGraphErrors();
+  g_AlphaSigmaVsLoop_BTCP_EEP  -> SetName("g_AlpharmsVsLoop_BTCP_EEP");
+  g_AlphaSigmaVsLoop_BTCP_EEP  -> SetTitle("g_AlpharmsVsLoop_BTCP_EEP");
 
-  hC_AlphaValues_EEM            = new hChain ("AlphaValues_EEM", "AlphaValues_EEM", 400,0.2,1.9, nLoops);
-  hC_AlphaSpreadVsLoop_EEM      = new hChain ("hC_AlphaSpreadVsLoop_EEM", "hC_AlphaSpreadVsLoop_EEM", 0,40,40, nLoops);
-  hC_Alpha_EEM                  = new h2Chain("hC_Alpha_EEM", "hC_Alpha_EEM", 100,1, 101, 100, 1, 101, nLoops );
+  p_AlphaVsIeta_SIC_EEP       = new TProfile("p_AlphaVsIeta_SIC_EEP","p_AlphaVsIeta_SIC_EEP",40,0,40);
+  AlphaSpreadVsIeta_SIC_EEP   = new TH1F("AlphaSpreadVsIeta_SIC_EEP","AlphaSpreadVsIeta_SIC_EEP",40,0,40);
+    
+  g_AlphameanVsLoop_SIC_EEP   = new TGraphErrors();
+  g_AlphameanVsLoop_SIC_EEP   -> SetName("g_AlphameanVsLoop_SIC_EEP");
+  g_AlphameanVsLoop_SIC_EEP   -> SetTitle("g_AlphameanVsLoop_SIC_EEP");
   
-  h_Alpha_EEM             = new TH2F("h_Alpha_EEM", "h_Alpha_EEM", 100,1, 101, 100, 1, 101 );
+  g_AlpharmsVsLoop_SIC_EEP    = new TGraphErrors();
+  g_AlpharmsVsLoop_SIC_EEP    -> SetName("g_AlpharmsVsLoop_SIC_EEP");
+  g_AlpharmsVsLoop_SIC_EEP    -> SetTitle("g_AlpharmsVsLoop_SIC_EEP");
+
+  g_AlphaSigmaVsLoop_SIC_EEP  = new TGraphErrors();
+  g_AlphaSigmaVsLoop_SIC_EEP  -> SetName("g_AlpharmsVsLoop_SIC_EEP");
+  g_AlphaSigmaVsLoop_SIC_EEP  -> SetTitle("g_AlpharmsVsLoop_SIC_EEP");
+ 
+ ///EE+
+
+  hC_AlphaValues_BTCP_EEM            = new hChain ("AlphaValues_BTCP_EEM", "AlphaValues_BTCP_EEM", 400,0.2,1.9, nLoops);
+  hC_AlphaSpreadVsLoop_BTCP_EEM      = new hChain ("hC_AlphaSpreadVsLoop_BTCP_EEM", "hC_AlphaSpreadVsLoop_BTCP_EEM", 40,0,40,nLoops);
+  hC_Alpha_BTCP_EEM                  = new h2Chain("hC_Alpha_BTCP_EEM", "hC_Alpha_BTCP_EEM", 100,1, 101, 100, 1, 101, nLoops );
+  hC_AlphaValues_SIC_EEM            = new hChain ("AlphaValues_SIC_EEM", "AlphaValues_SIC_EEM", 400,0.2,1.9, nLoops);
+  hC_AlphaSpreadVsLoop_SIC_EEM      = new hChain ("hC_AlphaSpreadVsLoop_SIC_EEM", "hC_AlphaSpreadVsLoop_SIC_EEM", 40,0,40,nLoops);
+  hC_Alpha_SIC_EEM                  = new h2Chain("hC_Alpha_SIC_EEM", "hC_Alpha_SIC_EEM", 100,1, 101, 100, 1, 101, nLoops );
+  
+  h_Alpha_EEM             = new TH2F("h_Alpha_EEM", "h_Alpha_EEM", 100,1,101,100,1,101);
   h_scalib_EEM            = new TH2F("h_scalib_EEM","h_scalib_EEM",100,1,101,100,1,101);
-  h_occupancy_EEM         = new TH2F("h_occupancy_EEM", "h_occupancy_EEM", 100,1, 101, 100, 1, 101 );
-  h_Alpha_meanOnring_EEM  = new TH2F ("h_Alpha_meanOnring_EEM", "h_Alpha_meanOnring_EEM",  100,1, 101, 100, 1, 101);
-  h_map_Dead_Channels_EEM = new TH2F("h_map_Dead_Channels_EEM","h_map_Dead_Channels_EEM",100,1,101,100,1,101);
- 
-  p_AlphaVsIeta_EEM       = new TProfile("p_AlphaVsIeta_EEM","p_AlphaVsIeta_EEM",40,0,40);
-  AlphaSpreadVsIeta_EEM   = new TH1F("AlphaSpreadVsIeta_EEM","AlphaSpreadVsIeta_EEM",40,0,40);
- 
-  g_AlphameanVsLoop_EEM   = new TGraphErrors();
-  g_AlphameanVsLoop_EEM   -> SetName("g_AlphameanVsLoop_EEM");
-  g_AlphameanVsLoop_EEM   -> SetTitle("g_AlphameanVsLoop_EEM");
-  
-  g_AlpharmsVsLoop_EEM    = new TGraphErrors();
-  g_AlpharmsVsLoop_EEM    -> SetName("g_AlpharmsVsLoop_EEM");
-  g_AlpharmsVsLoop_EEM    -> SetTitle("g_AlpharmsVsLoop_EEM");
- 
-  g_AlphaSigmaVsLoop_EEM  = new TGraphErrors();
 
-  g_AlphaSigmaVsLoop_EEM  -> SetName("g_AlphaSigmaVsLoop_EEM");
-  g_AlphaSigmaVsLoop_EEM  -> SetTitle("g_AlphaSigmaVsLoop_EEM");
+  h_occupancy_EEM         = new TH2F("h_occupancy_EEM", "h_occupancy_EEM", 100,1, 101, 100, 1, 101 );
+  h_map_Dead_Channels_EEM = new TH2F("h_map_Dead_Channels_EEM","h_map_Dead_Channels_EEM",100,1,101,100,1,101);
+
+  p_AlphaVsIeta_BTCP_EEM       = new TProfile("p_AlphaVsIeta_BTCP_EEM","p_AlphaVsIeta_BTCP_EEM",40,0,40);
+  AlphaSpreadVsIeta_BTCP_EEM   = new TH1F("AlphaSpreadVsIeta_BTCP_EEM","AlphaSpreadVsIeta_BTCP_EEM",40,0,40);
+    
+  g_AlphameanVsLoop_BTCP_EEM   = new TGraphErrors();
+  g_AlphameanVsLoop_BTCP_EEM   -> SetName("g_AlphameanVsLoop_BTCP_EEM");
+  g_AlphameanVsLoop_BTCP_EEM   -> SetTitle("g_AlphameanVsLoop_BTCP_EEM");
+  
+  g_AlpharmsVsLoop_BTCP_EEM    = new TGraphErrors();
+  g_AlpharmsVsLoop_BTCP_EEM    -> SetName("g_AlpharmsVsLoop_BTCP_EEM");
+  g_AlpharmsVsLoop_BTCP_EEM    -> SetTitle("g_AlpharmsVsLoop_BTCP_EEM");
+
+  g_AlphaSigmaVsLoop_BTCP_EEM  = new TGraphErrors();
+  g_AlphaSigmaVsLoop_BTCP_EEM  -> SetName("g_AlpharmsVsLoop_BTCP_EEM");
+  g_AlphaSigmaVsLoop_BTCP_EEM  -> SetTitle("g_AlpharmsVsLoop_BTCP_EEM");
+
+  p_AlphaVsIeta_SIC_EEM       = new TProfile("p_AlphaVsIeta_SIC_EEM","p_AlphaVsIeta_SIC_EEM",40,0,40);
+  AlphaSpreadVsIeta_SIC_EEM   = new TH1F("AlphaSpreadVsIeta_SIC_EEM","AlphaSpreadVsIeta_SIC_EEM",40,0,40);
+    
+  g_AlphameanVsLoop_SIC_EEM   = new TGraphErrors();
+  g_AlphameanVsLoop_SIC_EEM   -> SetName("g_AlphameanVsLoop_SIC_EEM");
+  g_AlphameanVsLoop_SIC_EEM   -> SetTitle("g_AlphameanVsLoop_SIC_EEM");
+  
+  g_AlpharmsVsLoop_SIC_EEM    = new TGraphErrors();
+  g_AlpharmsVsLoop_SIC_EEM    -> SetName("g_AlpharmsVsLoop_SIC_EEM");
+  g_AlpharmsVsLoop_SIC_EEM    -> SetTitle("g_AlpharmsVsLoop_SIC_EEM");
+
+  g_AlphaSigmaVsLoop_SIC_EEM  = new TGraphErrors();
+  g_AlphaSigmaVsLoop_SIC_EEM  -> SetName("g_AlpharmsVsLoop_SIC_EEM");
+  g_AlphaSigmaVsLoop_SIC_EEM  -> SetTitle("g_AlpharmsVsLoop_SIC_EEM");
+  
   
   return;
 }
@@ -293,12 +319,10 @@ void XtalAlphaEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, 
       }
   
       if (iLoop > 0) thisAlpha = h_Alpha_hashedIndex_EE -> GetBinContent(thisIndex+1);
-            
       if(ele1_recHit_laserCorr -> at(iRecHit)>0. && ele1_recHit_Alpha -> at(iRecHit)>0.)
        thisE += theScalibration[thisIndex]*ele1_recHit_E -> at(iRecHit)*FdiEta*TMath::Power(ele1_recHit_laserCorr -> at(iRecHit),thisAlpha-1.); /// SC energy
-          
+   
     }
-
     for (unsigned int iRecHit = 0; iRecHit < ele1_recHit_E->size(); iRecHit++ ) {
             
       float thisAlpha = 1.;
@@ -430,9 +454,16 @@ void XtalAlphaEE::BuildEoPeta_ele(int iLoop, int nentries , int useW, int useZ, 
 
  /// Save E/p distributions
  if(isSaveEPDistribution == true && outEPDistribution_p!="NULL" ) {
-
+   
+   if(iLoop ==0){
+   TFile *f2 = new TFile(outEPDistribution_p.Data(),"RECREATE");
+   saveEoPeta(f2);
+   }
+   else{
    TFile *f2 = new TFile(outEPDistribution_p.Data(),"UPDATE");
    saveEoPeta(f2);
+   }
+  
  }
   
 }
@@ -618,15 +649,16 @@ void XtalAlphaEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoo
              
             int thisIndex = ele1_recHit_hashedIndex -> at(iRecHit);
             float thisAlpha = 1.;
-             
-            if( iLoop > 0 ) thisAlpha = h_Alpha_hashedIndex_EE -> GetBinContent(thisIndex+1);
-             
+
             /// Fill the occupancy map JUST for the first Loop
             if( iLoop == 0 ){
               h_occupancy_hashedIndex_EE -> Fill(thisIndex);
               if ( GetZsideFromHashedIndex(thisIndex) < 0 ) h_occupancy_EEM -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
               else                                          h_occupancy_EEP -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
             }
+
+            if( iLoop > 0 ) thisAlpha = h_Alpha_hashedIndex_EE -> GetBinContent(thisIndex+1);
+             
           
             ///Use full statistic
             if( splitStat == 0 ){
@@ -803,16 +835,16 @@ void XtalAlphaEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoo
               
               int thisIndex = ele2_recHit_hashedIndex -> at(iRecHit);
               float thisAlpha = 1.;
-              
-              if(iLoop > 0) thisAlpha = h_Alpha_hashedIndex_EE -> GetBinContent(thisIndex+1);
-                
+        
               /// Fill the occupancy map JUST for the first Loop
               if ( iLoop == 0 ){
                 h_occupancy_hashedIndex_EE -> Fill(thisIndex);
                 if( GetZsideFromHashedIndex(thisIndex) < 0 ) h_occupancy_EEM -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
                 else                                         h_occupancy_EEP -> Fill(GetIxFromHashedIndex(thisIndex), GetIyFromHashedIndex(thisIndex) );
               }
-              
+        
+              if(iLoop > 0) thisAlpha = h_Alpha_hashedIndex_EE -> GetBinContent(thisIndex+1);
+                      
               /// Use full statistic
               if( splitStat == 0){
                 if(thisCaliBlock == 0)
@@ -883,7 +915,7 @@ void XtalAlphaEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoo
                   int EoPbin = EoPHisto->FindBin(thisE/(pIn-ele2_es));
                   theNumerator_EEP[thisIndex]   += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*
                                                    TMath::Power(ele2_recHit_laserCorr -> at(iRecHit),thisAlpha-1.)/
-                                                   thisE*(pIn-ele1_es)/thisE*EoPHisto->GetBinContent(EoPbin);
+                                                   thisE*(pIn-ele2_es)/thisE*EoPHisto->GetBinContent(EoPbin);
                   theDenominator_EEP[thisIndex] += theScalibration[thisIndex]*ele2_recHit_E -> at(iRecHit)*FdiEta*
                                                    TMath::Power(ele2_recHit_laserCorr -> at(iRecHit),thisAlpha-1.)/
                                                    thisE*EoPHisto->GetBinContent(EoPbin);
@@ -898,88 +930,146 @@ void XtalAlphaEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoo
     } ///  End Cycle on the events
       
     std::cout << ">>>>> [L3][endOfLoop] entering..." << std::endl;
-          
-    TH1F* auxiliary_Alpha_EEM = new TH1F("auxiliary_Alpha_EEM","auxiliary_Alpha_EEM",400,0.,3.);
-    TH1F* auxiliary_Alpha_EEP = new TH1F("auxiliary_Alpha_EEP","auxiliary_Alpha_EEP",400,0.,3.);
+
+    TH1F* auxiliary_Alpha_BTCP_EEM = new TH1F("auxiliary_Alpha_BTCP_EEM","auxiliary_Alpha_BTCP_EEM",400,0.,3.);
+    TH1F* auxiliary_Alpha_BTCP_EEP = new TH1F("auxiliary_Alpha_BTCP_EEP","auxiliary_Alpha_BTCP_EEP",400,0.,3.);
+    TH1F* auxiliary_Alpha_SIC_EEM = new TH1F("auxiliary_Alpha_SIC_EEM","auxiliary_Alpha_SIC_EEM",400,0.,3.);
+    TH1F* auxiliary_Alpha_SIC_EEP = new TH1F("auxiliary_Alpha_SIC_EEP","auxiliary_Alpha_SIC_EEP",400,0.,3.);
  
-    TF1* f_EEP = new TF1("f_EEP","gaus",0.,3.);
-    TF1* f_EEM = new TF1("f_EEM","gaus",0.,3.);
+    TF1* f_BTCP_EEP = new TF1("f_BTCP_EEP","gaus",0.,3.);
+    TF1* f_BTCP_EEM = new TF1("f_BTCP_EEM","gaus",0.,3.);
+    TF1* f_SIC_EEP = new TF1("f_SIC_EEP","gaus",0.,3.);
+    TF1* f_SIC_EEM = new TF1("f_SIC_EEM","gaus",0.,3.);
  
     ///Fill the histo of IntercalibValues before the solve
-    for( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ )
-    {
-      if( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 )
-      {
+    for( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
+      if( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) > 0 ){
+
         int thisCaliBlock = -1;
         if( GetZsideFromHashedIndex(iIndex) < 0 ) thisCaliBlock = 0;
         else thisCaliBlock = 1;
         
         float thisAlphaConstant = 1.;
-        
+        float oldAlphaConstant = 1.;
+        if( iLoop > 0 ) oldAlphaConstant = h_Alpha_hashedIndex_EE -> GetBinContent (iIndex+1);
+
+         
         if( thisCaliBlock == 0 && theDenominator_EEM[iIndex] != 0. ) thisAlphaConstant = theNumerator_EEM[iIndex] / theDenominator_EEM[iIndex];
         if( thisCaliBlock == 1 && theDenominator_EEP[iIndex] != 0. ) thisAlphaConstant = theNumerator_EEP[iIndex] / theDenominator_EEP[iIndex];
         
-        float oldAlphaConstant = 1.;
-        if( iLoop > 0 ) oldAlphaConstant = h_Alpha_hashedIndex_EE -> GetBinContent (iIndex+1);
         h_Alpha_hashedIndex_EE -> SetBinContent(iIndex+1, thisAlphaConstant*oldAlphaConstant);
         
-        if( thisCaliBlock == 0 ){
+        if(SicCrystal->isSic(GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex), GetZsideFromHashedIndex(iIndex))){
+         if( thisCaliBlock == 0 ){
 
-          hC_AlphaValues_EEM -> Fill (iLoop, thisAlphaConstant);
-          hC_Alpha_EEM       -> Fill(iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisAlphaConstant*oldAlphaConstant);
+	  hC_AlphaValues_SIC_EEM -> Fill (iLoop, thisAlphaConstant);
+          hC_Alpha_SIC_EEM       -> Fill (iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisAlphaConstant*oldAlphaConstant);
           
-          auxiliary_Alpha_EEM->Fill(thisAlphaConstant);
-        }
-        if( thisCaliBlock == 1)
-        {
-          hC_AlphaValues_EEP -> Fill (iLoop, thisAlphaConstant);
-          hC_Alpha_EEP -> Fill(iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisAlphaConstant*oldAlphaConstant);
+          auxiliary_Alpha_SIC_EEM->Fill(thisAlphaConstant);
+         }
+         if( thisCaliBlock == 1){
+          hC_AlphaValues_SIC_EEP -> Fill (iLoop, thisAlphaConstant);
+          hC_Alpha_SIC_EEP       -> Fill(iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisAlphaConstant*oldAlphaConstant);
           
-          auxiliary_Alpha_EEP->Fill(thisAlphaConstant);
+          auxiliary_Alpha_SIC_EEP->Fill(thisAlphaConstant);
+         }
         }
+        else{
+         if( thisCaliBlock == 0 ){
+
+	  hC_AlphaValues_BTCP_EEM -> Fill (iLoop, thisAlphaConstant);
+          hC_Alpha_BTCP_EEM       -> Fill (iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisAlphaConstant*oldAlphaConstant);
+          
+          auxiliary_Alpha_BTCP_EEM->Fill(thisAlphaConstant);
+         }
+         if( thisCaliBlock == 1){
+          hC_AlphaValues_BTCP_EEP -> Fill (iLoop, thisAlphaConstant);
+          hC_Alpha_BTCP_EEP       -> Fill(iLoop, GetIxFromHashedIndex(iIndex), GetIyFromHashedIndex(iIndex),thisAlphaConstant*oldAlphaConstant);
+          
+          auxiliary_Alpha_BTCP_EEP->Fill(thisAlphaConstant);
+        }
+       }
+
       }
     }
+    //******************************* EE- ***************************
+   
+    g_AlphameanVsLoop_SIC_EEM -> SetPoint(iLoop, iLoop,  auxiliary_Alpha_SIC_EEM->GetMean());
+    g_AlphameanVsLoop_SIC_EEM -> SetPointError(iLoop, 0.,auxiliary_Alpha_SIC_EEM->GetMeanError());
     
-    g_AlphameanVsLoop_EEM -> SetPoint(iLoop, iLoop,  auxiliary_Alpha_EEM->GetMean());
-    g_AlphameanVsLoop_EEM -> SetPointError(iLoop, 0.,auxiliary_Alpha_EEM->GetMeanError());
+    g_AlpharmsVsLoop_SIC_EEM -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_SIC_EEM -> GetRMS());
+    g_AlpharmsVsLoop_SIC_EEM -> SetPointError(iLoop, 0., auxiliary_Alpha_SIC_EEM -> GetRMSError());
     
-    g_AlpharmsVsLoop_EEM -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_EEM -> GetRMS());
-    g_AlpharmsVsLoop_EEM -> SetPointError(iLoop, 0., auxiliary_Alpha_EEM -> GetRMSError());
-    
-    f_EEM -> SetParameters (auxiliary_Alpha_EEM->GetEntries(),auxiliary_Alpha_EEM->GetMean(),auxiliary_Alpha_EEM->GetRMS());
-    f_EEM -> SetRange      (auxiliary_Alpha_EEM->GetMean()-8*auxiliary_Alpha_EEM->GetRMS(),auxiliary_Alpha_EEM->GetMean()+8*auxiliary_Alpha_EEM->GetRMS());
+    f_SIC_EEM -> SetParameters (auxiliary_Alpha_SIC_EEM->GetEntries(),auxiliary_Alpha_SIC_EEM->GetMean(),auxiliary_Alpha_SIC_EEM->GetRMS());
+    f_SIC_EEM -> SetRange      (auxiliary_Alpha_SIC_EEM->GetMean()-8*auxiliary_Alpha_SIC_EEM->GetRMS(),auxiliary_Alpha_SIC_EEM->GetMean()+
+                                8*auxiliary_Alpha_SIC_EEM->GetRMS());
 
-    auxiliary_Alpha_EEM->Fit("f_EEM","QR");
-
+    auxiliary_Alpha_SIC_EEM->Fit("f_SIC_EEM","QR");
   
-    g_AlphaSigmaVsLoop_EEM -> SetPoint(iLoop, iLoop,   f_EEM -> GetParameter(2));
-    g_AlphaSigmaVsLoop_EEM -> SetPointError(iLoop, 0., f_EEM -> GetParError(2));
+    g_AlphaSigmaVsLoop_SIC_EEM -> SetPoint(iLoop, iLoop,   f_SIC_EEM -> GetParameter(2));
+    g_AlphaSigmaVsLoop_SIC_EEM -> SetPointError(iLoop, 0., f_SIC_EEM -> GetParError(2));
+
+    g_AlphameanVsLoop_BTCP_EEM -> SetPoint(iLoop, iLoop,  auxiliary_Alpha_BTCP_EEM->GetMean());
+    g_AlphameanVsLoop_BTCP_EEM -> SetPointError(iLoop, 0.,auxiliary_Alpha_BTCP_EEM->GetMeanError());
     
-    g_AlphameanVsLoop_EEP -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_EEP -> GetMean());
-    g_AlphameanVsLoop_EEP -> SetPointError(iLoop, 0., auxiliary_Alpha_EEP -> GetMeanError());
+    g_AlpharmsVsLoop_BTCP_EEM -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_BTCP_EEM -> GetRMS());
+    g_AlpharmsVsLoop_BTCP_EEM -> SetPointError(iLoop, 0., auxiliary_Alpha_BTCP_EEM -> GetRMSError());
     
-    g_AlpharmsVsLoop_EEP -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_EEP -> GetRMS());
-    g_AlpharmsVsLoop_EEP -> SetPointError(iLoop, 0., auxiliary_Alpha_EEP -> GetRMSError());
+    f_BTCP_EEM -> SetParameters (auxiliary_Alpha_BTCP_EEM->GetEntries(),auxiliary_Alpha_BTCP_EEM->GetMean(),auxiliary_Alpha_BTCP_EEM->GetRMS());
+    f_BTCP_EEM -> SetRange      (auxiliary_Alpha_BTCP_EEM->GetMean()-8*auxiliary_Alpha_BTCP_EEM->GetRMS(),auxiliary_Alpha_BTCP_EEM->GetMean()+
+                                8*auxiliary_Alpha_BTCP_EEM->GetRMS());
 
-
-    f_EEP -> SetParameters (auxiliary_Alpha_EEP->GetEntries(),auxiliary_Alpha_EEP->GetMean(),auxiliary_Alpha_EEP->GetRMS());
-    f_EEP -> SetRange      (auxiliary_Alpha_EEP->GetMean()-8*auxiliary_Alpha_EEP->GetRMS(),auxiliary_Alpha_EEP->GetMean()+8*auxiliary_Alpha_EEP->GetRMS());
-
-    auxiliary_Alpha_EEP->Fit("f_EEP","QR");
-
+    auxiliary_Alpha_BTCP_EEM->Fit("f_BTCP_EEM","QR");
   
-    g_AlphaSigmaVsLoop_EEP -> SetPoint(iLoop, iLoop,   f_EEP -> GetParameter(2));
-    g_AlphaSigmaVsLoop_EEP -> SetPointError(iLoop, 0., f_EEP -> GetParError(2));
+    g_AlphaSigmaVsLoop_BTCP_EEM -> SetPoint(iLoop, iLoop,   f_BTCP_EEM -> GetParameter(2));
+    g_AlphaSigmaVsLoop_BTCP_EEM -> SetPointError(iLoop, 0., f_BTCP_EEM -> GetParError(2));
+   
+    //******************************* EE+ ***************************
+  
+    g_AlphameanVsLoop_SIC_EEP -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_SIC_EEP -> GetMean());
+    g_AlphameanVsLoop_SIC_EEP -> SetPointError(iLoop, 0., auxiliary_Alpha_SIC_EEP -> GetMeanError());
     
+    g_AlpharmsVsLoop_SIC_EEP -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_SIC_EEP -> GetRMS());
+    g_AlpharmsVsLoop_SIC_EEP -> SetPointError(iLoop, 0., auxiliary_Alpha_SIC_EEP -> GetRMSError());
 
-    delete auxiliary_Alpha_EEP ;
-    delete auxiliary_Alpha_EEM ;
-    delete f_EEP;
-    delete f_EEM;
+    f_SIC_EEP -> SetParameters (auxiliary_Alpha_SIC_EEP->GetEntries(),auxiliary_Alpha_SIC_EEP->GetMean(),auxiliary_Alpha_SIC_EEP->GetRMS());
+    f_SIC_EEP -> SetRange      (auxiliary_Alpha_SIC_EEP->GetMean()-8*auxiliary_Alpha_SIC_EEP->GetRMS(),auxiliary_Alpha_SIC_EEP->GetMean()+
+                                8*auxiliary_Alpha_SIC_EEP->GetRMS());
+
+    auxiliary_Alpha_SIC_EEP->Fit("f_SIC_EEP","QR");
+
+    g_AlphaSigmaVsLoop_SIC_EEP -> SetPoint(iLoop, iLoop,   f_SIC_EEP -> GetParameter(2));
+    g_AlphaSigmaVsLoop_SIC_EEP -> SetPointError(iLoop, 0., f_SIC_EEP -> GetParError(2));
+    
+    g_AlphameanVsLoop_BTCP_EEP -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_BTCP_EEP -> GetMean());
+    g_AlphameanVsLoop_BTCP_EEP -> SetPointError(iLoop, 0., auxiliary_Alpha_BTCP_EEP -> GetMeanError());
+    
+    g_AlpharmsVsLoop_BTCP_EEP -> SetPoint(iLoop, iLoop,   auxiliary_Alpha_BTCP_EEP -> GetRMS());
+    g_AlpharmsVsLoop_BTCP_EEP -> SetPointError(iLoop, 0., auxiliary_Alpha_BTCP_EEP -> GetRMSError());
+
+    f_BTCP_EEP -> SetParameters (auxiliary_Alpha_BTCP_EEP->GetEntries(),auxiliary_Alpha_BTCP_EEP->GetMean(),auxiliary_Alpha_BTCP_EEP->GetRMS());
+    f_BTCP_EEP -> SetRange      (auxiliary_Alpha_BTCP_EEP->GetMean()-8*auxiliary_Alpha_BTCP_EEP->GetRMS(),auxiliary_Alpha_BTCP_EEP->GetMean()+
+                                8*auxiliary_Alpha_BTCP_EEP->GetRMS());
+
+    auxiliary_Alpha_BTCP_EEP->Fit("f_BTCP_EEP","QR");
+
+    g_AlphaSigmaVsLoop_BTCP_EEP -> SetPoint(iLoop, iLoop,   f_BTCP_EEP -> GetParameter(2));
+    g_AlphaSigmaVsLoop_BTCP_EEP -> SetPointError(iLoop, 0., f_BTCP_EEP -> GetParError(2));
+    
+    delete auxiliary_Alpha_SIC_EEP ;
+    delete auxiliary_Alpha_SIC_EEM ;
+    delete auxiliary_Alpha_BTCP_EEP ;
+    delete auxiliary_Alpha_BTCP_EEM ;
+    delete f_SIC_EEP;
+    delete f_SIC_EEM;
+    delete f_BTCP_EEP;
+    delete f_BTCP_EEM;
 
    //Alpha spread in each ring
-    std::map <int,TH1F*> *histoTempEEP = new std::map <int,TH1F*>();
-    std::map <int,TH1F*> *histoTempEEM = new std::map <int,TH1F*>();
+    std::map <int,TH1F*> *histoTemp_BTCP_EEP = new std::map <int,TH1F*>();
+    std::map <int,TH1F*> *histoTemp_BTCP_EEM = new std::map <int,TH1F*>();
+    std::map <int,TH1F*> *histoTemp_SIC_EEP = new std::map <int,TH1F*>();
+    std::map <int,TH1F*> *histoTemp_SIC_EEM = new std::map <int,TH1F*>();
  
    TString Name ;
 
@@ -994,61 +1084,131 @@ void XtalAlphaEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoo
        int thisIx = GetIxFromHashedIndex(iIndex);
        int thisIy = GetIyFromHashedIndex(iIndex);
        int thisIz = GetZsideFromHashedIndex(iIndex);
+
        int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz);
 
-       if(!((*histoTempEEP)[thisIr]) && thisCaliBlock==1){  Name = Form("histoTempEEP_%d",thisIr);
-                                                       	    (*histoTempEEP)[thisIr]= new TH1F(Name.Data(),Name.Data(),400,0.,3.);
-       } 
+       if(SicCrystal->isSic(thisIx,thisIy,thisIz)){
+        if(!((*histoTemp_SIC_EEP)[thisIr]) && thisCaliBlock==1){  Name = Form("histoTemp_SIC_EEP_%d",thisIr);
+                                                       	         (*histoTemp_SIC_EEP)[thisIr]= new TH1F(Name.Data(),Name.Data(),400,0.,3.);
+        } 
        
-       if(!((*histoTempEEM)[thisIr]) && thisCaliBlock==0){  Name = Form("histoTempEEM_%d",thisIr);
-	                                               	    (*histoTempEEM)[thisIr]= new TH1F(Name.Data(),Name.Data(),400,0.,3.);
-       }
+        if(!((*histoTemp_SIC_EEM)[thisIr]) && thisCaliBlock==0){  Name = Form("histoTemp_SIC_EEM_%d",thisIr);
+	                                               	         (*histoTemp_SIC_EEM)[thisIr]= new TH1F(Name.Data(),Name.Data(),400,0.,3.);
+        }
 
-       float thisAlphaConstant = h_Alpha_hashedIndex_EE -> GetBinContent (iIndex+1); /// Alpha value
+        float thisAlphaConstant = h_Alpha_hashedIndex_EE -> GetBinContent (iIndex+1); /// Alpha value
 
-       if(thisCaliBlock==0)      (*histoTempEEM)[thisIr]->Fill(thisAlphaConstant);
-       else if(thisCaliBlock==1) (*histoTempEEP)[thisIr]->Fill(thisAlphaConstant); 
-   }
- 
-  
-   for( unsigned int iRing = 0; iRing<histoTempEEP->size(); iRing++){
-   
-     TF1* f_EEP = new TF1("f_EEP","gaus",0.,3.);
-     f_EEP->SetParameters((*histoTempEEP)[iRing]->GetEntries(),(*histoTempEEP)[iRing]->GetMean(),(*histoTempEEP)[iRing]->GetRMS());
-     f_EEP->SetRange((*histoTempEEP)[iRing]->GetMean()-8*(*histoTempEEP)[iRing]->GetRMS(),(*histoTempEEP)[iRing]->GetMean()+8*(*histoTempEEP)[iRing]->GetRMS());
-    
-     (*histoTempEEP)[iRing]->Fit("f_EEP","QR");
+        if(thisCaliBlock==0)      (*histoTemp_SIC_EEM)[thisIr]->Fill(thisAlphaConstant);
+        else if(thisCaliBlock==1) (*histoTemp_SIC_EEP)[thisIr]->Fill(thisAlphaConstant); 
+      }
+     
+      else{
+        if(!((*histoTemp_BTCP_EEP)[thisIr]) && thisCaliBlock==1){  Name = Form("histoTemp_BTCP_EEP_%d",thisIr);
+                                                       	         (*histoTemp_BTCP_EEP)[thisIr]= new TH1F(Name.Data(),Name.Data(),400,0.,3.);
+        } 
+       
+        if(!((*histoTemp_BTCP_EEM)[thisIr]) && thisCaliBlock==0){  Name = Form("histoTemp_BTCP_EEM_%d",thisIr);
+	                                               	         (*histoTemp_BTCP_EEM)[thisIr]= new TH1F(Name.Data(),Name.Data(),400,0.,3.);
+        }
 
-     hC_AlphaSpreadVsLoop_EEP->SetBinContent(iLoop,iRing,f_EEP->GetParameter(2));
-     hC_AlphaSpreadVsLoop_EEP->SetBinError(iLoop,iRing,f_EEP->GetParError(2));
+        float thisAlphaConstant = h_Alpha_hashedIndex_EE -> GetBinContent (iIndex+1); /// Alpha value
 
-     delete f_EEP;
-   }
- 
-  for( unsigned int iRing = 0; iRing<histoTempEEM->size(); iRing++){
-   
-     TF1* f_EEM = new TF1("f_EEM","gaus",0.,3.);
-     f_EEM->SetParameters((*histoTempEEM)[iRing]->GetEntries(),(*histoTempEEM)[iRing]->GetMean(),(*histoTempEEM)[iRing]->GetRMS());
-     f_EEM->SetRange((*histoTempEEM)[iRing]->GetMean()-8*(*histoTempEEM)[iRing]->GetRMS(),(*histoTempEEM)[iRing]->GetMean()+8*(*histoTempEEM)[iRing]->GetRMS());
-    
-     (*histoTempEEM)[iRing]->Fit("f_EEM","QR");
-
-     hC_AlphaSpreadVsLoop_EEM->SetBinContent(iLoop,iRing,f_EEM->GetParameter(2));
-     hC_AlphaSpreadVsLoop_EEM->SetBinError(iLoop,iRing,f_EEM->GetParError(2));
-
-     delete f_EEM;
+        if(thisCaliBlock==0)      (*histoTemp_BTCP_EEM)[thisIr]->Fill(thisAlphaConstant);
+        else if(thisCaliBlock==1) (*histoTemp_BTCP_EEP)[thisIr]->Fill(thisAlphaConstant); 
+      }
+     
    }
   
-  for( std::map<int,TH1F*>::const_iterator itrechit = histoTempEEP->begin(); itrechit !=histoTempEEP->end(); itrechit++) delete itrechit->second;
-  for( std::map<int,TH1F*>::const_iterator itrechit = histoTempEEM->begin(); itrechit !=histoTempEEM->end(); itrechit++) delete itrechit->second;
+ 
+     
+   for( unsigned int iRing = 0; iRing<histoTemp_SIC_EEP->size(); iRing++){
+   
+     if(!(*histoTemp_SIC_EEP)[iRing]) continue;
+   
+     TF1* funz_SIC_EEP = new TF1("funz_SIC_EEP","gaus",0.,3.);
+     
+     funz_SIC_EEP->SetParameters((*histoTemp_SIC_EEP)[iRing]->GetEntries(),(*histoTemp_SIC_EEP)[iRing]->GetMean(),(*histoTemp_SIC_EEP)[iRing]->GetRMS());
+     funz_SIC_EEP->SetRange((*histoTemp_SIC_EEP)[iRing]->GetMean()-8*(*histoTemp_SIC_EEP)[iRing]->GetRMS(),(*histoTemp_SIC_EEP)[iRing]->GetMean()
+                             +8*(*histoTemp_SIC_EEP)[iRing]->GetRMS());
+    
+     (*histoTemp_SIC_EEP)[iRing]->Fit("funz_SIC_EEP","QR");
 
-  delete histoTempEEP;
-  delete histoTempEEM;
+     hC_AlphaSpreadVsLoop_SIC_EEP->SetBinContent(iLoop,iRing,funz_SIC_EEP->GetParameter(2));
+     hC_AlphaSpreadVsLoop_SIC_EEP->SetBinError(iLoop,iRing,funz_SIC_EEP->GetParError(2));
 
+     delete funz_SIC_EEP;
+   }
+
+   for( unsigned int iRing = 0; iRing<histoTemp_BTCP_EEP->size(); iRing++){
+   
+     if(!(*histoTemp_BTCP_EEP)[iRing]) continue;
+   
+     TF1* funz_BTCP_EEP = new TF1("funz_BTCP_EEP","gaus",0.,3.);
+     
+     funz_BTCP_EEP->SetParameters((*histoTemp_BTCP_EEP)[iRing]->GetEntries(),(*histoTemp_BTCP_EEP)[iRing]->GetMean(),(*histoTemp_BTCP_EEP)[iRing]->GetRMS());
+     funz_BTCP_EEP->SetRange((*histoTemp_BTCP_EEP)[iRing]->GetMean()-8*(*histoTemp_BTCP_EEP)[iRing]->GetRMS(),(*histoTemp_BTCP_EEP)[iRing]->GetMean()
+                             +8*(*histoTemp_BTCP_EEP)[iRing]->GetRMS());
+    
+     (*histoTemp_BTCP_EEP)[iRing]->Fit("funz_BTCP_EEP","QR");
+
+     hC_AlphaSpreadVsLoop_BTCP_EEP->SetBinContent(iLoop,iRing,funz_BTCP_EEP->GetParameter(2));
+     hC_AlphaSpreadVsLoop_BTCP_EEP->SetBinError(iLoop,iRing,funz_BTCP_EEP->GetParError(2));
+
+     delete funz_BTCP_EEP;
+   }
+
+   
+  for( unsigned int iRing = 0; iRing<histoTemp_SIC_EEM->size(); iRing++){
+
+     if(!(*histoTemp_SIC_EEM)[iRing]) continue;
+   
+     TF1* funz_SIC_EEM = new TF1("funz_SIC_EEM","gaus",0.,3.);
+     funz_SIC_EEM->SetParameters((*histoTemp_SIC_EEM)[iRing]->GetEntries(),(*histoTemp_SIC_EEM)[iRing]->GetMean(),(*histoTemp_SIC_EEM)[iRing]->GetRMS());
+     funz_SIC_EEM->SetRange((*histoTemp_SIC_EEM)[iRing]->GetMean()-8*(*histoTemp_SIC_EEM)[iRing]->GetRMS(),(*histoTemp_SIC_EEM)[iRing]->GetMean()
+                          +8*(*histoTemp_SIC_EEM)[iRing]->GetRMS());
+    
+     (*histoTemp_SIC_EEM)[iRing]->Fit("funz_SIC_EEM","QR");
+
+     hC_AlphaSpreadVsLoop_SIC_EEM->SetBinContent(iLoop,iRing,funz_SIC_EEM->GetParameter(2));
+     hC_AlphaSpreadVsLoop_SIC_EEM->SetBinError(iLoop,iRing,funz_SIC_EEM->GetParError(2));
+     delete funz_SIC_EEM;
+    
+  }
+  
+  for( unsigned int iRing = 0; iRing<histoTemp_BTCP_EEM->size(); iRing++){
+
+     if(!(*histoTemp_SIC_EEM)[iRing]) continue;
+   
+     TF1* funz_BTCP_EEM = new TF1("funz_BTCP_EEM","gaus",0.,3.);
+     funz_BTCP_EEM->SetParameters((*histoTemp_BTCP_EEM)[iRing]->GetEntries(),(*histoTemp_BTCP_EEM)[iRing]->GetMean(),(*histoTemp_BTCP_EEM)[iRing]->GetRMS());
+     funz_BTCP_EEM->SetRange((*histoTemp_BTCP_EEM)[iRing]->GetMean()-8*(*histoTemp_BTCP_EEM)[iRing]->GetRMS(),(*histoTemp_BTCP_EEM)[iRing]->GetMean()
+                          +8*(*histoTemp_BTCP_EEM)[iRing]->GetRMS());
+    
+     (*histoTemp_BTCP_EEM)[iRing]->Fit("funz_BTCP_EEM","QR");
+
+     hC_AlphaSpreadVsLoop_BTCP_EEM->SetBinContent(iLoop,iRing,funz_BTCP_EEM->GetParameter(2));
+     hC_AlphaSpreadVsLoop_BTCP_EEM->SetBinError(iLoop,iRing,funz_BTCP_EEM->GetParError(2));
+     delete funz_BTCP_EEM;
+    
+  }
+  
+  for( std::map<int,TH1F*>::const_iterator itrechit = histoTemp_SIC_EEM->begin(); itrechit !=histoTemp_SIC_EEM->end(); itrechit++) delete itrechit->second;
+  for( std::map<int,TH1F*>::const_iterator itrechit = histoTemp_SIC_EEP->begin(); itrechit !=histoTemp_SIC_EEP->end(); itrechit++) delete itrechit->second;
+  for( std::map<int,TH1F*>::const_iterator itrechit = histoTemp_BTCP_EEM->begin(); itrechit !=histoTemp_BTCP_EEM->end(); itrechit++) delete itrechit->second;
+  for( std::map<int,TH1F*>::const_iterator itrechit = histoTemp_BTCP_EEP->begin(); itrechit !=histoTemp_BTCP_EEP->end(); itrechit++) delete itrechit->second;
+ 
+  delete histoTemp_BTCP_EEP;
+  delete histoTemp_BTCP_EEM;
+  delete histoTemp_SIC_EEP;
+  delete histoTemp_SIC_EEM;
+
+   
   } /// End of Calibration Loops
 
-  std::map<int,TH1F*> *histoEEP = new std::map<int,TH1F*>();
-  std::map<int,TH1F*> *histoEEM = new std::map<int,TH1F*>();
+  std::map<int,TH1F*> *histo_SIC_EEP = new std::map<int,TH1F*>();
+  std::map<int,TH1F*> *histo_SIC_EEM = new std::map<int,TH1F*>();
+  std::map<int,TH1F*> *histo_BTCP_EEP = new std::map<int,TH1F*>();
+  std::map<int,TH1F*> *histo_BTCP_EEM = new std::map<int,TH1F*>();
 
   TString Name ;
       
@@ -1064,6 +1224,7 @@ void XtalAlphaEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoo
        int thisIx = GetIxFromHashedIndex(iIndex);
        int thisIy = GetIyFromHashedIndex(iIndex);
        int thisIz = GetZsideFromHashedIndex(iIndex); /// Ix, Iy and Iz info for each xtal
+       
        int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz); /// Endcap ring  xtal belongs to
        
        float thisAlphaConstant = h_Alpha_hashedIndex_EE -> GetBinContent (iIndex+1); /// Final IC value
@@ -1071,108 +1232,121 @@ void XtalAlphaEE::Loop(int nentries, int useZ, int useW, int splitStat, int nLoo
        if ( thisCaliBlock == 0 ) h_Alpha_EEM -> Fill (thisIx, thisIy, thisAlphaConstant);
        else                      h_Alpha_EEP -> Fill (thisIx, thisIy, thisAlphaConstant);
 
-       if ( thisCaliBlock == 0 ) p_AlphaVsIeta_EEM -> Fill (thisIr,thisAlphaConstant);
-       else                      p_AlphaVsIeta_EEP -> Fill (thisIr,thisAlphaConstant);
        
-       if( thisCaliBlock == 0 )
-       {
-         IxValues_EEM.push_back(thisIx);
-         IyValues_EEM.push_back(thisIy);
-         AlphaValues_EEM.push_back(thisAlphaConstant);
-       }
-       else
-       {
-         IxValues_EEP.push_back(thisIx);
-         IyValues_EEP.push_back(thisIy);
-         AlphaValues_EEP.push_back(thisAlphaConstant);
-       }
-       
+       if(SicCrystal->isSic(thisIx,thisIy,thisIz)){
 
-       if(thisIz >0)
-       {
-         SumAlpha_Ring_EEP.at(thisIr) = SumAlpha_Ring_EEP.at(thisIr) + thisAlphaConstant;
-         Sumxtal_Ring_EEP.at(thisIr) = Sumxtal_Ring_EEP.at(thisIr) + 1;
-       }
-       else
-       {
-         SumAlpha_Ring_EEM.at(thisIr) = SumAlpha_Ring_EEM.at(thisIr) + thisAlphaConstant;
-         Sumxtal_Ring_EEM.at(thisIr) = Sumxtal_Ring_EEM.at(thisIr) + 1;
-       }
+        if ( thisCaliBlock == 0 ) p_AlphaVsIeta_SIC_EEM -> Fill (thisIr,thisAlphaConstant);
+        else                      p_AlphaVsIeta_SIC_EEP -> Fill (thisIr,thisAlphaConstant);
+
   
-       if((!(*histoEEP)[thisIr]) && thisCaliBlock==1){ Name = Form("histoEEP_%d",thisIr);
-	                                               (*histoEEP)[thisIr] = new TH1F(Name.Data(),Name.Data(),400,0.,3.);
-       }
-       if((!(*histoEEM)[thisIr]) && thisCaliBlock==0){ Name = Form("histoEEM_%d",thisIr);
-	                                               (*histoEEM)[thisIr] = new TH1F(Name.Data(),Name.Data(),400,0.,3.);
-       }                                            
+         if((!(*histo_SIC_EEP)[thisIr]) && thisCaliBlock==1){ Name = Form("histo_SIC_EEP_%d",thisIr);
+	                                               (*histo_SIC_EEP)[thisIr] = new TH1F(Name.Data(),Name.Data(),400,0.,3.);
+         }
+         if((!(*histo_SIC_EEM)[thisIr]) && thisCaliBlock==0){ Name = Form("histo_SIC_EEM_%d",thisIr);
+	                                               (*histo_SIC_EEM)[thisIr] = new TH1F(Name.Data(),Name.Data(),400,0.,3.);
+         }                                            
 
-       if(thisCaliBlock==0)  (*histoEEM)[thisIr]->Fill(thisAlphaConstant);
-       else if(thisCaliBlock==1) (*histoEEP)[thisIr]->Fill(thisAlphaConstant); 
+        if(thisCaliBlock==0)  (*histo_SIC_EEM)[thisIr]->Fill(thisAlphaConstant);
+        else if(thisCaliBlock==1) (*histo_SIC_EEP)[thisIr]->Fill(thisAlphaConstant); 
+       }
+       else{
+
+         if ( thisCaliBlock == 0 ) p_AlphaVsIeta_BTCP_EEM -> Fill (thisIr,thisAlphaConstant);
+         else                      p_AlphaVsIeta_BTCP_EEP -> Fill (thisIr,thisAlphaConstant);
+  
+         if((!(*histo_BTCP_EEP)[thisIr]) && thisCaliBlock==1){ Name = Form("histo_BTCP_EEP_%d",thisIr);
+	                                               (*histo_BTCP_EEP)[thisIr] = new TH1F(Name.Data(),Name.Data(),400,0.,3.);
+         }
+         if((!(*histo_BTCP_EEM)[thisIr]) && thisCaliBlock==0){ Name = Form("histo_BTCP_EEM_%d",thisIr);
+	                                               (*histo_BTCP_EEM)[thisIr] = new TH1F(Name.Data(),Name.Data(),400,0.,3.);
+         }                                            
+
+        if(thisCaliBlock==0)  (*histo_BTCP_EEM)[thisIr]->Fill(thisAlphaConstant);
+        else if(thisCaliBlock==1) (*histo_BTCP_EEP)[thisIr]->Fill(thisAlphaConstant); 
+     }
 
   }
    
-  /// IC Normaliztion trough the mean value of each ring
-  for ( int iIndex = 0; iIndex < kEEhalf*2; iIndex++ ){
-
-     if ( h_occupancy_hashedIndex_EE -> GetBinContent(iIndex+1) == 0 ) continue;
-
-       
-       int thisIx = GetIxFromHashedIndex(iIndex);
-       int thisIy = GetIyFromHashedIndex(iIndex);
-       int thisIz = GetZsideFromHashedIndex(iIndex);
-       
-       int thisIr = eRings -> GetEndcapRing(thisIx,thisIy,thisIz);
-       
-       float thisAlphaConstant = h_Alpha_hashedIndex_EE -> GetBinContent (iIndex+1);
-       
-       if( thisIz > 0 )
-       {
-         if(Sumxtal_Ring_EEP.at(thisIr) != 0 && SumAlpha_Ring_EEP.at(thisIr)!= 0)
-         h_Alpha_meanOnring_EEP->Fill(thisIx,thisIy,thisAlphaConstant/(SumAlpha_Ring_EEP.at(thisIr)/Sumxtal_Ring_EEP.at(thisIr)));
-       }
-       else
-       {
-         if(Sumxtal_Ring_EEM.at(thisIr) != 0 && SumAlpha_Ring_EEM.at(thisIr) != 0)
-         h_Alpha_meanOnring_EEM->Fill(thisIx,thisIy,thisAlphaConstant/(SumAlpha_Ring_EEM.at(thisIr)/Sumxtal_Ring_EEM.at(thisIr)));
-       }
-   }
-
    // spread and mean value vs iRing
 
-   for( unsigned int iRing = 0; iRing<histoEEP->size(); iRing++){
+   for( unsigned int iRing = 0; iRing<histo_SIC_EEP->size(); iRing++){
+     if(!(*histo_SIC_EEP)[iRing]) continue;
    
-     TF1* f_EEP = new TF1("f_EEP","gaus",0.,3.);
-     f_EEP->SetParameters((*histoEEP)[iRing]->GetEntries(),(*histoEEP)[iRing]->GetMean(),(*histoEEP)[iRing]->GetRMS());
-     f_EEP->SetRange((*histoEEP)[iRing]->GetMean()-8*(*histoEEP)[iRing]->GetRMS(),(*histoEEP)[iRing]->GetMean()+8*(*histoEEP)[iRing]->GetRMS());
+     TF1* f_SIC_EEP = new TF1("f_SIC_EEP","gaus",0.,3.);
+     f_SIC_EEP->SetParameters((*histo_SIC_EEP)[iRing]->GetEntries(),(*histo_SIC_EEP)[iRing]->GetMean(),(*histo_SIC_EEP)[iRing]->GetRMS());
+     f_SIC_EEP->SetRange((*histo_SIC_EEP)[iRing]->GetMean()-8*(*histo_SIC_EEP)[iRing]->GetRMS(),(*histo_SIC_EEP)[iRing]->GetMean()
+                          +8*(*histo_SIC_EEP)[iRing]->GetRMS());
     
-     (*histoEEP)[iRing]->Fit("f_EEP","QR");
+     (*histo_SIC_EEP)[iRing]->Fit("f_SIC_EEP","QR");
 
-     AlphaSpreadVsIeta_EEP->SetBinContent(iRing,f_EEP->GetParameter(2));
-     AlphaSpreadVsIeta_EEP->SetBinError(iRing,f_EEP->GetParError(2));
+     AlphaSpreadVsIeta_SIC_EEP->SetBinContent(iRing,f_SIC_EEP->GetParameter(2));
+     AlphaSpreadVsIeta_SIC_EEP->SetBinError(iRing,f_SIC_EEP->GetParError(2));
 
-     delete f_EEP;
+     delete f_SIC_EEP;
+
    }
  
-  for( unsigned int iRing = 0; iRing<histoEEM->size(); iRing++){
+   for( unsigned int iRing = 0; iRing<histo_BTCP_EEP->size(); iRing++){
+     if(!(*histo_BTCP_EEP)[iRing]) continue;
    
-     TF1* f_EEM = new TF1("f_EEM","gaus",0.,3.);
-     f_EEM->SetParameters((*histoEEM)[iRing]->GetEntries(),(*histoEEM)[iRing]->GetMean(),(*histoEEM)[iRing]->GetRMS());
-     f_EEM->SetRange((*histoEEM)[iRing]->GetMean()-8*(*histoEEM)[iRing]->GetRMS(),(*histoEEM)[iRing]->GetMean()+8*(*histoEEM)[iRing]->GetRMS());
+     TF1* f_BTCP_EEP = new TF1("f_BTCP_EEP","gaus",0.,3.);
+     f_BTCP_EEP->SetParameters((*histo_BTCP_EEP)[iRing]->GetEntries(),(*histo_BTCP_EEP)[iRing]->GetMean(),(*histo_BTCP_EEP)[iRing]->GetRMS());
+     f_BTCP_EEP->SetRange((*histo_BTCP_EEP)[iRing]->GetMean()-8*(*histo_BTCP_EEP)[iRing]->GetRMS(),(*histo_BTCP_EEP)[iRing]->GetMean()
+                          +8*(*histo_BTCP_EEP)[iRing]->GetRMS());
     
-     (*histoEEM)[iRing]->Fit("f_EEM","QR");
+     (*histo_BTCP_EEP)[iRing]->Fit("f_BTCP_EEP","QR");
 
-     AlphaSpreadVsIeta_EEM->SetBinContent(iRing,f_EEM->GetParameter(2));
-     AlphaSpreadVsIeta_EEM->SetBinError(iRing,f_EEM->GetParError(2));
+     AlphaSpreadVsIeta_BTCP_EEP->SetBinContent(iRing,f_BTCP_EEP->GetParameter(2));
+     AlphaSpreadVsIeta_BTCP_EEP->SetBinError(iRing,f_BTCP_EEP->GetParError(2));
 
-     delete f_EEM;
+     delete f_BTCP_EEP;
+
    }
+ 
+   for( unsigned int iRing = 0; iRing<histo_SIC_EEM->size(); iRing++){
+     if(!(*histo_SIC_EEM)[iRing]) continue;
+   
+     TF1* f_SIC_EEM = new TF1("f_SIC_EEM","gaus",0.,3.);
+     f_SIC_EEM->SetParameters((*histo_SIC_EEM)[iRing]->GetEntries(),(*histo_SIC_EEM)[iRing]->GetMean(),(*histo_SIC_EEM)[iRing]->GetRMS());
+     f_SIC_EEM->SetRange((*histo_SIC_EEM)[iRing]->GetMean()-8*(*histo_SIC_EEM)[iRing]->GetRMS(),(*histo_SIC_EEM)[iRing]->GetMean()
+                          +8*(*histo_SIC_EEM)[iRing]->GetRMS());
+    
+     (*histo_SIC_EEM)[iRing]->Fit("f_SIC_EEM","QR");
 
-  for( std::map<int,TH1F*>::const_iterator itrechit = histoEEP->begin(); itrechit !=histoEEP->end(); itrechit++) delete itrechit->second;
-  for( std::map<int,TH1F*>::const_iterator itrechit = histoEEM->begin(); itrechit !=histoEEM->end(); itrechit++) delete itrechit->second;
+     AlphaSpreadVsIeta_SIC_EEM->SetBinContent(iRing,f_SIC_EEM->GetParameter(2));
+     AlphaSpreadVsIeta_SIC_EEM->SetBinError(iRing,f_SIC_EEM->GetParError(2));
 
-  delete histoEEP;
-  delete histoEEM;
-  
+     delete f_SIC_EEM;
+
+   }
+ 
+   for( unsigned int iRing = 0; iRing<histo_BTCP_EEM->size(); iRing++){
+     if(!(*histo_BTCP_EEM)[iRing]) continue;
+   
+     TF1* f_BTCP_EEM = new TF1("f_BTCP_EEM","gaus",0.,3.);
+     f_BTCP_EEM->SetParameters((*histo_BTCP_EEM)[iRing]->GetEntries(),(*histo_BTCP_EEM)[iRing]->GetMean(),(*histo_BTCP_EEM)[iRing]->GetRMS());
+     f_BTCP_EEM->SetRange((*histo_BTCP_EEM)[iRing]->GetMean()-8*(*histo_BTCP_EEM)[iRing]->GetRMS(),(*histo_BTCP_EEM)[iRing]->GetMean()
+                          +8*(*histo_BTCP_EEM)[iRing]->GetRMS());
+    
+     (*histo_BTCP_EEM)[iRing]->Fit("f_BTCP_EEM","QR");
+
+     AlphaSpreadVsIeta_BTCP_EEM->SetBinContent(iRing,f_BTCP_EEM->GetParameter(2));
+     AlphaSpreadVsIeta_BTCP_EEM->SetBinError(iRing,f_BTCP_EEM->GetParError(2));
+
+     delete f_BTCP_EEM;
+
+   }
+ 
+
+  for( std::map<int,TH1F*>::const_iterator itrechit = histo_SIC_EEP->begin(); itrechit !=histo_SIC_EEP->end(); itrechit++) delete itrechit->second;
+  for( std::map<int,TH1F*>::const_iterator itrechit = histo_SIC_EEM->begin(); itrechit !=histo_SIC_EEM->end(); itrechit++) delete itrechit->second;
+  for( std::map<int,TH1F*>::const_iterator itrechit = histo_BTCP_EEP->begin(); itrechit !=histo_BTCP_EEP->end(); itrechit++) delete itrechit->second;
+  for( std::map<int,TH1F*>::const_iterator itrechit = histo_BTCP_EEM->begin(); itrechit !=histo_BTCP_EEM->end(); itrechit++) delete itrechit->second;
+
+  delete histo_SIC_EEP;
+  delete histo_SIC_EEM;
+  delete histo_BTCP_EEP;
+  delete histo_BTCP_EEM;
 }
    
 
@@ -1188,45 +1362,62 @@ void XtalAlphaEE::saveHistos(TFile * f1){
  
   ///EE+
 
-  hC_AlphaValues_EEP         ->Write(*f1);
-  hC_AlphaSpreadVsLoop_EEP   ->Write(*f1);
-  hC_Alpha_EEP               ->Write("",*f1);
+  hC_AlphaValues_SIC_EEP         ->Write(*f1);
+  hC_AlphaSpreadVsLoop_SIC_EEP   ->Write(*f1);
+  hC_Alpha_SIC_EEP               ->Write("",*f1);
+  hC_AlphaValues_BTCP_EEP         ->Write(*f1);
+  hC_AlphaSpreadVsLoop_BTCP_EEP   ->Write(*f1);
+  hC_Alpha_BTCP_EEP               ->Write("",*f1);
   
   h_Alpha_EEP             ->Write();
   h_scalib_EEP            ->Write();
 
   h_occupancy_EEP         ->Write();
-  h_Alpha_meanOnring_EEP  ->Write("h_Alpha_meanOnring_EEP");
   h_map_Dead_Channels_EEP ->Write();
 
-  p_AlphaVsIeta_EEP       ->Write();
-  AlphaSpreadVsIeta_EEP   ->Write();
+  p_AlphaVsIeta_SIC_EEP       ->Write();
+  AlphaSpreadVsIeta_SIC_EEP   ->Write();
     
-  g_AlphameanVsLoop_EEP   ->Write("g_AlphameanVsLoop_EEP");
-  g_AlpharmsVsLoop_EEP    ->Write("g_AlpharmsVsLoop_EEP");
-  g_AlphaSigmaVsLoop_EEP  ->Write("g_AlphaSigmaVsLoop_EEP");
+  g_AlphameanVsLoop_SIC_EEP   ->Write("g_AlphameanVsLoop_SIC_EEP");
+  g_AlpharmsVsLoop_SIC_EEP    ->Write("g_AlpharmsVsLoop_SIC_EEP");
+  g_AlphaSigmaVsLoop_SIC_EEP  ->Write("g_AlphaSigmaVsLoop_SIC_EEP");
  
-  /// EE-
+  p_AlphaVsIeta_BTCP_EEP       ->Write();
+  AlphaSpreadVsIeta_BTCP_EEP   ->Write();
+    
+  g_AlphameanVsLoop_BTCP_EEP   ->Write("g_AlphameanVsLoop_BTCP_EEP");
+  g_AlpharmsVsLoop_BTCP_EEP    ->Write("g_AlpharmsVsLoop_BTCP_EEP");
+  g_AlphaSigmaVsLoop_BTCP_EEP  ->Write("g_AlphaSigmaVsLoop_BTCP_EEP");
+ 
+ ///EE-
 
-  hC_AlphaValues_EEM         ->Write(*f1);
-  hC_AlphaSpreadVsLoop_EEM   ->Write(*f1);
-  hC_Alpha_EEM               ->Write("",*f1);
+  hC_AlphaValues_SIC_EEM         ->Write(*f1);
+  hC_AlphaSpreadVsLoop_SIC_EEM   ->Write(*f1);
+  hC_Alpha_SIC_EEM               ->Write("",*f1);
+  hC_AlphaValues_BTCP_EEM         ->Write(*f1);
+  hC_AlphaSpreadVsLoop_BTCP_EEM   ->Write(*f1);
+  hC_Alpha_BTCP_EEM               ->Write("",*f1);
   
   h_Alpha_EEM             ->Write();
   h_scalib_EEM            ->Write();
 
   h_occupancy_EEM         ->Write();
-  h_Alpha_meanOnring_EEM  ->Write("h_Alpha_meanOnring_EEM");
   h_map_Dead_Channels_EEM ->Write();
 
-  p_AlphaVsIeta_EEM       ->Write();
-  AlphaSpreadVsIeta_EEM   ->Write();
+  p_AlphaVsIeta_SIC_EEM       ->Write();
+  AlphaSpreadVsIeta_SIC_EEM   ->Write();
     
-  g_AlphameanVsLoop_EEM   ->Write("g_AlphameanVsLoop_EEM");
-  g_AlpharmsVsLoop_EEM    ->Write("g_AlpharmsVsLoop_EEM");
-  g_AlphaSigmaVsLoop_EEM  ->Write("g_AlphaSigmaVsLoop_EEM");
-  
-   
+  g_AlphameanVsLoop_SIC_EEM   ->Write("g_AlphameanVsLoop_SIC_EEM");
+  g_AlpharmsVsLoop_SIC_EEM    ->Write("g_AlpharmsVsLoop_SIC_EEM");
+  g_AlphaSigmaVsLoop_SIC_EEM  ->Write("g_AlphaSigmaVsLoop_SIC_EEM");
+ 
+  p_AlphaVsIeta_BTCP_EEM       ->Write();
+  AlphaSpreadVsIeta_BTCP_EEM   ->Write();
+    
+  g_AlphameanVsLoop_BTCP_EEM   ->Write("g_AlphameanVsLoop_BTCP_EEM");
+  g_AlpharmsVsLoop_BTCP_EEM    ->Write("g_AlpharmsVsLoop_BTCP_EEM");
+  g_AlphaSigmaVsLoop_BTCP_EEM  ->Write("g_AlphaSigmaVsLoop_BTCP_EEM");
+ 
   f1->Close();
 
   return;

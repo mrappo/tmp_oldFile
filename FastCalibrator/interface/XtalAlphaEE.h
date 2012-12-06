@@ -26,6 +26,7 @@
 #include "CalibrationUtils.h"
 #include "readJSONFile.h"
 #include "TEndcapRings.h"
+#include "TSicCrystals.h"
 
 class XtalAlphaEE{
 
@@ -46,12 +47,12 @@ class XtalAlphaEE{
     Int_t           isZ;
 
     ///! Ele1 Variables
-    std::vector<float>   *ele1_recHit_E;
-    std::vector<int>     *ele1_recHit_hashedIndex;
-    std::vector<int>     *ele1_recHit_ietaORix;
-    std::vector<int>     *ele1_recHit_iphiORiy;
-    std::vector<int>     *ele1_recHit_laserCorr;   
-    std::vector<int>     *ele1_recHit_Alpha;   
+    std::vector<float>    *ele1_recHit_E;
+    std::vector<int>      *ele1_recHit_hashedIndex;
+    std::vector<int>      *ele1_recHit_ietaORix;
+    std::vector<int>      *ele1_recHit_iphiORiy;
+    std::vector<float>    *ele1_recHit_laserCorr;   
+    std::vector<float>    *ele1_recHit_Alpha;   
     
     Float_t         ele1_charge;
     Float_t         ele1_eta;
@@ -78,12 +79,12 @@ class XtalAlphaEE{
     Float_t         ele1_seedLaserCorr;
 
     ///! Ele Variables
-    std::vector<float>   *ele2_recHit_E;
-    std::vector<int>     *ele2_recHit_hashedIndex;
-    std::vector<int>     *ele2_recHit_iphiORiy;
-    std::vector<int>     *ele2_recHit_ietaORix;
-    std::vector<int>     *ele2_recHit_laserCorr;   
-    std::vector<int>     *ele2_recHit_Alpha;   
+    std::vector<float>    *ele2_recHit_E;
+    std::vector<int>      *ele2_recHit_hashedIndex;
+    std::vector<int>      *ele2_recHit_iphiORiy;
+    std::vector<int>      *ele2_recHit_ietaORix;
+    std::vector<float>    *ele2_recHit_laserCorr;   
+    std::vector<float>    *ele2_recHit_Alpha;   
     
     Float_t         ele2_charge;
     Float_t         ele2_eta;
@@ -212,58 +213,61 @@ class XtalAlphaEE{
    hChain     *hC_EoP;
    
    /// EE+
-   hChain     *hC_AlphaValues_EEP;
-   h2Chain    *hC_Alpha_EEP;
-   hChain     *hC_AlphaSpreadVsLoop_EEP;
+   hChain     *hC_AlphaValues_BTCP_EEP;
+   h2Chain    *hC_Alpha_BTCP_EEP;
+   hChain     *hC_AlphaSpreadVsLoop_BTCP_EEP;
 
-   TProfile   *p_AlphaVsIeta_EEP;
-   TH1F       *AlphaSpreadVsIeta_EEP;
+   hChain     *hC_AlphaValues_SIC_EEP;
+   h2Chain    *hC_Alpha_SIC_EEP;
+   hChain     *hC_AlphaSpreadVsLoop_SIC_EEP;
+
+   TProfile   *p_AlphaVsIeta_BTCP_EEP;
+   TH1F       *AlphaSpreadVsIeta_BTCP_EEP;
+   TProfile   *p_AlphaVsIeta_SIC_EEP;
+   TH1F       *AlphaSpreadVsIeta_SIC_EEP;
           
    TH2F       *h_occupancy_EEP;
  
    TH2F       *h_Alpha_EEP;
    TH2F       *h_scalib_EEP;
-   TH2F       *h_Alpha_meanOnring_EEP;
    TH2F       *h_Alpha_Original_EEP;
  
    
-   TGraphErrors *g_AlphameanVsLoop_EEP;
-   TGraphErrors *g_AlpharmsVsLoop_EEP;
-   TGraphErrors *g_AlphaSigmaVsLoop_EEP;
+   TGraphErrors *g_AlphameanVsLoop_BTCP_EEP;
+   TGraphErrors *g_AlpharmsVsLoop_BTCP_EEP;
+   TGraphErrors *g_AlphaSigmaVsLoop_BTCP_EEP;
+   TGraphErrors *g_AlphameanVsLoop_SIC_EEP;
+   TGraphErrors *g_AlpharmsVsLoop_SIC_EEP;
+   TGraphErrors *g_AlphaSigmaVsLoop_SIC_EEP;
 
-   std::vector<int>   IxValues_EEP;
-   std::vector<int>   IyValues_EEP;
-   std::vector<float> AlphaValues_EEP;
+   /// EE-
+   hChain     *hC_AlphaValues_BTCP_EEM;
+   h2Chain    *hC_Alpha_BTCP_EEM;
+   hChain     *hC_AlphaSpreadVsLoop_BTCP_EEM;
 
-   std::vector<float> SumAlpha_Ring_EEP;
-   std::vector<int>   Sumxtal_Ring_EEP;
-    
-    
-    /// EE-
-   hChain     *hC_AlphaValues_EEM;
-   h2Chain    *hC_Alpha_EEM;
-   hChain     *hC_AlphaSpreadVsLoop_EEM;
- 
+   hChain     *hC_AlphaValues_SIC_EEM;
+   h2Chain    *hC_Alpha_SIC_EEM;
+   hChain     *hC_AlphaSpreadVsLoop_SIC_EEM;
+
+   TProfile   *p_AlphaVsIeta_BTCP_EEM;
+   TH1F       *AlphaSpreadVsIeta_BTCP_EEM;
+   TProfile   *p_AlphaVsIeta_SIC_EEM;
+   TH1F       *AlphaSpreadVsIeta_SIC_EEM;
+          
    TH2F       *h_occupancy_EEM;
- 
-   TProfile   *p_AlphaVsIeta_EEM;
-   TH1F       *AlphaSpreadVsIeta_EEM;
  
    TH2F       *h_Alpha_EEM;
    TH2F       *h_scalib_EEM;
-   TH2F       *h_Alpha_meanOnring_EEM;
    TH2F       *h_Alpha_Original_EEM;
+ 
    
-   TGraphErrors *g_AlphameanVsLoop_EEM;
-   TGraphErrors *g_AlpharmsVsLoop_EEM;
-   TGraphErrors *g_AlphaSigmaVsLoop_EEM;
+   TGraphErrors *g_AlphameanVsLoop_BTCP_EEM;
+   TGraphErrors *g_AlpharmsVsLoop_BTCP_EEM;
+   TGraphErrors *g_AlphaSigmaVsLoop_BTCP_EEM;
+   TGraphErrors *g_AlphameanVsLoop_SIC_EEM;
+   TGraphErrors *g_AlpharmsVsLoop_SIC_EEM;
+   TGraphErrors *g_AlphaSigmaVsLoop_SIC_EEM;
 
-   std::vector<int>   IxValues_EEM;
-   std::vector<int>   IyValues_EEM;
-   std::vector<float> AlphaValues_EEM;
-
-   std::vector<float> SumAlpha_Ring_EEM;
-   std::vector<int>   Sumxtal_Ring_EEM;
  
    /// Dead Channel infos
    std::vector<int> DeadXtal_HashedIndex;
@@ -278,7 +282,8 @@ class XtalAlphaEE{
 
     /// Essential values to get EE geometry
     TEndcapRings* eRings;
-    
+    TSicCrystals* SicCrystal;
+
     static const int IX_MIN = 1;
     static const int IY_MIN = 1;
     static const int IX_MAX = 100;
