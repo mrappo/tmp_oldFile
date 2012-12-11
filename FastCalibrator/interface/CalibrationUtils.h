@@ -16,6 +16,7 @@
 #include "TGraphErrors.h"
 #include "TH2F.h"
 #include "TEndcapRings.h"
+#include "geometryUtils.h"
 
 
 //############## ECAL BARREL ####################
@@ -32,8 +33,14 @@ void InitializeDeadTT_EB(std::vector<std::pair<int,int> >& TT_centre);
 void InitializeDeadTT_EB2012(std::vector<std::pair<int,int> >& TT_centre);
 
 
-/// Normalize IC EB
+/// Normalize IC vs ring EB
 void NormalizeIC_EB(TH2F* h_scale_EB, TH2F* hcmap,const std::vector< std::pair<int,int> > & TT_centre, bool skip = true);
+
+/// Normalize IC vs LMR EB 
+void NormalizeIC_LMR_EB(TH2F* h_scale_EB, TH2F* hcmap,const std::vector< std::pair<int,int> > & TT_centre, bool skip = true);
+
+/// Normalize IC vs SM EB 
+void NormalizeIC_SM_EB(TH2F* h_scale_EB, TH2F* hcmap,const std::vector< std::pair<int,int> > & TT_centre, bool skip = true);
 
 /// Book spread Histos
 void BookSpreadHistos_EB(TH1F* h_spread, std::vector<TH1F*>& h_spread_vsEtaFold, TGraphErrors* g_spread_vsEtaFold, const int& etaRingWidth,

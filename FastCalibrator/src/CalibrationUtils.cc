@@ -12,6 +12,7 @@
 bool CheckxtalIC_EB(TH2F* h_scale_EB, int iPhi, int iEta)
 {
   if( h_scale_EB->GetBinContent(iPhi,iEta) == 0 ) return false;
+  if( h_scale_EB->GetBinContent(iPhi,iEta) > 5 ) return false;
   
   int bx = h_scale_EB->GetNbinsX();
   int by = h_scale_EB->GetNbinsY();
@@ -44,6 +45,7 @@ bool CheckxtalTT_EB(int iPhi, int iEta, const std::vector<std::pair<int,int> >& 
 bool CheckxtalIC_EE(TH2F* h_scale_EE,int ix, int iy, int ir)
 {
   if( h_scale_EE->GetBinContent(ix,iy)==0 ) return false;
+  if( h_scale_EE->GetBinContent(ix,iy) > 5 ) return false;
   
   int bx= h_scale_EE->GetNbinsX();
   int by= h_scale_EE->GetNbinsY();
@@ -128,6 +130,117 @@ void NormalizeIC_EB(TH2F* h_scale_EB, TH2F* hcmap_EB, const std::vector< std::pa
   }
 }
 
+/////////////////////////////////////////////////////////////////////////
+
+void NormalizeIC_LMR_EB(TH2F* h_scale_EB, TH2F* hcmap_EB, const std::vector< std::pair<int,int> > & TT_centre, bool skip)
+{
+  TFile* inFile = TFile::Open("./src/drawRegions.root", "READ");
+  TH2F* h2_EB_LMR = (TH2F*)(inFile -> Get("h2_EB_LMR"));
+
+  float sumIC[325];
+  float numIC[325];
+  for(int ii = 0; ii < 325; ii++)
+  {
+	sumIC[ii] = 0;
+	numIC[ii] = 0;
+  }
+  
+  // mean over LMR corrected skipping dead channel 
+  for(int iEta = 1; iEta <= h_scale_EB->GetNbinsY(); ++iEta)
+  {
+    for(int iPhi = 1; iPhi <= h_scale_EB->GetNbinsX() ; ++iPhi)
+    {
+	
+      bool isGood = CheckxtalIC_EB(h_scale_EB,iPhi,iEta);
+      bool isGoodTT = CheckxtalTT_EB(iPhi,iEta,TT_centre);
+      int regionId = h2_EB_LMR -> GetBinContent(iEta,iPhi);
+      if( isGood && isGoodTT )
+      {  
+        sumIC[regionId] = sumIC[regionId] + h_scale_EB -> GetBinContent(iPhi,iEta);
+        numIC[regionId] = numIC[regionId] + 1;
+      }
+    }
+  } 
+
+  // normalize IC skipping bad channels and bad TTs
+  for(int iEta = 1; iEta <= h_scale_EB->GetNbinsY(); ++iEta)
+  {
+    for(int iPhi = 1; iPhi <= h_scale_EB->GetNbinsX() ; ++iPhi)
+    {
+      int regionId = h2_EB_LMR -> GetBinContent(iPhi,iEta);
+      if( numIC[regionId] == 0 || sumIC[regionId] == 0 ) continue;
+      
+      if( !skip )
+      {
+        hcmap_EB -> SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(sumIC[regionId]/numIC[regionId]));
+        continue;
+      }
+      else
+      {
+        bool isGood = CheckxtalIC_EB(h_scale_EB,iPhi,iEta);
+        bool isGoodTT = CheckxtalTT_EB(iPhi,iEta,TT_centre);
+        if( !isGood || !isGoodTT ) continue;
+        hcmap_EB -> SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(sumIC[regionId]/numIC[regionId]));
+      }
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////
+
+void NormalizeIC_SM_EB(TH2F* h_scale_EB, TH2F* hcmap_EB, const std::vector< std::pair<int,int> > & TT_centre, bool skip)
+{
+  TFile* inFile = TFile::Open("./src/drawRegions.root", "READ");
+  TH2F* h2_EB_LMR = (TH2F*)(inFile -> Get("h2_EB_SM"));
+
+  float sumIC[36];
+  float numIC[36];
+  for(int ii = 0; ii < 36; ii++)
+  {
+	sumIC[ii] = 0;
+	numIC[ii] = 0;
+  }
+  
+  // mean over LMR corrected skipping dead channel 
+  for(int iEta = 1; iEta <= h_scale_EB->GetNbinsY(); ++iEta)
+  {
+    for(int iPhi = 1; iPhi <= h_scale_EB->GetNbinsX() ; ++iPhi)
+    {
+	
+      bool isGood = CheckxtalIC_EB(h_scale_EB,iPhi,iEta);
+      bool isGoodTT = CheckxtalTT_EB(iPhi,iEta,TT_centre);
+      int regionId = h2_EB_LMR -> GetBinContent(iEta,iPhi);
+      if( isGood && isGoodTT )
+      {  
+        sumIC[regionId] = sumIC[regionId] + h_scale_EB -> GetBinContent(iPhi,iEta);
+        numIC[regionId] = numIC[regionId] + 1;
+      }
+    }
+  } 
+ 
+  // normalize IC skipping bad channels and bad TTs
+  for(int iEta = 1; iEta <= h_scale_EB->GetNbinsY(); ++iEta)
+  {
+    for(int iPhi = 1; iPhi <= h_scale_EB->GetNbinsX() ; ++iPhi)
+    {
+      int regionId = h2_EB_LMR -> GetBinContent(iPhi,iEta);
+      if( numIC[regionId] == 0 || sumIC[regionId] == 0 ) continue;
+      
+      if( !skip )
+      {
+        hcmap_EB -> SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(sumIC[regionId]/numIC[regionId]));
+        continue;
+      }
+      else
+      {
+        bool isGood = CheckxtalIC_EB(h_scale_EB,iPhi,iEta);
+        bool isGoodTT = CheckxtalTT_EB(iPhi,iEta,TT_centre);
+        if( !isGood || !isGoodTT ) continue;
+        hcmap_EB -> SetBinContent(iPhi,iEta,h_scale_EB->GetBinContent(iPhi,iEta)/(sumIC[regionId]/numIC[regionId]));
+      }
+    }
+  }
+}
 
 
 /////////////////////////////////////////////////////////////////////////
