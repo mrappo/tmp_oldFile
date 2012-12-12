@@ -727,22 +727,22 @@ int main(int argc, char **argv)
   
   std::ofstream outTxt((outputFolder+"/"+outputTxt+"_relative.txt").c_str(),std::ios::out);
   
-  outTxt << "---------------------------------------------------------------" << std::endl;
-  if( isEB == true )
-    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iEta"
-           << std::fixed << std::setprecision(0) << std::setw(10) << "iPhi"
-           << std::fixed << std::setprecision(0) << std::setw(10) << "iZ"
-           << std::fixed << std::setprecision(6) << std::setw(15) << "IC"
-           << std::fixed << std::setprecision(6) << std::setw(15) << "error"
-           << std::endl;
-  else
-    outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iX"
-           << std::fixed << std::setprecision(0) << std::setw(10) << "iY"
-           << std::fixed << std::setprecision(0) << std::setw(10) << "iZ"
-           << std::fixed << std::setprecision(6) << std::setw(15) << "IC"
-           << std::fixed << std::setprecision(6) << std::setw(15) << "error"
-           << std::endl;
-  outTxt << "---------------------------------------------------------------" << std::endl;
+  //outTxt << "---------------------------------------------------------------" << std::endl;
+  //if( isEB == true )
+  //  outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iEta"
+  //         << std::fixed << std::setprecision(0) << std::setw(10) << "iPhi"
+  //         << std::fixed << std::setprecision(0) << std::setw(10) << "iZ"
+  //         << std::fixed << std::setprecision(6) << std::setw(15) << "IC"
+  //         << std::fixed << std::setprecision(6) << std::setw(15) << "error"
+  //         << std::endl;
+  //else
+  //  outTxt << std::fixed << std::setprecision(0) << std::setw(10) << "iX"
+  //         << std::fixed << std::setprecision(0) << std::setw(10) << "iY"
+  //         << std::fixed << std::setprecision(0) << std::setw(10) << "iZ"
+  //         << std::fixed << std::setprecision(6) << std::setw(15) << "IC"
+  //         << std::fixed << std::setprecision(6) << std::setw(15) << "error"
+  //         << std::endl;
+  //outTxt << "---------------------------------------------------------------" << std::endl;
   
   
   std::map<int,TH2F*> h2_final;
