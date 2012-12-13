@@ -30,8 +30,8 @@
 /// Selection for jets
 #define TagJetPtCut     30.
 #define JetAcceptance   4.7
-#define DEtaTagJetCut   4.5 
-#define MjjTagJetCutMin 450.
+#define DEtaTagJetCut   3.5 
+#define MjjTagJetCutMin 500.
   
  
 // Compile with g++ -Wall -o VHAnalysisSelection `root-config --glibs --cflags` VBFAnalysisSelection.cpp
