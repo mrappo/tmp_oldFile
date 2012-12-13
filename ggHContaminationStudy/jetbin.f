@@ -6,7 +6,7 @@ c--- Note: implements Eq. (3.2) of CEZ paper
       implicit none
       include 'constants.f'
       logical passed, first 
-      integer j,maxparts,found,j1,j2,j3
+      integer j,maxparts,found,j1,j2,j3,NumJets
       double precision pt,etarap,p(mxpart,4),ptj,ptj1,ptj2,
      . etaj1,etaj2,mj1j2
       double precision ptj3,etaj3
@@ -21,6 +21,7 @@ c--- Note: implements Eq. (3.2) of CEZ paper
      
       JetPtMin   = 30d0
       JetEtaMax  = 4.7d0
+      NumJets    = 2
       passed     = .false.
 
 ***************************** START CUTS *******************************
@@ -58,9 +59,23 @@ c          write(*,*) 'j', j, ptj
 
 c      write(*,*) 'found ',found 
 
-      if (found .lt. 2) goto 999
+      if (found .lt. NumJets ) goto 999
       if (ptj1  .lt. JetPtMin) goto 999
       if (ptj2  .lt. JetPtMin) goto 999
+
+c      write(*,*) 'ptj1 ',ptj1, 'ptj2 ',ptj2 
+
+      etaj1= 0d0
+      etaj2= 0d0
+      etaj1=etarap(j1,p)
+      etaj2=etarap(j2,p)
+
+c     eta acceptance selection                                                                                                                                    
+
+      if(abs(etaj1) .gt. JetEtaMax) goto 999
+      if(abs(etaj2) .gt. JetEtaMax) goto 999
+
+
 
 ********************** END OF CUT CROSS SECTIONS ***********************
 
