@@ -23,8 +23,8 @@ c PG---      use sub_defs_io
       JetPtMin   = 30d0
       JetEtaCut  = 4.7d0
       JetEtaMax  = 4.7d0
-      JetDEtaMin = 4.5d0
-      JetMjjMin  = 450d0
+      JetDEtaMin = 3.5d0
+      JetMjjMin  = 500d0
       JetMjjMax  = 10000d0
       jetveto    = .true.
       passed     = .false.      
