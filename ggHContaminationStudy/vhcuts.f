@@ -24,7 +24,7 @@ c--- Note: implements Eq. (3.2) of CEZ paper
       JetEtaMax  = 4.7d0
       JetDEtaMin = 2.1d0
       JetMjjMin  = 65d0
-      JetMjjMax  = 115d0
+      JetMjjMax  = 105d0
       jetveto    = .true.
       passed     = .false.
 
