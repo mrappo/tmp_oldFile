@@ -33,7 +33,7 @@
 #define TagJetEtaCut    2.5
 #define DEtaTagJetCut   2.1 
 #define MjjTagJetCutMin 65.
-#define MjjTagJetCutMax 115.
+#define MjjTagJetCutMax 105.
   
  
 // Compile with g++ -Wall -o VHAnalysisSelection `root-config --glibs --cflags` VHAnalysisSelection.cpp
