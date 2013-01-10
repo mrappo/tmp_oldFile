@@ -76,6 +76,19 @@ hChain::SetBinContent (int i, int bin, double val)
     return ;
   }
 
+//RG --------------------------------------------------------   
+
+
+
+void 
+hChain::SetBinError (int i, int bin, double val) 
+  {
+    m_histos.at (i)->SetBinError (bin,val) ;
+//    m_ntuples.at (i)->Fill (val) ;
+    return ;
+  }
+
+
 
 //PG --------------------------------------------------------   
 

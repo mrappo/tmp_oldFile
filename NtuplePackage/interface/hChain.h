@@ -23,6 +23,7 @@ struct hChain
   double  GetEffectiveEntries(int index);
   TH1F* GetHisto (int index);
   void SetBinContent (int i, int bin, double val) ;
+  void SetBinError (int i, int bin, double val) ;
   void Print (bool isLog = false, int rebin = 1, TString altName = "default") ;
   void PrintEach (bool isLog = false, int rebin = 1) ;
   void Normalize (int index) ;
