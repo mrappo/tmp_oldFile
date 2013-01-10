@@ -254,36 +254,3 @@ int TBarrelRegions::GetRegionIdIeta(const int& regionId, const std::string& type
 }
 
 
-// --- EE ---
-// default constructor, reading the map from file                                                                                                                          
-TSicCrystals::TSicCrystals()
-{
-  //initializing the matrix
-  int ix,iy,iz;
-  for (ix=0;ix<100;ix++) 
-  {
-    for (iy=0;iy<100;iy++) 
-    {
-      for (iz=-1;iz<2;iz++) sicMap[ix][iy][iz]=0;
-    }
-  }
-  
-  FILE *fSic;
-  fSic = fopen("SIC_ixiyiz.list","r");
-  std::cout << "Reading SIC crystals map: SIC_ixiyiz.list" << std::endl;
-  while(fscanf(fSic,"%d %d %d \n",&ix,&iy,&iz) !=EOF ) {
-    sicMap[ix][iy][iz] = 1;
-  }
-  
-  return; 
-}
-
-//dtor
-TSicCrystals::~TSicCrystals() { return;}
-
-
-//methods
-int TSicCrystals::isSic(const int ix, const int iy, const int iz)
-{
-  return sicMap[ix][iy][iz];
-}

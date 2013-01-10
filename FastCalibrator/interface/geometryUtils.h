@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <math.h>
 #include <vector>
-
+#include "TSicCrystals.h"
 
 /// EE Geometry ///
 class TEndcapRegions {
@@ -52,17 +52,5 @@ class TBarrelRegions {
 };
 
 
-////SIC MAP
-class TSicCrystals {
-
- private:
-  int sicMap[100][100][3]; 
-
- public:
-  TSicCrystals();  
-  virtual ~TSicCrystals(); 
-  int isSic(const int,const int,const int);
-
-};
 
 #endif
