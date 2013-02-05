@@ -120,8 +120,8 @@ double deltaEta(const double& eta1, const double& eta2)
 
 //  ------------------------------------------------------------
 
-double deltaR(const double& eta1, const double& phi1,
-              const double& eta2, const double& phi2)
+double deltaR(const double& phi1, const double& phi2,
+              const double& eta1, const double& eta2)
 { 
  double deltaphi = deltaPhi(phi1, phi2);
  double deltaeta = deltaEta(eta1, eta2);

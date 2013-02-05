@@ -50,8 +50,8 @@ double deltaPhi (const double& phi1, const double& phi2);
 double deltaEta (const double& eta1, const double& eta2);
 
 /** compute delta R */
-double deltaR (const double& eta1, const double& phi1,
-               const double& eta2, const double& phi2);
+double deltaR (const double& phi1, const double& phi2,
+               const double& eta1, const double& eta2);
 
 
 
