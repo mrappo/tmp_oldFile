@@ -1,0 +1,19 @@
+#####################################################################################################################
+#  Sample Name 					            Reduced Name      Color     XSec (pb)    NumEntriesBefore
+######################################################################################################################
+
+RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb	DATA		4	1            1
+RD_el_WJets_CMSSW532						W+Jets		2	37500	     76102995
+RD_el_WW_CMSSW532						WW		5	57.1         10000283
+RD_el_WZ_CMSSW532						WZ		3	22.4	     10000283
+RD_el_ZpJ_CMSSW532						Z+Jets		4	3530	     30459503
+RD_el_ZZ_CMSSW532						ZZ		7	9.03	     9799908
+RD_el_STopS_Tbar_CMSSW532					STop		51	2.5	     139974
+RD_el_STopS_T_CMSSW532						STop		51	4.5	     259961
+RD_el_STopT_Tbar_CMSSW532					STop		51	32.3	     1935072
+RD_el_STopT_T_CMSSW532						STop		51	59.5	     3758227
+RD_el_STopTW_Tbar_CMSSW532					STop		51	11.2	     493460
+RD_el_STopTW_T_CMSSW532						STop		51	11.2	     497658
+RD_el_TTbar_CMSSW532						tt_bar		6	225.197	     6923750
+RD_el_HWWMH600_CMSSW532_private					ggH		8	0.523	     296946
+RD_el_VBFHWWMH600_CMSSW532_private				qqH             4	0.09688	     298292
