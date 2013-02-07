@@ -1,0 +1,28 @@
+######################################################
+# Variable                      Nbin    Min     Max ##
+######################################################
+
+GroomedJet_CA8_pt[0]		50	200	800
+GroomedJet_CA8_pt_pr[0]		50	200	800	                                                            
+#GroomedJet_CA8_eta[0]		50	-5      5     
+#GroomedJet_CA8_phi[0]		50      -3.14   3.14    
+GroomedJet_CA8_mass[0]		50	0	200
+#GroomedJet_CA8_rcores04[0]     50	0       1
+#GroomedJet_CA8_rcores07[0]     50	0       1
+#GroomedJet_CA8_ptcores04[0]	50	0	1
+#GroomedJet_CA8_ptcores07[0]    50	0       1
+#GroomedJet_CA8_planarflow04[0]	50	0	1
+#GroomedJet_CA8_planarflow07[0] 50	0       1
+#GroomedJet_CA8_qjetmassvolatility[0]	50	0	1
+#GroomedJet_CA8_qjetmass[0]	50	0	500
+#GroomedJet_CA8_qjetmassdrop[0]	50	0	1	
+#GroomedJet_CA8_tau2tau1[0]	50	0	1	
+#GroomedJet_CA8_mass_pr[0]	50	0	200	
+#GroomedJet_CA8_pt[0]		50      200     800     
+#GroomedJet_CA8_pt[1]		50      200     800     
+#GroomedJet_CA8_mass[1]		50      0	300     
+W_muon_eta			50	-5	5	
+W_muon_pt			20	0	400
+#W_muon_phi			50	-3.14	3.14	
+event_met_pfmet		        50	50	500	
+#event_met_pfmetPhi		50	-3.14	3.14
