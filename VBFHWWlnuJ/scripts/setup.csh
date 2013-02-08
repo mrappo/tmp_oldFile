@@ -20,4 +20,4 @@ setenv PATH ${PATH}:${THISDIR}/NtuplePackage/bin
 setenv NTUPLEPKGINCLUDE ${THISDIR}/NtuplePackage/interface
 setenv NTUPLEPKGLIB ${THISDIR}/NtuplePackage/lib
 
-setenv FASTCALIBRATOR ${THISDIR}/
+setenv VBFHWWlnuJ ${THISDIR}/
