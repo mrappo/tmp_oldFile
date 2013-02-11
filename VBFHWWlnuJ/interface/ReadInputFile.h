@@ -8,7 +8,7 @@
 
 int ReadInputSampleFile   (const std::string & ,std::vector<std::string> &, std::vector<std::string> &, std::vector<int> &,  std::vector<double> &, std::vector<int> &);
 
-int ReadInputVariableFile (const std::string & ,std::vector<std::string> &, std::vector<int> &, std::vector<double> & ,std::vector<double> & );
+int ReadInputVariableFile (const std::string & ,std::vector<std::string> &, std::vector<int> &, std::vector<double> & ,std::vector<double> &, std::vector<std::string> & );
 
 int ReadInputCutFile      (const std::string & ,std::vector<std::string> &);
 

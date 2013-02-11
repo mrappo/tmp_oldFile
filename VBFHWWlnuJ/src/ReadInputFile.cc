@@ -35,7 +35,7 @@ int ReadInputSampleFile(const std::string & InputSampleList, std::vector<std::st
 
 
 int ReadInputVariableFile( const std::string & InputVariableList , std::vector<std::string> & Variables, std::vector<int> & VariablesNbin,
-                           std::vector<double> & VariablesMinValue, std::vector<double> & VariablesMaxValue ){
+                           std::vector<double> & VariablesMinValue, std::vector<double> & VariablesMaxValue, std::vector<std::string> & VariablesTitle ){
 
 
   std::ifstream inputFile (InputVariableList.c_str());
@@ -54,11 +54,12 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
     std::string  VariablesNbinTemp;
     std::string  VariablesMinValueTemp;
     std::string  VariablesMaxValueTemp;
+    std::string  VariablesTitleTemp;
 
-    line >> VariablesTemp >> VariablesNbinTemp >> VariablesMinValueTemp >> VariablesMaxValueTemp ;
+    line >> VariablesTemp >> VariablesNbinTemp >> VariablesMinValueTemp >> VariablesMaxValueTemp >> VariablesTitleTemp ;
 
     Variables.push_back(VariablesTemp); VariablesNbin.push_back(atoi(VariablesNbinTemp.c_str())) ; VariablesMinValue.push_back(atof(VariablesMinValueTemp.c_str())); 
-    VariablesMaxValue.push_back(atof(VariablesMaxValueTemp.c_str()));
+    VariablesMaxValue.push_back(atof(VariablesMaxValueTemp.c_str())); VariablesTitle.push_back(VariablesTitleTemp);
 
   }
 
