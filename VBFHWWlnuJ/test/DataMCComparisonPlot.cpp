@@ -24,7 +24,7 @@
 #include "ntpleUtils.h"
 #include "ConfigParser.h"
 #include "ReadInputFile.h"
-
+#include "DataMCPlotTool.h"
 
 void LatexCMS (double lumi) ;
 
@@ -189,8 +189,8 @@ int main (int argc, char **argv){
           TString CanvasName = Form("%s_%zu",Variables.at(iVar).c_str(),iCut);         
 	  c[iCut][iVar] = new TCanvas (CanvasName.Data() ,"" ) ;
 	   
-	  TPad* upperPad = new TPad("upperPad", "upperPad", .005, .300, .995, .910);
-	  TPad* lowerPad = new TPad("lowerPad", "lowerPad", .005, .005, .995, .295);
+	  TPad* upperPad = new TPad("upperPad", "upperPad", .005, .320, .995, .910);
+	  TPad* lowerPad = new TPad("lowerPad", "lowerPad", .005, .015, .995, .265);
 
 	  lowerPad->Draw();
 	  upperPad->Draw();        
@@ -259,7 +259,7 @@ int main (int argc, char **argv){
 	  hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
  
-	  hs[iCut][iVar]->Draw("hist");
+	  DrawStackError(hs[iCut][iVar],0);
 	  histos[iCut][iVar][iSampleData]->Draw("E same");
 	  leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], (NameReducedSample.at(iSampleggH)+"*10").c_str(), "l" );
 	  leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSamplevbf], (NameReducedSample.at(iSamplevbf)+"*10").c_str(), "l" );
@@ -300,24 +300,6 @@ int main (int argc, char **argv){
  outputFile->Close();
 
  return 0 ;
-
-}
-
-
-void LatexCMS (double lumi){
-
-  TLatex latex;
-  latex.SetNDC();
-  latex.SetTextSize(0.04);
-
-  latex.SetTextAlign(31); // align right
-  latex.DrawLatex(0.80,0.962,"#sqrt{s} = 8 TeV");
-  latex.SetTextAlign(31); // align right
-  latex.DrawLatex(0.66,0.962,Form("#int #font[12]{L} dt = %.1f pb^{-1}", (float)lumi));
-
-  latex.SetTextAlign(11); // align left
-  //  latex.DrawLatex(0.15,0.93,"CMS,  #sqrt{s} = 7 TeV");//preliminary 2011");
-  latex.DrawLatex(0.15,0.962,"CMS preliminary");
 
 }
 
