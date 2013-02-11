@@ -18,6 +18,7 @@
 #include "TLatex.h"
 
 
+
 void DrawStackError(THStack* hs, double syst);
 
 void LatexCMS (double lumi);
