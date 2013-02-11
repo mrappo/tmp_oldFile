@@ -96,8 +96,9 @@ int main (int argc, char **argv){
   std::vector <double> VariablesMinValue;
   std::vector <double> VariablesMaxValue;
   std::vector <int> VariablesNbin;
+  std::vector <std::string> VariablesTitle;
 
-  if(ReadInputVariableFile(InputVariableList,Variables,VariablesNbin,VariablesMinValue,VariablesMaxValue) <= 0){ 
+  if(ReadInputVariableFile(InputVariableList,Variables,VariablesNbin,VariablesMinValue,VariablesMaxValue,VariablesTitle) <= 0){ 
     std::cerr<<" Empty Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
 
@@ -172,6 +173,7 @@ int main (int argc, char **argv){
   TCanvas* c[CutList.size()][Variables.size()];
   TLegend* leg[CutList.size()][Variables.size()];
   TH1F*    histo_top[CutList.size()][Variables.size()];
+  TH1F*    histo_diboson[CutList.size()][Variables.size()];
   THStack* hs[CutList.size()][Variables.size()];
   TH1F*    histoSum[CutList.size()][Variables.size()];
   TH1F*    RatioDataMC[CutList.size()][Variables.size()];
@@ -195,10 +197,13 @@ int main (int argc, char **argv){
 
 	  upperPad->cd();
  
-	  leg[iCut][iVar] = new TLegend (0.66, 0.6, 0.99, 0.99) ;
+	  leg[iCut][iVar] = new TLegend (0.81, 0.6, 0.99, 0.90) ;
 	  leg[iCut][iVar]->SetFillColor(0);
 
 	  histo_top[iCut][iVar] = new TH1F ( (Variables.at(iVar)+"sTop"+CutList.at(iCut)).c_str(),"",VariablesNbin.at(iVar),
+                                             VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+
+	  histo_diboson[iCut][iVar] = new TH1F ( (Variables.at(iVar)+"diboson"+CutList.at(iCut)).c_str(),"",VariablesNbin.at(iVar),
                                              VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
 	  hs[iCut][iVar] = new THStack ((Variables.at(iVar)+CutList.at(iCut)).c_str(),"") ;
@@ -212,8 +217,10 @@ int main (int argc, char **argv){
 
 	      histos[iCut][iVar][iSample]->SetLineColor(kBlack);
 	      histos[iCut][iVar][iSample]->SetLineStyle(1);
-	      histos[iCut][iVar][iSample]->GetXaxis()->SetTitle((Variables.at(iVar)).c_str());
 	      histos[iCut][iVar][iSample]->Draw("E");
+              histos[iCut][iVar][iSample]->GetXaxis()->SetTitle((VariablesTitle.at(iVar)).c_str());
+              histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.06);
+	      gPad->Modified();
 	      iSampleData = iSample;                                                                       
 	      leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "ple" ); 
 	    }
@@ -224,11 +231,18 @@ int main (int argc, char **argv){
 	      else iSamplevbf = iSample; 
 	    }
 	    
-	    else if ( NameReducedSample.at(iSample)=="STop")
+	    else if (( NameReducedSample.at(iSample)=="STop") || ( NameReducedSample.at(iSample)=="tt_bar") )
 	      {  
 		histo_top[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_top[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
 		histo_top[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+	      }
+	    else if (( NameReducedSample.at(iSample)=="WW") || ( NameReducedSample.at(iSample)=="WZ") || ( NameReducedSample.at(iSample)=="ZZ") )
+	      {  
+		histo_diboson[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
+		histo_diboson[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
+		histo_diboson[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	      }
 	    else
@@ -240,8 +254,10 @@ int main (int argc, char **argv){
 
 	  }
 	   
-	  leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "sTop", "fl" );
+	  leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Top", "fl" );
+	  leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "diBoson", "fl" );
 	  hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
+	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
  
 	  hs[iCut][iVar]->Draw("hist");
 	  histos[iCut][iVar][iSampleData]->Draw("E same");
@@ -270,7 +286,11 @@ int main (int argc, char **argv){
 	  
 	  RatioDataMC[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
           RatioDataMC[iCut][iVar]->Divide(histoSum[iCut][iVar]);
+          RatioDataMC[iCut][iVar]->SetMinimum(0.5);
+          RatioDataMC[iCut][iVar]->SetMaximum(1.5);
 	  RatioDataMC[iCut][iVar]->Draw("PE");
+	  RatioDataMC[iCut][iVar]->GetXaxis()->SetLabelSize(0.06);
+	  RatioDataMC[iCut][iVar]->GetYaxis()->SetLabelSize(0.06);
 
 	  c[iCut][iVar]->Write();
 	  c[iCut][iVar]->Close();
@@ -291,13 +311,13 @@ void LatexCMS (double lumi){
   latex.SetTextSize(0.04);
 
   latex.SetTextAlign(31); // align right
-  latex.DrawLatex(0.85,0.93,"#sqrt{s} = 8 TeV");
+  latex.DrawLatex(0.80,0.962,"#sqrt{s} = 8 TeV");
   latex.SetTextAlign(31); // align right
-  latex.DrawLatex(0.65,0.93,Form("#int #font[12]{L} dt = %.1f fb^{-1}", (float)lumi));
+  latex.DrawLatex(0.66,0.962,Form("#int #font[12]{L} dt = %.1f pb^{-1}", (float)lumi));
 
   latex.SetTextAlign(11); // align left
   //  latex.DrawLatex(0.15,0.93,"CMS,  #sqrt{s} = 7 TeV");//preliminary 2011");
-  latex.DrawLatex(0.15,0.96,"CMS preliminary");
+  latex.DrawLatex(0.15,0.962,"CMS preliminary");
 
 }
 
