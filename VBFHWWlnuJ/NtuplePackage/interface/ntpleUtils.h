@@ -18,16 +18,7 @@
 #include "ConfigParser.h"
 
 
-
-
-
-
 bool maggiore(double i, double j);
-
-
-
-
-
 
 /** get the number of events from a list of files */
 std::map<int, int> GetTotalEvents(const std::string& histoName, const std::string& inputFileList);
@@ -39,10 +30,6 @@ bool FillChain(TChain& chain, const std::string& inputFileList);
 int parseConfigFile (const TString& config) ;
 
 
-
-
-
-
 /** compute delta phi */
 double deltaPhi (const double& phi1, const double& phi2);
 
@@ -52,9 +39,6 @@ double deltaEta (const double& eta1, const double& eta2);
 /** compute delta R */
 double deltaR (const double& phi1, const double& phi2,
                const double& eta1, const double& eta2);
-
-
-
 
 
 /** define the map of all possible matching */
@@ -224,5 +208,30 @@ void Print4V(const ROOT::Math::XYZTVector& p);
 /** get electorn flag/severity level */
 bool GetElectronFlag(const std::string& flag);
 bool GetElectronSeverityLevel(const std::string& SeverityLevel);
+
+
+/** Conversion Function **/
+
+float eta_to_theta (float eta);
+  
+float theta_to_eta (float theta);
+  
+float polar_to_cart_r (float x, float y, float z);
+
+float polar_to_cart_theta (float x, float y, float z);
+
+float polar_to_cart_phi (float x, float y, float z);
+
+float cart_to_polar_x (float r, float theta, float phi);
+
+float cart_to_polar_y (float r, float theta, float phi);
+
+float cart_to_polar_z (float r, float theta, float phi);
+
+float hep_to_polar_x (float t, float eta, float phi);
+
+float hep_to_polar_y (float t, float eta, float phi);
+
+float hep_to_polar_z (float t, float eta, float phi);
 
 #endif
