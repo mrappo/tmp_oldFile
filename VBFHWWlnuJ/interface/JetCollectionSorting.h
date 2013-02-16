@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <functional>
 #include "Math/Vector3D.h"
 #include "Math/Vector4D.h"
 
@@ -21,25 +22,69 @@ std::vector<const lorentzVector *> Jet_Mjj_pT (const lorentzVector * input, int 
 // lorentzVector pointers sorting algos
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-struct TLVP_EtaSort{
+#ifndef TLVP_EtaSort_h
+#define TLVP_EtaSort_h
+
+class TLVP_EtaSort : public std::binary_function<int,int,bool>{
+
+ public: 
+  
+  // default constructor
+  TLVP_EtaSort(){};
+
+  // default de-constructor
+  ~TLVP_EtaSort(){};
+
+  // Operator ()
   bool operator() (const lorentzVector * x, const lorentzVector * y){
     return x->Eta () < y->Eta () ;
-  }
+  };
+
 } ;
 
+#endif
 
-struct TLVP_AbsEtaSort{
+#ifndef TLVP_AbsEtaSort_h
+#define TLVP_AbsEtaSort_h
+
+class TLVP_AbsEtaSort : public std::binary_function<int,int,bool> {
+
+ public: 
+  
+  // default constructor
+  TLVP_AbsEtaSort(){};
+
+  // default de-constructor
+  ~TLVP_AbsEtaSort(){};
+
+  // Operator ()
   bool operator() (const lorentzVector * x, const lorentzVector * y){
     return fabs (x->Eta ()) < fabs (y->Eta ()) ;
-  }
+  };
+
 } ;
 
-struct TLVP_PtSort{
+#endif
+
+#ifndef TLVP_PtSort_h
+#define TLVP_PtSort_h
+
+class TLVP_PtSort : public std::binary_function<int,int,bool>{
+
+ public :
+  // default constructor
+  TLVP_PtSort(){};
+
+  // default de-constructor
+  ~TLVP_PtSort(){};
+
+  // Operator ()
   bool operator() (const lorentzVector * x, const lorentzVector * y){
-    return x->Pt () < y->Pt () ;
-  }
+      return x->Pt () < y->Pt () ;
+  };
+  
 } ;
 
-
+#endif
 
 #endif
