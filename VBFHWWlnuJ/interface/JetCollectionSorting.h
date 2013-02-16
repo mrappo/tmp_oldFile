@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include <algorithm>
+
 #include "Math/Vector3D.h"
 #include "Math/Vector4D.h"
 
