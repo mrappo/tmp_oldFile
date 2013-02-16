@@ -12,12 +12,12 @@ typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > lorentzVector 
 
 
 // two jets vbf with highest Deta first , then W jets with higher pT
-std::vector<const lorentzVector *> Jet_Deta_pT       (const lorentzVector * input, int njets);
+std::vector<const lorentzVector *> Jet_Deta_pT       (const lorentzVector input [], int njets);
 
-std::vector<const lorentzVector *> Jet_FNAL_Criteria (const lorentzVector * input, int njets);
+std::vector<const lorentzVector *> Jet_FNAL_Criteria (const lorentzVector input[], int njets);
 
 // two jets vbf with highest Mjj first , then W jets with higher pT
-std::vector<const lorentzVector *> Jet_Mjj_pT (const lorentzVector * input, int njets);
+std::vector<const lorentzVector *> Jet_Mjj_pT (const lorentzVector input[], int njets);
 
 // lorentzVector pointers sorting algos
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----

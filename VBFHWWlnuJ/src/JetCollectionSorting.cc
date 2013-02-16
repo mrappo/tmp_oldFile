@@ -1,6 +1,6 @@
 #include "JetCollectionSorting.h"
 
-std::vector<const lorentzVector *> Jet_Deta_pT (const lorentzVector * input, const int & njets){
+std::vector<const lorentzVector *> Jet_Deta_pT (const lorentzVector input [], const int & njets){
 
   std::vector<const lorentzVector *> input_p ;
   std::vector<const lorentzVector *> output_p ;
@@ -38,7 +38,7 @@ std::vector<const lorentzVector *> Jet_Deta_pT (const lorentzVector * input, con
 //     |Deta|>3.5
 //     mj1j2 > 300
 
-std::vector<const lorentzVector *> JS_FNAL (const lorentzVector * input, int njets){
+std::vector<const lorentzVector *> JS_FNAL (const lorentzVector input [], int njets){
 
   std::vector<const lorentzVector *> input_p ;
   std::vector<const lorentzVector *> output_p ;
@@ -57,19 +57,19 @@ std::vector<const lorentzVector *> JS_FNAL (const lorentzVector * input, int nje
 
   for (int iJet = 0 ; iJet < njets - 1 ; ++iJet){
 
-    if (fabs (input_p.at (iJet)->Eta ()) > 4.7 ) continue ;
+    if (fabs (input_p.at(iJet)->Eta()) > 4.7 ) continue ;
 
       for (int jJet = iJet + 1 ; jJet < njets ; ++jJet) {
 
-          if (fabs (input_p.at (jJet)->Eta ()) > 4.7) continue ;
+          if (fabs (input_p.at(jJet)->Eta()) > 4.7) continue ;
 
-          if (input_p.at (iJet)->Eta () * input_p.at (jJet)->Eta () > 0) continue ;
+          if (input_p.at(iJet)->Eta() * input_p.at(jJet)->Eta() > 0) continue ;
 
-          float deta = fabs (input_p.at (iJet)->Eta () - input_p.at (jJet)->Eta ()) ;
+          float deta = fabs (input_p.at(iJet)->Eta() - input_p.at(jJet)->Eta()) ;
 
           if (deta < 3.5) continue ;
 
-          lorentzVector sum = *input_p.at (iJet) + *input_p.at (jJet) ;
+          lorentzVector sum = *(input_p.at(iJet)) + *(input_p.at(jJet)) ;
           float mjj = sum.M2() ;
 
           if (mjj < 300) continue ;
@@ -81,28 +81,28 @@ std::vector<const lorentzVector *> JS_FNAL (const lorentzVector * input, int nje
        }
   }
 
-  if (maxDeta < 0.1) return output_p ;
+  if (maxDeta < 0.1 || iJ1 == iJ2) return output_p ;
 
-  output_p.push_back (input_p.at (iJ1)) ; 
-  output_p.push_back (input_p.at (iJ2)) ; 
+  output_p.push_back (input_p.at(iJ1)) ; 
+  output_p.push_back (input_p.at(iJ2)) ; 
 
   if (iJ1 < iJ2) std::swap (iJ1, iJ2) ;
 
-  input_p.erase (input_p.begin () + iJ1) ;
-  input_p.erase (input_p.begin () + iJ2) ;
+  input_p.erase (input_p.begin() + iJ1) ;
+  input_p.erase (input_p.begin() + iJ2) ;
 
   if(input_p.size()<2) return output_p;
 
-  std::sort (input_p.begin (), input_p.end (), TLVP_PtSort ()) ;
+  std::sort (input_p.begin(), input_p.end(), TLVP_PtSort()) ;
 
-  output_p.push_back (input_p.at (0)) ;
-  output_p.push_back (input_p.at (1)) ;
+  output_p.push_back (input_p.at(0)) ;
+  output_p.push_back (input_p.at(1)) ;
 
   return output_p ;
 }
 
 // - two jets with highest Mjj are the VBF ones, then two jets with highest pT are the W ones
-std::vector<const lorentzVector *> Jet_Mjj_pT (const lorentzVector * input, int njets){
+std::vector<const lorentzVector *> Jet_Mjj_pT (const lorentzVector input [], int njets){
 
   std::vector<const lorentzVector *> input_p ;
   std::vector<const lorentzVector *> output_p ;
@@ -123,7 +123,7 @@ std::vector<const lorentzVector *> Jet_Mjj_pT (const lorentzVector * input, int 
   for (int iJet = 0 ; iJet < njets - 1 ; ++iJet){
       for (int jJet = iJet + 1 ; jJet < njets ; ++jJet) {
 
-          lorentzVector sum = *input_p.at (iJet) + *input_p.at (jJet) ;
+	lorentzVector sum = *(input_p.at(iJet)) + *(input_p.at(jJet)) ;
           float mjj = sum.M2() ;
 
           if (mjj > maxMjj){
@@ -134,20 +134,20 @@ std::vector<const lorentzVector *> Jet_Mjj_pT (const lorentzVector * input, int 
       }
   }
 
-  output_p.push_back (input_p.at (iJ1)) ; 
-  output_p.push_back (input_p.at (iJ2)) ; 
+  output_p.push_back (input_p.at(iJ1)) ; 
+  output_p.push_back (input_p.at(iJ2)) ; 
 
   if (iJ1 < iJ2) std::swap (iJ1, iJ2) ;
 
-  input_p.erase (input_p.begin () + iJ1) ;
-  input_p.erase (input_p.begin () + iJ2) ;
+  input_p.erase (input_p.begin() + iJ1) ;
+  input_p.erase (input_p.begin() + iJ2) ;
 
   if(input_p.size()<2) return output_p;
 
-  std::sort (input_p.begin (), input_p.end (), TLVP_PtSort ()) ;
+  std::sort (input_p.begin(), input_p.end(), TLVP_PtSort()) ;
  
-  output_p.push_back (input_p.at (0)) ;
-  output_p.push_back (input_p.at (1)) ;
+  output_p.push_back (input_p.at(0)) ;
+  output_p.push_back (input_p.at(1)) ;
 
   return output_p ;
 }
