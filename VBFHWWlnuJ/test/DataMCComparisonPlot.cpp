@@ -181,6 +181,7 @@ int main (int argc, char **argv){
 
   TH1F*    histo_top[CutList.size()][Variables.size()];
   TH1F*    histo_diboson[CutList.size()][Variables.size()];
+  TH1F*    histo_WJets[CutList.size()][Variables.size()];
   TH1F*    histoSum[CutList.size()][Variables.size()];
   TH1F*    RatioDataMC[CutList.size()][Variables.size()];
 
@@ -208,6 +209,10 @@ int main (int argc, char **argv){
 
 	  histo_diboson[iCut][iVar] = new TH1F ( (Variables.at(iVar)+"diboson"+CutList.at(iCut)).c_str(),"",VariablesNbin.at(iVar),
                                              VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+
+	  histo_WJets[iCut][iVar] = new TH1F ( (Variables.at(iVar)+"WJets"+CutList.at(iCut)).c_str(),"",VariablesNbin.at(iVar),
+                                             VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+
 
 	  hs[iCut][iVar] = new THStack ((Variables.at(iVar)+CutList.at(iCut)).c_str(),"") ;
 	  histoSum[iCut][iVar] = new TH1F ((Variables.at(iVar)+"sum"+CutList.at(iCut)).c_str(),"",
@@ -270,6 +275,13 @@ int main (int argc, char **argv){
 		histo_top[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	      }
+	    else if ( NameReducedSample.at(iSample)=="W+Jets" )
+	      {  
+		histo_WJets[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
+		histo_WJets[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
+		histo_WJets[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		} 
 	    else if (( NameReducedSample.at(iSample)=="WW") || ( NameReducedSample.at(iSample)=="WZ") || ( NameReducedSample.at(iSample)=="ZZ") )
 	      {  
 		histo_diboson[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
@@ -288,6 +300,8 @@ int main (int argc, char **argv){
 	   
 	  leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Top", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "diBoson", "fl" );
+	  leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "fl" );
+	  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
      
