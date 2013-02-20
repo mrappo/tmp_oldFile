@@ -1,19 +1,15 @@
 #include "DataMCPlotTool.h"
 
-void DrawStackError(THStack* hs, double syst){ 
+void DrawStackError(THStack* hs, const double & syst, const std::string & Labels){ 
   TObjArray* histos = hs->GetStack () ;
   if (histos) {
     Int_t number = histos->GetEntries();
     TH1F* last = (TH1F*) histos->At (number-1) ;
+    last->GetXaxis()->SetTitle(Labels.c_str());
     last->DrawClone ("hist") ;
     for (int i = number-2 ; i >=0 ; --i) {
       TH1F * histo = (TH1F*) histos->At (i) ;
-      //    Style_t origStyle = histo->GetFillStyle ();
-      //    Color_t origColor = histo->GetFillColor ();
-      //    TH1F* dummy = (TH1F*) histo->Clone () ;
-      //    dummy->SetFillStyle (1001) ; 
-      //    dummy->SetFillColor (10) ;        
-      //    dummy->Draw ("same hist") ;
+      histo->GetXaxis()->SetTitle(Labels.c_str());
       histo->Draw ("same hist") ;
     }
     Style_t origStyleLast = last->GetFillStyle ();
