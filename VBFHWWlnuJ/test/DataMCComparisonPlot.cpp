@@ -32,7 +32,7 @@ void LatexCMS (double lumi) ;
 // To lunch the sequence : 
 
 // 1) Electron : ls cfg/DataMCComparison_InputCfgFile/ | grep _el_ | grep cfg | grep -v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
-// 1) Muon     : ls cfg/DataMCComparison_InputCfgFile/ | grep _mu_ | grep cfg | grep .v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
+// 1) Muon     : ls cfg/DataMCComparison_InputCfgFile/ | grep _mu_ | grep cfg | grep -v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
 
 int main (int argc, char **argv){
 
@@ -152,6 +152,7 @@ int main (int argc, char **argv){
        
        histos[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
        histos[iCut][iVar][iSample]->SetLineColor(ColorSample.at(iSample));
+       histos[iCut][iVar][iSample]->GetXaxis()->SetTitle(Variables.at(iVar).c_str());
     } 
    }
   }
@@ -223,11 +224,11 @@ int main (int argc, char **argv){
 	   
           if(!WithoutData){
 
-              upperPad = new TPad("upperPad", "upperPad", .005, .320, .995, .910);
-	      lowerPad = new TPad("lowerPad", "lowerPad", .005, .015, .995, .265);
+              upperPad = new TPad("upperPad", "upperPad", .005, .250, .995, .910);
+	      lowerPad = new TPad("lowerPad", "lowerPad", .005, .015, .995, .225);
 
-              upperPadLog = new TPad("upperPadLog", "upperPadLog", .005, .320, .995, .910);
-	      lowerPadLog = new TPad("lowerPadLog", "lowerPadLog", .005, .015, .995, .265);
+              upperPadLog = new TPad("upperPadLog", "upperPadLog", .005, .250, .995, .910);
+	      lowerPadLog = new TPad("lowerPadLog", "lowerPadLog", .005, .015, .995, .225);
 
           }
           else{
@@ -248,16 +249,10 @@ int main (int argc, char **argv){
 	  for (size_t iSample = 0; iSample<NameSample.size(); iSample++){
 	  
 	    if( NameReducedSample.at(iSample) == "DATA" && !WithoutData){
-
 	      histos[iCut][iVar][iSample]->SetLineColor(kBlack);
 	      histos[iCut][iVar][iSample]->SetLineStyle(1);
               histos[iCut][iVar][iSample]->GetXaxis()->SetTitle((VariablesTitle.at(iVar)).c_str());
               histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.06);
-              upperPad->cd();
-	      histos[iCut][iVar][iSample]->Draw("E");
-              upperPadLog->cd();
-	      histos[iCut][iVar][iSample]->Draw("E");
-	      gPad->Modified();
 	      iSampleData = iSample;                                                                       
 	      leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "ple" ); 
 	    }
@@ -306,8 +301,9 @@ int main (int argc, char **argv){
 	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
      
           upperPad->cd();
-	 
-	  DrawStackError(hs[iCut][iVar],0);
+
+	  DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
+                         
 	  if(!WithoutData) histos[iCut][iVar][iSampleData]->Draw("E same");
 	  leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], (NameReducedSample.at(iSampleggH)+"*10").c_str(), "l" );
 	  leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSamplevbf], (NameReducedSample.at(iSamplevbf)+"*10").c_str(), "l" );
@@ -336,10 +332,12 @@ int main (int argc, char **argv){
 	  
                             RatioDataMC[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
                             RatioDataMC[iCut][iVar]->Divide(histoSum[iCut][iVar]);
-                            RatioDataMC[iCut][iVar]->SetMinimum(0.5);
-                            RatioDataMC[iCut][iVar]->SetMaximum(1.5);
+                            RatioDataMC[iCut][iVar]->SetMinimum(0);
+                            RatioDataMC[iCut][iVar]->SetMaximum(2);
 	                    RatioDataMC[iCut][iVar]->GetXaxis()->SetLabelSize(0.06);
+	                    RatioDataMC[iCut][iVar]->GetXaxis()->SetTitle(Variables.at(iVar).c_str());
 	                    RatioDataMC[iCut][iVar]->GetYaxis()->SetLabelSize(0.06);
+	                    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitle("Data/MC");
 	                    RatioDataMC[iCut][iVar]->Draw("PE");
          
                             lowerPadLog->cd();
@@ -349,7 +347,7 @@ int main (int argc, char **argv){
 	                    RatioDataMC[iCut][iVar]->Draw("PE");
 
 	  }
-
+	  
 	  c[iCut][iVar]->Write();
           
 	  std::string canvasname = CanvasName.Data() ;
@@ -358,7 +356,6 @@ int main (int argc, char **argv){
           
 	  c[iCut][iVar]->Print( (OutputRootDirectory+"/"+canvasname+".eps").c_str(),"eps");
 	  c[iCut][iVar]->Close();
-
 
 	  if(!WithoutData){  lowerPadLog->cd();
                              lowerPadLog->SetGridx();
@@ -370,7 +367,7 @@ int main (int argc, char **argv){
 	  upperPadLog->cd();
 	  upperPadLog->SetLogy();
 
-	  DrawStackError(hs[iCut][iVar],0);
+	  DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
 	  if(!WithoutData) histos[iCut][iVar][iSampleData]->Draw("E same");
 	  histos[iCut][iVar][iSampleggH]->Draw("hist same");
 	  histos[iCut][iVar][iSamplevbf]->Draw("hist same");
@@ -384,10 +381,9 @@ int main (int argc, char **argv){
           
 	  cLog[iCut][iVar]->Print( (OutputRootDirectory+"/"+canvasnameLog+".eps").c_str(),"eps");
           cLog[iCut][iVar]->Close();
-	
-      }
+     }
     }
- 
+	  
  outputFile->Close();
 
  return 0 ;
