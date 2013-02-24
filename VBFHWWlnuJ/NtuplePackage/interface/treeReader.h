@@ -8,6 +8,7 @@
 #include "Math/Vector3D.h"
 #include "TBranch.h"
 #include "TBranchElement.h"
+#include "TLeaf.h"
 
 #include <map>
 #include <vector>
@@ -30,7 +31,13 @@ class treeReader
     std::vector<float>*                  GetFloat (const std::string &name);
     std::vector<int>*                    GetInt   (const std::string &name);
     std::vector<std::string>*            GetString(const std::string &name);
-    
+
+    ROOT::Math::XYZVector*  get3V    (const std::string &name);
+    ROOT::Math::XYZTVector* get4V    (const std::string &name);
+    double*                 getDouble(const std::string &name);
+    float*                  getFloat (const std::string &name);
+    int*                    getInt   (const std::string &name);
+    std::string*            getString(const std::string &name);
     
   private:
 
@@ -40,6 +47,13 @@ class treeReader
     std::map <std::string, std::vector<float> * >                  m_Fvectors ;
     std::map <std::string, std::vector<int> * >                    m_Ivectors ;
     std::map <std::string, std::vector<std::string> * >            m_Svectors ;
+    
+    std::map <std::string, ROOT::Math::XYZVector*  >  k_3Vvectors ;
+    std::map <std::string, ROOT::Math::XYZTVector*  > k_4Vvectors ;
+    std::map <std::string, double*  >                 k_Dvectors ;
+    std::map <std::string, float*  >                  k_Fvectors ;
+    std::map <std::string, int * >                    k_Ivectors ;
+    std::map <std::string, std::string * >            k_Svectors ;
     
     TTree * m_tree ;
     bool m_verbosity ;
