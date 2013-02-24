@@ -4,7 +4,6 @@ LIB   = ../lib/
 BIN   =  ../bin/
 PRG  =  ../test/
 
-
 HdrSuf  =  .h
 SrcSuf  =  .cc
 ObjSuf  =  .o
@@ -12,16 +11,17 @@ PrgSuf  =  .cpp
 BinSuf  =  .exe
 LibSuf  =  .so
 
-
 HDRS  =  $(wildcard $(HDR)*$(HdrSuf))
 SRCS  =  $(wildcard *$(SrcSuf))
 _OBJS  =  $(patsubst %$(SrcSuf), %$(ObjSuf), $(SRCS))
 OBJS   =  $(addprefix $(OBJ),$(_OBJS))
 PRGS  =  $(wildcard $(PRG)*$(PrgSuf))
+
 _BINS    =  $(wildcard $(PRG)*$(PrgSuf))
 __BINS   =  $(_BINS:$(PrgSuf)=$(BinSuf))
 ___BINS  =  $(notdir $(__BINS))
 BINS	 =  $(addprefix $(BIN),${___BINS})
+
 
 LINKDEF   =  $(wildcard ${HDR}*LinkDef.h)
 DICTHDRS  =  $(patsubst $(LINKDEF),,$(HDRS)) $(LINKDEF)
@@ -33,22 +33,28 @@ ROOTGLIBS     = $(shell root-config --glibs)
 NTUPLEPACKAGEFLAGS = $(shell ntuplepkg-config --include)
 NTUPLEPACKAGELIBS = $(shell ntuplepkg-config --libs)
 
+KINFITTERPACKAGEFLAGS = $(shell kinfitpkg-config --include)
+KINFITTERPACKAGELIBS = $(shell kinfitpkg-config --libs)
+
 CLHEPCFLAGS   =  $(shell clhep-config --include)
 CLHEPLIBS     =  $(shell clhep-config --libs)
 
 ARCHL = -m64
 
 CXX  =  g++
-CXXFLAGS  =  -Wall -O -fPIC -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) -L/gwteraw/cmssw/slc5_amd64_gcc462/external/gcc/4.6.2/lib64/ $(CLHEPCFLAGS)
+CXXFLAGS  =  -Wall -O -fPIC -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(KINFITTERPACKAGEFLAGS) -L/gwteraw/cmssw/slc5_amd64_gcc462/external/gcc/4.6.2/lib64/ $(CLHEPCFLAGS) 
 CPP  =  g++
-CPPFLAGS  = -Wall $(ARCHL) -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) -L/gwteraw/cmssw/slc5_amd64_gcc462/external/gcc/4.6.2/lib64/ $(CLHEPCFLAGS)
+CPPFLAGS  = -Wall $(ARCHL) -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(KINFITTERPACKAGEFLAGS) -L/gwteraw/cmssw/slc5_amd64_gcc462/external/gcc/4.6.2/lib64/ $(CLHEPCFLAGS) 
+
+F    = gfortran
+FFLAGS = -c
 
 LD       =  g++
 LDFLAGS  =  -rdynamic -shared $(ARCHL)
 SONAME	 =  libVBFHWWlnuJ.so
 SOFLAGS  =  -Wl,-soname,$(SONAME)
 
-GLIBS   =  -lm -ldl -rdynamic $(ROOTGLIBS) $(CLHEPCFLAGS) -lGenVector -lFoam -lMinuit -lTMVA -lMLP -lXMLIO -lGpad  -lTreePlayer $(NTUPLEPACKAGELIBS)
+GLIBS   =  -lm -ldl -rdynamic $(ROOTGLIBS) $(NTUPLEPACKAGELIBS) $(CLHEPCFLAGS) $(KINFITTERPACKAGELIBS) -lGenVector -lFoam -lMinuit -lTMVA -lMLP -lXMLIO -lGpad  -lTreePlayer 
 
 
 #################################################
@@ -59,9 +65,9 @@ LibSuf  =  .dylib
 
 ARCHL = -m32
 
-CPPFLAGS  =  -Wall -W -Woverloaded-virtual -O2 $(ARCHL) -pipe -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS)
+CPPFLAGS  =  -Wall -W -Woverloaded-virtual -O2 $(ARCHL) -pipe -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS) $(KINFITTERPACKAGEFLAGS)
 
-CXXFLAGS  =  -Wall -W -Woverloaded-virtual -O2 $(ARCHL) -pipe -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS)
+CXXFLAGS  =  -Wall -W -Woverloaded-virtual -O2 $(ARCHL) -pipe -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS) $(KINFITTERPACKAGEFLAGS)
 
 LDFLAGS  =  -dynamiclib -shared -single_module -undefined dynamic_lookup $(ARCHL)
 SONAME	 =  libVBFHWWlnuJ.dylib
@@ -77,9 +83,9 @@ LibSuf  =  .dylib
 
 ARCHL = -m64
 
-CPPFLAGS  =  -Wall -W -Woverloaded-virtual -O2 $(ARCHL) -pipe -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS)
+CPPFLAGS  =  -Wall -W -Woverloaded-virtual -O2 $(ARCHL) -pipe -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS) $(KINFITTERPACKAGEFLAGS)
 
-CXXFLAGS  =  -Wall -W -Woverloaded-virtual -O2 $(ARCHL) -pipe -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS)
+CXXFLAGS  =  -Wall -W -Woverloaded-virtual -O2 $(ARCHL) -pipe -I$(HDR) $(ROOTCFLAGS) $(NTUPLEPACKAGEFLAGS) $(CLHEPCFLAGS) $(KINFITTERPACKAGEFLAGS)
 
 LDFLAGS  =  -dynamiclib -shared -single_module -undefined dynamic_lookup $(ARCHL)
 SONAME	 =  libVBFHWWlnuJ.dylib
@@ -91,11 +97,10 @@ endif
 
 
 
-.PHONY: all exe test clean
+.PHONY: all exe test clean exef
 
 
 all: $(LIB)$(SONAME)
-
 
 exe: $(BINS) 
 
@@ -106,7 +111,7 @@ test:
 	@echo "SRCS = $(SRCS)"
 	@echo "OBJS = $(OBJS)"
 	@echo "PRGS = $(PRGS)"
-	@echo "BINS = $(BINS)"
+	@echo "BINS = $(BIN)%$(BinSuf): $(PRG)%$(PrgSuf)"
 
 
 $(OBJ)%$(ObjSuf): %$(SrcSuf) $(HDRS)
@@ -123,12 +128,14 @@ $(OBJ)mydict.cc: $(DICTHDRS)
 	rootcint -f $(OBJ)mydict.cc -c -p ${CXXFLAGS} $(DICTHDRS)
 
 $(LIB)$(SONAME): $(OBJS) $(OBJ)mydict.o
-	@echo "Linking $(SONAME):"
 	$(LD) $(LDFLAGS) $(OBJS) $(OBJ)mydict.o $(SOFLAGS) $(ROOTGLIBS) -o $(LIB)$(SONAME)
+        @echo "Linking $(SONAME):"
+
+
 
 $(BIN)%$(BinSuf): $(PRG)%$(PrgSuf) $(HDRS) $(LIB)$(SONAME)
 	$(CPP) $<  $(CPPFLAGS) -L$(LIB) $(GLIBS) -lVBFHWWlnuJ -o $@
 
 
 clean:
-	rm -f $(OBJ)*$(ObjSuf) $(LIB)*$(LibSuf) $(OBJ)mydict* $(BIN)*$(BinSuf)
+	rm -f $(OBJ)*$(ObjSuf)  $(OBJ)mydict* $(BIN)*$(BinSuf) $(LIB)*$(LibSuf) 
