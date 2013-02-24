@@ -1,19 +1,21 @@
 #include "treeReader.h"
 
-
 treeReader::treeReader (TTree * tree, bool verbosity) :
 m_tree (tree),
 m_verbosity (verbosity)
 {
+
  TObjArray * br_list = m_tree->GetListOfBranches () ;
  TIter br_it (br_list) ;
+
  TBranch * iBranch ; 
  TBranchElement* bre ;
  TLeaf* Leaf;
- //PG loop over branches
+
  while ((iBranch = (TBranch *) br_it.Next ()))  {
   bre = (TBranchElement*) iBranch ;
   std::string bname = bre->GetClassName () ;      
+  std::string branchTitle = iBranch->GetTitle();
 
   if(bname!=""){
 
@@ -43,8 +45,7 @@ m_verbosity (verbosity)
    else if (!bname.find ("vector<string>") ){
     if (m_verbosity)
      std::cout << "SV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-    std::vector<std::string> * dummy = new std::vector<std::string> ;
-    m_Svectors[bre->GetName ()] = dummy ;
+    m_Svectors[bre->GetName ()] = new std::vector<std::string> ;
     m_tree->SetBranchAddress (bre->GetName (), &m_Svectors[bre->GetName ()]) ; 
    }
 
@@ -62,50 +63,188 @@ m_verbosity (verbosity)
     m_tree->SetBranchAddress (bre->GetName (), &m_Dvectors[bre->GetName ()]) ;
    }
 
-   else if (!bname.find ("ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double>") ){
+   else if (!bname.find ("ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > ")){
     if (m_verbosity)
-      std::cout << "4V | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-    k_4Vvectors[bre->GetName ()] = new ROOT::Math::XYZTVector ;
-    m_tree->SetBranchAddress (bre->GetName (), k_4Vvectors[bre->GetName ()]) ;      
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << bre->GetClassName() << "\n" ;
+
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_4Vvectors[bre->GetName ()] = new  ROOT::Math::XYZTVector [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_4Vvectors[bre->GetName ()]) ;}
+    else{ k_4Vvectors[bre->GetName ()] = new  ROOT::Math::XYZTVector ;m_tree->SetBranchAddress (bre->GetName (),k_4Vvectors[bre->GetName ()]) ;}
+  
    }
 
-   else if (!bname.find ("ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<double>,ROOT::Math::DefaultCoordinateSystemTag> ") ){
+
+    else if (!bname.find ("ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<double>,ROOT::Math::DefaultCoordinateSystemTag>* ")){
     if (m_verbosity)
-     std::cout << "3V | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-    k_3Vvectors[bre->GetName ()] = new ROOT::Math::XYZVector   ;
-    m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;    
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
+   
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_3Vvectors[bre->GetName ()] = new  ROOT::Math::XYZVector [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;}
+    else{ k_3Vvectors[bre->GetName ()] = new  ROOT::Math::XYZVector ;m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;}
+
    }
 
    else if (!bname.find ("int")  || !bname.find ("Int_t") ){
     if (m_verbosity)
-     std::cout << "IV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-    k_Ivectors[bre->GetName ()] = new int ;
-    m_tree->SetBranchAddress (bre->GetName (),k_Ivectors[bre->GetName ()]) ; 
-   }
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
+   
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
 
-   else if (!bname.find ("string")  || !bname.find ("TString") ){
-    if (m_verbosity)
-     std::cout << "SV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-    k_Svectors[bre->GetName ()] = new std::string ; 
-    m_tree->SetBranchAddress (bre->GetName (),k_Svectors[bre->GetName ()]) ; 
-   }
+    if(branchTitle.at(foundFirst-1)==']'){
 
-   else if (!bname.find ("float")  || !bname.find ("Float_t")  ){
-    if (m_verbosity)
-     std::cout << "FV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-    k_Fvectors[bre->GetName ()] = new  float ;
-    m_tree->SetBranchAddress (bre->GetName (),k_Fvectors[bre->GetName ()]) ; 
-   }
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
 
-   else if (!bname.find ("double")  || !bname.find ("Double_t") ){
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_Ivectors[bre->GetName ()] = new int [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Ivectors[bre->GetName ()]) ;}
+    else{ k_Ivectors[bre->GetName ()] = new int ;     m_tree->SetBranchAddress (bre->GetName (),k_Ivectors[bre->GetName ()]) ;}
+    }
+  
+
+  else if (!bname.find ("std::string")  || !bname.find ("TString") ){
     if (m_verbosity)
-     std::cout << "DV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
-    k_Dvectors[bre->GetName ()] = new double ;
-    m_tree->SetBranchAddress (bre->GetName (),k_Dvectors[bre->GetName ()]) ; 
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
+   
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_Svectors[bre->GetName ()] = new std::string [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Svectors[bre->GetName ()]) ;}
+    else{ k_Svectors[bre->GetName ()] = new std::string ;     m_tree->SetBranchAddress (bre->GetName (),k_Svectors[bre->GetName ()]) ;}
+   
+  }
+  
+
+  else if (!bname.find ("float")  || !bname.find ("Float_t") ){
+    if (m_verbosity)
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
+
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+   
+    if(vectorx!=0 && vectory==0){k_Fvectors[bre->GetName ()] = new float [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Fvectors[bre->GetName ()]) ; }
+    else if(vectorx==0 && vectory==0){ k_Fvectors[bre->GetName ()] = new float ;     m_tree->SetBranchAddress (bre->GetName (),k_Fvectors[bre->GetName ()]) ; }
+ 
    }
  
-  }
+   else if (!bname.find ("double")  || !bname.find ("Double_t")  ){
+      if (m_verbosity)
+	std::cout << "DV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
+    
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
 
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+    if(vectorx!=0 && vectory==0){k_Dvectors[bre->GetName ()] = new double [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Dvectors[bre->GetName ()]) ;}
+    else{ k_Dvectors[bre->GetName ()] = new double ;  m_tree->SetBranchAddress (bre->GetName (),k_Dvectors[bre->GetName ()]) ;}
+   }
+    
+  }
+ 
   else{
 
     Leaf = iBranch->GetLeaf(iBranch->GetName());
@@ -156,49 +295,186 @@ m_verbosity (verbosity)
       m_tree->SetBranchAddress (bre->GetName (), &m_Dvectors[bre->GetName ()]) ;
     }
 
-    else if (!bname.find ("ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > *") ) {
-      if (m_verbosity)
-	std::cout << "4V | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
-      k_4Vvectors[bre->GetName ()] = new ROOT::Math::XYZTVector ;
-      m_tree->SetBranchAddress (bre->GetName (),k_4Vvectors[bre->GetName ()]) ;
-    }
- 
-    else if (!bname.find ("ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<double>,ROOT::Math::DefaultCoordinateSystemTag> *") ){
-      if (m_verbosity)
-	std::cout << "3V | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
-      k_3Vvectors[bre->GetName ()] = new ROOT::Math::XYZVector ;
-      m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;
-    }
-  
-    else if (!bname.find ("int")  || !bname.find ("Int_t")  ){
-      if (m_verbosity)
-	std::cout << "IV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
-      k_Ivectors[bre->GetName ()] = new int  ;
-      m_tree->SetBranchAddress (bre->GetName (),k_Ivectors[bre->GetName ()]) ;
-      
-    }
-  
-    else if (!bname.find ("string")  || !bname.find ("TString")  ){
-      if (m_verbosity)
-	std::cout << "SV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
-      k_Svectors[bre->GetName ()] = new std::string  ;
-      m_tree->SetBranchAddress (bre->GetName (),k_Svectors[bre->GetName ()]) ;
+    else if (!bname.find ("ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> >* ")){
+    if (m_verbosity)
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
+
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
     }
 
-    else if (!bname.find ("double")  || !bname.find ("Double_t")  ){
+    if(vectorx!=0 && vectory==0){k_4Vvectors[bre->GetName ()] = new  ROOT::Math::XYZTVector [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_4Vvectors[bre->GetName ()]) ;}
+    else{ k_4Vvectors[bre->GetName ()] = new  ROOT::Math::XYZTVector ;m_tree->SetBranchAddress (bre->GetName (),k_4Vvectors[bre->GetName ()]) ;}
+  
+    }
+
+
+    else if (!bname.find ("ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<double>,ROOT::Math::DefaultCoordinateSystemTag>* ")){
+    if (m_verbosity)
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
+   
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_3Vvectors[bre->GetName ()] = new  ROOT::Math::XYZVector [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;}
+    else{ k_3Vvectors[bre->GetName ()] = new  ROOT::Math::XYZVector ;m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;}
+    }
+  
+
+   else if (!bname.find ("int")  || !bname.find ("Int_t") ){
+    if (m_verbosity)
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
+   
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_Ivectors[bre->GetName ()] = new int [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Ivectors[bre->GetName ()]) ;}
+    else{ k_Ivectors[bre->GetName ()] = new int ;     m_tree->SetBranchAddress (bre->GetName (),k_Ivectors[bre->GetName ()]) ;}
+    }
+  
+
+  else if (!bname.find ("std::string")  || !bname.find ("TString") ){
+    if (m_verbosity)
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
+   
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_Svectors[bre->GetName ()] = new std::string [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Svectors[bre->GetName ()]) ;}
+    else{ k_Svectors[bre->GetName ()] = new std::string ;     m_tree->SetBranchAddress (bre->GetName (),k_Svectors[bre->GetName ()]) ;}
+   
+  }
+  
+
+  else if (!bname.find ("float")  || !bname.find ("Float_t") ){
+    if (m_verbosity)
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
+
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+   
+    if(vectorx!=0 && vectory==0){k_Fvectors[bre->GetName ()] = new float [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Fvectors[bre->GetName ()]) ; }
+    else if(vectorx==0 && vectory==0){ k_Fvectors[bre->GetName ()] = new float ;     m_tree->SetBranchAddress (bre->GetName (),k_Fvectors[bre->GetName ()]) ; }
+ 
+   }
+ 
+   else if (!bname.find ("double")  || !bname.find ("Double_t")  ){
       if (m_verbosity)
 	std::cout << "DV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
-      k_Dvectors[bre->GetName ()] = new double  ;
-      m_tree->SetBranchAddress (bre->GetName (),k_Dvectors[bre->GetName ()]) ;
+    
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
     }
-  
-  else if (!bname.find ("float")  || !bname.find ("Float_t") ){
-      if (m_verbosity)
-	std::cout << "FV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
-      k_Fvectors[bre->GetName ()] = new float ;
-      m_tree->SetBranchAddress (bre->GetName (),k_Fvectors[bre->GetName ()]) ;
-    }
-  
+    if(vectorx!=0 && vectory==0){k_Dvectors[bre->GetName ()] = new double [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Dvectors[bre->GetName ()]) ;}
+    else{ k_Dvectors[bre->GetName ()] = new double ;  m_tree->SetBranchAddress (bre->GetName (),k_Dvectors[bre->GetName ()]) ;}
+   }
+    
   }
 
  } //PG loop over branches
@@ -212,66 +488,45 @@ m_verbosity (verbosity)
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 
-treeReader::~treeReader () 
-{
+treeReader::~treeReader () {
+
   for (std::map <std::string, std::vector<double> * >::const_iterator iMap = m_Dvectors.begin () ; iMap != m_Dvectors.end () ; ++iMap)
-    {
-      if(iMap->second) delete iMap->second ;}
+      if(iMap->second) delete iMap->second ;
    
  
   for (std::map <std::string, std::vector<float> * >::const_iterator iMap = m_Fvectors.begin () ; iMap != m_Fvectors.end () ; ++iMap)
-    {
       if(iMap->second) delete iMap->second ;
-    } 
  
   for (std::map <std::string, std::vector<int> * >::const_iterator iMap = m_Ivectors.begin () ; iMap != m_Ivectors.end () ; ++iMap)
-    {
       if(iMap->second) delete iMap->second ;
-    } 
 
   for (std::map <std::string, std::vector<std::string> * >::const_iterator iMap = m_Svectors.begin () ; iMap != m_Svectors.end () ; ++iMap)
-    {
       if(iMap->second) delete iMap->second ;
-    } 
  
   for (std::map <std::string, std::vector<ROOT::Math::XYZTVector> * >::const_iterator iMap = m_4Vvectors.begin () ; iMap != m_4Vvectors.end () ;  ++iMap)
-    {
       if(iMap->second) delete iMap->second ;
-    } 
  
   for (std::map <std::string, std::vector<ROOT::Math::XYZVector> * >::const_iterator iMap = m_3Vvectors.begin () ; iMap != m_3Vvectors.end (); ++iMap)
-    {
       if(iMap->second) delete iMap->second ;
-    } 
+
   for (std::map <std::string, double * >::const_iterator iMap = k_Dvectors.begin () ; iMap != k_Dvectors.end () ; ++iMap)
-    {
       if(iMap->second) delete iMap->second ;
-    } 
  
   for (std::map <std::string, float * >::const_iterator iMap = k_Fvectors.begin () ; iMap != k_Fvectors.end () ; ++iMap)
-    {
       if(iMap->second)  delete iMap->second ;
-    } 
  
   for (std::map <std::string, int * >::const_iterator iMap = k_Ivectors.begin () ; iMap != k_Ivectors.end () ; ++iMap)
-    {
       if(iMap->second) delete iMap->second ;
-    } 
 
   for (std::map <std::string, std::string * >::const_iterator iMap = k_Svectors.begin () ; iMap != k_Svectors.end () ; ++iMap)
-    {
       if(iMap->second)   delete iMap->second ;
-    } 
  
   for (std::map <std::string, ROOT::Math::XYZTVector * >::const_iterator iMap = k_4Vvectors.begin () ; iMap != k_4Vvectors.end () ;  ++iMap)
-    {
       if(iMap->second)  delete iMap->second ;
-    } 
  
   for (std::map <std::string, ROOT::Math::XYZVector * >::const_iterator iMap = k_3Vvectors.begin () ; iMap != k_3Vvectors.end (); ++iMap)
-    {
       if(iMap->second)  delete iMap->second ;
-      } 
+
 } 
 
 
