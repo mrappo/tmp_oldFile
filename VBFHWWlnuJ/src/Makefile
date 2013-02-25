@@ -115,11 +115,11 @@ test:
 
 
 $(OBJ)%$(ObjSuf): %$(SrcSuf) $(HDRS)
-	$(CXX) -c $(CXXFLAGS) -o $@ $< 
+	$(CXX) $< -c $(CXXFLAGS) -o $@  
 
 
 $(OBJ)mydict.o: $(OBJ)mydict.cc $(OBJ)mydict.h
-	$(CXX) -c $(CXXFLAGS) -o $@ $<
+	$(CXX) $< -c $(CXXFLAGS) -o $@ 
 
 
 $(OBJ)mydict.cc: $(DICTHDRS)
@@ -134,7 +134,7 @@ $(LIB)$(SONAME): $(OBJS) $(OBJ)mydict.o
 
 
 $(BIN)%$(BinSuf): $(PRG)%$(PrgSuf) $(HDRS) $(LIB)$(SONAME)
-	$(CPP) $<  $(CPPFLAGS) -L$(LIB) $(GLIBS) -lVBFHWWlnuJ -o $@
+	$(CPP) $<  -lVBFHWWlnuJ $(CPPFLAGS) -L$(LIB) $(GLIBS)  -o $@
 
 
 clean:
