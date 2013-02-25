@@ -19,7 +19,7 @@ fi
 export PATH=${PATH}:${THISDIR}/bin
 export PATH=${PATH}:${CLHEPSYS}/bin
 export PATH=${PATH}:${THISDIR}/NtuplePackage/bin
-export PATH=${PATH}:${THISDIR}/../KinFitter/bin
+export PATH=${PATH}:${THISDIR}/KinFitter/bin
 
 
 export NTUPLEPKGINCLUDE=${THISDIR}/NtuplePackage/interface
