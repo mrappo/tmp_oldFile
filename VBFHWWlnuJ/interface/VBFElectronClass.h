@@ -66,10 +66,6 @@ class VBFElectronClass {
 
   int vbf_maxpt_jj_type,   vbf_maxpt_n_excj,   vbf_maxpt_n_exfj,   vbf_maxpt_n_gdjj;
 
-  float vbf_maxpt_wjj_e ,   vbf_maxpt_wjj_pt ,   vbf_maxpt_wjj_eta ,   vbf_maxpt_wjj_phi ,   vbf_maxpt_wjj_m ;
-  float vbf_maxpt_wj1_e ,   vbf_maxpt_wj1_pt ,   vbf_maxpt_wj1_eta ,   vbf_maxpt_wj1_phi ,   vbf_maxpt_wj1_m ;
-  float vbf_maxpt_wj2_e ,   vbf_maxpt_wj2_pt ,   vbf_maxpt_wj2_eta ,   vbf_maxpt_wj2_phi ,   vbf_maxpt_wj2_m ;
-
   float vbf_maxpt_j1_bDiscriminatorSSVHE , vbf_maxpt_j1_bDiscriminatorTCHE, vbf_maxpt_j1_bDiscriminatorCSV;
   float vbf_maxpt_j1_bDiscriminatorSSVHP, vbf_maxpt_j1_bDiscriminatorTCHP ;
   float vbf_maxpt_j2_bDiscriminatorSSVHE, vbf_maxpt_j2_bDiscriminatorTCHE, vbf_maxpt_j2_bDiscriminatorCSV;
@@ -107,10 +103,6 @@ class VBFElectronClass {
   float vbf_maxDeta_j1_isPileUpTight  , vbf_maxDeta_j2_isPileUpTight  ;
 
   int vbf_maxDeta_jj_type,   vbf_maxDeta_n_excj,   vbf_maxDeta_n_exfj,   vbf_maxDeta_n_gdjj;
-
-  float vbf_maxDeta_wjj_e ,   vbf_maxDeta_wjj_pt ,   vbf_maxDeta_wjj_eta ,   vbf_maxDeta_wjj_phi ,   vbf_maxDeta_wjj_m ;
-  float vbf_maxDeta_wj1_e ,   vbf_maxDeta_wj1_pt ,   vbf_maxDeta_wj1_eta ,   vbf_maxDeta_wj1_phi ,   vbf_maxDeta_wj1_m ;
-  float vbf_maxDeta_wj2_e ,   vbf_maxDeta_wj2_pt ,   vbf_maxDeta_wj2_eta ,   vbf_maxDeta_wj2_phi ,   vbf_maxDeta_wj2_m ;
  
   float vbf_maxDeta_j1_bDiscriminatorSSVHE, vbf_maxDeta_j1_bDiscriminatorTCHE, vbf_maxDeta_j1_bDiscriminatorCSV;
   float vbf_maxDeta_j1_bDiscriminatorSSVHP, vbf_maxDeta_j1_bDiscriminatorTCHP ;
@@ -143,11 +135,7 @@ class VBFElectronClass {
   float vbf_maxMjj_j2_e ,   vbf_maxMjj_j2_pt ,   vbf_maxMjj_j2_eta ,  vbf_maxMjj_j2_phi , vbf_maxMjj_j2_m ;
   float vbf_maxMjj_jj_deta ,vbf_maxMjj_jj_dphi; 
 
-  int vbf_maxMjj_jj_type,   vbf_maxMjj_n_excj,   vbf_maxMjj_n_exfj,   vbf_maxMjj_n_gdjj;
-
-  float vbf_maxMjj_wjj_e ,   vbf_maxMjj_wjj_pt ,   vbf_maxMjj_wjj_eta ,   vbf_maxMjj_wjj_phi ,   vbf_maxMjj_wjj_m ;
-  float vbf_maxMjj_wj1_e ,   vbf_maxMjj_wj1_pt ,   vbf_maxMjj_wj1_eta ,   vbf_maxMjj_wj1_phi ,   vbf_maxMjj_wj1_m ;
-  float vbf_maxMjj_wj2_e ,   vbf_maxMjj_wj2_pt ,   vbf_maxMjj_wj2_eta ,   vbf_maxMjj_wj2_phi ,   vbf_maxMjj_wj2_m ;
+  int vbf_maxMjj_jj_type,   vbf_maxMjj_n_excj,   vbf_maxMjj_n_exfj;
 
   float vbf_maxMjj_j1_QGLikelihood, vbf_maxMjj_j2_QGLikelihood;
 

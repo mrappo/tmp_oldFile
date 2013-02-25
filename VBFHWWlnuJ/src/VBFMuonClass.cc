@@ -26,7 +26,6 @@ VBFMuonClass::VBFMuonClass(TFile* inputFile, std::string inputTreeName){
   }
   else fTree = (TTree*) inputFile -> Get(inputTreeName.c_str());
 
-
   fReader = new treeReader((TTree*)(fTree), false);
 
   SetBranchAddressAndStatus(fTree);
@@ -56,7 +55,7 @@ void VBFMuonClass::SetTree(TTree* inputTree){
 
   fReader = new treeReader((TTree*)(fTree), false);
 
-  SetBranchAddressAndStatus(fTree);
+   SetBranchAddressAndStatus(fTree);
 
 }
 
@@ -188,25 +187,6 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxpt_jj_type",&vbf_maxpt_jj_type,"vbf_maxpt_jj_type/I");
    inputTree->Branch("vbf_maxpt_n_excj",&vbf_maxpt_n_excj,"vbf_maxpt_n_excj/I");
    inputTree->Branch("vbf_maxpt_n_exfj",&vbf_maxpt_n_exfj,"vbf_maxpt_n_exfj/I");
-   inputTree->Branch("vbf_maxpt_n_gdjj",&vbf_maxpt_n_gdjj,"vbf_maxpt_n_gdjj/I");
-
-   inputTree->Branch("vbf_maxpt_wjj_e",&vbf_maxpt_wjj_e,"vbf_maxpt_wjj_e/F");
-   inputTree->Branch("vbf_maxpt_wjj_pt",&vbf_maxpt_wjj_pt,"vbf_maxpt_wjj_pt/F");
-   inputTree->Branch("vbf_maxpt_wjj_eta",&vbf_maxpt_wjj_eta,"vbf_maxpt_wjj_eta/F");
-   inputTree->Branch("vbf_maxpt_wjj_phi",&vbf_maxpt_wjj_phi,"vbf_maxpt_wjj_phi/F");
-   inputTree->Branch("vbf_maxpt_wjj_m",&vbf_maxpt_wjj_m,"vbf_maxpt_wjj_m/F");
-
-   inputTree->Branch("vbf_maxpt_wj1_e",&vbf_maxpt_wj1_e,"vbf_maxpt_wj1_e/F");
-   inputTree->Branch("vbf_maxpt_wj1_pt",&vbf_maxpt_wj1_pt,"vbf_maxpt_wj1_pt/F");
-   inputTree->Branch("vbf_maxpt_wj1_eta",&vbf_maxpt_wj1_eta,"vbf_maxpt_wj1_eta/F");
-   inputTree->Branch("vbf_maxpt_wj1_phi",&vbf_maxpt_wj1_phi,"vbf_maxpt_wj1_phi/F");
-   inputTree->Branch("vbf_maxpt_wj1_m",&vbf_maxpt_wj1_m,"vbf_maxpt_wj1_m/F");
-
-   inputTree->Branch("vbf_maxpt_wj2_e",&vbf_maxpt_wj2_e,"vbf_maxpt_wj2_e/F");
-   inputTree->Branch("vbf_maxpt_wj2_pt",&vbf_maxpt_wj2_pt,"vbf_maxpt_wj2_pt/F");
-   inputTree->Branch("vbf_maxpt_wj2_eta",&vbf_maxpt_wj2_eta,"vbf_maxpt_wj2_eta/F");
-   inputTree->Branch("vbf_maxpt_wj2_phi",&vbf_maxpt_wj2_phi,"vbf_maxpt_wj2_phi/F");
-   inputTree->Branch("vbf_maxpt_wj2_m",&vbf_maxpt_wj2_m,"vbf_maxpt_wj2_m/F");
 
    inputTree->Branch("vbf_maxpt_j1_bDiscriminatorSSVHE",&vbf_maxpt_j1_bDiscriminatorSSVHE,"vbf_maxpt_j1_bDiscriminatorSSVHE/F");
    inputTree->Branch("vbf_maxpt_j1_bDiscriminatorTCHE",&vbf_maxpt_j1_bDiscriminatorTCHE,"vbf_maxpt_j1_bDiscriminatorTCHE/F");  
@@ -314,25 +294,6 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxDeta_jj_type",&vbf_maxDeta_jj_type,"vbf_maxDeta_jj_type/I");
    inputTree->Branch("vbf_maxDeta_n_excj",&vbf_maxDeta_n_excj,"vbf_maxDeta_n_excj/I");
    inputTree->Branch("vbf_maxDeta_n_exfj",&vbf_maxDeta_n_exfj,"vbf_maxDeta_n_exfj/I");
-   inputTree->Branch("vbf_maxDeta_n_gdjj",&vbf_maxDeta_n_gdjj,"vbf_maxDeta_n_gdjj/I");
-
-   inputTree->Branch("vbf_maxDeta_wjj_e",&vbf_maxDeta_wjj_e,"vbf_maxDeta_wjj_e/F");
-   inputTree->Branch("vbf_maxDeta_wjj_pt",&vbf_maxDeta_wjj_pt,"vbf_maxDeta_wjj_pt/F");
-   inputTree->Branch("vbf_maxDeta_wjj_eta",&vbf_maxDeta_wjj_eta,"vbf_maxDeta_wjj_eta/F");
-   inputTree->Branch("vbf_maxDeta_wjj_phi",&vbf_maxDeta_wjj_phi,"vbf_maxDeta_wjj_phi/F");
-   inputTree->Branch("vbf_maxDeta_wjj_m",&vbf_maxDeta_wjj_m,"vbf_maxDeta_wjj_m/F");
-
-   inputTree->Branch("vbf_maxDeta_wj1_e",&vbf_maxDeta_wj1_e,"vbf_maxDeta_wj1_e/F");
-   inputTree->Branch("vbf_maxDeta_wj1_pt",&vbf_maxDeta_wj1_pt,"vbf_maxDeta_wj1_pt/F");
-   inputTree->Branch("vbf_maxDeta_wj1_eta",&vbf_maxDeta_wj1_eta,"vbf_maxDeta_wj1_eta/F");
-   inputTree->Branch("vbf_maxDeta_wj1_phi",&vbf_maxDeta_wj1_phi,"vbf_maxDeta_wj1_phi/F");
-   inputTree->Branch("vbf_maxDeta_wj1_m",&vbf_maxDeta_wj1_m,"vbf_maxDeta_wj1_m/F");
-
-   inputTree->Branch("vbf_maxDeta_wj2_e",&vbf_maxDeta_wj2_e,"vbf_maxDeta_wj2_e/F");
-   inputTree->Branch("vbf_maxDeta_wj2_pt",&vbf_maxDeta_wj2_pt,"vbf_maxDeta_wj2_pt/F");
-   inputTree->Branch("vbf_maxDeta_wj2_eta",&vbf_maxDeta_wj2_eta,"vbf_maxDeta_wj2_eta/F");
-   inputTree->Branch("vbf_maxDeta_wj2_phi",&vbf_maxDeta_wj2_phi,"vbf_maxDeta_wj2_phi/F");
-   inputTree->Branch("vbf_maxDeta_wj2_m",&vbf_maxDeta_wj2_m,"vbf_maxDeta_wj2_m/F");
 
    inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorSSVHE",&vbf_maxDeta_j1_bDiscriminatorSSVHE,"vbf_maxDeta_j1_bDiscriminatorSSVHE/F");
    inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorTCHE",&vbf_maxDeta_j1_bDiscriminatorTCHE,"vbf_maxDeta_j1_bDiscriminatorTCHE/F");  
@@ -440,25 +401,6 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxMjj_jj_type",&vbf_maxMjj_jj_type,"vbf_maxMjj_jj_type/I");
    inputTree->Branch("vbf_maxMjj_n_excj",&vbf_maxMjj_n_excj,"vbf_maxMjj_n_excj/I");
    inputTree->Branch("vbf_maxMjj_n_exfj",&vbf_maxMjj_n_exfj,"vbf_maxMjj_n_exfj/I");
-   inputTree->Branch("vbf_maxMjj_n_gdjj",&vbf_maxMjj_n_gdjj,"vbf_maxMjj_n_gdjj/I");
-
-   inputTree->Branch("vbf_maxMjj_wjj_e",&vbf_maxMjj_wjj_e,"vbf_maxMjj_wjj_e/F");
-   inputTree->Branch("vbf_maxMjj_wjj_pt",&vbf_maxMjj_wjj_pt,"vbf_maxMjj_wjj_pt/F");
-   inputTree->Branch("vbf_maxMjj_wjj_eta",&vbf_maxMjj_wjj_eta,"vbf_maxMjj_wjj_eta/F");
-   inputTree->Branch("vbf_maxMjj_wjj_phi",&vbf_maxMjj_wjj_phi,"vbf_maxMjj_wjj_phi/F");
-   inputTree->Branch("vbf_maxMjj_wjj_m",&vbf_maxMjj_wjj_m,"vbf_maxMjj_wjj_m/F");
-
-   inputTree->Branch("vbf_maxMjj_wj1_e",&vbf_maxMjj_wj1_e,"vbf_maxMjj_wj1_e/F");
-   inputTree->Branch("vbf_maxMjj_wj1_pt",&vbf_maxMjj_wj1_pt,"vbf_maxMjj_wj1_pt/F");
-   inputTree->Branch("vbf_maxMjj_wj1_eta",&vbf_maxMjj_wj1_eta,"vbf_maxMjj_wj1_eta/F");
-   inputTree->Branch("vbf_maxMjj_wj1_phi",&vbf_maxMjj_wj1_phi,"vbf_maxMjj_wj1_phi/F");
-   inputTree->Branch("vbf_maxMjj_wj1_m",&vbf_maxMjj_wj1_m,"vbf_maxMjj_wj1_m/F");
-
-   inputTree->Branch("vbf_maxMjj_wj2_e",&vbf_maxMjj_wj2_e,"vbf_maxMjj_wj2_e/F");
-   inputTree->Branch("vbf_maxMjj_wj2_pt",&vbf_maxMjj_wj2_pt,"vbf_maxMjj_wj2_pt/F");
-   inputTree->Branch("vbf_maxMjj_wj2_eta",&vbf_maxMjj_wj2_eta,"vbf_maxMjj_wj2_eta/F");
-   inputTree->Branch("vbf_maxMjj_wj2_phi",&vbf_maxMjj_wj2_phi,"vbf_maxMjj_wj2_phi/F");
-   inputTree->Branch("vbf_maxMjj_wj2_m",&vbf_maxMjj_wj2_m,"vbf_maxMjj_wj2_m/F");
 
    inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorSSVHE",&vbf_maxMjj_j1_bDiscriminatorSSVHE,"vbf_maxMjj_j1_bDiscriminatorSSVHE/F");
    inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorTCHE",&vbf_maxMjj_j1_bDiscriminatorTCHE,"vbf_maxMjj_j1_bDiscriminatorTCHE/F");  
@@ -564,12 +506,7 @@ void VBFMuonClass::InitializateVariables(){
  vbf_maxpt_j1_isPileUpMedium=-999 , vbf_maxpt_j2_isPileUpMedium=-999 ;
  vbf_maxpt_j1_isPileUpTight=-999  , vbf_maxpt_j2_isPileUpTight=-999  ;
 
- vbf_maxpt_jj_type=-999,   vbf_maxpt_n_excj=-999,   vbf_maxpt_n_exfj=-999,   vbf_maxpt_n_gdjj=-999;
-
- vbf_maxpt_wjj_e=-999 ,   vbf_maxpt_wjj_pt=-999 ,   vbf_maxpt_wjj_eta=-999 ,   vbf_maxpt_wjj_phi=-999 ,   vbf_maxpt_wjj_m=-999 ;
- vbf_maxpt_wj1_e=-999 ,   vbf_maxpt_wj1_pt=-999 ,   vbf_maxpt_wj1_eta=-999 ,   vbf_maxpt_wj1_phi=-999 ,   vbf_maxpt_wj1_m=-999 ;
- vbf_maxpt_wj2_e=-999 ,   vbf_maxpt_wj2_pt=-999 ,   vbf_maxpt_wj2_eta=-999 ,   vbf_maxpt_wj2_phi=-999 ,   vbf_maxpt_wj2_m=-999 ;
-
+ vbf_maxpt_jj_type=-999,   vbf_maxpt_n_excj=-999,   vbf_maxpt_n_exfj=-999;
 
  vbf_maxpt_j1_bDiscriminatorSSVHE=-999, vbf_maxpt_j1_bDiscriminatorTCHE=-999, vbf_maxpt_j1_bDiscriminatorCSV=-999;
  vbf_maxpt_j1_bDiscriminatorSSVHP=-999, vbf_maxpt_j1_bDiscriminatorTCHP=-999;
@@ -609,12 +546,7 @@ void VBFMuonClass::InitializateVariables(){
  vbf_maxDeta_j1_isPileUpMedium=-999 , vbf_maxDeta_j2_isPileUpMedium=-999 ;
  vbf_maxDeta_j1_isPileUpTight=-999  , vbf_maxDeta_j2_isPileUpTight=-999  ;
 
- vbf_maxDeta_jj_type=-999,   vbf_maxDeta_n_excj=-999,   vbf_maxDeta_n_exfj=-999,   vbf_maxDeta_n_gdjj=-999;
-
- vbf_maxDeta_wjj_e=-999 ,   vbf_maxDeta_wjj_pt=-999 ,   vbf_maxDeta_wjj_eta=-999 ,   vbf_maxDeta_wjj_phi=-999 ,   vbf_maxDeta_wjj_m=-999 ;
- vbf_maxDeta_wj1_e=-999 ,   vbf_maxDeta_wj1_pt=-999 ,   vbf_maxDeta_wj1_eta=-999 ,   vbf_maxDeta_wj1_phi=-999 ,   vbf_maxDeta_wj1_m=-999 ;
- vbf_maxDeta_wj2_e=-999 ,   vbf_maxDeta_wj2_pt=-999 ,   vbf_maxDeta_wj2_eta=-999 ,   vbf_maxDeta_wj2_phi=-999 ,   vbf_maxDeta_wj2_m=-999 ;
-
+ vbf_maxDeta_jj_type=-999,   vbf_maxDeta_n_excj=-999,   vbf_maxDeta_n_exfj=-999;
 
  vbf_maxDeta_j1_bDiscriminatorSSVHE=-999, vbf_maxDeta_j1_bDiscriminatorTCHE=-999, vbf_maxDeta_j1_bDiscriminatorCSV=-999;
  vbf_maxDeta_j1_bDiscriminatorSSVHP=-999, vbf_maxDeta_j1_bDiscriminatorTCHP=-999;
@@ -654,11 +586,7 @@ void VBFMuonClass::InitializateVariables(){
  vbf_maxMjj_j1_isPileUpMedium=-999 , vbf_maxMjj_j2_isPileUpMedium=-999 ;
  vbf_maxMjj_j1_isPileUpTight=-999  , vbf_maxMjj_j2_isPileUpTight=-999  ;
 
- vbf_maxMjj_jj_type=-999,   vbf_maxMjj_n_excj=-999,   vbf_maxMjj_n_exfj=-999,   vbf_maxMjj_n_gdjj=-999;
-
- vbf_maxMjj_wjj_e=-999 ,   vbf_maxMjj_wjj_pt=-999 ,   vbf_maxMjj_wjj_eta=-999 ,   vbf_maxMjj_wjj_phi=-999 ,   vbf_maxMjj_wjj_m=-999 ;
- vbf_maxMjj_wj1_e=-999 ,   vbf_maxMjj_wj1_pt=-999 ,   vbf_maxMjj_wj1_eta=-999 ,   vbf_maxMjj_wj1_phi=-999 ,   vbf_maxMjj_wj1_m=-999 ;
- vbf_maxMjj_wj2_e=-999 ,   vbf_maxMjj_wj2_pt=-999 ,   vbf_maxMjj_wj2_eta=-999 ,   vbf_maxMjj_wj2_phi=-999 ,   vbf_maxMjj_wj2_m=-999 ;
+ vbf_maxMjj_jj_type=-999,   vbf_maxMjj_n_excj=-999,   vbf_maxMjj_n_exfj=-999;
 
 
  vbf_maxMjj_j1_bDiscriminatorSSVHE=-999, vbf_maxMjj_j1_bDiscriminatorTCHE=-999, vbf_maxMjj_j1_bDiscriminatorCSV=-999;

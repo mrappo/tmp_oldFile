@@ -6,23 +6,35 @@
 #include <functional>
 #include <algorithm>
 
+
+#include "TLorentzVector.h"
 #include "Math/Vector3D.h"
 #include "Math/Vector4D.h"
 
+#ifndef JetAK5_h
+#define JetAK5_h
 
-typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > lorentzVector ;
+class JetAK5 {
 
+ public :
 
-// two jets vbf with highest Deta first , then W jets with higher pT
-std::vector<const lorentzVector *> Jet_Deta_pT       (const lorentzVector input [], int njets);
+  // default constructor
+  JetAK5();
 
-std::vector<const lorentzVector *> Jet_FNAL_Criteria (const lorentzVector input[], int njets);
+  JetAK5(const int & position, const std::string & NameCollection, TLorentzVector & Vect) ;
 
-// two jets vbf with highest Mjj first , then W jets with higher pT
-std::vector<const lorentzVector *> Jet_Mjj_pT (const lorentzVector input[], int njets);
+  // default de-constructor
+  ~JetAK5();
 
-// lorentzVector pointers sorting algos
-// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+  int position_ ;
+  std::string NameCollection_ ;
+  TLorentzVector Momentum_ ;
+
+  
+} ;
+
+#endif
+
 
 #ifndef TLVP_EtaSort_h
 #define TLVP_EtaSort_h
@@ -38,9 +50,7 @@ class TLVP_EtaSort : public std::binary_function<int,int,bool>{
   ~TLVP_EtaSort(){};
 
   // Operator ()
-  bool operator() (const lorentzVector * x, const lorentzVector * y){
-    return x->Eta () < y->Eta () ;
-  };
+  bool operator() (const JetAK5 & x, const JetAK5 & y) ;
 
 } ;
 
@@ -60,9 +70,7 @@ class TLVP_AbsEtaSort : public std::binary_function<int,int,bool> {
   ~TLVP_AbsEtaSort(){};
 
   // Operator ()
-  bool operator() (const lorentzVector * x, const lorentzVector * y){
-    return fabs (x->Eta ()) < fabs (y->Eta ()) ;
-  };
+  bool operator() (const JetAK5 & x, const JetAK5 & y);
 
 } ;
 
@@ -81,12 +89,11 @@ class TLVP_PtSort : public std::binary_function<int,int,bool>{
   ~TLVP_PtSort(){};
 
   // Operator ()
-  bool operator() (const lorentzVector * x, const lorentzVector * y){
-      return x->Pt () < y->Pt () ;
-  };
+  bool operator() (const JetAK5 & x, const JetAK5 & y);
   
 } ;
 
 #endif
+
 
 #endif
