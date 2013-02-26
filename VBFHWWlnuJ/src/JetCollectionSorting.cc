@@ -30,5 +30,5 @@ bool TLVP_AbsEtaSort::operator() (const JetAK5 & x, const JetAK5 & y){
 
 // Operator ()                                                                                                                                                                                  
 bool TLVP_PtSort::operator() (const JetAK5 & x, const JetAK5 & y){
-  return x.Momentum_.Pt () < y.Momentum_.Pt () ;
+  return x.Momentum_.Pt () > y.Momentum_.Pt () ;
 };
