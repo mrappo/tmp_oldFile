@@ -24,15 +24,18 @@ class VBFMuonClass {
   VBFMuonClass( TFile *inputFile = 0, std::string inputTreeName = "WJet") ;
   ~VBFMuonClass();
 
-  void SetBranchAddressAndStatus(TTree * inputTree);
+  void SetBranchAddressAndStatus(TTree * inputTree = 0 );
 
   TTree* GetTree();
 
   void SetTree(TTree* inputTree =0);
 
+  void SetReader(TTree* inputTree = 0);
+
   void SetNewBranches(TTree* inputTree =0);  
 
   void InitializateVariables();
+
 
   TTree* fTree ;
   treeReader * fReader ;

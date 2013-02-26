@@ -30,6 +30,8 @@ class VBFElectronClass {
 
   void SetTree(TTree* inputTree =0);
 
+  void SetReader(TTree* inputTree =0);
+
   void SetNewBranches(TTree* inputTree =0);  
 
   void InitializateVariables();

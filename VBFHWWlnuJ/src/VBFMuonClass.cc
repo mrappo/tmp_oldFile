@@ -10,11 +10,6 @@ VBFMuonClass::VBFMuonClass(TTree* inputTree){
                        fTree = (TTree*) f -> Get("WJet");
   }
   else fTree = inputTree ;
-
-  fReader = new treeReader((TTree*)(fTree), false);
-
-  SetBranchAddressAndStatus(fTree);
-  
 }
 
 
@@ -25,10 +20,6 @@ VBFMuonClass::VBFMuonClass(TFile* inputFile, std::string inputTreeName){
                        fTree = (TTree*) f -> Get("WJet");
   }
   else fTree = (TTree*) inputFile -> Get(inputTreeName.c_str());
-
-  fReader = new treeReader((TTree*)(fTree), false);
-
-  SetBranchAddressAndStatus(fTree);
 
 }
 
@@ -44,6 +35,15 @@ TTree* VBFMuonClass::GetTree(){
 }
 
 
+void VBFMuonClass::SetReader(TTree* inputTree){
+
+  if(inputTree ==0) return ;
+ 
+  fReader = new treeReader((TTree*)(fTree), false);
+
+  SetBranchAddressAndStatus(fTree);
+
+}
 
 void VBFMuonClass::SetTree(TTree* inputTree){
 

@@ -11,10 +11,6 @@ VBFElectronClass::VBFElectronClass(TTree* inputTree){
   }
   else fTree = inputTree ;
 
-  fReader = new treeReader((TTree*)(fTree), false);
-  
-  SetBranchAddressAndStatus(fTree);
-
 }
 
 
@@ -25,10 +21,6 @@ VBFElectronClass::VBFElectronClass(TFile* inputFile, std::string inputTreeName){
                        fTree = (TTree*) f -> Get("WJet");
   }
   else fTree = (TTree*) inputFile -> Get(inputTreeName.c_str());
-
-  fReader = new treeReader((TTree*)(fTree), false);
-
-  SetBranchAddressAndStatus(fTree);
 
 }
 
@@ -43,7 +35,15 @@ TTree* VBFElectronClass::GetTree(){
   return fTree ;
 }
 
+void VBFElectronClass::SetReader( TTree* inputTree){
 
+  if(inputTree == 0) return ; 
+
+  fReader = new treeReader((TTree*)(fTree), false);
+  
+  SetBranchAddressAndStatus(fTree);
+
+}
 
 void VBFElectronClass::SetTree(TTree* inputTree){
 
