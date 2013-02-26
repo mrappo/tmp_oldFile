@@ -1,0 +1,13 @@
+case $1 in
+--include)
+echo "-I$KINFITPKGINCLUDE"
+;;
+--libs)
+echo "-L$KINFITPKGLIB -lKinFitter"
+;;
+*)
+### Give an error
+echo "Unknown argument \"$1\"!" 1>&2
+exit 1
+;;
+esac
