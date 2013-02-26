@@ -89,9 +89,10 @@ int main (int argc, char** argv){
   TFile * inputFile = new TFile((InputDirectory+"/"+InputRootFile).c_str(),"READ");
 
   // Efficiency Histo
-  TH1F* SelectionEfficiency = new TH1F ("SelectionEfficiency","Selection Efficiency", 10,0,10);
+  TH1F* SelectionEfficiency = new TH1F ("SelectionEfficiency","Selection Efficiency",10,0,10);
   int nstepEvents [10];
-  int nStep = 1;
+  for ( int iEvents = 0 ; iEvents < 10 ; iEvents ++) nstepEvents[iEvents] = 0 ;
+  int nStep ;
 
   // Muon Sample Processing 
   if(LeptonType == "Muon"){
@@ -107,12 +108,14 @@ int main (int argc, char** argv){
    std::cout<<" Open Input File : "<<inputFile->GetName()<<" TreeName  "<<TreeName<<std::endl;
 
    VBFMuonClass* MuonTree = new VBFMuonClass (inputFile,TreeName);
+   
+   MuonTree->SetReader(MuonTree->fTree);
 
    std::cout<<"                                   "<<std::endl;
    std::cout<<" Clone Tree  "<<std::endl;
    
    TTree *newtree = MuonTree->fTree->CloneTree(0);
-
+   
    // Add new Branches 
    VBFMuonClass* NewMuonTree = new VBFMuonClass(newtree);
    
@@ -126,9 +129,9 @@ int main (int argc, char** argv){
   
    for(int iEntry = 0 ; iEntry <  MuonTree->fTree->GetEntries ()  ; iEntry++){
 
-
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"All Events");
+    nStep = 1 ;
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"All Events");
+    nstepEvents[nStep-1]++;
     nStep = 2;
     
     MuonTree->fTree->GetEntry(iEntry); 
@@ -140,18 +143,17 @@ int main (int argc, char** argv){
     // Basic Selections for boosted region 
     if(!(MuonTree->fReader->getInt("isgengdboostedWevt")[0]) || (MuonTree->fReader->getFloat("GroomedJet_CA8_deltaR_lca8jet")[0]) < TMath::Pi()/ 2.0  || 
         (MuonTree->fReader->getFloat("GroomedJet_CA8_pt")[0])< JetPtWboostedMin || (MuonTree->fReader->getFloat("W_pt")[0]) < JetPtWboostedMin ) continue ;
-
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Base Boosted W");
+    
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Base Boosted W");
+    nstepEvents[nStep-1]++;
     nStep = 3;
 
     // Control the Jet Multiplicity for VBF regime
-    if( (fabs(MuonTree->fReader->getInt("numPFCorJets")[0])+fabs(MuonTree->fReader->getInt("numJetPFCorVBFTag")[0])) < NumJetMin ) continue ;
+    if( (fabs(MuonTree->fReader->getInt("numPFCorJets")[0])+fabs(MuonTree->fReader->getInt("numPFCorVBFTagJets")[0])) < NumJetMin ) continue ;
 
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Jet Number");
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Jet Number"); 
+    nstepEvents[nStep-1]++;
     nStep = 4;
-
 
     // Join forward and central PFJetCor Collection    
     std::vector<TLorentzVector> GroomedJet_CA8_Collection ;
@@ -166,8 +168,8 @@ int main (int argc, char** argv){
                           MuonTree->fReader->getFloat("GroomedJet_CA8_phi")[iJet],MuonTree->fReader->getFloat("GroomedJet_CA8_e")[iJet]);
 
      // Selection on CA8 Jets
-     if(fabs(JetTemp.Eta())<JetEtaCutMax && JetTemp.Pt()>JetPtCutMin) 
-     GroomedJet_CA8_Collection.push_back(JetTemp);
+     if(fabs(JetTemp.Eta())<JetEtaCutMax && JetTemp.Pt()>JetPtCutMin)
+       GroomedJet_CA8_Collection.push_back(JetTemp);
 
      JetTemp.SetPtEtaPhiE(MuonTree->fReader->getFloat("JetPFCor_Pt")[iJet],MuonTree->fReader->getFloat("JetPFCor_Eta")[iJet],
  			  MuonTree->fReader->getFloat("JetPFCor_Phi")[iJet],MuonTree->fReader->getFloat("JetPFCor_E")[iJet]);
@@ -193,9 +195,9 @@ int main (int argc, char** argv){
 
     // Another Skim on Jet Counting
     if(GroomedJet_CA8_Collection.size() == 0 || JetPFCor_AK5_Collection.size() < 3) continue ;
-
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Jet Number CA8 - AK5");
+   
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Jet Number CA8 - AK5"); 
+    nstepEvents[nStep-1]++;
     nStep = 5;
 
    
@@ -216,9 +218,8 @@ int main (int argc, char** argv){
 
     if(CleanedJetPFCor_AK5_Collection.size() < 2) continue ; 
 
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Matching CA8 - AK5");
-    nStep = 6;
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Matching CA8 - AK5");
+    nstepEvents[nStep-1]++;
 
     // vbf Tag Jet Selection
 
@@ -260,7 +261,7 @@ int main (int argc, char** argv){
     outputAK5_MjjSorted.push_back (CleanedJetPFCor_AK5_Collection.at (iJ1)) ;
     outputAK5_MjjSorted.push_back (CleanedJetPFCor_AK5_Collection.at (iJ2)) ;
 
-    
+   
     // Calculate Neutrino Pz
     TLorentzVector W_mu, W_Met, W_neutrino; 
    
@@ -359,8 +360,8 @@ int main (int argc, char** argv){
     NewMuonTree->boosted_wjj_ang_hb   = fabs(costheta2); 
     NewMuonTree->boosted_wjj_ang_hs   = costhetastar;
     NewMuonTree->boosted_wjj_ang_phi  = phi;
-    NewMuonTree->boosted_wjj_ang_phia = phistar1;																		    NewMuonTree->boosted_wjj_ang_phib = phistar2;
-    
+    NewMuonTree->boosted_wjj_ang_phia = phistar1;																		     NewMuonTree->boosted_wjj_ang_phib = phistar2;
+     
     //////////////////////////////////////////////////////////////////////////////////////////////////
     // Fill Information for Max Pt Pair of vbf tag jets
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1179,17 +1180,17 @@ int main (int argc, char** argv){
 
     }
     else { std::cerr<<" problem with High Deta Jet Name Collection "<<std::endl; continue ; }
-    
+      
     NewMuonTree->fTree->Fill();
     
    } // End of Loop on the event
 
    // Save Results in the output
-   
-   NewMuonTree->fTree->Write(TreeName.c_str());
-   SelectionEfficiency->GetXaxis()->SetRangeUser(0,nStep);
-   for(int ibin =0; ibin < nStep ; ibin++) SelectionEfficiency->SetBinContent(ibin,nstepEvents[ibin]);
-   SelectionEfficiency->Write();
+  NewMuonTree->fTree->Write(TreeName.c_str());
+  int ibin = 0 ;
+  for( ; nstepEvents[ibin]!=0 ; ibin ++) SelectionEfficiency->SetBinContent(ibin+1,nstepEvents[ibin]); 
+  SelectionEfficiency->GetXaxis()->SetRangeUser(0,nStep);
+  SelectionEfficiency->Write();
 
    std::cout << " Finish :: " << outputFile->GetName() << "    "<<  MuonTree->fTree->GetEntries ()  << std::endl;
    outputFile->Close();
@@ -1205,6 +1206,7 @@ int main (int argc, char** argv){
    outputFile->cd();
    
    VBFElectronClass* ElectronTree = new VBFElectronClass (inputFile,TreeName);
+   ElectronTree -> SetReader(ElectronTree->fTree);
 
    TTree *newtree = ElectronTree->fTree->CloneTree(0);
 
@@ -1219,9 +1221,9 @@ int main (int argc, char** argv){
   
    for(int iEntry = 0 ; iEntry <  ElectronTree->fTree->GetEntries ()  ; iEntry++){
 
-
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"All Events");
+    nStep = 1;
+    nstepEvents[nStep-1]++;
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep))=="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"All Events");
     nStep = 2;
 
     ElectronTree->fTree->GetEntry(iEntry); 
@@ -1234,15 +1236,15 @@ int main (int argc, char** argv){
     if(!(ElectronTree->fReader->getInt("isgengdboostedWevt")[0]) || (ElectronTree->fReader->getFloat("GroomedJet_CA8_deltaR_lca8jet")[0]) < TMath::Pi()/ 2.0  || 
         (ElectronTree->fReader->getFloat("GroomedJet_CA8_pt")[0])< JetPtWboostedMin || (ElectronTree->fReader->getFloat("W_pt")[0]) < JetPtWboostedMin ) continue ;
 
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Base Boosted W");
+    nstepEvents[nStep-1]++;
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep))=="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Base Boosted W");
     nStep = 3;
 
     // Control the Jet Multiplicity for VBF regime
-    if( (fabs(ElectronTree->fReader->getInt("numPFCorJets")[0])+fabs(ElectronTree->fReader->getInt("numJetPFCorVBFTag")[0])) < NumJetMin ) continue ;
+    if( (fabs(ElectronTree->fReader->getInt("numPFCorJets")[0])+fabs(ElectronTree->fReader->getInt("numPFCorVBFTagJets")[0])) < NumJetMin ) continue ;
 
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Jet Number");
+    nstepEvents[nStep-1]++;
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep))=="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Jet Number");
     nStep = 4;
 
 
@@ -1286,8 +1288,8 @@ int main (int argc, char** argv){
 
     if(GroomedJet_CA8_Collection.size() == 0 || JetPFCor_AK5_Collection.size() < 3) continue ;
 
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Jet Number CA8 - AK5");
+    nstepEvents[nStep-1]++;
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep))=="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Jet Number CA8 - AK5");
     nStep = 5;
 
     // Clean AK5 Jet Collection choosing the hard CA8 as W Hadronic
@@ -1307,9 +1309,8 @@ int main (int argc, char** argv){
 
     if(CleanedJetPFCor_AK5_Collection.size() < 2) continue ; 
 
-    nstepEvents[nStep]++;
-    if(iEntry==0)SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Matching CA8 - AK5");
-    nStep = 6;
+    nstepEvents[nStep-1]++;
+    if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep))=="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Matching CA8 - AK5");
 
     // vbf Tag Jet Selection
 
@@ -2270,16 +2271,17 @@ int main (int argc, char** argv){
 
     }
     else { std::cerr<<" problem with High Deta Jet Name Collection "<<std::endl; continue ; }
-
+         
     NewElectronTree->fTree->Fill();
-
+    
    } // End of Loop on the event
 
    // Save Results in the output
    
    NewElectronTree->fTree->Write(TreeName.c_str());
+   int ibin = 0 ;
+   for( ; nstepEvents[ibin]!=0 ; ibin ++) SelectionEfficiency->SetBinContent(ibin+1,nstepEvents[ibin]); 
    SelectionEfficiency->GetXaxis()->SetRangeUser(0,nStep);
-   for(int ibin =0; ibin < nStep ; ibin++) SelectionEfficiency->SetBinContent(ibin,nstepEvents[ibin]);
    SelectionEfficiency->Write();
 
    std::cout << " Finish :: " << outputFile->GetName() << "    "<<  ElectronTree->fTree->GetEntries ()  << std::endl;
