@@ -19,5 +19,5 @@ RD_el_STopT_Tbar_CMSSW532                                      STop             
 RD_el_STopT_T_CMSSW532                                         STop                       8             59.5      3758227
 RD_el_STopTW_Tbar_CMSSW532                                     STop                       8             11.2       493460
 RD_el_STopTW_T_CMSSW532                                        STop                       8             11.2       497658
-RD_el_HWWMH800_CMSSW532_private                      ggH                        4         0.006637      198750
-RD_el_VBFHWWMH800_CMSSW532_private                   qqH                        1         0.00264       192735
+RD_el_HWWMH800_CMSSW532_private                      ggH                        4         0.01391      198750
+RD_el_VBFHWWMH800_CMSSW532_private                   qqH                        1         0.00554       192735
