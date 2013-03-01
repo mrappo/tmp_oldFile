@@ -1,4 +1,4 @@
-#####################################################################################################################
+C#####################################################################################################################
 #  Sample Name 					            Reduced Name      Color     XSec (pb)    NumEntriesBefore
 ######################################################################################################################
 RD_WmunuJets_DataAll_GoldenJSON_19p3invfb            DATA                       1               1            1
@@ -19,5 +19,5 @@ RD_mu_STopT_T_CMSSW532                               STop                       
 RD_mu_STopTW_Tbar_CMSSW532                           STop                       8            11.2       493460
 RD_mu_STopTW_T_CMSSW532                              STop                       8            11.2       497658
 RD_mu_TTbar_CMSSW532                                 tt_bar                     8         225.197      6923750
-RD_mu_HWWMH600_CMSSW532_private                                ggH                        4         0.0638       197170
-RD_mu_VBFHWWMH600_CMSSW532_private                             qqH                        1         0.0118       198900
+RD_mu_HWWMH600_CMSSW532_private                                ggH                        4         0.1276       197170
+RD_mu_VBFHWWMH600_CMSSW532_private                             qqH                        1         0.0236       198900
