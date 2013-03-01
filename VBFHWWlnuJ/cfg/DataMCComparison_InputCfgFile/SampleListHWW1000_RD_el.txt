@@ -30,5 +30,5 @@ RD_el_TTbar_CMSSW532                                           tt_bar           
 #RD_el_TTbar_scaleup_CMSSW532                                   tt_bar           8         225.197      5009488
 #RD_el_TTbar_scaledown_CMSSW532                                 tt_bar           8         228.0        5387181
 #RD_el_TTbar_powheg_CMSSW532                                    tt_bar           8         225.197      21675970
-RD_el_HWWMH1000_CMSSW532_private                     ggH                        4         0.00859      199914
-RD_el_VBFHWWMH1000_CMSSW532_private                  qqH                        1         0.00651      197234
+RD_el_HWWMH1000_CMSSW532_private                              ggH               4         0.00859      199914
+RD_el_VBFHWWMH1000_CMSSW532_private                           qqH               1         0.00651      197234
