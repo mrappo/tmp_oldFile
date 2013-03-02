@@ -35,6 +35,7 @@ $NumJetMin        = $User_Preferences{"NumJetMin"};
 
 $OutputRootDirectory = $User_Preferences{"OutputRootDirectory"};
 
+$CMSSWPATH       = $User_Preferences{"CMSSWPATH"};
 $JOBDir           = $User_Preferences{"JOBDir"};
 $BatchSystem      = $User_Preferences{"BatchSystem"};
 $EXEFile          = $User_Preferences{"EXEFile"};
@@ -69,10 +70,10 @@ system ($command);
 
 $LISTOFSample = $BASEDir."/LISTOFSample.txt";
 
-if($LeptonType eq "Muon")    { $command = "ls ".$InputDirectory." | grep mu > ".$LISTOFSample ; 
+if($LeptonType eq "Muon")    { $command = "ls ".$InputDirectory." | grep mu | grep root > ".$LISTOFSample ; 
                                print "LISTOFSample ".$command."\n";
                                system ($command);}
-if($LeptonType eq "Electron"){ $command = "ls ".$InputDirectory." | grep el > ".$LISTOFSample ; 
+if($LeptonType eq "Electron"){ $command = "ls ".$InputDirectory." | grep el | grep root > ".$LISTOFSample ; 
                                print "LISTOFSample ".$command."\n";
                                system ($command);}
 
@@ -112,7 +113,7 @@ while (<LISTOFSample>)
 
     open (SAMPLECFGFILE, ">", $tempCfg) or die "Can't open file ".$tempCfg;
 
-    $command = "[input]" ;
+    $command = "[Input]" ;
     print SAMPLECFGFILE $command."\n";
     print SAMPLECFGFILE "\n";
 
@@ -164,7 +165,8 @@ while (<LISTOFSample>)
     print SAMPLECFGFILE $command."\n";
     print SAMPLECFGFILE "\n";
 
-    $command = "OutputRootFile = ".$LeptonType."_".$Sample ;
+    $command = "OutputRootFile = ".$Sample ;
+    $command =~  s/RD_/VBF_/g ;
     print SAMPLECFGFILE $command."\n";
     print SAMPLECFGFILE "\n";
 
@@ -181,7 +183,7 @@ while (<LISTOFSample>)
     $command = "export SCRAM_ARCH=slc5_amd64_gcc462" ;
     print SAMPLEJOBFILE $command."\n";
     
-    $command = "cd /afs/cern.ch/work/r/rgerosa/CMSSW_5_3_3_patch3/src/ ; eval `scramv1 runtime -sh` ; cd -" ;
+    $command = "cd ".$CMSSWPATH." ; eval `scramv1 runtime -sh` ; cd -" ;
     print SAMPLEJOBFILE $command."\n";
 
     $command = "source ../setup.sh" ;
@@ -194,7 +196,7 @@ while (<LISTOFSample>)
     # submit job
     ############
     
-    if($BatchSystem eq 'hercules') { $command = " qsub -V -d ".$BASEDir."/".$JOBDir." -q shortcms ".$BASEDir."/".$tempBjob ;  }      
+    if($BatchSystem eq 'hercules') { $command = " qsub -V -d ".$BASEDir."/".$JOBDir." -q longcms ".$BASEDir."/".$tempBjob ;  }      
     if($BatchSystem eq 'lxbatch')  { $command = " bsub -cwd ".$BASEDir."/".$JOBDir." -q cmscaf1nh ".$BASEDir."/".$tempBjob ;  }
  
     print SAMPLEJOBLISTFILE $command."\n";

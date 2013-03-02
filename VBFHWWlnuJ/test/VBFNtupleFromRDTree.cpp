@@ -103,7 +103,7 @@ int main (int argc, char** argv){
 
    // create and open the output file 
 
-   TFile *outputFile = new TFile((OutputRootDirectory+"/Mu"+OutputRootFile).c_str(),"RECREATE");
+   TFile *outputFile = new TFile((OutputRootDirectory+"/"+OutputRootFile).c_str(),"RECREATE");
    outputFile->cd();
 
    std::cout<<" Open Input File : "<<inputFile->GetName()<<" TreeName  "<<TreeName<<std::endl;
@@ -1261,7 +1261,7 @@ int main (int argc, char** argv){
 
    // create and open the output file 
 
-   TFile *outputFile = new TFile((OutputRootDirectory+"/El"+OutputRootFile).c_str(),"RECREATE");
+   TFile *outputFile = new TFile((OutputRootDirectory+"/"+OutputRootFile).c_str(),"RECREATE");
    outputFile->cd();
 
    std::cout<<" Open Input File : "<<inputFile->GetName()<<" TreeName  "<<TreeName<<std::endl;
