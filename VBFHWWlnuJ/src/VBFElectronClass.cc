@@ -176,13 +176,13 @@ void VBFElectronClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxpt_j2_QGLikelihood",&vbf_maxpt_j2_QGLikelihood,"vbf_maxpt_j2_QGLikelihood/F");
 
    
-   inputTree->Branch("vbf_maxpt_j1_isPileUpLoose",&vbf_maxpt_j1_isPileUpLoose,"vbf_maxpt_j1_isPileUpLoose/F");
-   inputTree->Branch("vbf_maxpt_j1_isPileUpMedium",&vbf_maxpt_j1_isPileUpMedium,"vbf_maxpt_j1_isPileUpMedium/F");
-   inputTree->Branch("vbf_maxpt_j1_isPileUpTight",&vbf_maxpt_j1_isPileUpTight,"vbf_maxpt_j1_isPileUpTight/F");
+   inputTree->Branch("vbf_maxpt_j1_isPileUpLoose",&vbf_maxpt_j1_isPileUpLoose,"vbf_maxpt_j1_isPileUpLoose/O");
+   inputTree->Branch("vbf_maxpt_j1_isPileUpMedium",&vbf_maxpt_j1_isPileUpMedium,"vbf_maxpt_j1_isPileUpMedium/O");
+   inputTree->Branch("vbf_maxpt_j1_isPileUpTight",&vbf_maxpt_j1_isPileUpTight,"vbf_maxpt_j1_isPileUpTight/O");
 
-   inputTree->Branch("vbf_maxpt_j2_isPileUpLoose",&vbf_maxpt_j2_isPileUpLoose,"vbf_maxpt_j2_isPileUpLoose/F");
-   inputTree->Branch("vbf_maxpt_j2_isPileUpMedium",&vbf_maxpt_j2_isPileUpMedium,"vbf_maxpt_j2_isPileUpMedium/F");
-   inputTree->Branch("vbf_maxpt_j2_isPileUpTight",&vbf_maxpt_j2_isPileUpTight,"vbf_maxpt_j2_isPileUpTight/F");
+   inputTree->Branch("vbf_maxpt_j2_isPileUpLoose",&vbf_maxpt_j2_isPileUpLoose,"vbf_maxpt_j2_isPileUpLoose/O");
+   inputTree->Branch("vbf_maxpt_j2_isPileUpMedium",&vbf_maxpt_j2_isPileUpMedium,"vbf_maxpt_j2_isPileUpMedium/O");
+   inputTree->Branch("vbf_maxpt_j2_isPileUpTight",&vbf_maxpt_j2_isPileUpTight,"vbf_maxpt_j2_isPileUpTight/O");
 
    inputTree->Branch("vbf_maxpt_jj_type",&vbf_maxpt_jj_type,"vbf_maxpt_jj_type/I");
    inputTree->Branch("vbf_maxpt_n_excj",&vbf_maxpt_n_excj,"vbf_maxpt_n_excj/I");
@@ -502,9 +502,9 @@ void VBFElectronClass::InitializateVariables(){
 
  vbf_maxpt_j1_QGLikelihood=-999,  vbf_maxpt_j2_QGLikelihood=-999;
 
- vbf_maxpt_j1_isPileUpLoose=-999  , vbf_maxpt_j2_isPileUpLoose=-999  ;
- vbf_maxpt_j1_isPileUpMedium=-999 , vbf_maxpt_j2_isPileUpMedium=-999 ;
- vbf_maxpt_j1_isPileUpTight=-999  , vbf_maxpt_j2_isPileUpTight=-999  ;
+ vbf_maxpt_j1_isPileUpLoose =false  , vbf_maxpt_j2_isPileUpLoose =false  ;
+ vbf_maxpt_j1_isPileUpMedium=false  , vbf_maxpt_j2_isPileUpMedium=false  ;
+ vbf_maxpt_j1_isPileUpTight =false  , vbf_maxpt_j2_isPileUpTight =false  ;
 
  vbf_maxpt_jj_type=-999,   vbf_maxpt_n_excj=-999,   vbf_maxpt_n_exfj=-999;
 
@@ -543,9 +543,9 @@ void VBFElectronClass::InitializateVariables(){
 
  vbf_maxDeta_j1_QGLikelihood=-999,  vbf_maxDeta_j2_QGLikelihood=-999;
 
- vbf_maxDeta_j1_isPileUpLoose=-999  , vbf_maxDeta_j2_isPileUpLoose=-999  ;
- vbf_maxDeta_j1_isPileUpMedium=-999 , vbf_maxDeta_j2_isPileUpMedium=-999 ;
- vbf_maxDeta_j1_isPileUpTight=-999  , vbf_maxDeta_j2_isPileUpTight=-999  ;
+ vbf_maxDeta_j1_isPileUpLoose =false  , vbf_maxDeta_j2_isPileUpLoose =false  ;
+ vbf_maxDeta_j1_isPileUpMedium=false  , vbf_maxDeta_j2_isPileUpMedium=false  ;
+ vbf_maxDeta_j1_isPileUpTight =false  , vbf_maxDeta_j2_isPileUpTight =false  ;
 
  vbf_maxDeta_jj_type=-999,   vbf_maxDeta_n_excj=-999,   vbf_maxDeta_n_exfj=-999;
 
@@ -583,9 +583,9 @@ void VBFElectronClass::InitializateVariables(){
 
  vbf_maxMjj_j1_QGLikelihood=-999,  vbf_maxMjj_j2_QGLikelihood=-999;
 
- vbf_maxMjj_j1_isPileUpLoose=-999  , vbf_maxMjj_j2_isPileUpLoose=-999  ;
- vbf_maxMjj_j1_isPileUpMedium=-999 , vbf_maxMjj_j2_isPileUpMedium=-999 ;
- vbf_maxMjj_j1_isPileUpTight=-999  , vbf_maxMjj_j2_isPileUpTight=-999  ;
+ vbf_maxMjj_j1_isPileUpLoose =false  , vbf_maxMjj_j2_isPileUpLoose =false  ;
+ vbf_maxMjj_j1_isPileUpMedium=false  , vbf_maxMjj_j2_isPileUpMedium=false ;
+ vbf_maxMjj_j1_isPileUpTight =false  , vbf_maxMjj_j2_isPileUpTight =false  ;
 
  vbf_maxMjj_jj_type=-999,   vbf_maxMjj_n_excj=-999,   vbf_maxMjj_n_exfj=-999 ;
 

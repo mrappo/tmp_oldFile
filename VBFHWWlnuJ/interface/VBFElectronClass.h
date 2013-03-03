@@ -62,9 +62,9 @@ class VBFElectronClass {
 
   float vbf_maxpt_j1_QGLikelihood,  vbf_maxpt_j2_QGLikelihood;
 
-  float vbf_maxpt_j1_isPileUpLoose  , vbf_maxpt_j2_isPileUpLoose  ;
-  float vbf_maxpt_j1_isPileUpMedium , vbf_maxpt_j2_isPileUpMedium ;
-  float vbf_maxpt_j1_isPileUpTight  , vbf_maxpt_j2_isPileUpTight  ;
+  bool vbf_maxpt_j1_isPileUpLoose  , vbf_maxpt_j2_isPileUpLoose  ;
+  bool vbf_maxpt_j1_isPileUpMedium , vbf_maxpt_j2_isPileUpMedium ;
+  bool vbf_maxpt_j1_isPileUpTight  , vbf_maxpt_j2_isPileUpTight  ;
 
   int vbf_maxpt_jj_type,   vbf_maxpt_n_excj,   vbf_maxpt_n_exfj,   vbf_maxpt_n_gdjj;
 
@@ -100,9 +100,9 @@ class VBFElectronClass {
 
   float vbf_maxDeta_j1_QGLikelihood, vbf_maxDeta_j2_QGLikelihood;
 
-  float vbf_maxDeta_j1_isPileUpLoose  , vbf_maxDeta_j2_isPileUpLoose  ;
-  float vbf_maxDeta_j1_isPileUpMedium , vbf_maxDeta_j2_isPileUpMedium ;
-  float vbf_maxDeta_j1_isPileUpTight  , vbf_maxDeta_j2_isPileUpTight  ;
+  bool vbf_maxDeta_j1_isPileUpLoose  , vbf_maxDeta_j2_isPileUpLoose  ;
+  bool vbf_maxDeta_j1_isPileUpMedium , vbf_maxDeta_j2_isPileUpMedium ;
+  bool vbf_maxDeta_j1_isPileUpTight  , vbf_maxDeta_j2_isPileUpTight  ;
 
   int vbf_maxDeta_jj_type,   vbf_maxDeta_n_excj,   vbf_maxDeta_n_exfj,   vbf_maxDeta_n_gdjj;
  
@@ -141,9 +141,9 @@ class VBFElectronClass {
 
   float vbf_maxMjj_j1_QGLikelihood, vbf_maxMjj_j2_QGLikelihood;
 
-  float vbf_maxMjj_j1_isPileUpLoose  , vbf_maxMjj_j2_isPileUpLoose  ;
-  float vbf_maxMjj_j1_isPileUpMedium , vbf_maxMjj_j2_isPileUpMedium ;
-  float vbf_maxMjj_j1_isPileUpTight  , vbf_maxMjj_j2_isPileUpTight ;
+  bool vbf_maxMjj_j1_isPileUpLoose  , vbf_maxMjj_j2_isPileUpLoose  ;
+  bool vbf_maxMjj_j1_isPileUpMedium , vbf_maxMjj_j2_isPileUpMedium ;
+  bool vbf_maxMjj_j1_isPileUpTight  , vbf_maxMjj_j2_isPileUpTight ;
 
   float vbf_maxMjj_j1_bDiscriminatorSSVHE, vbf_maxMjj_j1_bDiscriminatorTCHE, vbf_maxMjj_j1_bDiscriminatorCSV;
   float vbf_maxMjj_j1_bDiscriminatorSSVHP, vbf_maxMjj_j1_bDiscriminatorTCHP ;
