@@ -283,13 +283,13 @@ void VBFElectronClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxDeta_j2_QGLikelihood",&vbf_maxDeta_j2_QGLikelihood,"vbf_maxDeta_j2_QGLikelihood/F");
 
    
-   inputTree->Branch("vbf_maxDeta_j1_isPileUpLoose",&vbf_maxDeta_j1_isPileUpLoose,"vbf_maxDeta_j1_isPileUpLoose/F");
-   inputTree->Branch("vbf_maxDeta_j1_isPileUpMedium",&vbf_maxDeta_j1_isPileUpMedium,"vbf_maxDeta_j1_isPileUpMedium/F");
-   inputTree->Branch("vbf_maxDeta_j1_isPileUpTight",&vbf_maxDeta_j1_isPileUpTight,"vbf_maxDeta_j1_isPileUpTight/F");
+   inputTree->Branch("vbf_maxDeta_j1_isPileUpLoose",&vbf_maxDeta_j1_isPileUpLoose,"vbf_maxDeta_j1_isPileUpLoose/O");
+   inputTree->Branch("vbf_maxDeta_j1_isPileUpMedium",&vbf_maxDeta_j1_isPileUpMedium,"vbf_maxDeta_j1_isPileUpMedium/O");
+   inputTree->Branch("vbf_maxDeta_j1_isPileUpTight",&vbf_maxDeta_j1_isPileUpTight,"vbf_maxDeta_j1_isPileUpTight/O");
 
-   inputTree->Branch("vbf_maxDeta_j2_isPileUpLoose",&vbf_maxDeta_j2_isPileUpLoose,"vbf_maxDeta_j2_isPileUpLoose/F");
-   inputTree->Branch("vbf_maxDeta_j2_isPileUpMedium",&vbf_maxDeta_j2_isPileUpMedium,"vbf_maxDeta_j2_isPileUpMedium/F");
-   inputTree->Branch("vbf_maxDeta_j2_isPileUpTight",&vbf_maxDeta_j2_isPileUpTight,"vbf_maxDeta_j2_isPileUpTight/F");
+   inputTree->Branch("vbf_maxDeta_j2_isPileUpLoose",&vbf_maxDeta_j2_isPileUpLoose,"vbf_maxDeta_j2_isPileUpLoose/O");
+   inputTree->Branch("vbf_maxDeta_j2_isPileUpMedium",&vbf_maxDeta_j2_isPileUpMedium,"vbf_maxDeta_j2_isPileUpMedium/O");
+   inputTree->Branch("vbf_maxDeta_j2_isPileUpTight",&vbf_maxDeta_j2_isPileUpTight,"vbf_maxDeta_j2_isPileUpTight/O");
 
    inputTree->Branch("vbf_maxDeta_jj_type",&vbf_maxDeta_jj_type,"vbf_maxDeta_jj_type/I");
    inputTree->Branch("vbf_maxDeta_n_excj",&vbf_maxDeta_n_excj,"vbf_maxDeta_n_excj/I");
@@ -390,13 +390,13 @@ void VBFElectronClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxMjj_j2_QGLikelihood",&vbf_maxMjj_j2_QGLikelihood,"vbf_maxMjj_j2_QGLikelihood/F");
 
    
-   inputTree->Branch("vbf_maxMjj_j1_isPileUpLoose",&vbf_maxMjj_j1_isPileUpLoose,"vbf_maxMjj_j1_isPileUpLoose/F");
-   inputTree->Branch("vbf_maxMjj_j1_isPileUpMedium",&vbf_maxMjj_j1_isPileUpMedium,"vbf_maxMjj_j1_isPileUpMedium/F");
-   inputTree->Branch("vbf_maxMjj_j1_isPileUpTight",&vbf_maxMjj_j1_isPileUpTight,"vbf_maxMjj_j1_isPileUpTight/F");
+   inputTree->Branch("vbf_maxMjj_j1_isPileUpLoose",&vbf_maxMjj_j1_isPileUpLoose,"vbf_maxMjj_j1_isPileUpLoose/O");
+   inputTree->Branch("vbf_maxMjj_j1_isPileUpMedium",&vbf_maxMjj_j1_isPileUpMedium,"vbf_maxMjj_j1_isPileUpMedium/O");
+   inputTree->Branch("vbf_maxMjj_j1_isPileUpTight",&vbf_maxMjj_j1_isPileUpTight,"vbf_maxMjj_j1_isPileUpTight/O");
 
-   inputTree->Branch("vbf_maxMjj_j2_isPileUpLoose",&vbf_maxMjj_j2_isPileUpLoose,"vbf_maxMjj_j2_isPileUpLoose/F");
-   inputTree->Branch("vbf_maxMjj_j2_isPileUpMedium",&vbf_maxMjj_j2_isPileUpMedium,"vbf_maxMjj_j2_isPileUpMedium/F");
-   inputTree->Branch("vbf_maxMjj_j2_isPileUpTight",&vbf_maxMjj_j2_isPileUpTight,"vbf_maxMjj_j2_isPileUpTight/F");
+   inputTree->Branch("vbf_maxMjj_j2_isPileUpLoose",&vbf_maxMjj_j2_isPileUpLoose,"vbf_maxMjj_j2_isPileUpLoose/O");
+   inputTree->Branch("vbf_maxMjj_j2_isPileUpMedium",&vbf_maxMjj_j2_isPileUpMedium,"vbf_maxMjj_j2_isPileUpMedium/O");
+   inputTree->Branch("vbf_maxMjj_j2_isPileUpTight",&vbf_maxMjj_j2_isPileUpTight,"vbf_maxMjj_j2_isPileUpTight/O");
 
    inputTree->Branch("vbf_maxMjj_jj_type",&vbf_maxMjj_jj_type,"vbf_maxMjj_jj_type/I");
    inputTree->Branch("vbf_maxMjj_n_excj",&vbf_maxMjj_n_excj,"vbf_maxMjj_n_excj/I");
