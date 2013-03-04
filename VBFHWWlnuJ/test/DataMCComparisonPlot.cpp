@@ -102,7 +102,7 @@ int main (int argc, char **argv){
   std::cout<<"      "<<std::endl;
 
   std::string SignalRSGPythiaName ;
-  try{  SignalRSGPythiaName = gConfigParser -> readStringOption("Input::SignalRSGPythiaName");}
+  try{  SignalRSGPythiaName = gConfigParser -> readStringOption("Input::SignalPythiaName");}
   catch(char const* exceptionString){ SignalRSGPythiaName = "NULL";
                                       std::cerr<<" No Signal RSG Pythia Name --> NULL "<<std::endl;
   }
