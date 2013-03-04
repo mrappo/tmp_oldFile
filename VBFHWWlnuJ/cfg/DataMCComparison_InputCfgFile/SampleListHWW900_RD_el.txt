@@ -2,7 +2,6 @@
 #  Sample Name 					               Reduced Name      Color     XSec (pb)    NumEntriesBefore
 ##############################################################################################################################
 VBF_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb  DATA             1               1            1
-VBF_el_WJets_madgraph_CMSSW532                                  W+Jets           2           36257     76102995
 VBF_el_ZpJ_CMSSW532                                             Z+Jets                     5            3503     30459503
 VBF_el_STopS_Tbar_CMSSW532                                      STop                       8              25       139974
 VBF_el_STopS_T_CMSSW532                                         STop                       8             4.5       259961
