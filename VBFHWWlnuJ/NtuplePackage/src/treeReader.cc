@@ -665,6 +665,19 @@ int* treeReader::getInt(const std::string &name){
   else return new int;
 }
 
+
+std::vector<bool>* treeReader::GetBool(const std::string &name){
+  std::map<std::string,std::vector<bool> * >::const_iterator it_I  = m_Bvectors.find(name);
+  if (it_I  != m_Bvectors.end()  ) return m_Bvectors[name];
+  else return new std::vector<bool>;
+}
+
+bool* treeReader::getBool(const std::string &name){
+  std::map<std::string,bool * >::const_iterator  it_I  = k_Bvectors.find(name);
+  if (it_I  != k_Bvectors.end()  ) return k_Bvectors[name];
+  else return new bool;
+}
+
 std::vector<std::string>* treeReader::GetString(const std::string &name){
   std::map<std::string,std::vector<std::string> * >::const_iterator it_S  = m_Svectors.find(name);
   if (it_S  != m_Svectors.end()  ) return m_Svectors[name];
