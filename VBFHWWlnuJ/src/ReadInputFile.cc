@@ -13,7 +13,7 @@ int ReadInputSampleFile(const std::string & InputSampleList, std::vector<std::st
   
     getline(inputFile,buffer);
 
-    if(buffer=="" || !buffer.find("#") ) continue ;
+    if(buffer.empty() || !buffer.find("#") ) continue ;
     std::stringstream line(buffer);
 
     std::string  NameSampleTemp;
@@ -47,7 +47,7 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
   
     getline(inputFile,buffer);
 
-    if(buffer=="" || !buffer.find("#") ) continue ;
+    if(buffer.empty() || !buffer.find("#") ) continue ;
     std::stringstream line(buffer);
 
     std::string  VariablesTemp;
@@ -80,7 +80,7 @@ int ReadInputCutFile( const std::string & InputCutList , std::vector<std::string
   
     getline(inputFile,buffer);
 
-    if(buffer=="" || !buffer.find("#") ) continue ;
+    if(buffer.empty() || !buffer.find("#") ) continue ;
 
     CutList.push_back(buffer);
   }
