@@ -6,8 +6,6 @@
 #include <vector>
 #include <istream>
 #include <sstream>
-#include <map>
-#include <algorithm>
 
 #include "TCanvas.h"
 #include "TTree.h"
@@ -29,10 +27,17 @@
 
 void LatexCMS (double lumi) ;
 
-// To lunch the sequence : 
+// To lunch the sequence for the Higgs : 
 
-// 1) Electron : ls cfg/DataMCComparison_InputCfgFile/ | grep _el_ | grep cfg | grep -v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
-// 1) Muon     : ls cfg/DataMCComparison_InputCfgFile/ | grep _mu_ | grep cfg | grep -v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
+// 1) Ele : ls cfg/DataMCComparison_InputCfgFile/ | grep _el_ | grep HWW | grep cfg | grep -v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
+// 2) Mu  : ls cfg/DataMCComparison_InputCfgFile/ | grep _mu_ | grep HWW | grep cfg | grep -v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
+
+
+// To lunch the sequence for the RSG Graviton : 
+
+// 1) Ele : ls cfg/DataMCComparison_InputCfgFile/ | grep _el_ | grep RSG | grep cfg | grep -v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
+// 2) Mu  : ls cfg/DataMCComparison_InputCfgFile/ | grep _mu_ | grep RSG | grep cfg | grep -v ~ | awk '{print "./bin/DataMCComparisonPlot.exe cfg/DataMCComparison_InputCfgFile/"$1}' | /bin/sh
+
 
 int main (int argc, char **argv){
 
@@ -59,24 +64,160 @@ int main (int argc, char **argv){
   std::string InputSampleList    = gConfigParser -> readStringOption("Input::InputSampleList");
   std::string InputVariableList  = gConfigParser -> readStringOption("Input::InputVariableList");
   std::string InputCutList       = gConfigParser -> readStringOption("Input::InputCutList");
-  std::string TreeName           = gConfigParser -> readStringOption("Input::TreeName");
 
-  std::string SignalqqHName      = gConfigParser -> readStringOption("Input::SignalqqHName");
-  std::string SignalggHName      = gConfigParser -> readStringOption("Input::SignalggHName");
+  std::cout<<"      "<<std::endl;
+  std::cout<<" InputDirectory: "<<InputDirectory<<std::endl;
+  std::cout<<"      "<<std::endl;
+  std::cout<<" InputSampleList: "<<InputSampleList<<std::endl;
+  std::cout<<"      "<<std::endl;
+  std::cout<<" InputVariableList: "<<InputVariableList<<std::endl;
+  std::cout<<"      "<<std::endl;
+  std::cout<<" InputCutList: "<<InputCutList<<std::endl;
+  std::cout<<"      "<<std::endl;
 
-  std::string BackgroundWeight   = gConfigParser -> readStringOption("Input::BackgroundWeight");
-  std::string SignalggHWeight    = gConfigParser -> readStringOption("Input::SignalggHWeight");
 
-  std::string OutputRootDirectory   = gConfigParser -> readStringOption("Output::OutputRootDirectory");
-  std::string OutputRootFile        = gConfigParser -> readStringOption("Output::OutputRootFile");
+  std::string TreeName ;
+  try{ TreeName  = gConfigParser -> readStringOption("Input::TreeName");}
+  catch(std::string TreeName){ TreeName = "WJet"; std::cerr<<" TreeName Set by default to --> WJet "<<std::endl;}
 
-  double Lumi         = gConfigParser -> readDoubleOption("Input::Lumi");
+  std::cout<<" TreeName: "<<TreeName<<std::endl;
+  std::cout<<"      "<<std::endl;
+  
+  std::string SignalggHName ; 
+  try{  SignalggHName = gConfigParser -> readStringOption("Input::SignalggHName");}
+  catch(char const* exceptionString) { SignalggHName = "NULL";
+                                       std::cerr<<" No Signal ggH Name --> NULL  "<<std::endl;
+  }
+
+  std::cout<<" SignalggHName: "<<SignalggHName<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string SignalqqHName ;
+  try{  SignalqqHName = gConfigParser -> readStringOption("Input::SignalqqHName");}
+  catch(char const* exceptionString) { SignalqqHName = "NULL";
+                                       std::cerr<<" No Signal qqH Name --> NULL "<<std::endl;
+  }
+
+  std::cout<<" SignalqqHName: "<<SignalqqHName<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string SignalRSGPythiaName ;
+  try{  SignalRSGPythiaName = gConfigParser -> readStringOption("Input::SignalRSGPythiaName");}
+  catch(char const* exceptionString){ SignalRSGPythiaName = "NULL";
+                                      std::cerr<<" No Signal RSG Pythia Name --> NULL "<<std::endl;
+  }
+
+  std::cout<<" SignalRSGPythiaName: "<<SignalRSGPythiaName<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string SignalRSGHerwigName ;
+  try{  SignalRSGHerwigName = gConfigParser -> readStringOption("Input::SignalHerwigName");}
+  catch(char const* exceptionString) { SignalRSGHerwigName = "NULL";
+                                       std::cerr<<" No Signal RSG Herwig Name --> NULL "<<std::endl;
+  }
+
+  std::cout<<" SignalRSGHerwigName: "<<SignalRSGHerwigName<<std::endl;
+  std::cout<<"      "<<std::endl;
+
 
   bool   WithoutData  = gConfigParser -> readBoolOption("Input::WithoutData");
 
 
+  std::string BackgroundWeight   = gConfigParser -> readStringOption("Option::BackgroundWeight");
+
+  std::cout<<" BackgroundWeight: "<<BackgroundWeight<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string SignalggHWeight;
+  try{ SignalggHWeight  = gConfigParser -> readStringOption("Option::SignalggHWeight");}
+  catch(char const* exceptionString) { SignalggHWeight="1";
+                                       std::cerr<<" Weight ggH set to --> 1 Default "<<std::endl;
+  }
+
+  std::cout<<" SignalggHWeight: "<<SignalggHWeight<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string SignalqqHWeight;
+  try{ SignalqqHWeight  = gConfigParser -> readStringOption("Option::SignalqqHWeight");}
+  catch(char const* exceptionString) { SignalqqHWeight="1";
+                                       std::cerr<<" Weight qqH set to --> 1 Default "<<std::endl;
+  }
+
+  std::cout<<" SignalqqHWeight: "<<SignalqqHWeight<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string SignalRSGPythiaWeight;
+  try{ SignalRSGPythiaWeight  = gConfigParser -> readStringOption("Option::SignalPythiaWeight");}
+  catch(char const* exceptionString) { SignalRSGPythiaWeight="1";
+                                       std::cerr<<" Weight Pyhtia set to --> 1 Default "<<std::endl;
+  }
+
+  std::cout<<" SignalRSGPythiaWeight: "<<SignalRSGPythiaWeight<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string SignalRSGHerwigWeight;
+  try{ SignalRSGHerwigWeight  = gConfigParser -> readStringOption("Option::SignalHerwigWeight");}
+  catch(char const* exceptionString) { SignalRSGHerwigWeight="1";
+                                       std::cerr<<" Weight Herwig set to --> 1 Default "<<std::endl;
+  }
+
+  std::cout<<" SignalRSGHerwigWeight: "<<SignalRSGHerwigWeight<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+ 
+  double Lumi         = gConfigParser -> readDoubleOption("Option::Lumi");
+
+  std::cout<<" Lumi: "<<Lumi<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+
+  double SignalScaleFactor;
+  try{ SignalScaleFactor  = gConfigParser -> readDoubleOption("Option::SignalScaleFactor");}
+  catch(char const* exceptionString) { SignalScaleFactor=100;
+                                       std::cerr<<" Signal Scale Factor  --> 100 Default "<<std::endl;
+  }
+
+  std::cout<<" Signal Scale Factor : "<<SignalScaleFactor<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+
+  std::string OutputRootDirectory   = gConfigParser -> readStringOption("Output::OutputRootDirectory");
+
+  std::cout<<" OutputRootDirectory: "<<OutputRootDirectory<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string OutputRootFile        = gConfigParser -> readStringOption("Output::OutputRootFile");
+
+  std::cout<<" OutputRootFile: "<<OutputRootFile<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  
   std::string command = "if [ ! -e "+OutputRootDirectory+" ] ; then mkdir "+OutputRootDirectory+" ; fi";
+  std::cout<<" command = "<<command<<std::endl;
+  std::cout<<"           "<<std::endl;
+
   system(command.c_str());
+
+  
+  std::string OutputPlotDirectory = OutputRootDirectory+"/"+OutputRootFile ;
+  OutputPlotDirectory.replace(OutputPlotDirectory.end()-5,OutputPlotDirectory.end(),"_plot");
+  std::cout<<" OutputPlotDirectory = "<<OutputPlotDirectory<<std::endl;
+  std::cout<<"           "<<std::endl;
+  
+  
+  command = "if [ ! -e "+OutputPlotDirectory+" ] ; then mkdir "+OutputPlotDirectory+" ; fi";
+  std::cout<<" command = "<<command<<std::endl;
+  std::cout<<"           "<<std::endl;
+
+  system(command.c_str());
+
+  
+  command = "if [ ! -f "+OutputPlotDirectory+" ] ; then rm "+OutputPlotDirectory+"/* ; fi";
+  std::cout<<" command = "<<command<<std::endl;
+  std::cout<<"           "<<std::endl;
+  
+  system(command.c_str());
+  
 
   TFile *outputFile = new TFile((OutputRootDirectory+"/"+OutputRootFile).c_str(),"RECREATE");
 
@@ -145,14 +286,27 @@ int main (int argc, char **argv){
        
        if( NameReducedSample.at(iSample) == "DATA" && !WithoutData) TreeVect.at(iSample)-> Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(), (CutList.at(iCut)).c_str() ,"goff");
 
-       else if(NameReducedSample.at(iSample) != SignalggHName) TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),
-                                                                                           ("("+BackgroundWeight+") * ("+CutList.at(iCut)+")").c_str() ,"goff");
-
-       else TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalggHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+       else if(NameReducedSample.at(iSample) == SignalggHName && SignalggHName!="NULL")
+                TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalggHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
        
+       else if(NameReducedSample.at(iSample) == SignalqqHName && SignalqqHName!="NULL") 
+	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalqqHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+
+       else if(NameReducedSample.at(iSample) == SignalRSGPythiaName && SignalRSGPythiaName!="NULL") 
+	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalRSGPythiaWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+
+       else if(NameReducedSample.at(iSample) == SignalRSGHerwigName && SignalRSGHerwigName!="NULL") 
+	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalRSGHerwigWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+
+       else  TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+BackgroundWeight+") * ("+CutList.at(iCut)+")").c_str() ,"goff");
+
        histos[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
        histos[iCut][iVar][iSample]->SetLineColor(ColorSample.at(iSample));
        histos[iCut][iVar][iSample]->GetXaxis()->SetTitle(Variables.at(iVar).c_str());
+       histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.02);
+       histos[iCut][iVar][iSample]->GetYaxis()->SetTitle("Entries");
+       histos[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.02);
+
     } 
    }
   }
@@ -189,8 +343,10 @@ int main (int argc, char **argv){
   THStack* hs[CutList.size()][Variables.size()];
 
   int iSampleData = 0;
-  int iSampleggH = 0;
-  int iSamplevbf = 0;
+  int iSampleggH = -1;
+  int iSampleqqH = -1;
+  int iSampleRSGPythia = -1;
+  int iSampleRSGHerwig = -1;
 
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
 
@@ -225,10 +381,10 @@ int main (int argc, char **argv){
           if(!WithoutData){
 
               upperPad = new TPad("upperPad", "upperPad", .005, .250, .995, .910);
-	      lowerPad = new TPad("lowerPad", "lowerPad", .005, .015, .995, .225);
+	      lowerPad = new TPad("lowerPad", "lowerPad", .005, .025, .995, .250);
 
               upperPadLog = new TPad("upperPadLog", "upperPadLog", .005, .250, .995, .910);
-	      lowerPadLog = new TPad("lowerPadLog", "lowerPadLog", .005, .015, .995, .225);
+	      lowerPadLog = new TPad("lowerPadLog", "lowerPadLog", .005, .025, .995, .250);
 
           }
           else{
@@ -249,55 +405,71 @@ int main (int argc, char **argv){
 	  for (size_t iSample = 0; iSample<NameSample.size(); iSample++){
 	  
 	    if( NameReducedSample.at(iSample) == "DATA" && !WithoutData){
+
 	      histos[iCut][iVar][iSample]->SetLineColor(kBlack);
 	      histos[iCut][iVar][iSample]->SetLineStyle(1);
               histos[iCut][iVar][iSample]->GetXaxis()->SetTitle((VariablesTitle.at(iVar)).c_str());
-              histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.06);
+              histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.04);
+	      histos[iCut][iVar][iSample]->GetYaxis()->SetTitle("Entries");
+              histos[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.04);
+
 	      iSampleData = iSample;                                                                       
 	      leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "ple" ); 
 	    }
 	    
-	    else if ( NameReducedSample.at(iSample)==SignalggHName  || NameReducedSample.at(iSample)==SignalqqHName ){
-
-	      if(NameReducedSample.at(iSample)==SignalggHName) iSampleggH = iSample;
-	      else iSamplevbf = iSample; 
+	    else if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL"){
+	      iSampleggH = iSample;
 	    }
+
+	    else if ( NameReducedSample.at(iSample)==SignalqqHName && SignalqqHName!="NULL"){
+	      iSampleqqH = iSample;
+	    }
+            
+            else if ( NameReducedSample.at(iSample)==SignalRSGPythiaName && SignalRSGPythiaName!="NULL"){
+	      iSampleRSGPythia = iSample;
+	    }
+
+	     else if ( NameReducedSample.at(iSample)==SignalRSGHerwigName && SignalRSGHerwigName!="NULL"){
+	      iSampleRSGHerwig = iSample;
+	    }
+           
 	    
 	    else if (( NameReducedSample.at(iSample)=="STop") || ( NameReducedSample.at(iSample)=="tt_bar") )
-	      {  
+	    {  
 		histo_top[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_top[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
 		histo_top[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
-	      }
+	    }
 	    else if ( NameReducedSample.at(iSample)=="W+Jets" )
-	      {  
+	    {  
 		histo_WJets[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_WJets[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
 		histo_WJets[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
-		} 
+	    } 
 	    else if (( NameReducedSample.at(iSample)=="WW") || ( NameReducedSample.at(iSample)=="WZ") || ( NameReducedSample.at(iSample)=="ZZ") )
-	      {  
+	    {  
 		histo_diboson[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_diboson[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
 		histo_diboson[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
-	      }
+	    }
 	    else
-	      {
+	    {
 		hs[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 		leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "fl" );
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
-		}
+	    }
 
 	  }
 	   
 	  leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Top", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "diBoson", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "fl" );
-	  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
+
 	  hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
+	  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
      
           upperPad->cd();
@@ -305,24 +477,58 @@ int main (int argc, char **argv){
 	  DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
                          
 	  if(!WithoutData) histos[iCut][iVar][iSampleData]->Draw("E same");
-	  leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], (NameReducedSample.at(iSampleggH)+"*10").c_str(), "l" );
-	  leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSamplevbf], (NameReducedSample.at(iSamplevbf)+"*10").c_str(), "l" );
 
-	  histos[iCut][iVar][iSampleggH]->SetLineWidth(2);
-	  histos[iCut][iVar][iSamplevbf]->SetLineWidth(2);
+	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
+              
+	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleggH).c_str(),int(SignalScaleFactor));
+                    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], Name.Data(), "l" );
+                                     
+                    histos[iCut][iVar][iSampleggH]->SetLineWidth(2);
+                    histos[iCut][iVar][iSampleggH]->Scale(SignalScaleFactor*1.);
+                    histos[iCut][iVar][iSampleggH]->SetFillStyle(1);
+
+                    histos[iCut][iVar][iSampleggH]->Draw("hist same");
+          }
+       
+          if(SignalqqHName!="NULL" && iSampleqqH!=-1){ 
+
+          	    TString Name = Form("%s*%d",NameReducedSample.at(iSampleqqH).c_str(),int(SignalScaleFactor)); 
+               	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleqqH], Name.Data(), "l" );
+                    histos[iCut][iVar][iSampleqqH]->SetLineWidth(2);
           
+	            histos[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
+	            histos[iCut][iVar][iSampleqqH]->SetFillStyle(1);
+	            histos[iCut][iVar][iSampleqqH]->Draw("hist same");
 
-	  histos[iCut][iVar][iSampleggH]->Scale(10*1.);
-	  histos[iCut][iVar][iSamplevbf]->Scale(10*1.);
-	  histos[iCut][iVar][iSampleggH]->SetFillStyle(1);
-	  histos[iCut][iVar][iSamplevbf]->SetFillStyle(1);
-	  histos[iCut][iVar][iSampleggH]->Draw("hist same");
-	  histos[iCut][iVar][iSamplevbf]->Draw("hist same");
+          }
 
+	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){ 
+ 
+ 	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleRSGPythia).c_str(),int(SignalScaleFactor)); 
+               	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
+                                     
+                    histos[iCut][iVar][iSampleRSGPythia]->SetLineWidth(2);
+                    histos[iCut][iVar][iSampleRSGPythia]->Scale(SignalScaleFactor*1.);
+                    histos[iCut][iVar][iSampleRSGPythia]->SetFillStyle(1);
+
+                    histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
+          }
+       
+	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ 
+
+	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleRSGHerwig).c_str(),int(SignalScaleFactor)); 
+               	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
+                                     
+                    histos[iCut][iVar][iSampleRSGHerwig]->SetLineWidth(2);
+                    histos[iCut][iVar][iSampleRSGHerwig]->Scale(SignalScaleFactor*1.);
+                    histos[iCut][iVar][iSampleRSGHerwig]->SetFillStyle(1);
+
+                    histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
+          }
+       
 	  leg[iCut][iVar]->Draw("same");
 
           LatexCMS(Lumi);
-
 
 	  if(!WithoutData) {
          
@@ -332,12 +538,17 @@ int main (int argc, char **argv){
 	  
                             RatioDataMC[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
                             RatioDataMC[iCut][iVar]->Divide(histoSum[iCut][iVar]);
-                            RatioDataMC[iCut][iVar]->SetMinimum(0);
-                            RatioDataMC[iCut][iVar]->SetMaximum(2);
-	                    RatioDataMC[iCut][iVar]->GetXaxis()->SetLabelSize(0.06);
-	                    RatioDataMC[iCut][iVar]->GetXaxis()->SetTitle(Variables.at(iVar).c_str());
-	                    RatioDataMC[iCut][iVar]->GetYaxis()->SetLabelSize(0.06);
-	                    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitle("Data/MC");
+                            RatioDataMC[iCut][iVar]->SetMinimum(0.4);
+                            RatioDataMC[iCut][iVar]->SetMaximum(1.8);
+			
+                            RatioDataMC[iCut][iVar]->GetXaxis()->SetLabelSize(0.09);
+
+                            RatioDataMC[iCut][iVar]->GetYaxis()->SetLabelSize(0.09);
+                            RatioDataMC[iCut][iVar]->GetYaxis()->CenterTitle();
+			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitle("Data/MC");
+			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitleSize(0.12);
+			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitleOffset(0.4);
+
 	                    RatioDataMC[iCut][iVar]->Draw("PE");
          
                             lowerPadLog->cd();
@@ -354,7 +565,10 @@ int main (int argc, char **argv){
 	  std::replace(canvasname.begin(),canvasname.end(),'[','_');
 	  std::replace(canvasname.begin(),canvasname.end(),']','_');
           
-	  c[iCut][iVar]->Print( (OutputRootDirectory+"/"+canvasname+".eps").c_str(),"eps");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".eps").c_str(),"eps");
+
 	  c[iCut][iVar]->Close();
 
 	  if(!WithoutData){  lowerPadLog->cd();
@@ -368,9 +582,14 @@ int main (int argc, char **argv){
 	  upperPadLog->SetLogy();
 
 	  DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
+
 	  if(!WithoutData) histos[iCut][iVar][iSampleData]->Draw("E same");
-	  histos[iCut][iVar][iSampleggH]->Draw("hist same");
-	  histos[iCut][iVar][iSamplevbf]->Draw("hist same");
+
+	  if(SignalggHName!="NULL" && iSampleggH!=-1) histos[iCut][iVar][iSampleggH]->Draw("hist same");
+	  if(SignalqqHName!="NULL" && iSampleqqH!=-1) histos[iCut][iVar][iSampleqqH]->Draw("hist same");
+	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1) histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
+	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1) histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
+
 	  leg[iCut][iVar]->Draw("same");
           LatexCMS(Lumi);
        
@@ -379,14 +598,17 @@ int main (int argc, char **argv){
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),'[','_');
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),']','_');
           
-	  cLog[iCut][iVar]->Print( (OutputRootDirectory+"/"+canvasnameLog+".eps").c_str(),"eps");
+	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
+	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
+	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".eps").c_str(),"eps");
+
           cLog[iCut][iVar]->Close();
      }
     }
-	  
+
  outputFile->Close();
 
  return 0 ;
-
 }
+
 
