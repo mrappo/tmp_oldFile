@@ -2,6 +2,4 @@
 ########## Cut String For TTree Draw Method #########
 #####################################################
 
-#v_pt > 200 && GroomedJet_CA8_pt[0] > 200 && ggdboostedWevt == 1 && GroomedJet_CA8_deltaphi_METca8jet > 2.0 && GroomedJet_CA8_deltaR_lca8jet > 1.57 && event_met_pfmet > 50 && l_pt > 30
-
-issignal
+v_pt > 200 && GroomedJet_CA8_pt[0] > 200 && ggdboostedWevt == 1 && GroomedJet_CA8_deltaphi_METca8jet > 2.0 && GroomedJet_CA8_deltaR_lca8jet > 1.57 && event_met_pfmet > 50 && l_pt > 30 && numPFCorJetBTags == 0
