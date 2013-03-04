@@ -496,9 +496,9 @@ int main (int argc, char** argv){
     
       NewMuonTree->vbf_maxpt_j1_QGLikelihood = MuonTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_PtSorted.at(0).position_] ;
 
-      NewMuonTree->vbf_maxpt_j1_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_PtSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxpt_j1_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_PtSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxpt_j1_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_PtSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxpt_j1_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_PtSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxpt_j1_isPileUpMedium = MuonTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_PtSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxpt_j1_isPileUpTight  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_PtSorted.at(0).position_] ;
 
 
       NewMuonTree->vbf_maxpt_j1_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_PtSorted.at(0).position_] ;
@@ -539,9 +539,9 @@ int main (int argc, char** argv){
 
       NewMuonTree->vbf_maxpt_j1_QGLikelihood = MuonTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_PtSorted.at(0).position_] ;
 
-      NewMuonTree->vbf_maxpt_j1_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_PtSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxpt_j1_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_PtSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxpt_j1_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_PtSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxpt_j1_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_PtSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxpt_j1_isPileUpMedium = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_PtSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxpt_j1_isPileUpTight  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_PtSorted.at(0).position_] ;
 
 
       NewMuonTree->vbf_maxpt_j1_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_PtSorted.at(0).position_] ;
@@ -585,9 +585,9 @@ int main (int argc, char** argv){
     
       NewMuonTree->vbf_maxpt_j2_QGLikelihood = MuonTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_PtSorted.at(1).position_] ;
 
-      NewMuonTree->vbf_maxpt_j2_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_PtSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxpt_j2_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_PtSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxpt_j2_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_PtSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxpt_j2_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_PtSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxpt_j2_isPileUpMedium = MuonTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_PtSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxpt_j2_isPileUpTight  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_PtSorted.at(1).position_] ;
 
 
       NewMuonTree->vbf_maxpt_j2_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_PtSorted.at(1).position_] ;
@@ -628,9 +628,9 @@ int main (int argc, char** argv){
 
       NewMuonTree->vbf_maxpt_j2_QGLikelihood = MuonTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_PtSorted.at(1).position_] ;
 
-      NewMuonTree->vbf_maxpt_j2_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_PtSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxpt_j2_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_PtSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxpt_j2_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_PtSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxpt_j2_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_PtSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxpt_j2_isPileUpMedium = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_PtSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxpt_j2_isPileUpTight  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_PtSorted.at(1).position_] ;
 
 
       NewMuonTree->vbf_maxpt_j2_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_PtSorted.at(1).position_] ;
@@ -775,9 +775,9 @@ int main (int argc, char** argv){
     
       NewMuonTree->vbf_maxDeta_j1_QGLikelihood = MuonTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_DEtaSorted.at(0).position_] ;
 
-      NewMuonTree->vbf_maxDeta_j1_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_DEtaSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxDeta_j1_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_DEtaSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxDeta_j1_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxDeta_j1_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxDeta_j1_isPileUpMedium = MuonTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxDeta_j1_isPileUpTight  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_DEtaSorted.at(0).position_] ;
 
 
       NewMuonTree->vbf_maxDeta_j1_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_DEtaSorted.at(0).position_] ;
@@ -818,9 +818,9 @@ int main (int argc, char** argv){
 
       NewMuonTree->vbf_maxDeta_j1_QGLikelihood = MuonTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_DEtaSorted.at(0).position_] ;
 
-      NewMuonTree->vbf_maxDeta_j1_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_DEtaSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxDeta_j1_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_DEtaSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxDeta_j1_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxDeta_j1_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxDeta_j1_isPileUpMedium = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxDeta_j1_isPileUpTight  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_DEtaSorted.at(0).position_] ;
 
 
       NewMuonTree->vbf_maxDeta_j1_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_DEtaSorted.at(0).position_] ;
@@ -864,9 +864,9 @@ int main (int argc, char** argv){
     
       NewMuonTree->vbf_maxDeta_j2_QGLikelihood = MuonTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_DEtaSorted.at(1).position_] ;
 
-      NewMuonTree->vbf_maxDeta_j2_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_DEtaSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxDeta_j2_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_DEtaSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxDeta_j2_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxDeta_j2_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxDeta_j2_isPileUpMedium = MuonTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxDeta_j2_isPileUpTight  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_DEtaSorted.at(1).position_] ;
 
 
       NewMuonTree->vbf_maxDeta_j2_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_DEtaSorted.at(1).position_] ;
@@ -907,9 +907,9 @@ int main (int argc, char** argv){
 
       NewMuonTree->vbf_maxDeta_j2_QGLikelihood = MuonTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_DEtaSorted.at(1).position_] ;
 
-      NewMuonTree->vbf_maxDeta_j2_isPileUpLoose = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_DEtaSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxDeta_j2_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_DEtaSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxDeta_j2_isPileUpTight = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxDeta_j2_isPileUpLoose = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxDeta_j2_isPileUpMedium = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxDeta_j2_isPileUpTight = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_DEtaSorted.at(1).position_] ;
 
 
       NewMuonTree->vbf_maxDeta_j2_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_DEtaSorted.at(1).position_] ;
@@ -1054,9 +1054,9 @@ int main (int argc, char** argv){
     
       NewMuonTree->vbf_maxMjj_j1_QGLikelihood = MuonTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_MjjSorted.at(0).position_] ;
 
-      NewMuonTree->vbf_maxMjj_j1_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_MjjSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxMjj_j1_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_MjjSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxMjj_j1_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_MjjSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxMjj_j1_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_MjjSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxMjj_j1_isPileUpMedium = MuonTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_MjjSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxMjj_j1_isPileUpTight  = MuonTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_MjjSorted.at(0).position_] ;
 
 
       NewMuonTree->vbf_maxMjj_j1_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_MjjSorted.at(0).position_] ;
@@ -1097,9 +1097,9 @@ int main (int argc, char** argv){
 
       NewMuonTree->vbf_maxMjj_j1_QGLikelihood = MuonTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_MjjSorted.at(0).position_] ;
 
-      NewMuonTree->vbf_maxMjj_j1_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_MjjSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxMjj_j1_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_MjjSorted.at(0).position_] ;
-      NewMuonTree->vbf_maxMjj_j1_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_MjjSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxMjj_j1_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_MjjSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxMjj_j1_isPileUpMedium = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_MjjSorted.at(0).position_] ;
+      NewMuonTree->vbf_maxMjj_j1_isPileUpTight  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_MjjSorted.at(0).position_] ;
 
 
       NewMuonTree->vbf_maxMjj_j1_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_MjjSorted.at(0).position_] ;
@@ -1143,9 +1143,9 @@ int main (int argc, char** argv){
     
       NewMuonTree->vbf_maxMjj_j2_QGLikelihood = MuonTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_MjjSorted.at(1).position_] ;
 
-      NewMuonTree->vbf_maxMjj_j2_isPileUpLoose = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_MjjSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxMjj_j2_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_MjjSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxMjj_j2_isPileUpTight = MuonTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_MjjSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxMjj_j2_isPileUpLoose = MuonTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_MjjSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxMjj_j2_isPileUpMedium = MuonTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_MjjSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxMjj_j2_isPileUpTight = MuonTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_MjjSorted.at(1).position_] ;
 
 
       NewMuonTree->vbf_maxMjj_j2_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_MjjSorted.at(1).position_] ;
@@ -1186,9 +1186,9 @@ int main (int argc, char** argv){
 
       NewMuonTree->vbf_maxMjj_j2_QGLikelihood = MuonTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_MjjSorted.at(1).position_] ;
 
-      NewMuonTree->vbf_maxMjj_j2_isPileUpLoose  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_MjjSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxMjj_j2_isPileUpMedium = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_MjjSorted.at(1).position_] ;
-      NewMuonTree->vbf_maxMjj_j2_isPileUpTight  = MuonTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_MjjSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxMjj_j2_isPileUpLoose  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_MjjSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxMjj_j2_isPileUpMedium = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_MjjSorted.at(1).position_] ;
+      NewMuonTree->vbf_maxMjj_j2_isPileUpTight  = MuonTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_MjjSorted.at(1).position_] ;
 
 
       NewMuonTree->vbf_maxMjj_j2_bDiscriminatorSSVHE = MuonTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_MjjSorted.at(1).position_] ;
@@ -1654,9 +1654,9 @@ int main (int argc, char** argv){
     
       NewElectronTree->vbf_maxpt_j1_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_PtSorted.at(0).position_] ;
 
-      NewElectronTree->vbf_maxpt_j1_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_PtSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxpt_j1_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_PtSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxpt_j1_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_PtSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxpt_j1_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_PtSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxpt_j1_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_PtSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxpt_j1_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_PtSorted.at(0).position_] ;
 
 
       NewElectronTree->vbf_maxpt_j1_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_PtSorted.at(0).position_] ;
@@ -1697,9 +1697,9 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxpt_j1_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_PtSorted.at(0).position_] ;
 
-      NewElectronTree->vbf_maxpt_j1_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_PtSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxpt_j1_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_PtSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxpt_j1_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_PtSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxpt_j1_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_PtSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxpt_j1_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_PtSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxpt_j1_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_PtSorted.at(0).position_] ;
 
 
       NewElectronTree->vbf_maxpt_j1_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_PtSorted.at(0).position_] ;
@@ -1743,9 +1743,9 @@ int main (int argc, char** argv){
     
       NewElectronTree->vbf_maxpt_j2_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_PtSorted.at(1).position_] ;
 
-      NewElectronTree->vbf_maxpt_j2_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_PtSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxpt_j2_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_PtSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxpt_j2_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_PtSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxpt_j2_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_PtSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxpt_j2_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_PtSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxpt_j2_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_PtSorted.at(1).position_] ;
 
 
       NewElectronTree->vbf_maxpt_j2_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_PtSorted.at(1).position_] ;
@@ -1786,9 +1786,9 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxpt_j2_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_PtSorted.at(1).position_] ;
 
-      NewElectronTree->vbf_maxpt_j2_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_PtSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxpt_j2_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_PtSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxpt_j2_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_PtSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxpt_j2_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_PtSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxpt_j2_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_PtSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxpt_j2_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_PtSorted.at(1).position_] ;
 
 
       NewElectronTree->vbf_maxpt_j2_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_PtSorted.at(1).position_] ;
@@ -1933,9 +1933,9 @@ int main (int argc, char** argv){
     
       NewElectronTree->vbf_maxDeta_j1_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_DEtaSorted.at(0).position_] ;
 
-      NewElectronTree->vbf_maxDeta_j1_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_DEtaSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxDeta_j1_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_DEtaSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxDeta_j1_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxDeta_j1_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxDeta_j1_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxDeta_j1_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_DEtaSorted.at(0).position_] ;
 
 
       NewElectronTree->vbf_maxDeta_j1_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_DEtaSorted.at(0).position_] ;
@@ -1976,9 +1976,9 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxDeta_j1_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_DEtaSorted.at(0).position_] ;
 
-      NewElectronTree->vbf_maxDeta_j1_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_DEtaSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxDeta_j1_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_DEtaSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxDeta_j1_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxDeta_j1_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxDeta_j1_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_DEtaSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxDeta_j1_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_DEtaSorted.at(0).position_] ;
 
 
       NewElectronTree->vbf_maxDeta_j1_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_DEtaSorted.at(0).position_] ;
@@ -2022,9 +2022,9 @@ int main (int argc, char** argv){
     
       NewElectronTree->vbf_maxDeta_j2_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_DEtaSorted.at(1).position_] ;
 
-      NewElectronTree->vbf_maxDeta_j2_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_DEtaSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxDeta_j2_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_DEtaSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxDeta_j2_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxDeta_j2_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxDeta_j2_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxDeta_j2_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_DEtaSorted.at(1).position_] ;
 
 
       NewElectronTree->vbf_maxDeta_j2_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_DEtaSorted.at(1).position_] ;
@@ -2065,9 +2065,9 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxDeta_j2_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_DEtaSorted.at(1).position_] ;
 
-      NewElectronTree->vbf_maxDeta_j2_isPileUpLoose = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_DEtaSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxDeta_j2_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_DEtaSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxDeta_j2_isPileUpTight = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxDeta_j2_isPileUpLoose = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxDeta_j2_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_DEtaSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxDeta_j2_isPileUpTight = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_DEtaSorted.at(1).position_] ;
 
 
       NewElectronTree->vbf_maxDeta_j2_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_DEtaSorted.at(1).position_] ;
@@ -2212,9 +2212,9 @@ int main (int argc, char** argv){
     
       NewElectronTree->vbf_maxMjj_j1_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_MjjSorted.at(0).position_] ;
 
-      NewElectronTree->vbf_maxMjj_j1_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_MjjSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxMjj_j1_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_MjjSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxMjj_j1_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_MjjSorted.at(0).position_] ;
 
 
       NewElectronTree->vbf_maxMjj_j1_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_MjjSorted.at(0).position_] ;
@@ -2255,9 +2255,9 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxMjj_j1_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_MjjSorted.at(0).position_] ;
 
-      NewElectronTree->vbf_maxMjj_j1_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_MjjSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxMjj_j1_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_MjjSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxMjj_j1_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_MjjSorted.at(0).position_] ;
 
 
       NewElectronTree->vbf_maxMjj_j1_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_MjjSorted.at(0).position_] ;
@@ -2301,9 +2301,9 @@ int main (int argc, char** argv){
     
       NewElectronTree->vbf_maxMjj_j2_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_MjjSorted.at(1).position_] ;
 
-      NewElectronTree->vbf_maxMjj_j2_isPileUpLoose = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetLoose")[outputAK5_MjjSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxMjj_j2_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetMedium")[outputAK5_MjjSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxMjj_j2_isPileUpTight = ElectronTree->fReader->getFloat("JetPFCor_isPileUpJetTight")[outputAK5_MjjSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxMjj_j2_isPileUpLoose = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetLoose")[outputAK5_MjjSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxMjj_j2_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetMedium")[outputAK5_MjjSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxMjj_j2_isPileUpTight = ElectronTree->fReader->getBool("JetPFCor_isPileUpJetTight")[outputAK5_MjjSorted.at(1).position_] ;
 
 
       NewElectronTree->vbf_maxMjj_j2_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCor_bDiscriminatorSSVHE")[outputAK5_MjjSorted.at(1).position_] ;
@@ -2344,9 +2344,9 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxMjj_j2_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCorVBFTag_QGLikelihood")[outputAK5_MjjSorted.at(1).position_] ;
 
-      NewElectronTree->vbf_maxMjj_j2_isPileUpLoose  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_MjjSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxMjj_j2_isPileUpMedium = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_MjjSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxMjj_j2_isPileUpTight  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_MjjSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxMjj_j2_isPileUpLoose  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetLoose")[outputAK5_MjjSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxMjj_j2_isPileUpMedium = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetMedium")[outputAK5_MjjSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxMjj_j2_isPileUpTight  = ElectronTree->fReader->getBool("JetPFCorVBFTag_isPileUpJetTight")[outputAK5_MjjSorted.at(1).position_] ;
 
 
       NewElectronTree->vbf_maxMjj_j2_bDiscriminatorSSVHE = ElectronTree->fReader->getFloat("JetPFCorVBFTag_bDiscriminatorSSVHE")[outputAK5_MjjSorted.at(1).position_] ;
