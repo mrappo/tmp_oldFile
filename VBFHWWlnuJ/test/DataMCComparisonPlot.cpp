@@ -285,10 +285,10 @@ int main (int argc, char **argv){
        histos[iCut][iVar][iSample]->Sumw2();
        
        if( NameReducedSample.at(iSample) == "DATA" && !WithoutData) TreeVect.at(iSample)-> Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(), (CutList.at(iCut)).c_str() ,"goff");
-
+	 
        else if(NameReducedSample.at(iSample) == SignalggHName && SignalggHName!="NULL")
                 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalggHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
-       
+		
        else if(NameReducedSample.at(iSample) == SignalqqHName && SignalqqHName!="NULL") 
 	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalqqHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
 
@@ -474,9 +474,21 @@ int main (int argc, char **argv){
      
           upperPad->cd();
 
+
 	  DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
                          
-	  if(!WithoutData) histos[iCut][iVar][iSampleData]->Draw("E same");
+	  if(!WithoutData){ 
+
+            TObjArray* histoList = hs[iCut][iVar] -> GetStack();
+            TH1F* histo          = (TH1F*) histoList->At(histoList -> GetEntries()-1);
+
+	    upperPad->RangeAxis(histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmin(),std::min(histos[iCut][iVar][iSampleData]->GetYaxis()->GetXmin(),histo->GetYaxis()->GetXmin()),
+                                histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmax(),std::max(histos[iCut][iVar][iSampleData]->GetYaxis()->GetXmax(),histo->GetYaxis()->GetXmax()));
+                                                               
+
+            histos[iCut][iVar][iSampleData]->Draw("E same");
+          }
+	  
 
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
               
@@ -564,13 +576,13 @@ int main (int argc, char **argv){
 	  std::string canvasname = CanvasName.Data() ;
 	  std::replace(canvasname.begin(),canvasname.end(),'[','_');
 	  std::replace(canvasname.begin(),canvasname.end(),']','_');
-          
+	            
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".eps").c_str(),"eps");
 
 	  c[iCut][iVar]->Close();
-
+	  
 	  if(!WithoutData){  lowerPadLog->cd();
                              lowerPadLog->SetGridx();
 	                     lowerPadLog->SetGridy();
