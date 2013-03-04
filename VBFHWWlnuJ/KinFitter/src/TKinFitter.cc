@@ -1174,82 +1174,82 @@ TString TKinFitter::getStatusString() {
 void TKinFitter::print() {
   
   //edm::LogVerbatim log("KinFitter");
-  std::cout << "\n"
-      << "\n";
+  //  std::cout << "\n"
+  //    << "\n";
   // Print status of fit
-  std::cout  << "Status: " << getStatusString()
-      << "   F=" << getF() << "   S=" << getS() << "   N=" << _nbIter << "   NDF=" << getNDF() << "\n";
+ // std::cout  << "Status: " << getStatusString()
+  //    << "   F=" << getF() << "   S=" << getS() << "   N=" << _nbIter << "   NDF=" << getNDF() << "\n";
   // Print measured particles
-  std::cout  << "measured particles: \n";
+ // std::cout  << "measured particles: \n";
   Int_t parIndex = 0;
   for (unsigned int iP = 0; iP < _measParticles.size(); iP++) {
     TAbsFitParticle* particle = _measParticles[iP];
     Int_t nParP = particle->getNPar();
     const TMatrixD* par = particle->getParCurr();
     const TMatrixD* covP = particle->getCovMatrix();
-    std::cout  << std::setw(3) << setiosflags(std::ios::right) << iP;
-    std::cout  << std::setw(15) << setiosflags(std::ios::right) << particle->GetName();
-    std::cout  << std::setw(3) << " ";
+   // std::cout  << std::setw(3) << setiosflags(std::ios::right) << iP;
+    //std::cout  << std::setw(15) << setiosflags(std::ios::right) << particle->GetName();
+   // std::cout  << std::setw(3) << " ";
     for (int iPar = 0; iPar < nParP; iPar++) {
       if (iPar > 0) {
-	std::cout  << setiosflags(std::ios::right) << std::setw(21) << " ";
+//	std::cout  << setiosflags(std::ios::right) << std::setw(21) << " ";
       }
       TString colstr = "";
       colstr += parIndex;
       colstr += ":";
-      std::cout  << std::setw(4) << colstr;
-      std::cout  << std::setw(2) << " ";   
-      std::cout  << setiosflags(std::ios::left) << setiosflags(std::ios::scientific) << std::setprecision(3);
-      std::cout  << std::setw(15) << (*par)(iPar, 0);
+  //    std::cout  << std::setw(4) << colstr;
+   //   std::cout  << std::setw(2) << " ";   
+    //  std::cout  << setiosflags(std::ios::left) << setiosflags(std::ios::scientific) << std::setprecision(3);
+     // std::cout  << std::setw(15) << (*par)(iPar, 0);
       if(_nbIter > 0 && _status < 10) {
-	std::cout  << std::setw(15) << TMath::Sqrt( _yaVFit(iPar, iPar) );
+//	std::cout  << std::setw(15) << TMath::Sqrt( _yaVFit(iPar, iPar) );
       } else {
-	std::cout  << std::setw(15) << " ";
+	//std::cout  << std::setw(15) << " ";
       }
-      std::cout  << std::setw(15) << TMath::Sqrt( (*covP)(iPar, iPar) );
-      std::cout  << "\n";
+     // std::cout  << std::setw(15) << TMath::Sqrt( (*covP)(iPar, iPar) );
+     // std::cout  << "\n";
       parIndex++;
     }
-    std::cout  << particle->getInfoString();
+ //   std::cout  << particle->getInfoString();
   }
   // Print unmeasured particles
-  std::cout  << "unmeasured particles: \n";
+ // std::cout  << "unmeasured particles: \n";
   parIndex = 0;
   for (unsigned int iP = 0; iP < _unmeasParticles.size(); iP++) {
     TAbsFitParticle* particle = _unmeasParticles[iP];
     Int_t nParP = particle->getNPar();
     const TMatrixD* par = particle->getParCurr();
-    std::cout  << std::setw(3) << setiosflags(std::ios::right) << iP;
-    std::cout  << std::setw(15) << particle->GetName();
-    std::cout  << std::setw(3) << " ";
+  //  std::cout  << std::setw(3) << setiosflags(std::ios::right) << iP;
+   // std::cout  << std::setw(15) << particle->GetName();
+    //std::cout  << std::setw(3) << " ";
     for (int iPar = 0; iPar < nParP; iPar++) {
       if (iPar > 0) {
-	std::cout  << setiosflags(std::ios::right) << std::setw(21) << " ";
+//	std::cout  << setiosflags(std::ios::right) << std::setw(21) << " ";
       }
       TString colstr = "";
       colstr += parIndex;
       colstr += ":";
-      std::cout  << std::setw(4) << colstr;
-      std::cout  << std::setw(2) << " ";
-      std::cout  << setiosflags(std::ios::left) << setiosflags(std::ios::scientific) << std::setprecision(3);
-      std::cout  << std::setw(15) << (*par)(iPar, 0);
+  //    std::cout  << std::setw(4) << colstr;
+    //  std::cout  << std::setw(2) << " ";
+   //   std::cout  << setiosflags(std::ios::left) << setiosflags(std::ios::scientific) << std::setprecision(3);
+     // std::cout  << std::setw(15) << (*par)(iPar, 0);
       if(_nbIter > 0 && _status < 10) {
-	std::cout  << std::setw(15) << TMath::Sqrt( _yaVFit(iPar+_nParB, iPar+_nParB) );
+	//std::cout  << std::setw(15) << TMath::Sqrt( _yaVFit(iPar+_nParB, iPar+_nParB) );
       } else {
-	std::cout  << std::setw(15) << " ";
+	//std::cout  << std::setw(15) << " ";
       }
-      std::cout  << "\n";
+      //std::cout  << "\n";
       parIndex++;
     }
-    std::cout  << particle->getInfoString();
+  //  std::cout  << particle->getInfoString();
   }
-  std::cout  << "\n";
+//  std::cout  << "\n";
   // Print constraints
-  std::cout  << "constraints: \n";
+ // std::cout  << "constraints: \n";
   for (unsigned int indexConstr = 0; indexConstr < _constraints.size(); indexConstr++) {
-    std::cout  << _constraints[indexConstr]->getInfoString();
+ //   std::cout  << _constraints[indexConstr]->getInfoString();
   }
-  std::cout  << "\n" << std::endl;
+//  std::cout  << "\n" << std::endl;
   
 }
 
