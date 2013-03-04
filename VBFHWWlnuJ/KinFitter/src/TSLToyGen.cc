@@ -119,7 +119,7 @@ Bool_t TSLToyGen::doToyExperiments( Int_t nbExperiments ) {
   fitter.setVerbosity(0);
 
   if( _printPartIni ) {
-    std::cout << std::endl
+    /*  Std::cout << std::endl
 	      << "----------------------------------" << std::endl;
     std::cout << "--- PRINTING INITIAL PARTICLES ---" << std::endl;
     std::cout << "----------------------------------" << std::endl ;
@@ -127,11 +127,12 @@ Bool_t TSLToyGen::doToyExperiments( Int_t nbExperiments ) {
     _iniLepton->print();
     _iniX->print();
     _iniNeutrino->print();
-    std::cout << std::endl << std::endl;
+    std::cout << std::endl << std::endl;*/
   }
+    
  
   if( _printConsIni ) {
-    std::cout << std::endl
+    /*  std::cout << std::endl
 	      << "-------------------------------------------------" << std::endl;
     std::cout << "INITIAL CONSTRAINTS " << std::endl ;
     std::cout << "-------------------------------------------------" << std::endl;
@@ -141,7 +142,7 @@ Bool_t TSLToyGen::doToyExperiments( Int_t nbExperiments ) {
 	      << "    py: " << pYCons.getCurrentValue()
 	      << "    pz: " << pZCons.getCurrentValue() 
 	      << "     E: " << ECons.getCurrentValue() << std::endl << std::endl;
-  }
+    */ }
 
   // Check initial constraints
   if (  _doCheckConstraintsTruth ) {
@@ -160,19 +161,19 @@ Bool_t TSLToyGen::doToyExperiments( Int_t nbExperiments ) {
     smearParticles();
 
     if( _printSmearedPartBefore ) {
-      std::cout <<  std::endl  
+      /*  std::cout <<  std::endl  
 		<< "-------------------------------------------------------" << std::endl ;
       std::cout << "--- PRINTING SMEARED PARTICLES BEFORE FIT FOR experiment # " <<i+1 << std::endl;
       std::cout << "-------------------------------------------------------" << std::endl;
       _breco->print();
       _lepton->print();
       _X->print();
-      _neutrino->print();
+      _neutrino->print();*/
     }
     
   
     if( _printConsBefore ) {
-      std::cout << std::endl
+      /*      std::cout << std::endl
 		<< "-------------------------------------------------" << std::endl;
       std::cout << "INITIAL (SMEARED) CONSTRAINTS FOR experiment # "<< i+1 << std::endl ;
       std::cout << "-------------------------------------------------" << std::endl;
@@ -180,13 +181,13 @@ Bool_t TSLToyGen::doToyExperiments( Int_t nbExperiments ) {
 		<< "    px: " << pXCons.getCurrentValue()  
 		<< "    py: " << pYCons.getCurrentValue()
 		<< "    pz: " << pZCons.getCurrentValue() 
-		<< "     E: " << ECons.getCurrentValue() << std::endl << std::endl;
+		<< "     E: " << ECons.getCurrentValue() << std::endl << std::endl;*/
     }
     
     fitter.fit();
     
     if( _printConsAfter) {
-      std::cout << std::endl
+      /*      std::cout << std::endl
 		<< "-------------------------------------------------" << std::endl;
       std::cout << " CONSTRAINTS AFTER FIT FOR experiment # "<< i+1 << std::endl ;
       std::cout << "-------------------------------------------------" << std::endl;
@@ -195,11 +196,11 @@ Bool_t TSLToyGen::doToyExperiments( Int_t nbExperiments ) {
 		<< "    px: " << pXCons.getCurrentValue()  
 		<< "    py: " << pYCons.getCurrentValue()
 		<< "    pz: " << pZCons.getCurrentValue() 
-		<< "     E: " << ECons.getCurrentValue() << std::endl << std::endl;
+		<< "     E: " << ECons.getCurrentValue() << std::endl << std::endl;*/
     }
     
     if( _printPartAfter ) {
-      std::cout <<  std::endl  
+      /*      std::cout <<  std::endl  
 		<< "--------------------------------------------------------" << std::endl ;
       std::cout << "--- PRINTING PARTICLES AFTER FIT FOR experiment # "<< i+1 << std::endl;
       std::cout << "--------------------------------------------------------" << std::endl;
@@ -207,7 +208,7 @@ Bool_t TSLToyGen::doToyExperiments( Int_t nbExperiments ) {
       _lepton->print();
       _X->print();
       _neutrino->print();
-    }
+      */}
     
     _histStatus->Fill( fitter.getStatus() );
     _histNIter->Fill( fitter.getNbIter() );
@@ -221,9 +222,9 @@ Bool_t TSLToyGen::doToyExperiments( Int_t nbExperiments ) {
     }
 
     if (i % 176 == 0) {
-      std::cout << "\r";  
-      std::cout <<" ------ "<< (Double_t) i/nbExperiments*100. << " % PROCESSED ------";
-      std::cout.flush();
+      // std::cout << "\r";  
+      // std::cout <<" ------ "<< (Double_t) i/nbExperiments*100. << " % PROCESSED ------";
+      // std::cout.flush();
     }    
   }
   
