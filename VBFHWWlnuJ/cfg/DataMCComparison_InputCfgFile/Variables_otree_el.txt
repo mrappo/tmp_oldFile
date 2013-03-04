@@ -1,0 +1,21 @@
+######################################################
+# Variable                      Nbin    Min     Max ##
+######################################################
+
+l_pt                             30      0       400
+l_eta                            25      -2.4    2.4
+v_pt                             40      200     500
+pfMet                            40      0       500
+nPV                              40      0       40
+jet_tau2tau1                     40      0       1 
+jet_massdrop_pr                  40      0       1
+jet_qjetvol                      40      0       1
+jet_mass_pr                      50      0       300
+ungroomed_jet_pt                 50     200      800
+jet_pt1frac                      40      0       1
+jet_pt2frac                      40      0       1
+jet_planarflow04                 40      0       1
+jet_planarflow05                 40      0       1
+jet_planarflow06                 40      0       1
+jet_planarflow07                 40      0       1
+mass_lvj                         100     0       1700
