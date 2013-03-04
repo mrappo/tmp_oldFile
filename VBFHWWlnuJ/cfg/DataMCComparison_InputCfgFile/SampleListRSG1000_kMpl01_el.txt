@@ -22,5 +22,5 @@ ofile_tWch_bar                                                  STop            
 #ofile_TTbar_scaleUp                                             tt_bar           8         228.0        5387181
 ofile_TTbar_Powheg                                              tt_bar           8         225.197      21675970
 ofile_rsg1000_kMpl01_py                                         RSG_kMpl01_py    1         0.4254       30000
-ofile_rsg1000_kMpl01_hw                                         RSG_kMpl01_py    4         1.82         30000
+ofile_rsg1000_kMpl01_hw                                         RSG_kMpl01_hw    4         1.82         30000
 
