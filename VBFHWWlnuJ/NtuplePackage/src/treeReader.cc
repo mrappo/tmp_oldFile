@@ -35,6 +35,13 @@ m_verbosity (verbosity)
     m_tree->SetBranchAddress (bre->GetName (), &m_3Vvectors[bre->GetName ()]) ;    
    }
 
+   else if (!bname.find ("vector<bool>") ){
+    if (m_verbosity)
+     std::cout << "FV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ; 
+    m_Bvectors[bre->GetName ()] = new std::vector<bool> ;
+    m_tree->SetBranchAddress (bre->GetName (), &m_Bvectors[bre->GetName ()]) ; 
+   }
+
    else if (!bname.find ("vector<int>") ){
     if (m_verbosity)
      std::cout << "IV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
@@ -123,6 +130,37 @@ m_verbosity (verbosity)
     else{ k_3Vvectors[bre->GetName ()] = new  ROOT::Math::XYZVector ;m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;}
 
    }
+
+
+   else if (!bname.find ("bool")  || !bname.find ("Bool_t") ){
+    if (m_verbosity)
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << bre->GetClassName () << "\n" ;
+   
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_Bvectors[bre->GetName ()] = new bool [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Bvectors[bre->GetName ()]) ;}
+    else{ k_Bvectors[bre->GetName ()] = new bool ;     m_tree->SetBranchAddress (bre->GetName (),k_Bvectors[bre->GetName ()]) ;}
+    }
+  
 
    else if (!bname.find ("int")  || !bname.find ("Int_t") ){
     if (m_verbosity)
@@ -267,6 +305,13 @@ m_verbosity (verbosity)
       m_tree->SetBranchAddress (bre->GetName (), &m_3Vvectors[bre->GetName ()]) ;      
     }
 
+    else if (!bname.find ("vector<bool>") ){
+      if (m_verbosity)
+	std::cout << "IV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
+      m_Bvectors[bre->GetName ()] = new std::vector<bool>  ;
+      m_tree->SetBranchAddress (bre->GetName (), &m_Bvectors[bre->GetName ()]) ;      
+    }
+
     else if (!bname.find ("vector<int>") ){
       if (m_verbosity)
 	std::cout << "IV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
@@ -354,6 +399,36 @@ m_verbosity (verbosity)
     if(vectorx!=0 && vectory==0){k_3Vvectors[bre->GetName ()] = new  ROOT::Math::XYZVector [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;}
     else{ k_3Vvectors[bre->GetName ()] = new  ROOT::Math::XYZVector ;m_tree->SetBranchAddress (bre->GetName (),k_3Vvectors[bre->GetName ()]) ;}
     }
+
+   else if (!bname.find ("bool")  || !bname.find ("Bool_t") ){
+    if (m_verbosity)
+	std::cout << "FV | setting " << bre->GetName () << " for type : " << Leaf->GetTypeName () << "\n" ;
+   
+    int foundFirst = branchTitle.find("/");
+    int vectorx = 0 ;
+    int vectory = 0 ;
+
+    if(branchTitle.at(foundFirst-1)==']'){
+
+      size_t foundUp = branchTitle.find_first_of("[");
+      size_t foundDw = branchTitle.find_first_of("]");
+
+      std::string npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+      vectorx = atoi(npos.c_str());
+
+      branchTitle.replace(foundUp,foundDw-foundUp+1,"");
+      foundUp = branchTitle.find_first_of("[");
+      foundDw = branchTitle.find_first_of("]");
+      npos = branchTitle.substr(foundUp+1,foundDw-foundUp-1);
+
+      vectory = atoi(npos.c_str());
+
+    }
+
+    if(vectorx!=0 && vectory==0){k_Bvectors[bre->GetName ()] = new bool [vectorx]; m_tree->SetBranchAddress (bre->GetName (),k_Bvectors[bre->GetName ()]) ;}
+    else{ k_Bvectors[bre->GetName ()] = new bool ;     m_tree->SetBranchAddress (bre->GetName (),k_Bvectors[bre->GetName ()]) ;}
+    }
+  
   
 
    else if (!bname.find ("int")  || !bname.find ("Int_t") ){
