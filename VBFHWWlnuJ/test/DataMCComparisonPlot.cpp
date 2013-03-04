@@ -494,10 +494,10 @@ int main (int argc, char **argv){
 
           	    TString Name = Form("%s*%d",NameReducedSample.at(iSampleqqH).c_str(),int(SignalScaleFactor)); 
                	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleqqH], Name.Data(), "l" );
+	            histos[iCut][iVar][iSampleqqH]->SetFillStyle(0);
                     histos[iCut][iVar][iSampleqqH]->SetLineWidth(2);
           
 	            histos[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
-	            histos[iCut][iVar][iSampleqqH]->SetFillStyle(1);
 	            histos[iCut][iVar][iSampleqqH]->Draw("hist same");
 
           }
@@ -506,10 +506,10 @@ int main (int argc, char **argv){
  
  	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleRSGPythia).c_str(),int(SignalScaleFactor)); 
                	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
+                    histos[iCut][iVar][iSampleRSGPythia]->SetFillStyle(0);
                                      
                     histos[iCut][iVar][iSampleRSGPythia]->SetLineWidth(2);
                     histos[iCut][iVar][iSampleRSGPythia]->Scale(SignalScaleFactor*1.);
-                    histos[iCut][iVar][iSampleRSGPythia]->SetFillStyle(1);
 
                     histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
           }
@@ -519,9 +519,9 @@ int main (int argc, char **argv){
 	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleRSGHerwig).c_str(),int(SignalScaleFactor)); 
                	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
                                      
+                    histos[iCut][iVar][iSampleRSGHerwig]->SetFillStyle(0);
                     histos[iCut][iVar][iSampleRSGHerwig]->SetLineWidth(2);
                     histos[iCut][iVar][iSampleRSGHerwig]->Scale(SignalScaleFactor*1.);
-                    histos[iCut][iVar][iSampleRSGHerwig]->SetFillStyle(1);
 
                     histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
           }
