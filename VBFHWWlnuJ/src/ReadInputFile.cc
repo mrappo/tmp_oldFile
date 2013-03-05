@@ -67,6 +67,42 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
 
 }
 
+int ReadInputVariableBlindedFile( const std::string & InputVariableList , std::vector<std::string> & Variables, std::vector<int> & VariablesNbin,
+                                  std::vector<double> & VariablesMinValue, std::vector<double> & VariablesMaxValue,  std::vector<double> & VariablesBlindMinValue, 
+                                  std::vector<double> & VariablesBlindMaxValue, std::vector<std::string> & VariablesTitle ){
+
+
+  std::ifstream inputFile (InputVariableList.c_str());
+  std::string buffer;
+
+  if(inputFile.fail()) return -1; 
+
+  while(!inputFile.eof()){
+  
+    getline(inputFile,buffer);
+
+    if(buffer.empty() || !buffer.find("#") || buffer=="") continue ;
+    std::stringstream line(buffer);
+
+    std::string  VariablesTemp;
+    std::string  VariablesNbinTemp;
+    std::string  VariablesMinValueTemp;
+    std::string  VariablesMaxValueTemp;
+    std::string  VariablesBlindMinValueTemp;
+    std::string  VariablesBlindMaxValueTemp;    
+    std::string  VariablesTitleTemp;
+
+    line >> VariablesTemp >> VariablesNbinTemp >> VariablesMinValueTemp >> VariablesMaxValueTemp >> VariablesBlindMinValueTemp >> VariablesBlindMaxValueTemp >> VariablesTitleTemp ;
+    Variables.push_back(VariablesTemp); VariablesNbin.push_back(atoi(VariablesNbinTemp.c_str())) ; VariablesMinValue.push_back(atof(VariablesMinValueTemp.c_str())); 
+    VariablesMaxValue.push_back(atof(VariablesMaxValueTemp.c_str())); VariablesBlindMinValue.push_back(atof(VariablesBlindMinValueTemp.c_str()));
+    VariablesBlindMaxValue.push_back(atof(VariablesBlindMaxValueTemp.c_str()));  VariablesTitle.push_back(VariablesTitleTemp);
+
+  }
+
+  return Variables.size() ;
+
+}
+
 
 int ReadInputCutFile( const std::string & InputCutList , std::vector<std::string> & CutList){
 
