@@ -39,7 +39,7 @@ void VBFMuonClass::SetReader(TTree* inputTree){
 
   if(inputTree ==0) return ;
  
-  fReader = new treeReader((TTree*)(fTree), false);
+  fReader = new treeReader((TTree*)(fTree), true);
 
   SetBranchAddressAndStatus(fTree);
 
@@ -63,6 +63,8 @@ void VBFMuonClass::SetBranchAddressAndStatus ( TTree* inputTree){
 
 
   fTree->SetBranchStatus("MassV*",0);
+  fTree->SetBranchStatus("Mass*j*",0);
+  fTree->SetBranchStatus("cosTheta*",0);
   fTree->SetBranchStatus("cosJackson*",0);
   fTree->SetBranchStatus("colorCorr*", 0);
   fTree->SetBranchStatus("JetGen*",0);
@@ -70,6 +72,11 @@ void VBFMuonClass::SetBranchAddressAndStatus ( TTree* inputTree){
   fTree->SetBranchStatus("Photon*",0);
   fTree->SetBranchStatus("*Photon*",0);
   fTree->SetBranchStatus("W_Hb*",0);
+  fTree->SetBranchStatus("W_Lepton*",0);
+  fTree->SetBranchStatus("W_Met*",0);
+  fTree->SetBranchStatus("W_tLepton*",0);
+  fTree->SetBranchStatus("W_tMet*",0);
+
   fTree->SetBranchStatus("fit_*",0);
   fTree->SetBranchStatus("ang_*",0);
   fTree->SetBranchStatus("masslvjj",0);
@@ -81,7 +88,6 @@ void VBFMuonClass::SetBranchAddressAndStatus ( TTree* inputTree){
   fTree->SetBranchStatus("mvavbf*",0);
   fTree->SetBranchStatus("GroomedJet_number*",0);
   fTree->SetBranchStatus("GroomedJet*ak7",0);
-  fTree->SetBranchStatus("GroomedJet*AK7*",0);
   fTree->SetBranchStatus("boostedW_*",0);
   fTree->SetBranchStatus("vbf_*",0);
   fTree->SetBranchStatus("ttH_*",0);
