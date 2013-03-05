@@ -63,6 +63,13 @@ int main (int argc, char **argv){
   std::string InputDirectory     = gConfigParser -> readStringOption("Input::InputDirectory");
   std::string InputSampleList    = gConfigParser -> readStringOption("Input::InputSampleList");
   std::string InputVariableList  = gConfigParser -> readStringOption("Input::InputVariableList");
+
+  std::string InputVariableListBlinded ;
+  try{  InputVariableListBlinded = gConfigParser -> readStringOption("Input::InputVariableListBlinded");}
+  catch(const char* exceptionString){ InputVariableListBlinded = "NULL" ;
+                                      std::cerr<<" InputVariableListBlinded Set by default to --> NULL "<<std::endl;
+  }                                     
+
   std::string InputCutList       = gConfigParser -> readStringOption("Input::InputCutList");
 
   std::cout<<"      "<<std::endl;
@@ -72,13 +79,17 @@ int main (int argc, char **argv){
   std::cout<<"      "<<std::endl;
   std::cout<<" InputVariableList: "<<InputVariableList<<std::endl;
   std::cout<<"      "<<std::endl;
+  std::cout<<" InputVariableListBlinded: "<<InputVariableListBlinded<<std::endl;
+  std::cout<<"      "<<std::endl;
   std::cout<<" InputCutList: "<<InputCutList<<std::endl;
   std::cout<<"      "<<std::endl;
 
 
   std::string TreeName ;
   try{ TreeName  = gConfigParser -> readStringOption("Input::TreeName");}
-  catch(std::string TreeName){ TreeName = "WJet"; std::cerr<<" TreeName Set by default to --> WJet "<<std::endl;}
+  catch(char const* exceptionString){ TreeName = "WJet"; 
+                                      std::cerr<<" TreeName Set by default to --> WJet "<<std::endl;
+  }
 
   std::cout<<" TreeName: "<<TreeName<<std::endl;
   std::cout<<"      "<<std::endl;
@@ -243,9 +254,19 @@ int main (int argc, char **argv){
   std::vector <int> VariablesNbin;
   std::vector <std::string> VariablesTitle;
 
+ 
   if(ReadInputVariableFile(InputVariableList,Variables,VariablesNbin,VariablesMinValue,VariablesMaxValue,VariablesTitle) <= 0){ 
     std::cerr<<" Empty Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
+  std::vector <double> VariablesBlindedMinValue(Variables.size(),-999.);
+  std::vector <double> VariablesBlindedMaxValue(Variables.size(),-999.);
+
+ 
+  if(InputVariableListBlinded == "NULL" || ReadInputVariableBlindedFile(InputVariableListBlinded,Variables,VariablesNbin,VariablesMinValue,VariablesMaxValue,
+                                                                         VariablesBlindedMinValue, VariablesBlindedMaxValue, VariablesTitle) <=0)
+    std::cerr<<" Empty Variable Blinded List File or not Exisisting --> Exit "<<std::endl;
+
+ 
 
   std::vector <std::string> CutList;
 
@@ -259,7 +280,7 @@ int main (int argc, char **argv){
 
   TH1F* histos[CutList.size()][Variables.size()][NameSample.size()];
   TString hname ;
-
+   
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
     
     std::cout<<std::endl;
@@ -310,7 +331,7 @@ int main (int argc, char **argv){
     } 
    }
   }
-
+  
   // Normalization to the lumi of MC samples 
   double norm;
 
@@ -347,7 +368,7 @@ int main (int argc, char **argv){
   int iSampleqqH = -1;
   int iSampleRSGPythia = -1;
   int iSampleRSGHerwig = -1;
-
+  
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
 
      for (size_t iVar=0; iVar<Variables.size(); iVar++){
@@ -401,7 +422,7 @@ int main (int argc, char **argv){
 	  cLog[iCut][iVar] ->cd();
  	  if(!WithoutData) lowerPadLog->Draw();
 	  upperPadLog->Draw();     
-   	  
+	  
 	  for (size_t iSample = 0; iSample<NameSample.size(); iSample++){
 	  
 	    if( NameReducedSample.at(iSample) == "DATA" && !WithoutData){
@@ -463,7 +484,7 @@ int main (int argc, char **argv){
 	    }
 
 	  }
-	   
+	  
 	  leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Top", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "diBoson", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "fl" );
@@ -479,17 +500,25 @@ int main (int argc, char **argv){
                          
 	  if(!WithoutData){ 
 
-            TObjArray* histoList = hs[iCut][iVar] -> GetStack();
-            TH1F* histo          = (TH1F*) histoList->At(histoList -> GetEntries()-1);
+           TObjArray* histoList = hs[iCut][iVar] -> GetStack();
+           TH1F* histo          = (TH1F*) histoList->At(histoList -> GetEntries()-1);
 
-	    upperPad->RangeAxis(histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmin(),std::min(histos[iCut][iVar][iSampleData]->GetYaxis()->GetXmin(),histo->GetYaxis()->GetXmin()),
-                                histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmax(),std::max(histos[iCut][iVar][iSampleData]->GetYaxis()->GetXmax(),histo->GetYaxis()->GetXmax()));
+	   upperPad->RangeAxis(histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmin(),fabs(std::min(histos[iCut][iVar][iSampleData]->GetYaxis()->GetXmin(),histo->GetYaxis()->GetXmin())),
+             histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmax(),fabs(std::max(histos[iCut][iVar][iSampleData]->GetYaxis()->GetXmax(),histo->GetYaxis()->GetXmax())));
                                                                
 
-            histos[iCut][iVar][iSampleData]->Draw("E same");
+            if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
+	     
+                  for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
+                      iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
+
+                  histos[iCut][iVar][iSampleData]->Draw("E same");
+                
+            }
+            else histos[iCut][iVar][iSampleData]->Draw("E same");
+        
           }
 	  
-
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
               
 	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleggH).c_str(),int(SignalScaleFactor));
@@ -595,7 +624,18 @@ int main (int argc, char **argv){
 
 	  DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
 
-	  if(!WithoutData) histos[iCut][iVar][iSampleData]->Draw("E same");
+	  if(!WithoutData){
+
+           if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
+	     
+                  for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
+                      iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
+
+                  histos[iCut][iVar][iSampleData]->Draw("E same");
+                
+            }
+            else histos[iCut][iVar][iSampleData]->Draw("E same");
+          }
 
 	  if(SignalggHName!="NULL" && iSampleggH!=-1) histos[iCut][iVar][iSampleggH]->Draw("hist same");
 	  if(SignalqqHName!="NULL" && iSampleqqH!=-1) histos[iCut][iVar][iSampleqqH]->Draw("hist same");
@@ -617,7 +657,7 @@ int main (int argc, char **argv){
           cLog[iCut][iVar]->Close();
      }
     }
-
+  
  outputFile->Close();
 
  return 0 ;
