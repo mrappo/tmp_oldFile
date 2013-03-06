@@ -4,12 +4,11 @@
 
 l_pt                             30      0       400
 l_eta                            25      -2.4    2.4
-v_pt                             30      200     500
-pfMET                            35      0       500
+v_pt                             40      200     800
+pfMET                            35      0       600
 nPV                              40      0       40
 jet_tau2tau1                     35      0       1 
 jet_massdrop_pr                  35      0       1
 jet_qjetvol                      35      0       1
-jet_mass_pr                      30      0       140
-ungroomed_jet_pt                 30     200      500
+ungroomed_jet_pt                 40     200      800
 jet_planarflow04                 35      0       1
