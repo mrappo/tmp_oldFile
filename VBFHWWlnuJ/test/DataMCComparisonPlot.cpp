@@ -301,7 +301,7 @@ int main (int argc, char **argv){
        FileVect.push_back ( new TFile (NameFile.Data(),"READ") );  
        TreeVect.push_back( (TTree*) FileVect.at(iSample)->Get(TreeName.c_str()));
         
-       hname.Form ("%s_%s_%s",NameSample.at(iSample).c_str(),Variables.at(iVar).c_str(),CutList.at(iCut).c_str() );
+       hname.Form ("%s_%s_%d",NameSample.at(iSample).c_str(),Variables.at(iVar).c_str(),int(iCut));
        histos[iCut][iVar][iSample] = new TH1F (hname.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar));
        histos[iCut][iVar][iSample]->Sumw2();
        
@@ -381,20 +381,30 @@ int main (int argc, char **argv){
 
 	  leg[iCut][iVar] = new TLegend (0.81, 0.6, 0.99, 0.90) ;
 	  leg[iCut][iVar]->SetFillColor(0);
+ 
+          TString histoName = Form("%s_sTop_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histo_top[iCut][iVar] = new TH1F ( (Variables.at(iVar)+"sTop"+CutList.at(iCut)).c_str(),"",VariablesNbin.at(iVar),
+	  histo_top[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
                                              VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
-	  histo_diboson[iCut][iVar] = new TH1F ( (Variables.at(iVar)+"diboson"+CutList.at(iCut)).c_str(),"",VariablesNbin.at(iVar),
+          histoName = Form("%s_diboson_%d",Variables.at(iVar).c_str(),int(iCut));
+
+	  histo_diboson[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
                                              VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
-	  histo_WJets[iCut][iVar] = new TH1F ( (Variables.at(iVar)+"WJets"+CutList.at(iCut)).c_str(),"",VariablesNbin.at(iVar),
+          histoName = Form("%s_WJets_%d",Variables.at(iVar).c_str(),int(iCut));
+
+	  histo_WJets[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
                                              VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
+          histoName = Form("%s_stack_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  hs[iCut][iVar] = new THStack ((Variables.at(iVar)+CutList.at(iCut)).c_str(),"") ;
-	  histoSum[iCut][iVar] = new TH1F ((Variables.at(iVar)+"sum"+CutList.at(iCut)).c_str(),"",
-					   VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  hs[iCut][iVar] = new THStack (histoName.Data(),"") ;
+
+          histoName = Form("%s_sum_%d",Variables.at(iVar).c_str(),int(iCut));
+
+	  histoSum[iCut][iVar] = new TH1F ( histoName.Data(),"",
+					    VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
 
           TPad* upperPad ; TPad* lowerPad ; TPad* upperPadLog ; TPad* lowerPadLog ;  
@@ -608,7 +618,7 @@ int main (int argc, char **argv){
 	            
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
-	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".eps").c_str(),"eps");
+	  //	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".eps").c_str(),"eps");
 
 	  c[iCut][iVar]->Close();
 	  
@@ -652,7 +662,7 @@ int main (int argc, char **argv){
           
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
-	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".eps").c_str(),"eps");
+	  //	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".eps").c_str(),"eps");
 
           cLog[iCut][iVar]->Close();
      }
