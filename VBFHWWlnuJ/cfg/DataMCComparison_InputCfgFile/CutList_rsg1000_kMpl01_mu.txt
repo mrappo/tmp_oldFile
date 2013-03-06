@@ -2,4 +2,8 @@
 ########## Cut String For TTree Draw Method #########
 #####################################################
 
-issignal==1 && v_pt > 250 && pfMET > 70 && l_pt > 35
+issignal==1 && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250
+
+issignal==1 && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250 && ( jet_mass_pr <65 || jet_mass_pr > 100 )
+
+issignal==1 && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250 && ( jet_mass_pr <=65 && jet_mass_pr >= 100 )
