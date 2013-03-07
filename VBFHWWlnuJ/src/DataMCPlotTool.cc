@@ -3,9 +3,15 @@
 void DrawStackError(THStack* hs, const double & syst, const std::string & Labels){ 
   TObjArray* histos = hs->GetStack () ;
   if (histos) {
+
     Int_t number = histos->GetEntries();
     TH1F* last = (TH1F*) histos->At (number-1) ;
+
     last->GetXaxis()->SetTitle(Labels.c_str());
+    last->GetXaxis()->SetTitleSize(0.04);
+    last->GetYaxis()->SetTitle("Entries");
+    last->GetYaxis()->SetTitleSize(0.04);
+
     last->DrawClone ("hist") ;
     for (int i = number-2 ; i >=0 ; --i) {
       TH1F * histo = (TH1F*) histos->At (i) ;
