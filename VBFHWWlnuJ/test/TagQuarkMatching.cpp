@@ -42,20 +42,22 @@ int main (int argc, char** argv) {
   std::string InputDirectory     = gConfigParser -> readStringOption("Input::InputDirectory");
   std::string InputFileName      = gConfigParser -> readStringOption("Input::InputFileName");
 
-  std::cout<<"         "<<std::endl;
-  std::cout<<" InputDirectory :    "<<InputDirectory<<std::endl;
-  std::cout<<"         "<<std::endl;
-
-  std::cout<<" InputFileName :    "<<InputFileName<<std::endl;
-  std::cout<<"         "<<std::endl;
-
   std::string OutputDirectory     = gConfigParser -> readStringOption("Output::OutputDirectory");
   std::string OutputFileName      = gConfigParser -> readStringOption("Output::OutputFileName");
+
+  std::cout<<"         "<<std::endl;
+  std::cout<<" InputDirectory :     "<<InputDirectory<<std::endl;
+  std::cout<<"         "<<std::endl;
+
+  std::cout<<" InputFileName :      "<<InputFileName<<std::endl;
+  std::cout<<"         "<<std::endl;
+
+
 
   std::cout<<" OutputDirectory :    "<<OutputDirectory<<std::endl;
   std::cout<<"         "<<std::endl;
 
-  std::cout<<" OutputFileName :    "<<OutputFileName<<std::endl;
+  std::cout<<" OutputFileName :     "<<OutputFileName<<std::endl;
   std::cout<<"         "<<std::endl;
 
 
@@ -68,7 +70,7 @@ int main (int argc, char** argv) {
   float BoostedPtCut =  gConfigParser -> readFloatOption("Input::BoostedPtCut");
   float MetCut       =  gConfigParser -> readFloatOption("Input::MetCut");
 
-  std::cout<<" TreeName :    "<<TreeName<<std::endl;
+  std::cout<<" TreeName :          "<<TreeName<<std::endl;
   std::cout<<"         "<<std::endl;
 
   float dR_treshold ;
@@ -81,7 +83,7 @@ int main (int argc, char** argv) {
   std::cout<<"         "<<std::endl;
 
   float pt_treshold ;
-  try{ pt_treshold = gConfigParser -> readFloatOption("Input::PtCut"); }
+  try{ pt_treshold = gConfigParser -> readFloatOption("Option::PtCut"); }
   catch(char const* exceptionString){ pt_treshold = 0.3 ;
                                       std::cerr<<" pt Cut Set To --> 0.3"<<std::endl;
   }
@@ -113,8 +115,9 @@ int main (int argc, char** argv) {
                                       std::cerr<<" DRMin Set To --> 0."<<std::endl;
   }
 
-  std::cout<<" DRMin :    "<<DRMin<<" DRMax : "<<DRMax<<std::endl;
-  std::cout<<"         "<<std::endl;
+  std::cout<<" DRMin :    "<<DRMin<<std::endl;
+  std::cout<<" DRMax :    "<<DRMax<<std::endl;
+  std::cout<<"            "<<std::endl;
 
   float DEtaLimit;
 
@@ -149,7 +152,8 @@ int main (int argc, char** argv) {
   }
 
 
-  std::cout<<" DPtMin :    "<<DPtMin<<" DPtMax"<<DPtMax<<std::endl;
+  std::cout<<" DPtMin :    "<<DPtMin<<std::endl;
+  std::cout<<" DPtMax :    "<<DPtMax<<std::endl;
   std::cout<<"         "<<std::endl;
 
 
@@ -164,6 +168,9 @@ int main (int argc, char** argv) {
   if(fTree==0){ std::cerr<<" No Input Tree found --> exit "<<std::endl;  return -1; }
 
   // Create Output File
+
+  std::string command = " if [ ! -e "+OutputDirectory+"/ ] ; then mkdir "+OutputDirectory+" ; fi " ;
+  system(command.c_str());
 
   TFile * OutputFile  = new TFile((OutputDirectory+"/"+OutputFileName).c_str(),"RECREATE");
   OutputFile->cd();
@@ -407,14 +414,14 @@ int main (int argc, char** argv) {
   int   cont_dRandpt_maxpt = 0, cont_dRandpt_maxDeta=0, cont_dRandpt_maxMjj=0;
   int   cont_maxpt_maxDeta = 0, cont_maxpt_maxMjj=0, cont_maxMjj_maxDeta =0;
 
-  std::vector<int> cont_nj (10,0) ;
+  std::vector<int> cont_nj (12,0) ;
 
-  std::vector<int> cont_nj_match_maxpt (10,0); 
-  std::vector<int> cont_nj_match_maxDeta (10,0); 
-  std::vector<int> cont_nj_match_maxMjj (10,0);  
-  std::vector<int> cont_nj_match_dR_maxpt (10,0);
-  std::vector<int> cont_nj_match_dR_maxDeta (10,0);
-  std::vector<int> cont_nj_match_dR_maxMjj (10,0) ;
+  std::vector<int> cont_nj_match_maxpt (12,0); 
+  std::vector<int> cont_nj_match_maxDeta (12,0); 
+  std::vector<int> cont_nj_match_maxMjj (12,0);  
+  std::vector<int> cont_nj_match_dR_maxpt (12,0);
+  std::vector<int> cont_nj_match_dR_maxDeta (12,0);
+  std::vector<int> cont_nj_match_dR_maxMjj (12,0) ;
 
   int cont_tight_maxpt=0, cont_tight_maxDeta=0, cont_tight_maxMjj=0;
   int cont_tight_match_maxpt=0, cont_tight_match_maxDeta=0, cont_tight_match_maxMjj=0;
@@ -428,18 +435,19 @@ int main (int argc, char** argv) {
   
   //start reading tree
 
+  std::cout<< " Input Numeber of events in the tree : "<<nEntry<<std::endl;
+  std::cout<<"   "<<std::endl;
+ 
   for(int iEntry =0; iEntry<nEntry ; iEntry++){
 
 
     dR11_maxpt   = 0., dR12_maxpt   = 0.; dR11_maxDeta = 0., dR12_maxDeta = 0.; dR11_maxMjj  = 0., dR12_maxMjj  = 0.; 
     dR21_maxpt   = 0., dR22_maxpt   = 0.; dR21_maxDeta = 0., dR22_maxDeta = 0.; dR21_maxMjj  = 0., dR22_maxMjj  = 0.;
 
-    cont_maxpt0 =0, cont_maxDeta0 =0, cont_maxMjj0 =0; cont_maxpt1 =0, cont_maxDeta1 =0, cont_maxMjj1 =0;
-    cont_maxpt2 =0, cont_maxDeta2 =0, cont_maxMjj2 =0; dR1_maxpt =0., dR1_maxDeta =0., dR1_maxMjj =0.;
+    dR1_maxpt =0., dR1_maxDeta =0., dR1_maxMjj =0.;
     dR2_maxpt =0., dR2_maxDeta =0., dR2_maxMjj =0.;
   
     ptratio1_maxpt=0., ptratio1_maxDeta=0., ptratio1_maxMjj=0.; ptratio2_maxpt=0., ptratio2_maxDeta=0., ptratio2_maxMjj=0.;
-    cont_dRandpt_maxpt = 0, cont_dRandpt_maxDeta=0, cont_dRandpt_maxMjj=0; cont_maxpt_maxDeta = 0, cont_maxpt_maxMjj=0, cont_maxMjj_maxDeta =0;
 
  
     if( iEntry%1000 == 0 ) std::cout << "reading saved entry " << iEntry << "\r" << std::endl;
@@ -447,7 +455,7 @@ int main (int argc, char** argv) {
     fTree->GetEntry(iEntry);
     
     if(GroomedJet_CA8_pt[0]<BoostedPtCut || W_pt < BoostedPtCut || event_met_pfmet < MetCut ) continue;
-    nPassingEvents++;
+    if(vbf_maxpt_j1_pt <=0 || vbf_maxpt_j2_pt <=0 || W_TagQuark_pt[0] <=0 || W_TagQuark_pt[1] <=0 ) continue ;
 
     //calculation of dR for max pt
         
@@ -456,7 +464,7 @@ int main (int argc, char** argv) {
     dR21_maxpt = deltaR(W_TagQuark_phi[1],vbf_maxpt_j1_phi,W_TagQuark_eta[1],vbf_maxpt_j1_eta); 
     dR22_maxpt = deltaR(W_TagQuark_phi[1],vbf_maxpt_j2_phi,W_TagQuark_eta[1],vbf_maxpt_j2_eta); 
 
-    if(dR11_maxpt < dR12_maxpt){
+    if(dR11_maxpt < dR12_maxpt && dR22_maxpt<dR21_maxpt){
    
       dR1_maxpt = dR11_maxpt ;
       dR2_maxpt = dR22_maxpt ;
@@ -476,7 +484,7 @@ int main (int argc, char** argv) {
       histo_dR1_dpt1_maxpt->Fill(dR11_maxpt,vbf_maxpt_j1_pt/W_TagQuark_pt[0]);
       histo_dR2_dpt2_maxpt->Fill(dR22_maxpt,vbf_maxpt_j2_pt/W_TagQuark_pt[1]);
     }
-    else{
+    else if (dR12_maxpt <= dR12_maxpt && dR21_maxpt<=dR22_maxpt) {
 
       dR1_maxpt = dR12_maxpt ;
       dR2_maxpt = dR21_maxpt ;
@@ -497,6 +505,10 @@ int main (int argc, char** argv) {
       histo_dR2_dpt2_maxpt->Fill(dR21_maxpt,vbf_maxpt_j1_pt/W_TagQuark_pt[1]);
  
     }
+
+    else continue ;
+
+    nPassingEvents++;
 
    //same thing whit pair of jets with maxDeta
 
@@ -598,9 +610,9 @@ int main (int argc, char** argv) {
 
     // Count events which satisfy dR matching condition
 
-    if ( ((dR1_maxpt   <= dR_treshold) && (dR2_maxpt   > dR_treshold)) || ((dR1_maxpt   >  dR_treshold) && (dR2_maxpt   <= dR_treshold)) )   cont_maxpt1++;
-    if ( ((dR1_maxDeta <= dR_treshold) && (dR2_maxDeta > dR_treshold)) || ((dR1_maxDeta <= dR_treshold) && (dR2_maxDeta <= dR_treshold)) )   cont_maxDeta1++;
-    if ( ((dR1_maxMjj  <= dR_treshold) && (dR2_maxMjj  > dR_treshold)) || ((dR1_maxMjj  <= dR_treshold) && (dR2_maxMjj  <= dR_treshold)) )   cont_maxMjj1++;
+    if ( ((dR1_maxpt   <= dR_treshold) && (dR2_maxpt   > dR_treshold)) || ((dR1_maxpt   >  dR_treshold) && (dR2_maxpt   <= dR_treshold)) )  cont_maxpt1++;
+    if ( ((dR1_maxDeta <= dR_treshold) && (dR2_maxDeta > dR_treshold)) || ((dR1_maxDeta >  dR_treshold) && (dR2_maxDeta <= dR_treshold)) )  cont_maxDeta1++;
+    if ( ((dR1_maxMjj  <= dR_treshold) && (dR2_maxMjj  > dR_treshold)) || ((dR1_maxMjj  >  dR_treshold) && (dR2_maxMjj  <= dR_treshold)) )  cont_maxMjj1++;
 
     //both jets have matching in dR
     if ( (dR1_maxpt   <= dR_treshold) && (dR2_maxpt   <= dR_treshold) )  cont_maxpt2++;
@@ -697,8 +709,10 @@ int main (int argc, char** argv) {
     }
 
   }
-     
+
+  std::cout<<"    "<<std::endl;
   std::cout<<" Input Events : "<<nEntry<<" Passed Jet Met Selection "<<nPassingEvents<<std::endl;  
+  std::cout<<"    "<<std::endl;
 
   //create canvas and draw the plots  --> maxpt
 
@@ -707,7 +721,7 @@ int main (int argc, char** argv) {
   histo_dR1_maxpt_c->SetTickx();
   histo_dR1_maxpt_c->SetTicky();
   histo_dR1_maxpt->Draw();
-  histo_dR1_maxpt_c->Print ("DeltaR1_maxpt.png", "png");
+  histo_dR1_maxpt_c->Print ((OutputDirectory+"/DeltaR1_maxpt.png").c_str(), "png");
   histo_dR1_maxpt->Write();
 
   TCanvas *histo_dR2_maxpt_c = new TCanvas("histo_dR2_maxpt_c");
@@ -715,7 +729,7 @@ int main (int argc, char** argv) {
   histo_dR2_maxpt_c->SetTickx();
   histo_dR2_maxpt_c->SetTicky();
   histo_dR2_maxpt->Draw();
-  histo_dR2_maxpt_c->Print ("DeltaR2_maxpt.png", "png");
+  histo_dR2_maxpt_c->Print ((OutputDirectory+"/DeltaR2_maxpt.png").c_str(), "png");
   histo_dR2_maxpt->Write();
 
   TCanvas *histo_deta1_maxpt_c = new TCanvas("histo_deta1_maxpt_c");
@@ -723,7 +737,7 @@ int main (int argc, char** argv) {
   histo_deta1_maxpt_c->SetTickx();
   histo_deta1_maxpt_c->SetTicky();
   histo_deta1_maxpt->Draw();
-  histo_deta1_maxpt_c->Print ("Deta1_maxpt.png", "png");
+  histo_deta1_maxpt_c->Print ((OutputDirectory+"/Deta1_maxpt.png").c_str(), "png");
   histo_deta1_maxpt->Write();
 
   TCanvas *histo_deta2_maxpt_c = new TCanvas("histo_deta2_maxpt_c");
@@ -731,7 +745,7 @@ int main (int argc, char** argv) {
   histo_deta2_maxpt_c->SetTickx();
   histo_deta2_maxpt_c->SetTicky();
   histo_deta2_maxpt->Draw();
-  histo_deta2_maxpt_c->Print ("Deta2_maxpt.png", "png");
+  histo_deta2_maxpt_c->Print ((OutputDirectory+"/Deta2_maxpt.png").c_str(), "png");
   histo_deta2_maxpt->Write();
 
   TCanvas *histo_dphi1_maxpt_c = new TCanvas("histo_dphi1_maxpt_c");
@@ -739,7 +753,7 @@ int main (int argc, char** argv) {
   histo_dphi1_maxpt_c->SetTickx();
   histo_dphi1_maxpt_c->SetTicky();
   histo_dphi1_maxpt->Draw();
-  histo_dphi1_maxpt_c->Print ("Dphi1_maxpt.png", "png");
+  histo_dphi1_maxpt_c->Print ((OutputDirectory+"/Dphi1_maxpt.png").c_str(), "png");
   histo_dphi1_maxpt->Write();
 
   TCanvas *histo_dphi2_maxpt_c = new TCanvas("histo_dphi2_maxpt_c");
@@ -747,7 +761,7 @@ int main (int argc, char** argv) {
   histo_dphi2_maxpt_c->SetTickx();
   histo_dphi2_maxpt_c->SetTicky();
   histo_dphi2_maxpt->Draw();
-  histo_dphi2_maxpt_c->Print ("Dphi2_maxpt.png", "png");
+  histo_dphi2_maxpt_c->Print ((OutputDirectory+"/Dphi2_maxpt.png").c_str(), "png");
   histo_dphi2_maxpt->Write();
 
   TCanvas *histo_dpt1_maxpt_c = new TCanvas("histo_dpt1_maxpt_c");
@@ -755,7 +769,7 @@ int main (int argc, char** argv) {
   histo_dpt1_maxpt_c->SetTickx();
   histo_dpt1_maxpt_c->SetTicky();
   histo_dpt1_maxpt->Draw();
-  histo_dpt1_maxpt_c->Print ("Dpt1_maxpt.png", "png");
+  histo_dpt1_maxpt_c->Print ((OutputDirectory+"/Dpt1_maxpt.png").c_str(), "png");
   histo_dpt1_maxpt->Write();
 
 
@@ -764,7 +778,7 @@ int main (int argc, char** argv) {
   histo_dpt2_maxpt_c->SetTickx();
   histo_dpt2_maxpt_c->SetTicky();
   histo_dpt2_maxpt->Draw();
-  histo_dpt2_maxpt_c->Print ("Dpt2_maxpt.png", "png");
+  histo_dpt2_maxpt_c->Print ((OutputDirectory+"/Dpt2_maxpt.png").c_str(), "png");
   histo_dpt2_maxpt->Write();
 
   TCanvas *histo_dR1_dpt1_maxpt_c = new TCanvas("histo_dR1_dpt1_maxpt_c");
@@ -772,7 +786,7 @@ int main (int argc, char** argv) {
   histo_dR1_dpt1_maxpt_c->SetTickx();
   histo_dR1_dpt1_maxpt_c->SetTicky();
   histo_dR1_dpt1_maxpt->Draw("colz");
-  histo_dR1_dpt1_maxpt_c->Print ("DR1_Dpt1_maxpt.png", "png");
+  histo_dR1_dpt1_maxpt_c->Print ((OutputDirectory+"/DR1_Dpt1_maxpt.png").c_str(), "png");
   histo_dR1_dpt1_maxpt->Write();
 
   TCanvas *histo_dR2_dpt2_maxpt_c = new TCanvas("histo_dR2_dpt2_maxpt_c");
@@ -780,7 +794,7 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxpt_c->SetTickx();
   histo_dR2_dpt2_maxpt_c->SetTicky();
   histo_dR2_dpt2_maxpt->Draw("colz");
-  histo_dR2_dpt2_maxpt_c->Print ("DR2_Dpt2_maxpt.png", "png");
+  histo_dR2_dpt2_maxpt_c->Print ((OutputDirectory+"/DR2_Dpt2_maxpt.png").c_str(), "png");
   histo_dR2_dpt2_maxpt->Write();
 
   //create canvas and draw the plots  --> maxdeta
@@ -790,7 +804,7 @@ int main (int argc, char** argv) {
   histo_dR1_maxDeta_c->SetTickx();
   histo_dR1_maxDeta_c->SetTicky();
   histo_dR1_maxDeta->Draw();
-  histo_dR1_maxDeta_c->Print ("DeltaR1_maxDeta.png", "png");
+  histo_dR1_maxDeta_c->Print ((OutputDirectory+"/DeltaR1_maxDeta.png").c_str(), "png");
   histo_dR1_maxDeta->Write();
 
   TCanvas *histo_dR2_maxDeta_c = new TCanvas("histo_dR2_maxDeta_c");
@@ -798,7 +812,7 @@ int main (int argc, char** argv) {
   histo_dR2_maxDeta_c->SetTickx();
   histo_dR2_maxDeta_c->SetTicky();
   histo_dR2_maxDeta->Draw();
-  histo_dR2_maxDeta_c->Print ("DeltaR2_maxDeta.png", "png");
+  histo_dR2_maxDeta_c->Print ((OutputDirectory+"/DeltaR2_maxDeta.png").c_str(), "png");
   histo_dR2_maxDeta->Write();
 
   TCanvas *histo_deta1_maxDeta_c = new TCanvas("histo_deta1_maxDeta_c");
@@ -806,7 +820,7 @@ int main (int argc, char** argv) {
   histo_deta1_maxDeta_c->SetTickx();
   histo_deta1_maxDeta_c->SetTicky();
   histo_deta1_maxDeta->Draw();
-  histo_deta1_maxDeta_c->Print ("Deta1_maxDeta.png", "png");
+  histo_deta1_maxDeta_c->Print ((OutputDirectory+"/Deta1_maxDeta.png").c_str(), "png");
   histo_deta1_maxDeta->Write();
 
   TCanvas *histo_deta2_maxDeta_c = new TCanvas("histo_deta2_maxDeta_c");
@@ -814,7 +828,7 @@ int main (int argc, char** argv) {
   histo_deta2_maxDeta_c->SetTickx();
   histo_deta2_maxDeta_c->SetTicky();
   histo_deta2_maxDeta->Draw();
-  histo_deta2_maxDeta_c->Print ("Deta2_maxDeta.png", "png");
+  histo_deta2_maxDeta_c->Print ((OutputDirectory+"/Deta2_maxDeta.png").c_str(), "png");
   histo_deta2_maxDeta->Write();
 
   TCanvas *histo_dphi1_maxDeta_c = new TCanvas("histo_dphi1_maxDeta_c");
@@ -822,7 +836,7 @@ int main (int argc, char** argv) {
   histo_dphi1_maxDeta_c->SetTickx();
   histo_dphi1_maxDeta_c->SetTicky();
   histo_dphi1_maxDeta->Draw();
-  histo_dphi1_maxDeta_c->Print ("Dphi1_maxDeta.png", "png");
+  histo_dphi1_maxDeta_c->Print ((OutputDirectory+"/Dphi1_maxDeta.png").c_str(), "png");
   histo_dphi1_maxDeta->Write();
 
   TCanvas *histo_dphi2_maxDeta_c = new TCanvas("histo_dphi2_maxDeta_c");
@@ -830,7 +844,7 @@ int main (int argc, char** argv) {
   histo_dphi2_maxDeta_c->SetTickx();
   histo_dphi2_maxDeta_c->SetTicky();
   histo_dphi2_maxDeta->Draw();
-  histo_dphi2_maxDeta_c->Print ("Dphi2_maxDeta.png", "png");
+  histo_dphi2_maxDeta_c->Print ((OutputDirectory+"/Dphi2_maxDeta.png").c_str(), "png");
   histo_dphi2_maxDeta->Write();
 
   TCanvas *histo_dpt1_maxDeta_c = new TCanvas("histo_dpt1_maxDeta_c");
@@ -838,7 +852,7 @@ int main (int argc, char** argv) {
   histo_dpt1_maxDeta_c->SetTickx();
   histo_dpt1_maxDeta_c->SetTicky();
   histo_dpt1_maxDeta->Draw();
-  histo_dpt1_maxDeta_c->Print ("Dpt1_maxDeta.png", "png");
+  histo_dpt1_maxDeta_c->Print ((OutputDirectory+"/Dpt1_maxDeta.png").c_str(), "png");
   histo_dpt1_maxDeta->Write();
 
 
@@ -847,7 +861,7 @@ int main (int argc, char** argv) {
   histo_dpt2_maxDeta_c->SetTickx();
   histo_dpt2_maxDeta_c->SetTicky();
   histo_dpt2_maxDeta->Draw();
-  histo_dpt2_maxDeta_c->Print ("Dpt2_maxDeta.png", "png");
+  histo_dpt2_maxDeta_c->Print ((OutputDirectory+"/Dpt2_maxDeta.png").c_str(), "png");
   histo_dpt2_maxDeta->Write();
 
   TCanvas *histo_dR1_dpt1_maxDeta_c = new TCanvas("histo_dR1_dpt1_maxDeta_c");
@@ -855,7 +869,7 @@ int main (int argc, char** argv) {
   histo_dR1_dpt1_maxDeta_c->SetTickx();
   histo_dR1_dpt1_maxDeta_c->SetTicky();
   histo_dR1_dpt1_maxDeta->Draw("colz");
-  histo_dR1_dpt1_maxDeta_c->Print ("DR1_Dpt1_maxDeta.png", "png");
+  histo_dR1_dpt1_maxDeta_c->Print ((OutputDirectory+"/DR1_Dpt1_maxDeta.png").c_str(), "png");
   histo_dR1_dpt1_maxDeta->Write();
 
   TCanvas *histo_dR2_dpt2_maxDeta_c = new TCanvas("histo_dR2_dpt2_maxDeta_c");
@@ -863,7 +877,7 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxDeta_c->SetTickx();
   histo_dR2_dpt2_maxDeta_c->SetTicky();
   histo_dR2_dpt2_maxDeta->Draw("colz");
-  histo_dR2_dpt2_maxDeta_c->Print ("DR2_Dpt2_maxDeta.png", "png");
+  histo_dR2_dpt2_maxDeta_c->Print ((OutputDirectory+"/DR2_Dpt2_maxDeta.png").c_str(), "png");
   histo_dR2_dpt2_maxDeta->Write();
 
   //create canvas and draw the plots  --> maxMjj
@@ -873,7 +887,7 @@ int main (int argc, char** argv) {
   histo_dR1_maxMjj_c->SetTickx();
   histo_dR1_maxMjj_c->SetTicky();
   histo_dR1_maxMjj->Draw();
-  histo_dR1_maxMjj_c->Print ("DeltaR1_maxMjj.png", "png");
+  histo_dR1_maxMjj_c->Print ((OutputDirectory+"/DeltaR1_maxMjj.png").c_str(), "png");
   histo_dR1_maxMjj->Write();
 
   TCanvas *histo_dR2_maxMjj_c = new TCanvas("histo_dR2_maxMjj_c");
@@ -881,7 +895,7 @@ int main (int argc, char** argv) {
   histo_dR2_maxMjj_c->SetTickx();
   histo_dR2_maxMjj_c->SetTicky();
   histo_dR2_maxMjj->Draw();
-  histo_dR2_maxMjj_c->Print ("DeltaR2_maxMjj.png", "png");
+  histo_dR2_maxMjj_c->Print ((OutputDirectory+"/DeltaR2_maxMjj.png").c_str(), "png");
   histo_dR2_maxMjj->Write();
 
   TCanvas *histo_deta1_maxMjj_c = new TCanvas("histo_deta1_maxMjj_c");
@@ -889,7 +903,7 @@ int main (int argc, char** argv) {
   histo_deta1_maxMjj_c->SetTickx();
   histo_deta1_maxMjj_c->SetTicky();
   histo_deta1_maxMjj->Draw();
-  histo_deta1_maxMjj_c->Print ("Deta1_maxMjj.png", "png");
+  histo_deta1_maxMjj_c->Print ((OutputDirectory+"/Deta1_maxMjj.png").c_str(), "png");
   histo_deta1_maxMjj->Write();
 
   TCanvas *histo_deta2_maxMjj_c = new TCanvas("histo_deta2_maxMjj_c");
@@ -897,7 +911,7 @@ int main (int argc, char** argv) {
   histo_deta2_maxMjj_c->SetTickx();
   histo_deta2_maxMjj_c->SetTicky();
   histo_deta2_maxMjj->Draw();
-  histo_deta2_maxMjj_c->Print ("Deta2_maxMjj.png", "png");
+  histo_deta2_maxMjj_c->Print ((OutputDirectory+"/Deta2_maxMjj.png").c_str(), "png");
   histo_deta2_maxMjj->Write();
 
   TCanvas *histo_dphi1_maxMjj_c = new TCanvas("histo_dphi1_maxMjj_c");
@@ -905,7 +919,7 @@ int main (int argc, char** argv) {
   histo_dphi1_maxMjj_c->SetTickx();
   histo_dphi1_maxMjj_c->SetTicky();
   histo_dphi1_maxMjj->Draw();
-  histo_dphi1_maxMjj_c->Print ("Dphi1_maxMjj.png", "png");
+  histo_dphi1_maxMjj_c->Print ((OutputDirectory+"/Dphi1_maxMjj.png").c_str(), "png");
   histo_dphi1_maxMjj->Write();
 
   TCanvas *histo_dphi2_maxMjj_c = new TCanvas("histo_dphi2_maxMjj_c");
@@ -913,7 +927,7 @@ int main (int argc, char** argv) {
   histo_dphi2_maxMjj_c->SetTickx();
   histo_dphi2_maxMjj_c->SetTicky();
   histo_dphi2_maxMjj->Draw();
-  histo_dphi2_maxMjj_c->Print ("Dphi2_maxMjj.png", "png");
+  histo_dphi2_maxMjj_c->Print ((OutputDirectory+"/Dphi2_maxMjj.png").c_str(), "png");
   histo_dphi2_maxMjj->Write();
 
   TCanvas *histo_dpt1_maxMjj_c = new TCanvas("histo_dpt1_maxMjj_c");
@@ -921,7 +935,7 @@ int main (int argc, char** argv) {
   histo_dpt1_maxMjj_c->SetTickx();
   histo_dpt1_maxMjj_c->SetTicky();
   histo_dpt1_maxMjj->Draw();
-  histo_dpt1_maxMjj_c->Print ("Dpt1_maxMjj.png", "png");
+  histo_dpt1_maxMjj_c->Print ((OutputDirectory+"/Dpt1_maxMjj.png").c_str(), "png");
   histo_dpt1_maxMjj->Write();
 
 
@@ -930,7 +944,7 @@ int main (int argc, char** argv) {
   histo_dpt2_maxMjj_c->SetTickx();
   histo_dpt2_maxMjj_c->SetTicky();
   histo_dpt2_maxMjj->Draw();
-  histo_dpt2_maxMjj_c->Print ("Dpt2_maxMjj.png", "png");
+  histo_dpt2_maxMjj_c->Print ((OutputDirectory+"/Dpt2_maxMjj.png").c_str(), "png");
   histo_dpt2_maxMjj->Write();
 
   TCanvas *histo_dR1_dpt1_maxMjj_c = new TCanvas("histo_dR1_dpt1_maxMjj_c");
@@ -938,7 +952,7 @@ int main (int argc, char** argv) {
   histo_dR1_dpt1_maxMjj_c->SetTickx();
   histo_dR1_dpt1_maxMjj_c->SetTicky();
   histo_dR1_dpt1_maxMjj->Draw("colz");
-  histo_dR1_dpt1_maxMjj_c->Print ("DR1_Dpt1_maxMjj.png", "png");
+  histo_dR1_dpt1_maxMjj_c->Print ((OutputDirectory+"/DR1_Dpt1_maxMjj.png").c_str(), "png");
   histo_dR1_dpt1_maxMjj->Write();
 
   TCanvas *histo_dR2_dpt2_maxMjj_c = new TCanvas("histo_dR2_dpt2_maxMjj_c");
@@ -946,35 +960,35 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxMjj_c->SetTickx();
   histo_dR2_dpt2_maxMjj_c->SetTicky();
   histo_dR2_dpt2_maxMjj->Draw("colz");
-  histo_dR2_dpt2_maxMjj_c->Print ("DR2_Dpt2_maxMjj.png", "png");
+  histo_dR2_dpt2_maxMjj_c->Print ((OutputDirectory+"/DR2_Dpt2_maxMjj.png").c_str(), "png");
   histo_dR2_dpt2_maxMjj->Write();
 
   OutputFile->Close();
  
   //print information
-
+  std::cout<<"                                       "<<std::endl;
   std::cout<<"Event Fraction: (Total)     (thresholds dR=0.3,  ptratio=0.3)"<<std::endl;
 
   std::cout<<"######################################################################"<<std::endl;
 
-  std::cout<<"Pt max: both tag jets in dR  = "<<1.*cont_maxpt2/(1.*nEntry)<<std::endl;
-  std::cout<<"Pt max: only 1 jet in dR     = "<<1.*cont_maxpt1/(1.*nEntry)<<std::endl;
-  std::cout<<"Pt max: no matching in dR    = "<<1.*cont_maxpt0/(1.*nEntry)<<std::endl;
-  std::cout<<"Pt max: Both in dR and dPt   = "<<1.*cont_dRandpt_maxpt/(1.*nEntry)<<std::endl;
+  std::cout<<"Pt max: both tag jets in dR  = "<<1.*cont_maxpt2/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Pt max: only 1 jet in dR     = "<<1.*cont_maxpt1/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Pt max: no matching in dR    = "<<1.*cont_maxpt0/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Pt max: Both in dR and dPt   = "<<1.*cont_dRandpt_maxpt/(1.*nPassingEvents)<<std::endl;
 
   std::cout<<"#######################################################################"<<std::endl;
  
-  std::cout<<"Deta max: both tag jets in dR =  "<<1.*cont_maxDeta2/(1.*nEntry)<<std::endl;
-  std::cout<<"Deta max: only one jets in dR =  "<<1.*cont_maxDeta1/(1.*nEntry)<<std::endl;
-  std::cout<<"Deta max: no matching         =  "<<1.*cont_maxDeta0/(1.*nEntry)<<std::endl;
-  std::cout<<"Deta max: Both in dR and dPt  =  "<<1.*cont_dRandpt_maxDeta/(1.*nEntry)<<std::endl;
+  std::cout<<"Deta max: both tag jets in dR =  "<<1.*cont_maxDeta2/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Deta max: only one jets in dR =  "<<1.*cont_maxDeta1/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Deta max: no matching         =  "<<1.*cont_maxDeta0/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Deta max: Both in dR and dPt  =  "<<1.*cont_dRandpt_maxDeta/(1.*nPassingEvents)<<std::endl;
 
   std::cout<<"#######################################################################"<<std::endl;
 
-  std::cout<<"Mjj max: both tag jets in dR =  "<<1.*cont_maxMjj2/(1.*nEntry)<<std::endl;
-  std::cout<<"Mjj max: only one jets in dR =  "<<1.*cont_maxMjj1/(1.*nEntry)<<std::endl;
-  std::cout<<"Mjj max: no matching         =  "<<1.*cont_maxMjj0/(1.*nEntry)<<std::endl;
-  std::cout<<"Mjj max: Both in dR and dPt  =  "<<1.*cont_dRandpt_maxMjj/(1.*nEntry)<<std::endl;
+  std::cout<<"Mjj max: both tag jets in dR =  "<<1.*cont_maxMjj2/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Mjj max: only one jets in dR =  "<<1.*cont_maxMjj1/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Mjj max: no matching         =  "<<1.*cont_maxMjj0/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Mjj max: Both in dR and dPt  =  "<<1.*cont_dRandpt_maxMjj/(1.*nPassingEvents)<<std::endl;
 
 
   std::cout<<"#######################################################################"<<std::endl;
@@ -1066,9 +1080,9 @@ int main (int argc, char** argv) {
 
   std::cout<<"#######################################################################"<<std::endl;
 
-  std::cout<<"Pt max: "<<1.*cont_medium_maxpt/(1.*nEntry)<<std::endl;
-  std::cout<<"Deta max: "<<1.*cont_medium_maxDeta/(1.*nEntry)<<std::endl;
-  std::cout<<"Mjj max: "<<1.*cont_medium_maxMjj/(1.*nEntry)<<std::endl;
+  std::cout<<"Pt max: "<<1.*cont_medium_maxpt/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Deta max: "<<1.*cont_medium_maxDeta/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Mjj max: "<<1.*cont_medium_maxMjj/(1.*nPassingEvents)<<std::endl;
 
   std::cout<<"#######################################################################"<<std::endl;
 
@@ -1076,10 +1090,14 @@ int main (int argc, char** argv) {
 
   std::cout<<"#######################################################################"<<std::endl;
 
-  std::cout<<"Pt max: "<<1.*cont_tight_maxpt/(1.*nEntry)<<std::endl;
-  std::cout<<"Deta max: "<<1.*cont_tight_maxDeta/(1.*nEntry)<<std::endl;
-  std::cout<<"Mjj max: "<<cont_tight_maxMjj/(1.*nEntry)<<std::endl;
+  std::cout<<"Pt max: "<<1.*cont_tight_maxpt/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Deta max: "<<1.*cont_tight_maxDeta/(1.*nPassingEvents)<<std::endl;
+  std::cout<<"Mjj max: "<<cont_tight_maxMjj/(1.*nPassingEvents)<<std::endl;
 
+
+  std::cout<<"                                       "<<std::endl;
+  std::cout<<"Finish : exit from Programme          "<<std::endl;
+  std::cout<<"                                       "<<std::endl;
   
   return(0);
 
