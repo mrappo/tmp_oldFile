@@ -64,18 +64,38 @@ print "\n";
 $sampleJobListFile = "./lancia.sh";
 open(SAMPLEJOBLISTFILE, ">", $sampleJobListFile);
 
+$command = "if [ -e ".$BASEDir."/".$JOBDir." ] ; then rm -r ".$BASEDir."/".$JOBDir." ; fi";
 
-$command = "if [ -e ".$BASEDir."/".$JOBDir." ] ; then rm -r ".$BASEDir."/".$JOBDir." ; fi"; 
 system ($command);
+
 
 $LISTOFSample = $BASEDir."/LISTOFSample.txt";
 
-if($LeptonType eq "Muon")    { $command = "ls ".$InputDirectory." | grep mu | grep root > ".$LISTOFSample ; 
+$command = "if [ -f ".$LISTOFSample." ] ; then rm ".$LISTOFSample." ; fi";
+
+system($command);
+
+
+
+if($LeptonType eq "Muon")    { $command = "ls ".$InputDirectory." | grep mu | grep root >> ".$LISTOFSample ;
+
                                print "LISTOFSample ".$command."\n";
+
                                system ($command);}
-if($LeptonType eq "Electron"){ $command = "ls ".$InputDirectory." | grep el | grep root > ".$LISTOFSample ; 
+
+if($LeptonType eq "Electron"){ $command = "ls ".$InputDirectory." | grep el | grep root >> ".$LISTOFSample ;
+
                                print "LISTOFSample ".$command."\n";
-                               system ($command);}
+
+                               system ($command);
+
+                               $command = "ls ".$InputDirectory." | grep Wenu | grep -v QCD |  grep root >> ".$LISTOFSample ;
+
+                               print "LISTOFSample ".$command."\n";
+
+                               system ($command);
+
+			   }
 
 
 $jobIt =0 ;
