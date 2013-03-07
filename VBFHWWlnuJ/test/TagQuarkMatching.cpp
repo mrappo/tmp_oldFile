@@ -40,7 +40,7 @@ int main (int argc, char** argv) {
   parseConfigFile(argv[1]);
 
   std::string InputDirectory     = gConfigParser -> readStringOption("Input::InputDirectory");
-  std::string InputFileName      = gConfigParser -> readStringOption("Input::inputFileName");
+  std::string InputFileName      = gConfigParser -> readStringOption("Input::InputFileName");
 
   std::cout<<"         "<<std::endl;
   std::cout<<" InputDirectory :    "<<InputDirectory<<std::endl;
