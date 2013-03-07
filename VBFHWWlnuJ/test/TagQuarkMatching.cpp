@@ -49,7 +49,16 @@ int main (int argc, char** argv) {
   std::cout<<" InputFileName :    "<<InputFileName<<std::endl;
   std::cout<<"         "<<std::endl;
 
-  
+  std::string OutputDirectory     = gConfigParser -> readStringOption("Output::OutputDirectory");
+  std::string OutputFileName      = gConfigParser -> readStringOption("Output::OutputFileName");
+
+  std::cout<<" OutputDirectory :    "<<OutputDirectory<<std::endl;
+  std::cout<<"         "<<std::endl;
+
+  std::cout<<" OutputFileName :    "<<OutputFileName<<std::endl;
+  std::cout<<"         "<<std::endl;
+
+
   std::string TreeName ;
   try{ TreeName = gConfigParser -> readStringOption("Input::TreeName"); }
   catch( char const* exceptionString){ TreeName = "WJet" ;
@@ -144,8 +153,6 @@ int main (int argc, char** argv) {
   std::cout<<"         "<<std::endl;
 
 
-
-
   // Open Input File and Get Input Tree
 
   TFile * inputFile  = new TFile((InputDirectory+"/"+InputFileName).c_str(),"READ");
@@ -155,6 +162,11 @@ int main (int argc, char** argv) {
   TTree * fTree      = (TTree*) inputFile -> Get(TreeName.c_str());
 
   if(fTree==0){ std::cerr<<" No Input Tree found --> exit "<<std::endl;  return -1; }
+
+  // Create Output File
+
+  TFile * OutputFile  = new TFile((OutputDirectory+"/"+OutputFileName).c_str(),"RECREATE");
+  OutputFile->cd();
 
 
   // Histogramm in the output
@@ -403,12 +415,14 @@ int main (int argc, char** argv) {
   std::vector<int> cont_nj_match_dR_maxpt (10,0);
   std::vector<int> cont_nj_match_dR_maxDeta (10,0);
   std::vector<int> cont_nj_match_dR_maxMjj (10,0) ;
-/*
+
   int cont_tight_maxpt=0, cont_tight_maxDeta=0, cont_tight_maxMjj=0;
   int cont_tight_match_maxpt=0, cont_tight_match_maxDeta=0, cont_tight_match_maxMjj=0;
+  int cont_tight_match_dR_maxpt=0, cont_tight_match_dR_maxDeta=0, cont_tight_match_dR_maxMjj=0;
   int cont_medium_maxpt=0, cont_medium_maxDeta=0, cont_medium_maxMjj=0;
   int cont_medium_match_maxpt=0, cont_medium_match_maxDeta=0, cont_medium_match_maxMjj=0;
-  */
+  int cont_medium_match_dR_maxpt=0, cont_medium_match_dR_maxDeta=0, cont_medium_match_dR_maxMjj=0;
+  
 
   int nPassingEvents =0;
   
@@ -616,6 +630,10 @@ int main (int argc, char** argv) {
       flag_dRandpt_maxMjj++;
     }
 
+    if ( (flag_dRandpt_maxpt == 1 ) && (flag_dRandpt_maxDeta==1) )  cont_maxpt_maxDeta++;
+    if ( (flag_dRandpt_maxpt ==1  ) && (flag_dRandpt_maxMjj==1 ) )  cont_maxpt_maxMjj++;
+    if ( (flag_dRandpt_maxMjj ==1 ) && (flag_dRandpt_maxDeta==1) )  cont_maxMjj_maxDeta++;
+   
     int numjets = numPFCorJets + numPFCorVBFTagJets;
     
     cont_nj.at(numjets)++;
@@ -633,258 +651,439 @@ int main (int argc, char** argv) {
     if ( (dR1_maxDeta <= dR_treshold) && (dR2_maxDeta <= dR_treshold) )  cont_nj_match_dR_maxDeta.at(numjets)++;
     if ( (dR1_maxMjj  <= dR_treshold) && (dR2_maxMjj  <= dR_treshold) )  cont_nj_match_dR_maxMjj.at(numjets)++;
 
-
-
-    /*
-    int arejetsflipped_maxpt=0, arejetsflipped_maxDeta=0, arejetsflipped_maxMjj=0;
-
-
-
-
-
-    float deta1_maxpt, deta2_maxpt, dpt1_maxpt, dpt2_maxpt;
-
-    //flip dR if they are exchanged
-
- 
-    //if conditions are respected, then increases the counters
-
-    //only 1 jets has matching in dR
-
-
-    //matching in dR and ptratio for events with 3,4,5,6,7.. jets
-
     //matching with pileUp conditions
-    if ( (vbf_maxpt_j1_isPileUpTight==true) && (vbf_maxpt_j2_isPileUpTight==true)) {
+
+    if ( (vbf_maxpt_j1_isPileUpTight==true) && (vbf_maxpt_j2_isPileUpTight ==true) ) {
       cont_tight_maxpt++;
-      if ((dR1_maxpt<=dR_treshold)&&(dR2_maxpt<=dR_treshold)&&(ptratio1_maxpt<=pt_treshold)&&(ptratio2_maxpt<=pt_treshold))   cont_tight_match_maxpt++;
-  }
+
+      if ((dR1_maxpt <= dR_treshold) && (dR2_maxpt <= dR_treshold) )   cont_tight_match_dR_maxpt++;
+      if ((dR1_maxpt <= dR_treshold) && (dR2_maxpt <= dR_treshold) && ( fabs(ptratio1_maxpt-1.) <= pt_treshold) && ( fabs(ptratio2_maxpt-1.) <= pt_treshold))   cont_tight_match_maxpt++;
+    }
 
     if ( (vbf_maxDeta_j1_isPileUpTight==true) && (vbf_maxDeta_j2_isPileUpTight==true)) {
+
       cont_tight_maxDeta++;
-      if ((dR1_maxDeta<=dR_treshold)&&(dR2_maxDeta<=dR_treshold)&&(ptratio1_maxDeta<=pt_treshold)&&(ptratio2_maxDeta<=pt_treshold))   cont_tight_match_maxDeta++;
-  }
+
+      if ((dR1_maxDeta <= dR_treshold) && (dR2_maxDeta <= dR_treshold) )   cont_tight_match_dR_maxDeta++;
+      if ((dR1_maxDeta <= dR_treshold) && (dR2_maxDeta <= dR_treshold) && (fabs(ptratio1_maxDeta-1.) <= pt_treshold) && (fabs(ptratio2_maxDeta-1. )<= pt_treshold)) cont_tight_match_maxDeta++;
+    }
 
     if ( (vbf_maxMjj_j1_isPileUpTight==true) && (vbf_maxMjj_j2_isPileUpTight==true)) {
       cont_tight_maxMjj++;
-      if ((dR1_maxMjj<=dR_treshold)&&(dR2_maxMjj<=dR_treshold)&&(ptratio1_maxMjj<=pt_treshold)&&(ptratio2_maxMjj<=pt_treshold))   cont_tight_match_maxMjj++;
-  }
+
+      if ((dR1_maxMjj <= dR_treshold) && (dR2_maxMjj <= dR_treshold) )   cont_tight_match_dR_maxMjj++;
+      if ((dR1_maxMjj <= dR_treshold) && (dR2_maxMjj <= dR_treshold) && (fabs(ptratio1_maxMjj-1.) <= pt_treshold) && (fabs(ptratio2_maxMjj-1.) <= pt_treshold)) cont_tight_match_maxMjj++;
+    }
 
     if ( (vbf_maxpt_j1_isPileUpMedium==true) && (vbf_maxpt_j2_isPileUpMedium==true)) {
       cont_medium_maxpt++;
-      if ((dR1_maxpt<=dR_treshold)&&(dR2_maxpt<=dR_treshold)&&(ptratio1_maxpt<=pt_treshold)&&(ptratio2_maxpt<=pt_treshold))   cont_medium_match_maxpt++;
-  }
+
+      if ( (dR1_maxpt <= dR_treshold) && (dR2_maxpt <= dR_treshold))   cont_medium_match_dR_maxpt++;
+      if ( (dR1_maxpt <= dR_treshold) && (dR2_maxpt <= dR_treshold) && (fabs(ptratio1_maxpt-1.) <= pt_treshold) && (fabs(ptratio2_maxpt-1.) <= pt_treshold)) cont_medium_match_maxpt++;
+    }
 
     if ( (vbf_maxDeta_j1_isPileUpMedium==true) && (vbf_maxDeta_j2_isPileUpMedium==true)) {
       cont_medium_maxDeta++;
-      if ((dR1_maxDeta<=dR_treshold)&&(dR2_maxDeta<=dR_treshold)&&(ptratio1_maxDeta<=pt_treshold)&&(ptratio2_maxDeta<=pt_treshold))   cont_medium_match_maxDeta++;
-  }
+
+      if ((dR1_maxDeta <= dR_treshold) && (dR2_maxDeta <= dR_treshold))   cont_medium_match_dR_maxDeta++;
+      if ((dR1_maxDeta <= dR_treshold) && (dR2_maxDeta <= dR_treshold) && (fabs(ptratio1_maxDeta-1.) <= pt_treshold) && (fabs(ptratio2_maxDeta-1.) <= pt_treshold)) cont_medium_match_maxDeta++;
+    }
 
     if ( (vbf_maxMjj_j1_isPileUpMedium==true) && (vbf_maxMjj_j2_isPileUpMedium==true)) {
       cont_medium_maxMjj++;
-      if ((dR1_maxMjj<=dR_treshold)&&(dR2_maxMjj<=dR_treshold)&&(ptratio1_maxMjj<=pt_treshold)&&(ptratio2_maxMjj<=pt_treshold))   cont_medium_match_maxMjj++;
-  }
 
-    if ( (flag_dRandpt_maxpt==1)&&(flag_dRandpt_maxDeta==1) )  cont_maxpt_maxDeta++;
-    if ( (flag_dRandpt_maxpt==1)&&(flag_dRandpt_maxMjj==1) )   cont_maxpt_maxMjj++;
-    if ( (flag_dRandpt_maxMjj==1)&&(flag_dRandpt_maxDeta==1) ) cont_maxMjj_maxDeta++;
-    */    
+      if ((dR1_maxMjj <= dR_treshold) && (dR2_maxMjj <= dR_treshold))   cont_medium_match_dR_maxMjj++;
+      if ((dR1_maxMjj <= dR_treshold) && (dR2_maxMjj <= dR_treshold) && (fabs(ptratio1_maxMjj-1.) <= pt_treshold) && (fabs(ptratio2_maxMjj-1.) <= pt_treshold)) cont_medium_match_maxMjj++;
+    }
+
   }
-  
+     
   std::cout<<" Input Events : "<<nEntry<<" Passed Jet Met Selection "<<nPassingEvents<<std::endl;  
-  //create canvas and draw
-  /*
-  TCanvas *c1 = new TCanvas("c1","Graph Draw Options",200,10,600,400);
-  c1->cd();
-  c1->SetTickx();
-  c1->SetTicky();
-  histo_dR1_maxpt->GetXaxis()->SetTitle("#DeltaR_(j_{1},q_{1})");
+
+  //create canvas and draw the plots  --> maxpt
+
+  TCanvas *histo_dR1_maxpt_c = new TCanvas("histo_dR1_maxpt_c");
+  histo_dR1_maxpt_c->cd();
+  histo_dR1_maxpt_c->SetTickx();
+  histo_dR1_maxpt_c->SetTicky();
   histo_dR1_maxpt->Draw();
-  c1->Print ("DeltaR1_maxpt.png", "png");
-  delete c1;
+  histo_dR1_maxpt_c->Print ("DeltaR1_maxpt.png", "png");
+  histo_dR1_maxpt->Write();
 
-  TCanvas *c2 = new TCanvas("c2","Graph Draw Options",200,10,600,400);
-  c2->cd();
-  c2->SetTickx();
-  c2->SetTicky();
-  histo_dR2_maxpt->GetXaxis()->SetTitle("#DeltaR_(j_{2},q_{2})");
+  TCanvas *histo_dR2_maxpt_c = new TCanvas("histo_dR2_maxpt_c");
+  histo_dR2_maxpt_c->cd();
+  histo_dR2_maxpt_c->SetTickx();
+  histo_dR2_maxpt_c->SetTicky();
   histo_dR2_maxpt->Draw();
-  c2->Print ("DeltaR2_maxpt.png", "png");
-  delete c2;
+  histo_dR2_maxpt_c->Print ("DeltaR2_maxpt.png", "png");
+  histo_dR2_maxpt->Write();
 
-  TCanvas *c3 = new TCanvas("c3","Graph Draw Options",200,10,600,400);
-  c3->cd();
-  c3->SetTickx();
-  c3->SetTicky();
-  histo_deta1_maxpt->GetXaxis()->SetTitle("#Delta#eta_(j_{1},q_{1})");
+  TCanvas *histo_deta1_maxpt_c = new TCanvas("histo_deta1_maxpt_c");
+  histo_deta1_maxpt_c->cd();
+  histo_deta1_maxpt_c->SetTickx();
+  histo_deta1_maxpt_c->SetTicky();
   histo_deta1_maxpt->Draw();
-  c3->Print ("DeltaEta1_maxpt.png", "png");
-  delete c3;
+  histo_deta1_maxpt_c->Print ("Deta1_maxpt.png", "png");
+  histo_deta1_maxpt->Write();
 
-  TCanvas *c4 = new TCanvas("c4","Graph Draw Options",200,10,600,400);
-  c4->cd();
-  c4->SetTickx();
-  c4->SetTicky();
-  histo_deta2_maxpt->GetXaxis()->SetTitle("#Delta#eta_(j_{2},q_{2})");
+  TCanvas *histo_deta2_maxpt_c = new TCanvas("histo_deta2_maxpt_c");
+  histo_deta2_maxpt_c->cd();
+  histo_deta2_maxpt_c->SetTickx();
+  histo_deta2_maxpt_c->SetTicky();
   histo_deta2_maxpt->Draw();
-  c4->Print ("DeltaEta2_maxpt.png", "png");
-  delete c4;
+  histo_deta2_maxpt_c->Print ("Deta2_maxpt.png", "png");
+  histo_deta2_maxpt->Write();
 
-  TCanvas *c5 = new TCanvas("c5","Graph Draw Options",200,10,600,400);
-  c5->cd();
-  c5->SetTickx();
-  c5->SetTicky();
-  histo_dpt1_maxpt->GetXaxis()->SetTitle("#Deltap_{T}_(j_{1},q_{1})");
+  TCanvas *histo_dphi1_maxpt_c = new TCanvas("histo_dphi1_maxpt_c");
+  histo_dphi1_maxpt_c->cd();
+  histo_dphi1_maxpt_c->SetTickx();
+  histo_dphi1_maxpt_c->SetTicky();
+  histo_dphi1_maxpt->Draw();
+  histo_dphi1_maxpt_c->Print ("Dphi1_maxpt.png", "png");
+  histo_dphi1_maxpt->Write();
+
+  TCanvas *histo_dphi2_maxpt_c = new TCanvas("histo_dphi2_maxpt_c");
+  histo_dphi2_maxpt_c->cd();
+  histo_dphi2_maxpt_c->SetTickx();
+  histo_dphi2_maxpt_c->SetTicky();
+  histo_dphi2_maxpt->Draw();
+  histo_dphi2_maxpt_c->Print ("Dphi2_maxpt.png", "png");
+  histo_dphi2_maxpt->Write();
+
+  TCanvas *histo_dpt1_maxpt_c = new TCanvas("histo_dpt1_maxpt_c");
+  histo_dpt1_maxpt_c->cd();
+  histo_dpt1_maxpt_c->SetTickx();
+  histo_dpt1_maxpt_c->SetTicky();
   histo_dpt1_maxpt->Draw();
-  c5->Print ("DeltaPt1_maxpt.png", "png");
-  delete c5;
+  histo_dpt1_maxpt_c->Print ("Dpt1_maxpt.png", "png");
+  histo_dpt1_maxpt->Write();
 
-  TCanvas *c6 = new TCanvas("c6","Graph Draw Options",200,10,600,400);
-  c6->cd();
-  c6->SetTickx();
-  c6->SetTicky();
-  histo_dpt2_maxpt->GetXaxis()->SetTitle("#Deltap_T_(j_{2},q_{2})");
+
+  TCanvas *histo_dpt2_maxpt_c = new TCanvas("histo_dpt2_maxpt_c");
+  histo_dpt2_maxpt_c->cd();
+  histo_dpt2_maxpt_c->SetTickx();
+  histo_dpt2_maxpt_c->SetTicky();
   histo_dpt2_maxpt->Draw();
-  c6->Print ("DeltaPt2_maxpt.png", "png");
-  delete c6;
-  
+  histo_dpt2_maxpt_c->Print ("Dpt2_maxpt.png", "png");
+  histo_dpt2_maxpt->Write();
+
+  TCanvas *histo_dR1_dpt1_maxpt_c = new TCanvas("histo_dR1_dpt1_maxpt_c");
+  histo_dR1_dpt1_maxpt_c->cd();
+  histo_dR1_dpt1_maxpt_c->SetTickx();
+  histo_dR1_dpt1_maxpt_c->SetTicky();
+  histo_dR1_dpt1_maxpt->Draw("colz");
+  histo_dR1_dpt1_maxpt_c->Print ("DR1_Dpt1_maxpt.png", "png");
+  histo_dR1_dpt1_maxpt->Write();
+
+  TCanvas *histo_dR2_dpt2_maxpt_c = new TCanvas("histo_dR2_dpt2_maxpt_c");
+  histo_dR2_dpt2_maxpt_c->cd();
+  histo_dR2_dpt2_maxpt_c->SetTickx();
+  histo_dR2_dpt2_maxpt_c->SetTicky();
+  histo_dR2_dpt2_maxpt->Draw("colz");
+  histo_dR2_dpt2_maxpt_c->Print ("DR2_Dpt2_maxpt.png", "png");
+  histo_dR2_dpt2_maxpt->Write();
+
+  //create canvas and draw the plots  --> maxdeta
+
+  TCanvas *histo_dR1_maxDeta_c = new TCanvas("histo_dR1_maxDeta_c");
+  histo_dR1_maxDeta_c->cd();
+  histo_dR1_maxDeta_c->SetTickx();
+  histo_dR1_maxDeta_c->SetTicky();
+  histo_dR1_maxDeta->Draw();
+  histo_dR1_maxDeta_c->Print ("DeltaR1_maxDeta.png", "png");
+  histo_dR1_maxDeta->Write();
+
+  TCanvas *histo_dR2_maxDeta_c = new TCanvas("histo_dR2_maxDeta_c");
+  histo_dR2_maxDeta_c->cd();
+  histo_dR2_maxDeta_c->SetTickx();
+  histo_dR2_maxDeta_c->SetTicky();
+  histo_dR2_maxDeta->Draw();
+  histo_dR2_maxDeta_c->Print ("DeltaR2_maxDeta.png", "png");
+  histo_dR2_maxDeta->Write();
+
+  TCanvas *histo_deta1_maxDeta_c = new TCanvas("histo_deta1_maxDeta_c");
+  histo_deta1_maxDeta_c->cd();
+  histo_deta1_maxDeta_c->SetTickx();
+  histo_deta1_maxDeta_c->SetTicky();
+  histo_deta1_maxDeta->Draw();
+  histo_deta1_maxDeta_c->Print ("Deta1_maxDeta.png", "png");
+  histo_deta1_maxDeta->Write();
+
+  TCanvas *histo_deta2_maxDeta_c = new TCanvas("histo_deta2_maxDeta_c");
+  histo_deta2_maxDeta_c->cd();
+  histo_deta2_maxDeta_c->SetTickx();
+  histo_deta2_maxDeta_c->SetTicky();
+  histo_deta2_maxDeta->Draw();
+  histo_deta2_maxDeta_c->Print ("Deta2_maxDeta.png", "png");
+  histo_deta2_maxDeta->Write();
+
+  TCanvas *histo_dphi1_maxDeta_c = new TCanvas("histo_dphi1_maxDeta_c");
+  histo_dphi1_maxDeta_c->cd();
+  histo_dphi1_maxDeta_c->SetTickx();
+  histo_dphi1_maxDeta_c->SetTicky();
+  histo_dphi1_maxDeta->Draw();
+  histo_dphi1_maxDeta_c->Print ("Dphi1_maxDeta.png", "png");
+  histo_dphi1_maxDeta->Write();
+
+  TCanvas *histo_dphi2_maxDeta_c = new TCanvas("histo_dphi2_maxDeta_c");
+  histo_dphi2_maxDeta_c->cd();
+  histo_dphi2_maxDeta_c->SetTickx();
+  histo_dphi2_maxDeta_c->SetTicky();
+  histo_dphi2_maxDeta->Draw();
+  histo_dphi2_maxDeta_c->Print ("Dphi2_maxDeta.png", "png");
+  histo_dphi2_maxDeta->Write();
+
+  TCanvas *histo_dpt1_maxDeta_c = new TCanvas("histo_dpt1_maxDeta_c");
+  histo_dpt1_maxDeta_c->cd();
+  histo_dpt1_maxDeta_c->SetTickx();
+  histo_dpt1_maxDeta_c->SetTicky();
+  histo_dpt1_maxDeta->Draw();
+  histo_dpt1_maxDeta_c->Print ("Dpt1_maxDeta.png", "png");
+  histo_dpt1_maxDeta->Write();
+
+
+  TCanvas *histo_dpt2_maxDeta_c = new TCanvas("histo_dpt2_maxDeta_c");
+  histo_dpt2_maxDeta_c->cd();
+  histo_dpt2_maxDeta_c->SetTickx();
+  histo_dpt2_maxDeta_c->SetTicky();
+  histo_dpt2_maxDeta->Draw();
+  histo_dpt2_maxDeta_c->Print ("Dpt2_maxDeta.png", "png");
+  histo_dpt2_maxDeta->Write();
+
+  TCanvas *histo_dR1_dpt1_maxDeta_c = new TCanvas("histo_dR1_dpt1_maxDeta_c");
+  histo_dR1_dpt1_maxDeta_c->cd();
+  histo_dR1_dpt1_maxDeta_c->SetTickx();
+  histo_dR1_dpt1_maxDeta_c->SetTicky();
+  histo_dR1_dpt1_maxDeta->Draw("colz");
+  histo_dR1_dpt1_maxDeta_c->Print ("DR1_Dpt1_maxDeta.png", "png");
+  histo_dR1_dpt1_maxDeta->Write();
+
+  TCanvas *histo_dR2_dpt2_maxDeta_c = new TCanvas("histo_dR2_dpt2_maxDeta_c");
+  histo_dR2_dpt2_maxDeta_c->cd();
+  histo_dR2_dpt2_maxDeta_c->SetTickx();
+  histo_dR2_dpt2_maxDeta_c->SetTicky();
+  histo_dR2_dpt2_maxDeta->Draw("colz");
+  histo_dR2_dpt2_maxDeta_c->Print ("DR2_Dpt2_maxDeta.png", "png");
+  histo_dR2_dpt2_maxDeta->Write();
+
+  //create canvas and draw the plots  --> maxMjj
+
+  TCanvas *histo_dR1_maxMjj_c = new TCanvas("histo_dR1_maxMjj_c");
+  histo_dR1_maxMjj_c->cd();
+  histo_dR1_maxMjj_c->SetTickx();
+  histo_dR1_maxMjj_c->SetTicky();
+  histo_dR1_maxMjj->Draw();
+  histo_dR1_maxMjj_c->Print ("DeltaR1_maxMjj.png", "png");
+  histo_dR1_maxMjj->Write();
+
+  TCanvas *histo_dR2_maxMjj_c = new TCanvas("histo_dR2_maxMjj_c");
+  histo_dR2_maxMjj_c->cd();
+  histo_dR2_maxMjj_c->SetTickx();
+  histo_dR2_maxMjj_c->SetTicky();
+  histo_dR2_maxMjj->Draw();
+  histo_dR2_maxMjj_c->Print ("DeltaR2_maxMjj.png", "png");
+  histo_dR2_maxMjj->Write();
+
+  TCanvas *histo_deta1_maxMjj_c = new TCanvas("histo_deta1_maxMjj_c");
+  histo_deta1_maxMjj_c->cd();
+  histo_deta1_maxMjj_c->SetTickx();
+  histo_deta1_maxMjj_c->SetTicky();
+  histo_deta1_maxMjj->Draw();
+  histo_deta1_maxMjj_c->Print ("Deta1_maxMjj.png", "png");
+  histo_deta1_maxMjj->Write();
+
+  TCanvas *histo_deta2_maxMjj_c = new TCanvas("histo_deta2_maxMjj_c");
+  histo_deta2_maxMjj_c->cd();
+  histo_deta2_maxMjj_c->SetTickx();
+  histo_deta2_maxMjj_c->SetTicky();
+  histo_deta2_maxMjj->Draw();
+  histo_deta2_maxMjj_c->Print ("Deta2_maxMjj.png", "png");
+  histo_deta2_maxMjj->Write();
+
+  TCanvas *histo_dphi1_maxMjj_c = new TCanvas("histo_dphi1_maxMjj_c");
+  histo_dphi1_maxMjj_c->cd();
+  histo_dphi1_maxMjj_c->SetTickx();
+  histo_dphi1_maxMjj_c->SetTicky();
+  histo_dphi1_maxMjj->Draw();
+  histo_dphi1_maxMjj_c->Print ("Dphi1_maxMjj.png", "png");
+  histo_dphi1_maxMjj->Write();
+
+  TCanvas *histo_dphi2_maxMjj_c = new TCanvas("histo_dphi2_maxMjj_c");
+  histo_dphi2_maxMjj_c->cd();
+  histo_dphi2_maxMjj_c->SetTickx();
+  histo_dphi2_maxMjj_c->SetTicky();
+  histo_dphi2_maxMjj->Draw();
+  histo_dphi2_maxMjj_c->Print ("Dphi2_maxMjj.png", "png");
+  histo_dphi2_maxMjj->Write();
+
+  TCanvas *histo_dpt1_maxMjj_c = new TCanvas("histo_dpt1_maxMjj_c");
+  histo_dpt1_maxMjj_c->cd();
+  histo_dpt1_maxMjj_c->SetTickx();
+  histo_dpt1_maxMjj_c->SetTicky();
+  histo_dpt1_maxMjj->Draw();
+  histo_dpt1_maxMjj_c->Print ("Dpt1_maxMjj.png", "png");
+  histo_dpt1_maxMjj->Write();
+
+
+  TCanvas *histo_dpt2_maxMjj_c = new TCanvas("histo_dpt2_maxMjj_c");
+  histo_dpt2_maxMjj_c->cd();
+  histo_dpt2_maxMjj_c->SetTickx();
+  histo_dpt2_maxMjj_c->SetTicky();
+  histo_dpt2_maxMjj->Draw();
+  histo_dpt2_maxMjj_c->Print ("Dpt2_maxMjj.png", "png");
+  histo_dpt2_maxMjj->Write();
+
+  TCanvas *histo_dR1_dpt1_maxMjj_c = new TCanvas("histo_dR1_dpt1_maxMjj_c");
+  histo_dR1_dpt1_maxMjj_c->cd();
+  histo_dR1_dpt1_maxMjj_c->SetTickx();
+  histo_dR1_dpt1_maxMjj_c->SetTicky();
+  histo_dR1_dpt1_maxMjj->Draw("colz");
+  histo_dR1_dpt1_maxMjj_c->Print ("DR1_Dpt1_maxMjj.png", "png");
+  histo_dR1_dpt1_maxMjj->Write();
+
+  TCanvas *histo_dR2_dpt2_maxMjj_c = new TCanvas("histo_dR2_dpt2_maxMjj_c");
+  histo_dR2_dpt2_maxMjj_c->cd();
+  histo_dR2_dpt2_maxMjj_c->SetTickx();
+  histo_dR2_dpt2_maxMjj_c->SetTicky();
+  histo_dR2_dpt2_maxMjj->Draw("colz");
+  histo_dR2_dpt2_maxMjj_c->Print ("DR2_Dpt2_maxMjj.png", "png");
+  histo_dR2_dpt2_maxMjj->Write();
+
+  OutputFile->Close();
+ 
   //print information
 
-  cout<<"Frazioni di eventi in cui: (totale)     (soglia dR=0.3, soglia pt=0.3)"<<endl;
+  std::cout<<"Event Fraction: (Total)     (thresholds dR=0.3,  ptratio=0.3)"<<std::endl;
 
-  cout<<"######################################################################"<<endl;
+  std::cout<<"######################################################################"<<std::endl;
 
-  cout<<"Pt max: entrambi i jet matchano in dR "<<1.*cont_maxpt2/(1.*nEntry)<<endl;
-  cout<<"Pt max: un solo jet matcha in dR "<<1.*cont_maxpt1/(1.*nEntry)<<endl;
-  cout<<"Pt max: nessun jet matcha in dR "<<1.*cont_maxpt0/(1.*nEntry)<<endl;
-  cout<<"Pt max: entrambi i jet matchano sia in dR sia in pt: "<<1.*cont_dRandpt_maxpt/(1.*nEntry)<<endl;
+  std::cout<<"Pt max: both tag jets in dR  = "<<1.*cont_maxpt2/(1.*nEntry)<<std::endl;
+  std::cout<<"Pt max: only 1 jet in dR     = "<<1.*cont_maxpt1/(1.*nEntry)<<std::endl;
+  std::cout<<"Pt max: no matching in dR    = "<<1.*cont_maxpt0/(1.*nEntry)<<std::endl;
+  std::cout<<"Pt max: Both in dR and dPt   = "<<1.*cont_dRandpt_maxpt/(1.*nEntry)<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
-
-  cout<<"Deta max: entrambi i jet matchano in dR "<<1.*cont_maxDeta2/(1.*nEntry)<<endl;
-  cout<<"Deta max: un solo jet matcha in dR "<<1.*cont_maxDeta1/(1.*nEntry)<<endl;
-  cout<<"Deta max: nessun jet matcha in dR "<<1.*cont_maxDeta0/(1.*nEntry)<<endl;
-  cout<<"Deta max: entrambi i jet matchano sia in dR sia in pt: "<<1.*cont_dRandpt_maxDeta/(1.*nEntry)<<endl;
-
-  cout<<"#######################################################################"<<endl;
-
-  cout<<"Mjj max: entrambi i jet matchano in dR "<<1.*cont_maxMjj2/(1.*nEntry)<<endl; 
-  cout<<"Mjj max: un solo jet matcha in dR "<<1.*cont_maxMjj1/(1.*nEntry)<<endl; 
-  cout<<"Mjj max: nessun jet matcha dR "<<1.*cont_maxMjj0/(1.*nEntry)<<endl;
-  cout<<"Mjj max: entrambi i jet matchano sia in dR sia in pt: "<<1.*cont_dRandpt_maxMjj/(1.*nEntry)<<endl;
-
-
-  cout<<"#######################################################################"<<endl;
-
-  cout<<"Degli eventi in cui matchano (in dR e pt) i 2 jet a maxpt, c'è matching anche per quelli in Deta "<<1.*cont_maxpt_maxDeta/(1.*cont_dRandpt_maxpt)<<endl; 
-  cout<<"Degli eventi in cui matchano (in dR e pt) i 2 jet a maxpt, c'è matching anche per quelli in Mjj "<<1.*cont_maxpt_maxMjj/(1.*cont_dRandpt_maxpt)<<endl; 
-  cout<<"Degli eventi in cui matchano (in dR e pt) i 2 jet a maxDeta, c'è matching anche per quelli in pt  "<<1.*cont_maxpt_maxDeta/(1.*cont_dRandpt_maxDeta)<<endl;
-  cout<<"Degli eventi in cui matchano (in dR e pt) i 2 jet a maxDeta, c'è matching anche per quelli in Mjj "<<1.*cont_maxMjj_maxDeta/(1.*cont_dRandpt_maxDeta)<<endl; 
-  cout<<"Degli eventi in cui matchano (in dR e pt) i 2 jet a maxMjj, c'è matching anche per quelli in pt "<<1.*cont_maxpt_maxMjj/(1.*cont_dRandpt_maxMjj)<<endl; 
-  cout<<"Degli eventi in cui matchano (in dR e pt) i 2 jet a maxMjj, c'è matching anche per quelli in Deta  "<<1.*cont_maxMjj_maxDeta/(1.*cont_dRandpt_maxMjj)<<endl; 
-
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
  
-  cout<<"Eventi a 3 jets: "<<endl;
+  std::cout<<"Deta max: both tag jets in dR =  "<<1.*cont_maxDeta2/(1.*nEntry)<<std::endl;
+  std::cout<<"Deta max: only one jets in dR =  "<<1.*cont_maxDeta1/(1.*nEntry)<<std::endl;
+  std::cout<<"Deta max: no matching         =  "<<1.*cont_maxDeta0/(1.*nEntry)<<std::endl;
+  std::cout<<"Deta max: Both in dR and dPt  =  "<<1.*cont_dRandpt_maxDeta/(1.*nEntry)<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"Pt max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxpt[3]/(1.*cont_nj[3])<<endl;
-  cout<<"Deta max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxDeta[3]/(1.*cont_nj[3])<<endl;
-  cout<<"Mjj max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxMjj[3]/(1.*cont_nj[3])<<endl;
+  std::cout<<"Mjj max: both tag jets in dR =  "<<1.*cont_maxMjj2/(1.*nEntry)<<std::endl;
+  std::cout<<"Mjj max: only one jets in dR =  "<<1.*cont_maxMjj1/(1.*nEntry)<<std::endl;
+  std::cout<<"Mjj max: no matching         =  "<<1.*cont_maxMjj0/(1.*nEntry)<<std::endl;
+  std::cout<<"Mjj max: Both in dR and dPt  =  "<<1.*cont_dRandpt_maxMjj/(1.*nEntry)<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
+
+  std::cout<<"Maxpt matching in dR and dPt --> There is a matching also in maxDeta "<<1.*cont_maxpt_maxDeta/(1.*cont_dRandpt_maxpt)<<std::endl; 
+  std::cout<<"Maxpt matching in dR and dPt --> There is a matching also in maxMjj  "<<1.*cont_maxpt_maxMjj/(1.*cont_dRandpt_maxpt)<<std::endl; 
+  std::cout<<"MaxDeta matching in dR and dPt --> There is a matching also in maxpt  "<<1.*cont_maxpt_maxDeta/(1.*cont_dRandpt_maxDeta)<<std::endl;
+  std::cout<<"MaxDeta matching in dR and dPt --> There is a matching also in maxpt  "<<1.*cont_maxMjj_maxDeta/(1.*cont_dRandpt_maxDeta)<<std::endl; 
+  std::cout<<"MaxMjj matching in dR and dPt --> There is a matching also in maxpt  "<<1.*cont_maxpt_maxMjj/(1.*cont_dRandpt_maxMjj)<<std::endl; 
+  std::cout<<"MaxMjj matching in dR and dPt --> There is a matching also in maxDeta   "<<1.*cont_maxMjj_maxDeta/(1.*cont_dRandpt_maxMjj)<<std::endl; 
+
+  std::cout<<"#######################################################################"<<std::endl;
  
-  cout<<"Eventi a 3 jets: "<<endl;
+  std::cout<<"Events with 3 jets: "<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"Pt max: entrambi i jets matchano in dR "<<1.*cont_nj_match_dR_maxpt[3]/(1.*cont_nj[3])<<endl;
-  cout<<"Deta max: entrambi i jets matchano in dR "<<1.*cont_nj_match_dR_maxDeta[3]/(1.*cont_nj[3])<<endl;
-  cout<<"Mjj max: entrambi i jets matchano in dR "<<1.*cont_nj_match_dR_maxMjj[3]/(1.*cont_nj[3])<<endl;
+  std::cout<<"Pt max: both in dR   "<<1.*cont_nj_match_dR_maxpt[3]/(1.*cont_nj[3])<<std::endl;
+  std::cout<<"Deta max: both in dR "<<1.*cont_nj_match_dR_maxDeta[3]/(1.*cont_nj[3])<<std::endl;
+  std::cout<<"Mjj max: both in dR  "<<1.*cont_nj_match_dR_maxMjj[3]/(1.*cont_nj[3])<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Pt max: both in dR and dpt   "<<1.*cont_nj_match_maxpt[3]/(1.*cont_nj[3])<<std::endl;
+  std::cout<<"Deta max: both in dR and dpt "<<1.*cont_nj_match_maxDeta[3]/(1.*cont_nj[3])<<std::endl;
+  std::cout<<"Mjj max: both in dR and dpt  "<<1.*cont_nj_match_maxMjj[3]/(1.*cont_nj[3])<<std::endl;
 
-  cout<<"Eventi a 4 jets: "<<endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
+ 
+  std::cout<<"Events with 4 jets: "<<std::endl;
 
-  cout<<"Pt max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxpt[4]/(1.*cont_nj[4])<<endl;
-  cout<<"Deta max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxDeta[4]/(1.*cont_nj[4])<<endl;
-  cout<<"Mjj max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxMjj[4]/(1.*cont_nj[4])<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Pt max: both in dR   "<<1.*cont_nj_match_dR_maxpt[4]/(1.*cont_nj[4])<<std::endl;
+  std::cout<<"Deta max: both in dR "<<1.*cont_nj_match_dR_maxDeta[4]/(1.*cont_nj[4])<<std::endl;
+  std::cout<<"Mjj max: both in dR  "<<1.*cont_nj_match_dR_maxMjj[4]/(1.*cont_nj[4])<<std::endl;
 
-  cout<<"Eventi a 5 jets: "<<endl;
+  std::cout<<"Pt max: both in dR and dpt   "<<1.*cont_nj_match_maxpt[4]/(1.*cont_nj[4])<<std::endl;
+  std::cout<<"Deta max: both in dR and dpt "<<1.*cont_nj_match_maxDeta[4]/(1.*cont_nj[4])<<std::endl;
+  std::cout<<"Mjj max: both in dR and dpt  "<<1.*cont_nj_match_maxMjj[4]/(1.*cont_nj[5])<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
 
-  cout<<"Pt max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxpt[5]/(1.*cont_nj[5])<<endl;
-  cout<<"Deta max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxDeta[5]/(1.*cont_nj[5])<<endl;
-  cout<<"Mjj max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxMjj[5]/(1.*cont_nj[5])<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
+ 
+  std::cout<<"Events with 5 jets: "<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"Eventi a 6 jets: "<<endl;
+  std::cout<<"Pt max: both in dR   "<<1.*cont_nj_match_dR_maxpt[5]/(1.*cont_nj[5])<<std::endl;
+  std::cout<<"Deta max: both in dR "<<1.*cont_nj_match_dR_maxDeta[5]/(1.*cont_nj[5])<<std::endl;
+  std::cout<<"Mjj max: both in dR  "<<1.*cont_nj_match_dR_maxMjj[5]/(1.*cont_nj[5])<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Pt max: both in dR and dpt   "<<1.*cont_nj_match_maxpt[5]/(1.*cont_nj[5])<<std::endl;
+  std::cout<<"Deta max: both in dR and dpt "<<1.*cont_nj_match_maxDeta[5]/(1.*cont_nj[5])<<std::endl;
+  std::cout<<"Mjj max: both in dR and dpt  "<<1.*cont_nj_match_maxMjj[5]/(1.*cont_nj[5])<<std::endl;
 
-  cout<<"Pt max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxpt[6]/(1.*cont_nj[6])<<endl;
-  cout<<"Deta max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxDeta[6]/(1.*cont_nj[6])<<endl;
-  cout<<"Mjj max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxMjj[6]/(1.*cont_nj[6])<<endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"Eventi a 7 jets: "<<endl;
+  std::cout<<"Evens with both vbf jets satisify medium pile-up : "<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"Pt max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxpt[7]/(1.*cont_nj[7])<<endl;
-  cout<<"Deta max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxDeta[7]/(1.*cont_nj[7])<<endl;
-  cout<<"Mjj max: entrambi i jets matchano in dR e pt "<<1.*cont_nj_match_maxMjj[7]/(1.*cont_nj[7])<<endl;
+  std::cout<<"Pt max: both in dR   "<<1.*cont_medium_match_dR_maxpt/(1.*cont_medium_maxpt)<<std::endl;
+  std::cout<<"Deta max: both in dR "<<1.*cont_medium_match_dR_maxDeta/(1.*cont_medium_maxpt)<<std::endl;
+  std::cout<<"Mjj max: both in dR  "<<1.*cont_medium_match_dR_maxMjj/(1.*cont_medium_maxpt)<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Pt max: both in dR and dpt   "<<1.*cont_medium_match_maxpt/(1.*cont_medium_maxpt)<<std::endl;
+  std::cout<<"Deta max: both in dR and dpt "<<1.*cont_medium_match_maxDeta/(1.*cont_medium_maxpt)<<std::endl;
+  std::cout<<"Mjj max: both in dR  and dpt "<<1.*cont_medium_match_maxMjj/(1.*cont_medium_maxpt)<<std::endl;
 
-  cout<<"Eventi in cui entrambi i jets hanno passato la medium pileup: "<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Evens with both vbf jets satisify tight pile-up : "<<std::endl;
 
-  cout<<"Pt max: entrambi i jets matchano in dR e pt "<<1.*cont_medium_match_maxpt/(1.*cont_medium_maxpt)<<endl;
-  cout<<"Deta max: entrambi i jets matchano in dR e pt "<<1.*cont_medium_match_maxDeta/(1.*cont_medium_maxDeta)<<endl;
-  cout<<"Mjj max: entrambi i jets matchano in dR e pt "<<1.*cont_medium_match_maxMjj/(1.*cont_medium_maxMjj)<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Pt max: both in dR   "<<1.*cont_tight_match_dR_maxpt/(1.*cont_tight_maxpt)<<std::endl;
+  std::cout<<"Deta max: both in dR "<<1.*cont_tight_match_dR_maxDeta/(1.*cont_tight_maxpt)<<std::endl;
+  std::cout<<"Mjj max: both in dR  "<<1.*cont_tight_match_dR_maxMjj/(1.*cont_tight_maxpt)<<std::endl;
 
-  cout<<"Eventi in cui entrambi i jets hanno passato la tight pileup: "<<endl;
+  std::cout<<"Pt max: both in dR and dpt   "<<1.*cont_tight_match_maxpt/(1.*cont_tight_maxpt)<<std::endl;
+  std::cout<<"Deta max: both in dR and dpt "<<1.*cont_tight_match_maxDeta/(1.*cont_tight_maxpt)<<std::endl;
+  std::cout<<"Mjj max: both in dR  and dpt "<<1.*cont_tight_match_maxMjj/(1.*cont_tight_maxpt)<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
 
-  cout<<"Pt max: entrambi i jets matchano in dR e pt "<<1.*cont_tight_match_maxpt/(1.*cont_tight_maxpt)<<endl;
-  cout<<"Deta max: entrambi i jets matchano in dR e pt "<<1.*cont_tight_match_maxDeta/(1.*cont_tight_maxDeta)<<endl;
-  cout<<"Mjj max: entrambi i jets matchano in dR e pt "<<1.*cont_tight_match_maxMjj/(1.*cont_tight_maxMjj)<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Fraction of events with 2 jets  pileup medium: "<<std::endl;
 
-  cout<<"Frazioni di eventi sul totale in cui i 2 jet han passato la pileup medium: "<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Pt max: "<<1.*cont_medium_maxpt/(1.*nEntry)<<std::endl;
+  std::cout<<"Deta max: "<<1.*cont_medium_maxDeta/(1.*nEntry)<<std::endl;
+  std::cout<<"Mjj max: "<<1.*cont_medium_maxMjj/(1.*nEntry)<<std::endl;
 
-  cout<<"Pt max: "<<1.*cont_medium_maxpt/(1.*nEntry)<<endl;
-  cout<<"Deta max: "<<1.*cont_medium_maxDeta/(1.*nEntry)<<endl;
-  cout<<"Mjj max: "<<1.*cont_medium_maxMjj/(1.*nEntry)<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Fraction of events with 2 jets  pileup medium: "<<std::endl;
 
-  cout<<"Frazioni di eventi sul totale in cui i 2 jet han passato la pileup tight: "<<endl;
+  std::cout<<"#######################################################################"<<std::endl;
 
-  cout<<"#######################################################################"<<endl;
+  std::cout<<"Pt max: "<<1.*cont_tight_maxpt/(1.*nEntry)<<std::endl;
+  std::cout<<"Deta max: "<<1.*cont_tight_maxDeta/(1.*nEntry)<<std::endl;
+  std::cout<<"Mjj max: "<<cont_tight_maxMjj/(1.*nEntry)<<std::endl;
 
-  cout<<"Pt max: "<<1.*cont_tight_maxpt/(1.*nEntry)<<endl;
-  cout<<"Deta max: "<<1.*cont_tight_maxDeta/(1.*nEntry)<<endl;
-  cout<<"Mjj max: "<<cont_tight_maxMjj/(1.*nEntry)<<endl;
+  
+  return(0);
 
-  */
-  return(0);}
+}
 										       
+
+//  LocalWords:  endl
