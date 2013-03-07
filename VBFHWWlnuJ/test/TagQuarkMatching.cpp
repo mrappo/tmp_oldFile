@@ -220,6 +220,16 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxpt -> GetYaxis() -> SetTitle ("P_{t} Ratio (j2,q2)");
   histo_dR2_dpt2_maxpt->Sumw2();
 
+  TH2F* histo_dR1_dR2_maxpt = new TH2F("histo_dR1_dR2_maxpt","histo_dR1_dR2_maxpt",NBin,DRMin,DRMax,NBin,DRMin,DRMax);
+  histo_dR1_dR2_maxpt -> GetXaxis() -> SetTitle ("#DeltaR (j1,q1)");
+  histo_dR1_dR2_maxpt -> GetYaxis() -> SetTitle ("#DeltaR (j2,q2)");
+  histo_dR1_dR2_maxpt->Sumw2();
+
+  TH2F* histo_dpt1_dpt2_maxpt = new TH2F("histo_dpt1_dpt2_maxpt","histo_dpt1_dpt2_maxpt",NBin,DPtMin,DPtMax,NBin,DPtMin,DPtMax);
+  histo_dpt1_dpt2_maxpt -> GetXaxis() -> SetTitle ("#DeltaPt (j1,q1)");
+  histo_dpt1_dpt2_maxpt -> GetYaxis() -> SetTitle ("#DeltaPt (j2,q2)");
+  histo_dpt1_dpt2_maxpt->Sumw2();
+
 
   TH1F * histo_dR1_maxDeta   = new TH1F ("histo_dR1_maxDeta", "histo_dR1_maxDeta",  NBin, DRMin, DRMax);
   histo_dR1_maxDeta -> GetXaxis() -> SetTitle ("#DeltaR (j1,q1)");
@@ -261,6 +271,16 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxDeta -> GetXaxis() -> SetTitle ("#DeltaR (j2,q2)");
   histo_dR2_dpt2_maxDeta -> GetYaxis() -> SetTitle ("P_{t} Ratio (j2,q2)");
   histo_dR2_dpt2_maxDeta->Sumw2();
+
+  TH2F* histo_dR1_dR2_maxDeta = new TH2F("histo_dR1_dR2_maxDeta","histo_dR1_dR2_maxDeta",NBin,DRMin,DRMax,NBin,DRMin,DRMax);
+  histo_dR1_dR2_maxDeta -> GetXaxis() -> SetTitle ("#DeltaR (j1,q1)");
+  histo_dR1_dR2_maxDeta -> GetYaxis() -> SetTitle ("#DeltaR (j2,q2)");
+  histo_dR1_dR2_maxDeta->Sumw2();
+
+  TH2F* histo_dpt1_dpt2_maxDeta = new TH2F("histo_dpt1_dpt2_maxDeta","histo_dpt1_dpt2_maxDeta",NBin,DPtMin,DPtMax,NBin,DPtMin,DPtMax);
+  histo_dpt1_dpt2_maxDeta -> GetXaxis() -> SetTitle ("#DeltaPt (j1,q1)");
+  histo_dpt1_dpt2_maxDeta -> GetYaxis() -> SetTitle ("#DeltaPt (j2,q2)");
+  histo_dpt1_dpt2_maxDeta->Sumw2();
 
 
 
@@ -304,6 +324,16 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxMjj -> GetXaxis() -> SetTitle ("#DeltaR (j2,q2)");
   histo_dR2_dpt2_maxMjj -> GetYaxis() -> SetTitle ("P_{t} Ratio (j2,q2)");
   histo_dR2_dpt2_maxMjj->Sumw2();
+
+  TH2F* histo_dR1_dR2_maxMjj = new TH2F("histo_dR1_dR2_maxMjj","histo_dR1_dR2_maxMjj",NBin,DRMin,DRMax,NBin,DRMin,DRMax);
+  histo_dR1_dR2_maxMjj -> GetXaxis() -> SetTitle ("#DeltaR (j1,q1)");
+  histo_dR1_dR2_maxMjj -> GetYaxis() -> SetTitle ("#DeltaR (j2,q2)");
+  histo_dR1_dR2_maxMjj->Sumw2();
+
+  TH2F* histo_dpt1_dpt2_maxMjj = new TH2F("histo_dpt1_dpt2_maxMjj","histo_dpt1_dpt2_maxMjj",NBin,DPtMin,DPtMax,NBin,DPtMin,DPtMax);
+  histo_dpt1_dpt2_maxMjj -> GetXaxis() -> SetTitle ("#DeltaPt (j1,q1)");
+  histo_dpt1_dpt2_maxMjj -> GetYaxis() -> SetTitle ("#DeltaPt (j2,q2)");
+  histo_dpt1_dpt2_maxMjj->Sumw2();
 
   //Declaration of variables
 
@@ -483,6 +513,9 @@ int main (int argc, char** argv) {
 
       histo_dR1_dpt1_maxpt->Fill(dR11_maxpt,vbf_maxpt_j1_pt/W_TagQuark_pt[0]);
       histo_dR2_dpt2_maxpt->Fill(dR22_maxpt,vbf_maxpt_j2_pt/W_TagQuark_pt[1]);
+      histo_dR1_dR2_maxpt->Fill(dR11_maxpt,dR22_maxpt);
+      histo_dpt1_dpt2_maxpt->Fill(vbf_maxpt_j1_pt/W_TagQuark_pt[0],vbf_maxpt_j2_pt/W_TagQuark_pt[1]);
+
     }
     else if (dR12_maxpt <= dR12_maxpt && dR21_maxpt<=dR22_maxpt) {
 
@@ -503,6 +536,9 @@ int main (int argc, char** argv) {
 
       histo_dR1_dpt1_maxpt->Fill(dR12_maxpt,vbf_maxpt_j2_pt/W_TagQuark_pt[0]);
       histo_dR2_dpt2_maxpt->Fill(dR21_maxpt,vbf_maxpt_j1_pt/W_TagQuark_pt[1]);
+
+      histo_dR1_dR2_maxpt->Fill(dR12_maxpt,dR21_maxpt);
+      histo_dpt1_dpt2_maxpt->Fill(vbf_maxpt_j2_pt/W_TagQuark_pt[0],vbf_maxpt_j1_pt/W_TagQuark_pt[1]);
  
     }
 
@@ -536,6 +572,9 @@ int main (int argc, char** argv) {
 
       histo_dR1_dpt1_maxDeta->Fill(dR11_maxDeta,vbf_maxDeta_j1_pt/W_TagQuark_pt[0]);
       histo_dR2_dpt2_maxDeta->Fill(dR22_maxDeta,vbf_maxDeta_j2_pt/W_TagQuark_pt[1]);
+      histo_dR1_dR2_maxDeta->Fill(dR11_maxDeta,dR22_maxDeta);
+      histo_dpt1_dpt2_maxDeta->Fill(vbf_maxDeta_j1_pt/W_TagQuark_pt[0],vbf_maxDeta_j2_pt/W_TagQuark_pt[1]);
+
     }
     else{
  
@@ -557,6 +596,9 @@ int main (int argc, char** argv) {
       histo_dR1_dpt1_maxDeta->Fill(dR12_maxDeta,vbf_maxDeta_j2_pt/W_TagQuark_pt[0]);
       histo_dR2_dpt2_maxDeta->Fill(dR21_maxDeta,vbf_maxDeta_j1_pt/W_TagQuark_pt[1]);
  
+      histo_dR1_dR2_maxDeta->Fill(dR12_maxDeta,dR21_maxDeta);
+      histo_dpt1_dpt2_maxDeta->Fill(vbf_maxDeta_j2_pt/W_TagQuark_pt[0],vbf_maxDeta_j1_pt/W_TagQuark_pt[1]);
+
     }
 
    //same thing whit pair of jets with maxMjj
@@ -585,6 +627,9 @@ int main (int argc, char** argv) {
 
       histo_dR1_dpt1_maxMjj->Fill(dR11_maxMjj,vbf_maxMjj_j1_pt/W_TagQuark_pt[0]);
       histo_dR2_dpt2_maxMjj->Fill(dR22_maxMjj,vbf_maxMjj_j2_pt/W_TagQuark_pt[1]);
+      histo_dR1_dR2_maxMjj->Fill(dR11_maxMjj,dR22_maxMjj);
+      histo_dpt1_dpt2_maxMjj->Fill(vbf_maxMjj_j1_pt/W_TagQuark_pt[0],vbf_maxMjj_j2_pt/W_TagQuark_pt[1]);
+
     }
     else{
  
@@ -606,6 +651,9 @@ int main (int argc, char** argv) {
       histo_dR1_dpt1_maxMjj->Fill(dR12_maxMjj,vbf_maxMjj_j2_pt/W_TagQuark_pt[0]);
       histo_dR2_dpt2_maxMjj->Fill(dR21_maxMjj,vbf_maxMjj_j1_pt/W_TagQuark_pt[1]);
  
+      histo_dR1_dR2_maxMjj->Fill(dR12_maxMjj,dR21_maxMjj);
+      histo_dpt1_dpt2_maxMjj->Fill(vbf_maxMjj_j2_pt/W_TagQuark_pt[0],vbf_maxMjj_j1_pt/W_TagQuark_pt[1]);
+
     }
 
     // Count events which satisfy dR matching condition
@@ -797,6 +845,22 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxpt_c->Print ((OutputDirectory+"/DR2_Dpt2_maxpt.png").c_str(), "png");
   histo_dR2_dpt2_maxpt->Write();
 
+  TCanvas *histo_dR1_dR2_maxpt_c = new TCanvas("histo_dR1_dR2_maxpt_c");
+  histo_dR1_dR2_maxpt_c->cd();
+  histo_dR1_dR2_maxpt_c->SetTickx();
+  histo_dR1_dR2_maxpt_c->SetTicky();
+  histo_dR1_dR2_maxpt->Draw("colz");
+  histo_dR1_dR2_maxpt_c->Print ((OutputDirectory+"/DR1_DR2_maxpt.png").c_str(), "png");
+  histo_dR1_dR2_maxpt->Write();
+
+  TCanvas *histo_dpt1_dpt2_maxpt_c = new TCanvas("histo_dpt1_dpt2_maxpt_c");
+  histo_dpt1_dpt2_maxpt_c->cd();
+  histo_dpt1_dpt2_maxpt_c->SetTickx();
+  histo_dpt1_dpt2_maxpt_c->SetTicky();
+  histo_dpt1_dpt2_maxpt->Draw("colz");
+  histo_dpt1_dpt2_maxpt_c->Print ((OutputDirectory+"/Dpt1_Dpt2_maxpt.png").c_str(), "png");
+  histo_dpt1_dpt2_maxpt->Write();
+
   //create canvas and draw the plots  --> maxdeta
 
   TCanvas *histo_dR1_maxDeta_c = new TCanvas("histo_dR1_maxDeta_c");
@@ -880,6 +944,22 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxDeta_c->Print ((OutputDirectory+"/DR2_Dpt2_maxDeta.png").c_str(), "png");
   histo_dR2_dpt2_maxDeta->Write();
 
+  TCanvas *histo_dR1_dR2_maxDeta_c = new TCanvas("histo_dR1_dR2_maxDeta_c");
+  histo_dR1_dR2_maxDeta_c->cd();
+  histo_dR1_dR2_maxDeta_c->SetTickx();
+  histo_dR1_dR2_maxDeta_c->SetTicky();
+  histo_dR1_dR2_maxDeta->Draw("colz");
+  histo_dR1_dR2_maxDeta_c->Print ((OutputDirectory+"/DR1_DR2_maxDeta.png").c_str(), "png");
+  histo_dR1_dR2_maxDeta->Write();
+
+  TCanvas *histo_dpt1_dpt2_maxDeta_c = new TCanvas("histo_dpt1_dpt2_maxDeta_c");
+  histo_dpt1_dpt2_maxDeta_c->cd();
+  histo_dpt1_dpt2_maxDeta_c->SetTickx();
+  histo_dpt1_dpt2_maxDeta_c->SetTicky();
+  histo_dpt1_dpt2_maxDeta->Draw("colz");
+  histo_dpt1_dpt2_maxDeta_c->Print ((OutputDirectory+"/Dpt1_Dpt2_maxDeta.png").c_str(), "png");
+  histo_dpt1_dpt2_maxDeta->Write();
+
   //create canvas and draw the plots  --> maxMjj
 
   TCanvas *histo_dR1_maxMjj_c = new TCanvas("histo_dR1_maxMjj_c");
@@ -962,6 +1042,22 @@ int main (int argc, char** argv) {
   histo_dR2_dpt2_maxMjj->Draw("colz");
   histo_dR2_dpt2_maxMjj_c->Print ((OutputDirectory+"/DR2_Dpt2_maxMjj.png").c_str(), "png");
   histo_dR2_dpt2_maxMjj->Write();
+
+  TCanvas *histo_dR1_dR2_maxMjj_c = new TCanvas("histo_dR1_dR2_maxMjj_c");
+  histo_dR1_dR2_maxMjj_c->cd();
+  histo_dR1_dR2_maxMjj_c->SetTickx();
+  histo_dR1_dR2_maxMjj_c->SetTicky();
+  histo_dR1_dR2_maxMjj->Draw("colz");
+  histo_dR1_dR2_maxMjj_c->Print ((OutputDirectory+"/DR1_DR2_maxMjj.png").c_str(), "png");
+  histo_dR1_dR2_maxMjj->Write();
+
+  TCanvas *histo_dpt1_dpt2_maxMjj_c = new TCanvas("histo_dpt1_dpt2_maxMjj_c");
+  histo_dpt1_dpt2_maxMjj_c->cd();
+  histo_dpt1_dpt2_maxMjj_c->SetTickx();
+  histo_dpt1_dpt2_maxMjj_c->SetTicky();
+  histo_dpt1_dpt2_maxMjj->Draw("colz");
+  histo_dpt1_dpt2_maxMjj_c->Print ((OutputDirectory+"/Dpt1_Dpt2_maxMjj.png").c_str(), "png");
+  histo_dpt1_dpt2_maxMjj->Write();
 
   OutputFile->Close();
  
