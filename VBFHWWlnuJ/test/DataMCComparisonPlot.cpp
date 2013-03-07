@@ -536,7 +536,7 @@ int main (int argc, char **argv){
                                      
                     histos[iCut][iVar][iSampleggH]->SetLineWidth(2);
                     histos[iCut][iVar][iSampleggH]->Scale(SignalScaleFactor*1.);
-                    histos[iCut][iVar][iSampleggH]->SetFillStyle(1);
+                    histos[iCut][iVar][iSampleggH]->SetFillStyle(0);
 
                     histos[iCut][iVar][iSampleggH]->Draw("hist same");
           }
