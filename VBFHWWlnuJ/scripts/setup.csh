@@ -25,7 +25,7 @@ setenv PATH ${PATH}:${THISDIR}/KinFitter/bin
 setenv NTUPLEPKGINCLUDE ${THISDIR}/NtuplePackage/interface
 setenv NTUPLEPKGLIB ${THISDIR}/NtuplePackage/lib
 
-setenv KINFITPKGINCLUDE=${THISDIR}/KinFitter/interface
-setenv KINFITPKGLIB=${THISDIR}/KinFitter/lib
+setenv KINFITPKGINCLUDE ${THISDIR}/KinFitter/interface
+setenv KINFITPKGLIB ${THISDIR}/KinFitter/lib
 
 setenv VBFHWWlnuJ ${THISDIR}/
