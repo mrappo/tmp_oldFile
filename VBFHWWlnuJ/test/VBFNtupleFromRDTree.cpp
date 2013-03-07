@@ -418,7 +418,7 @@ int main (int argc, char** argv){
     NewMuonTree->vbf_maxpt_j2_m   = outputAK5_PtSorted.at(1).Momentum_.M();
    
     NewMuonTree->vbf_maxpt_jj_deta = fabs(outputAK5_PtSorted.at(0).Momentum_.Eta() - outputAK5_PtSorted.at(1).Momentum_.Eta()) ;
-    NewMuonTree->vbf_maxpt_jj_deta = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
+    NewMuonTree->vbf_maxpt_jj_dphi = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_PtSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_PtSorted.at(1).NameCollection_ == "JetPFCor"){
       NewMuonTree->vbf_maxpt_jj_type = 1 ;
@@ -695,7 +695,7 @@ int main (int argc, char** argv){
     NewMuonTree->vbf_maxDeta_j2_m   = outputAK5_DEtaSorted.at(1).Momentum_.M();
    
     NewMuonTree->vbf_maxDeta_jj_deta = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Eta() - outputAK5_DEtaSorted.at(1).Momentum_.Eta()) ;
-    NewMuonTree->vbf_maxDeta_jj_deta = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
+    NewMuonTree->vbf_maxDeta_jj_dphi = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_DEtaSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_DEtaSorted.at(1).NameCollection_ == "JetPFCor"){
       
@@ -974,7 +974,7 @@ int main (int argc, char** argv){
     NewMuonTree->vbf_maxMjj_j2_m   = outputAK5_MjjSorted.at(1).Momentum_.M();
    
     NewMuonTree->vbf_maxMjj_jj_deta = fabs(outputAK5_MjjSorted.at(0).Momentum_.Eta() - outputAK5_MjjSorted.at(1).Momentum_.Eta()) ;
-    NewMuonTree->vbf_maxMjj_jj_deta = fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
+    NewMuonTree->vbf_maxMjj_jj_dphi = fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_MjjSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_MjjSorted.at(1).NameCollection_ == "JetPFCor"){
       
@@ -1576,7 +1576,7 @@ int main (int argc, char** argv){
     NewElectronTree->vbf_maxpt_j2_m   = outputAK5_PtSorted.at(1).Momentum_.M();
    
     NewElectronTree->vbf_maxpt_jj_deta = fabs(outputAK5_PtSorted.at(0).Momentum_.Eta() - outputAK5_PtSorted.at(1).Momentum_.Eta()) ;
-    NewElectronTree->vbf_maxpt_jj_deta = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
+    NewElectronTree->vbf_maxpt_jj_dphi = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_PtSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_PtSorted.at(1).NameCollection_ == "JetPFCor"){
       NewElectronTree->vbf_maxpt_jj_type = 1 ;
@@ -1853,7 +1853,7 @@ int main (int argc, char** argv){
     NewElectronTree->vbf_maxDeta_j2_m   = outputAK5_DEtaSorted.at(1).Momentum_.M();
    
     NewElectronTree->vbf_maxDeta_jj_deta = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Eta() - outputAK5_DEtaSorted.at(1).Momentum_.Eta()) ;
-    NewElectronTree->vbf_maxDeta_jj_deta = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
+    NewElectronTree->vbf_maxDeta_jj_dphi = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_DEtaSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_DEtaSorted.at(1).NameCollection_ == "JetPFCor"){
       
@@ -2132,7 +2132,7 @@ int main (int argc, char** argv){
     NewElectronTree->vbf_maxMjj_j2_m   = outputAK5_MjjSorted.at(1).Momentum_.M();
    
     NewElectronTree->vbf_maxMjj_jj_deta = fabs(outputAK5_MjjSorted.at(0).Momentum_.Eta() - outputAK5_MjjSorted.at(1).Momentum_.Eta()) ;
-    NewElectronTree->vbf_maxMjj_jj_deta = fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
+    NewElectronTree->vbf_maxMjj_jj_dphi = fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_MjjSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_MjjSorted.at(1).NameCollection_ == "JetPFCor"){
       
