@@ -130,7 +130,7 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
 
   outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+"Cuts"+FitMethod+".root").c_str(),"RECREATE");
 
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"Cuts"+FitMethod+".root");
+  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"Cuts"+FitMethod);
 
   outputFile_->cd();
 
@@ -159,7 +159,7 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
   
   outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+LikelihoodType+".root").c_str(),"RECREATE");
 
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+LikelihoodType+".root");
+  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+LikelihoodType);
 
   outputFile_->cd();
 
@@ -185,7 +185,7 @@ void TrainingMVAClass::BookandTrainFisherDiscriminant(){
 
   outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+"Fisher.root").c_str(),"RECREATE");
 
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"Fisher.root");
+  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"Fisher");
 
   outputFile_->cd();
 
@@ -210,7 +210,7 @@ void TrainingMVAClass::BookandTrainLinearDiscriminant(){
 
   outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+"LD.root").c_str(),"RECREATE");
 
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"LD.root");
+  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"LD");
 
   outputFile_->cd();
 
@@ -239,7 +239,7 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
 
   outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+"MLP.root").c_str(),"RECREATE");
 
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"MLP.root");
+  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"MLP");
 
   outputFile_->cd();
 
@@ -269,7 +269,7 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
 
   outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+"BDT.root").c_str(),"RECREATE");
 
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"BDT.root");
+  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"BDT");
 
   outputFile_->cd();
 
@@ -296,7 +296,7 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
 
   outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+"BDTG.root").c_str(),"RECREATE");
 
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"BDTG.root");
+  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"BDTG");
 
   outputFile_->cd();
 
@@ -399,4 +399,42 @@ void TrainingMVAClass::SetEventWeight (const std::string & weightString){
 
 void  TrainingMVAClass::PrintTrainingResults (){
 
+  std::string command = " if [ ! -e plots ] ; then mkdir plots ; fi";
+  system(command.c_str());
+
+
+  for(size_t iRootFile = 0 ; iRootFile < outputFileNameComplete_.size() ; iRootFile++){
+
+    command = "root -l -b -q ../macros/TMVAMacros/variables.C("+outputFileNameComplete_.at(iRootFile)+".root)";
+    gROOT->ProcessLine(command.c_str());
+
+    command = "root -l -b -q ../macros/TMVAMacros/correlationscatter.C("+outputFileNameComplete_.at(iRootFile)+".root)";
+    gROOT->ProcessLine(command.c_str());
+
+    command = "root -l -b -q ../macros/TMVAMacros/correlations.C("+outputFileNameComplete_.at(iRootFile)+".root)";
+    gROOT->ProcessLine(command.c_str());
+
+    command = "root -l -b -q ../macros/TMVAMacros/mvas.C("+outputFileNameComplete_.at(iRootFile)+".root)";
+    gROOT->ProcessLine(command.c_str());
+
+    command = "root -l -b -q ../macros/TMVAMacros/mvaeffs.C("+outputFileNameComplete_.at(iRootFile)+".root)";
+    gROOT->ProcessLine(command.c_str());
+
+    command = "root -l -b -q ../macros/TMVAMacros/efficiencies.C("+outputFileNameComplete_.at(iRootFile)+".root)";
+    gROOT->ProcessLine(command.c_str());
+
+    command = " if [ ! -e "+outputFilePath_+"/trainingPlots ] ; then mkdir"+outputFilePath_+"/trainingPlots ; fi";
+    system(command.c_str());
+
+    command = " if [ ! -e "+outputFilePath_+"/trainingPlots/"+outputFileNameComplete_.at(iRootFile)+" ] ; then mkdir"+outputFilePath_+"/trainingPlots/"+
+                            outputFileNameComplete_.at(iRootFile)+" ; fi";
+    system(command.c_str());
+
+    command = "mv ./plots/"+outputFileNameComplete_.at(iRootFile)+".root* "+outputFilePath_+"/trainingPlots/"+outputFileNameComplete_.at(iRootFile)+"/" ;
+    system(command.c_str());
+
+  }
+
+
+  
 }
