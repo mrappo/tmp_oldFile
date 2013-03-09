@@ -1,0 +1,13 @@
+#####################################################################################################################
+#  Sample Name                                              Reduced Name      Color     XSec (pb)    NumEntriesBefore
+######################################################################################################################
+ofile_WJets_Pythia180                                            W+Jets            2           34.88      9739464
+#ofile_ZJets                                                     Z+Jets            5            3503     30459503
+#ofile_sch_bar                                                   STop             210             25       139974
+#ofile_sch                                                       STop             210            4.5       259961
+#ofile_tch_bar                                                   STop             210           32.3      1935072
+#ofile_tch                                                       STop             210           59.5      3758227
+#ofile_tWch                                                      STop             210           11.2       493460
+#ofile_tWch_bar                                                  STop             210           11.2       497658
+#ofile_TTbar_Powheg                                               tt_bar           210        225.197     21675970
+ofile_rsg2000_kMpl01_py                                          RSG_kMpl01_py    1         0.004083        30000
