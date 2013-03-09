@@ -10,6 +10,8 @@ int ReadInputSampleFile   (const std::string & ,std::vector<std::string> &, std:
 
 int ReadInputVariableFile (const std::string & ,std::vector<std::string> &, std::vector<int> &, std::vector<double> & ,std::vector<double> &, std::vector<std::string> & );
 
+int ReadInputVariableFile (const std::string & ,std::vector<std::string> &);
+
 int ReadInputVariableBlindedFile( const std::string & , std::vector<std::string> & , std::vector<int> & , std::vector<double> & , std::vector<double> & ,  
                                   std::vector<double> & , std::vector<double> & , std::vector<std::string> & );
 

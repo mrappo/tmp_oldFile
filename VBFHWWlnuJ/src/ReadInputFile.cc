@@ -67,6 +67,36 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
 
 }
 
+int ReadInputVariableFile( const std::string & InputVariableList , std::vector<std::string> & Variables){
+
+
+  std::ifstream inputFile (InputVariableList.c_str());
+  std::string buffer;
+
+  if(inputFile.fail()) return -1; 
+
+  while(!inputFile.eof()){
+  
+    getline(inputFile,buffer);
+
+    if(buffer.empty() || !buffer.find("#") || buffer=="") continue ;
+    std::stringstream line(buffer);
+
+    std::string  VariablesTemp;
+
+    line >> VariablesTemp ;
+
+    Variables.push_back(VariablesTemp);
+  }
+
+  return Variables.size() ;
+
+}
+
+
+
+
+
 int ReadInputVariableBlindedFile( const std::string & InputVariableList , std::vector<std::string> & Variables, std::vector<int> & VariablesNbin,
                                   std::vector<double> & VariablesMinValue, std::vector<double> & VariablesMaxValue,  std::vector<double> & VariablesBlindMinValue, 
                                   std::vector<double> & VariablesBlindMaxValue, std::vector<std::string> & VariablesTitle ){
