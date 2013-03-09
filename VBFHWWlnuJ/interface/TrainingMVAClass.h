@@ -39,7 +39,8 @@ class TrainingMVAClass {
 
   void AddTrainingVariables ( const std::vector<std::string> & mapTrainingVariables, const std::vector<std::string> & mapSpectatorVariables, const std::string & weightString  );	       
 
-  void AddPrepareTraining (const std::string & cutString, const int & nTraining = 0, const int & nTesting = 0, const std::string & splitMode = "Random", const std::string & NormMode = "None");
+  void AddPrepareTraining (const std::string & cutString, const int & nTraining = 0, const int & nTesting = 0, const std::string & splitMode = "Random", 
+                           const std::string & NormMode = "NumEvents");
 
 
   void BookandTrainRectangularCuts    ( const std::string & FitMethod );
