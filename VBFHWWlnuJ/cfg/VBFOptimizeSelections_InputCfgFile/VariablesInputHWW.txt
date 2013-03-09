@@ -1,0 +1,9 @@
+#######################################
+## Input Variables for Cut Optimization
+########################################
+
+vbf_maxpt_jj_deta
+vbf_maxpt_jj_m
+vbf_maxpt_j1_QGLikelihood
+vbf_maxpt_j2_QGLikelihood
+GroomedJet_CA8_massdrop[0]

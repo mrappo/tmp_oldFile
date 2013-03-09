@@ -1,0 +1,19 @@
+#######################################
+## Input Variables for Cut Optimization
+########################################
+jet_grsens_tr
+jet_grsens_ft
+jet_massdrop_pr
+jet_qjetvol
+jet_tau2tau1
+jet_pt1frac
+jet_sjdr
+jet_jetconstituents
+jet_rcore4
+jet_rcore5
+jet_rcore6
+jet_rcore7
+jet_planarflow04
+jet_planarflow05
+jet_planarflow06
+jet_planarflow07
