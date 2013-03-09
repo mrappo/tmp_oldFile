@@ -1,0 +1,17 @@
+#####################################################################################################################
+#  Sample Name                                              Reduced Name      Color     XSec (pb)    NumEntriesBefore
+######################################################################################################################
+VBF_mu_ZpJ_CMSSW532                                             Z+Jets                     5            3503     30459503
+VBF_mu_STopS_Tbar_CMSSW532                                      STop                       210            25       139974
+VBF_mu_STopS_T_CMSSW532                                         STop                       210           4.5       259961
+VBF_mu_STopT_Tbar_CMSSW532                                      STop                       210          32.3      1935072
+VBF_mu_STopT_T_CMSSW532                                         STop                       210          59.5      3758227
+VBF_mu_STopTW_Tbar_CMSSW532                                     STop                       210          11.2       493460
+VBF_mu_STopTW_T_CMSSW532                                        STop                       210          11.2       497658
+VBF_mu_TTbar_CMSSW532                                           tt_bar                     210       225.196      6923750
+VBF_mu_W1Jets_CMSSW532                                          W+Jets                     2            5400     23141598
+VBF_mu_W2Jets_CMSSW532                                          W+Jets                     2            1750     34044921
+VBF_mu_W3Jets_CMSSW532                                          W+Jets                     2             519     15539503
+VBF_mu_W4Jets_CMSSW532                                          W+Jets                     2             211     13382803
+VBF_mu_HWWMH700_CMSSW532_private                                ggH                        4         0.05813       197292
+VBF_mu_VBFHWWMH700_CMSSW532_private                             qqH                        1         0.01608       194830
