@@ -1,0 +1,8 @@
+#################################
+## Spectator Variable List ######
+#################################
+ 
+jet_pt_pr
+jet_mass_pr
+nPV
+jet_massdrop_pr
