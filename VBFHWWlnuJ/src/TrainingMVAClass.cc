@@ -43,11 +43,11 @@ TrainingMVAClass::~TrainingMVAClass(){
 
   for(size_t iTree = 0; iTree < backgroundTreeList_.size() ; iTree++) {if(backgroundTreeList_.at(iTree)!=0)  delete backgroundTreeList_.at(iTree) ;}
 
-  if(outputFile_!=0) delete outputFile_ ;
+  if(outputFile_!=0) outputFile_->Delete() ;
 
-  if(preselectionCut_!=0) delete preselectionCut_ ;
+  if(preselectionCut_!=0) preselectionCut_->Delete() ;
  
-  if(factory_!=0) delete factory_ ;
+  if(factory_!=0) factory_->Delete() ;
 
 }
 
@@ -149,10 +149,15 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
 void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodType ){
 
 
-  if( LikelihoodType == "kLikelihood") 
-      factory_->BookMethod( TMVA::Types::kLikelihood, LikelihoodType.c_str(),"!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:!TransformOutput:PDFInterpol=Spline2:NAvEvtPeDrBin=50");
-  if( LikelihoodType == "kPDERS")  
-      factory_->BookMethod( TMVA::Types::kPDERS, LikelihoodType.c_str(),"!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:VolumeRangeMode=Adaptive:KernelEstimator=Gauss:DeltaFrac=4:GaussSigma=0.3:NormTree=T");
+  if( LikelihoodType == "LikelihoodKDE") 
+      factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:!TransformOutput:PDFInterpol=KDE:KDEtype=Gauss:KDEiter=Adaptive:KDEFineFactor=0.3:KDEborder=None:NAvEvtPerBin=5");
+
+  else if( LikelihoodType == "PDERS")  
+      factory_->BookMethod(TMVA::Types::kPDERS, LikelihoodType.c_str(),
+                           "!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:VolumeRangeMode=Adaptive:KernelEstimator=Gauss:DeltaFrac=4:GaussSigma=0.3:NormTree=T");
+
+  else factory_->BookMethod( TMVA::Types::kLikelihood, LikelihoodType.c_str(),"!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:!TransformOutput:PDFInterpol=Spline2:NAvEvtPeDrBin=50");
+
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
@@ -287,7 +292,8 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
 void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & GradBaggingFraction, const std::string & PruneMethod,
                        			  const int & PruneStrength, const int & MaxDepth, const std::string & SeparationType){
 
-  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType                          =%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
+  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:PruneMethod=%s:PruneStrength=%d:MaxDepth=%d"
+                         ":SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
   factory_->BookMethod( TMVA::Types::kBDT, "BDTG", Option.Data());
 
@@ -297,6 +303,35 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
   outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+"BDTG.root").c_str(),"RECREATE");
 
   outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"BDTG");
+
+  outputFile_->cd();
+
+  factory_->TrainAllMethods();
+
+  factory_->TestAllMethods();
+
+  factory_->EvaluateAllMethods();
+
+  outputFile_->Close();
+  outputFile_->Delete();
+
+}
+
+
+void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & GradBaggingFraction, const std::string & PruneMethod,
+                       			  const int & PruneStrength, const int & MaxDepth, const std::string & SeparationType){
+
+  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:UseFisherCuts:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:PruneMethod=%s:PruneStrength=%d"
+                         ":MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
+
+  factory_->BookMethod( TMVA::Types::kBDT, "BDTF", Option.Data());
+
+  std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
+  system(command.c_str());
+
+  outputFile_ = new TFile ((outputFilePath_+"/"+outputFileName_+"BDTF.root").c_str(),"RECREATE");
+
+  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"BDTF");
 
   outputFile_->cd();
 
@@ -322,6 +357,7 @@ void TrainingMVAClass::SetSignalTree (const std::vector<TFile*> & signalFileList
    for(size_t iFile = 0 ; iFile < signalFileList.size() ; iFile ++){
     
      if(signalFileList.at(iFile)!=0)  signalTreeList_.push_back((TTree*) signalFileList.at(iFile)->Get(TreeName_.c_str()));
+
      }
  }
 
@@ -329,6 +365,7 @@ void TrainingMVAClass::SetSignalTree (const std::vector<TFile*> & signalFileList
 void TrainingMVAClass::SetSignalTree (const std::vector<TTree*> & signalTreeList){
   
   if(signalTreeList.size()!=0) signalTreeList_ = signalTreeList ; 
+
 }
 
 
@@ -340,6 +377,7 @@ void TrainingMVAClass::SetBackgroundTree (const std::vector<TFile*> & background
   for(size_t iFile = 0 ; iFile < backgroundFileList.size() ; iFile ++){
 
      if(backgroundFileList.at(iFile)!=0) backgroundTreeList_.push_back((TTree*) backgroundFileList.at(iFile)->Get(TreeName_.c_str()));
+
      }
 }
 

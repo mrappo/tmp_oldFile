@@ -44,7 +44,7 @@ class TrainingMVAClass {
 
 
   void BookandTrainRectangularCuts    ( const std::string & FitMethod );
-  void BookandTrainLikelihood         ( const std::string & LikelihoodType );
+  void BookandTrainLikelihood         ( const std::string & LikelihoodType = "Likelihood");
   void BookandTrainLinearDiscriminant ();
   void BookandTrainFisherDiscriminant ();
 
@@ -54,6 +54,9 @@ class TrainingMVAClass {
                                         const std::string & PruneMethod = "CostComplexity", const int & PruneStrength=30, 
                                         const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
   void BookandTrainBDTG               ( const int & NTrees = 500, const float & GradBaggingFraction = 0.5, const std::string & PruneMethod = "CostComplexity", const int & PruneStrength = 30,
+                                        const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
+
+  void BookandTrainBDTF               ( const int & NTrees = 500, const float & GradBaggingFraction = 0.5, const std::string & PruneMethod = "CostComplexity", const int & PruneStrength = 30,
                                         const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
 
   void PrintTrainingResults ();
