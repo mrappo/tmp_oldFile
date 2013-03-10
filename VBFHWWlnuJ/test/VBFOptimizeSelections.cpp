@@ -15,6 +15,10 @@
 #include "TMath.h"
 #include "TCanvas.h"
 
+#include "TSystem.h"
+#include "TROOT.h"
+
+
 #include "ntpleUtils.h"
 #include "ConfigParser.h"
 
@@ -25,16 +29,16 @@
 std::string getPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType = "none"){
 
   if( preselectionCutType == "basicPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-            return "issignal==1 && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
+            return "issignal && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
 
   else if(preselectionCutType == "basicPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-            return "issignal==1 && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250" ;
+            return "issignal && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250" ;
 
   else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-              return "issignal==1 && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
+              return "issignal && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
 
   else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-              return "issignal==1 && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
+              return "issignal && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
   
   else return "v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
   
@@ -52,6 +56,8 @@ int main (int argc, char** argv){
 
   // Load TTree Lybrary                                                                                                                                                                           
   gSystem->Load("libTree.so");
+
+  TMVA::Tools::Instance();
 
   // parse config file parameter                                                                                                                                                                  
   parseConfigFile(argv[1]);
@@ -140,7 +146,7 @@ int main (int argc, char** argv){
   std::cout<<" Outout Directory     "<<outputFileDirectory<<std::endl;
   std::cout<<" Input Sample List    "<<outputFileName<<std::endl;
   std::cout<<"                      "<<std::endl;
-  /*
+  
   // read sample input file list to Plot                                                                                                                                                          
 
   std::vector <std::string> NameSample;
@@ -157,7 +163,7 @@ int main (int argc, char** argv){
 
 
   // Read Input File Variables for Training 
-  
+ 
   std::vector<std::string> mapTrainingVariables;
 
   std::cout<<" Read Training Variables File List "<<std::endl;
@@ -167,18 +173,17 @@ int main (int argc, char** argv){
     std::cerr<<" Empty Input Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
   // Read Spectator Variables for Training 
-
+  
   std::vector<std::string> mapSpectatorVariables;
   
   std::cout<<" Read Spectator File List "<<std::endl;
   std::cout<<std::endl;
 
-  
   if(ReadInputVariableFile(InputSpectatorList,mapSpectatorVariables) <= 0){
     std::cerr<<" Empty Spectator Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
   // Import Sample and signal - background collections
-
+  
   std::vector <TFile*> signalFileList;
   std::vector <TFile*> backgroundFileList;
   std::vector <TTree*> signalTreeList;
@@ -189,29 +194,36 @@ int main (int argc, char** argv){
 
 
   for (size_t iSample=0; iSample<NameSample.size(); iSample++){
-
+        
 	TString NameFile = Form("%s/%s.root",InputDirectory.c_str(),NameSample.at(iSample).c_str());
 	std::cout<<" Input File : "<< NameFile.Data()<<std::endl;
-
-	if(NameSample.at(iSample) == SignalName ){
+                
+	if(NameReducedSample.at(iSample) == SignalName ){
           signalFileList.push_back ( new TFile (NameFile.Data(),"READ") );
-    	  if(signalFileList.back()!=0) signalTreeList.push_back( (TTree*) signalFileList.at(iSample)->Get(TreeName.c_str()));
+	  if(signalFileList.back()!=0) signalTreeList.push_back( (TTree*) signalFileList.back()->Get(TreeName.c_str()));
         }
-        else {
+	else {
                backgroundFileList.push_back ( new TFile (NameFile.Data(),"READ") );
-               if(backgroundFileList.back()!=0) backgroundTreeList.push_back( (TTree*) backgroundFileList.at(iSample)->Get(TreeName.c_str()));
-	}
- 
+               if(backgroundFileList.back()!=0) backgroundTreeList.push_back( (TTree*) backgroundFileList.back()->Get(TreeName.c_str())); 
+	       }
   }
-
+  std::cout<<std::endl;
+  
   // Book MVA Training Object
 
   TrainingMVAClass* WWTraining = new TrainingMVAClass(signalTreeList, backgroundTreeList, TreeName, outputFileDirectory, outputFileName, Label);
+  
+  // Set Input and Spectator Variables
+  std::cout<<std::endl;
+  std::cout<<" Set Training and Spectator Variables  "<<std::endl;
+  std::cout<<std::endl;
+
+  WWTraining->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
 
   // Set Global Weight and signal + background Tree for MVA Training
 
-  std::vector<double> signalGlobalWeight;
-  std::vector<double> backgroundGlobalWeight;
+  std::vector<double> signalGlobalWeight (signalTreeList.size(),0.);
+  std::vector<double> backgroundGlobalWeight (backgroundTreeList.size(),0.);
 
   int isSignal = 0;
   int isBackground = 0;
@@ -221,40 +233,28 @@ int main (int argc, char** argv){
   
   for(size_t iSample =0; iSample<NameSample.size() ; iSample++){
 
-    if( NameSample.at(iSample) == SignalName ) {
+    if( NameReducedSample.at(iSample) == SignalName ) {
        
-      if(signalTreeList.size() ==1 ) { signalGlobalWeight.at(isSignal) = 1.0 ; isSignal ++ ; }
-      else{
            signalGlobalWeight.at(isSignal) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
-           isSignal ++;
-      }
-
+           isSignal ++; 
     }
+
     else{
-         if(backgroundTreeList.size() ==1 ) { backgroundGlobalWeight.at(isBackground) = 1.0 ; isBackground ++ ; }
-         else{
-               backgroundGlobalWeight.at(isBackground) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
+	       backgroundGlobalWeight.at(isBackground) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
                isBackground ++;    
 	 }
-    }
+    
   }
-
-
+  
   WWTraining->BookMVATrees(signalGlobalWeight, backgroundGlobalWeight);
-
-  // Set Input and Spectator Variables
-  std::cout<<" Set Training and Spectator Variables  "<<std::endl;
-  std::cout<<std::endl;
-
-  WWTraining->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables, EventWeight);
-
+    
   // Prepare and Set the MVA Factory
-
+  std::cout<<std::endl;
   std::cout<<" Prepare MVA  "<<std::endl;
   std::cout<<std::endl;
 
-  WWTraining->AddPrepareTraining ( TCut ) ;
-
+  WWTraining->AddPrepareTraining ( TCut, EventWeight ) ;
+  
   // Book and Run TMVA Training and testing for the selected methods
 
   std::cout<<" Loop on the Selected Methods  "<<std::endl;
@@ -274,11 +274,11 @@ int main (int argc, char** argv){
     if(UseMethodName.at(iMethod) == "PDERS")         WWTraining->BookandTrainLikelihood("PDERS"); 
 
     // Fisher Discriminant
-    if(UseMethodName.at(iMethod) == "Fisher") WWTraining->BookandTrainFisherDiscriminant(); 
-
+    if(UseMethodName.at(iMethod) == "Fisher")  WWTraining->BookandTrainFisherDiscriminant(); 
+    
     // Linear Discriminant
-    if(UseMethodName.at(iMethod) == "LD")     WWTraining->BookandTrainLinearDiscriminant();
-
+    if(UseMethodName.at(iMethod) == "LD")      WWTraining->BookandTrainLinearDiscriminant();
+    
     // MLP
     if(UseMethodName.at(iMethod) == "MLP")     WWTraining->BookandTrainMLP();
 
@@ -286,13 +286,13 @@ int main (int argc, char** argv){
     if(UseMethodName.at(iMethod) == "BDT")     WWTraining->BookandTrainBDT();
 
     // BDTG
-    if(UseMethodName.at(iMethod) == "BDTG")     WWTraining->BookandTrainBDTG();
+    if(UseMethodName.at(iMethod) == "BDTG")    WWTraining->BookandTrainBDTG();
 
     // BDTF
-    if(UseMethodName.at(iMethod) == "BDTF")     WWTraining->BookandTrainBDTF();
-
+    if(UseMethodName.at(iMethod) == "BDTF")    WWTraining->BookandTrainBDTF();
+    
   }
-
+  /*
   // Print Output Plots
   std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
   std::cout<<std::endl;

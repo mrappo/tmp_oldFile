@@ -16,10 +16,12 @@
 
 #include "ntpleUtils.h"
 
+#if not defined(__CINT__) || defined(__MAKECINT__)
 #include "TMVA/MsgLogger.h"
 #include "TMVA/Config.h"
 #include "TMVA/Tools.h"
 #include "TMVA/Factory.h"
+#endif
 
 class TrainingMVAClass {
 
@@ -37,9 +39,9 @@ class TrainingMVAClass {
 
   void BookMVATrees (const std::vector<double> & signalGlobalWeight, const std::vector<double> & backgroundGlobalWeight) ;
 
-  void AddTrainingVariables ( const std::vector<std::string> & mapTrainingVariables, const std::vector<std::string> & mapSpectatorVariables, const std::string & weightString  );	       
+  void AddTrainingVariables ( const std::vector<std::string> & mapTrainingVariables, const std::vector<std::string> & mapSpectatorVariables);	       
 
-  void AddPrepareTraining (const std::string & cutString, const int & nTraining = 0, const int & nTesting = 0, const std::string & splitMode = "Random", 
+  void AddPrepareTraining (const std::string & cutString,  const std::string & weightString , const int & nTraining = 0, const int & nTesting = 0, const std::string & splitMode = "Random", 
                            const std::string & NormMode = "NumEvents");
 
 
@@ -82,7 +84,6 @@ class TrainingMVAClass {
 
   void SetEventWeight ( const std::string & weightString ) ;
 
-
  private : 
 
   std::vector<TTree*> signalTreeList_ ;
@@ -99,8 +100,8 @@ class TrainingMVAClass {
 
   std::string outputFilePath_ ;
   std::string outputFileName_ ;
+  std::string outputFileNameComplete_ ;
 
-  std::vector<std::string> outputFileNameComplete_;
   std::vector<std::string> outputFileWeightName_ ;
 
   TCut*  preselectionCut_ ;

@@ -9,12 +9,12 @@ TrainingMVAClass::TrainingMVAClass(const std::vector<TFile*> & signalFileList, c
 
    SetBackgroundTree (backgroundFileList,TreeName) ;
 
+   SetLabel ( Label );
+
    SetOutputFile ( outputFilePath , outputFileName ) ;
 
-   SetLabel ( Label );
- 
-   factory_ = new TMVA::Factory ((TreeName_+Label).c_str(),outputFile_,"!V:!Silent:Color:DrawProgressBar:Transformations=I;N;D;P;G,D:AnalysisType=Classification");
-    
+   factory_ = new TMVA::Factory (TreeName_+"_"+Label_,outputFile_, Form("!V:!Silent:%sColor:DrawProgressBar:Transformations=I;D;P;G:AnalysisType=Classification", gROOT->IsBatch()?"!":""));
+
 }
 
 TrainingMVAClass::TrainingMVAClass(const std::vector<TTree*> & signalTreeList, const std::vector<TTree*> & backgroundTreeList,  const std::string & TreeName,
@@ -27,11 +27,11 @@ TrainingMVAClass::TrainingMVAClass(const std::vector<TTree*> & signalTreeList, c
 
    SetBackgroundTree (backgroundTreeList) ;
 
+   SetLabel ( Label );
+
    SetOutputFile ( outputFilePath , outputFileName ) ;
 
-   SetLabel ( Label );
- 
-   factory_ = new TMVA::Factory ((TreeName_+Label).c_str(),outputFile_,"!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification");
+   factory_ = new TMVA::Factory (TreeName_+"_"+Label_,outputFile_, Form("!V:!Silent:%sColor:DrawProgressBar:Transformations=I;D;P;G:AnalysisType=Classification", gROOT->IsBatch()?"!":""));
 
 }
 
@@ -49,6 +49,21 @@ TrainingMVAClass::~TrainingMVAClass(){
  
   if(factory_!=0) factory_->Delete() ;
 
+}
+
+// AddTrainingVariables in the MVA
+
+void TrainingMVAClass::AddTrainingVariables ( const std::vector<std::string> & mapTrainingVariables, const std::vector<std::string> & mapSpectatorVariables){
+
+  SetTrainingVariables(mapTrainingVariables);
+  SetSpectatorVariables(mapSpectatorVariables);
+
+  for( size_t iVar = 0 ; iVar < mapTrainingVariables_.size() ; iVar ++ )
+    factory_->AddVariable(mapTrainingVariables_.at(iVar)+" := "+mapTrainingVariables_.at(iVar),'F');
+   
+  for( size_t iVar = 0 ; iVar < mapSpectatorVariables_.size() ; iVar ++ )
+    factory_->AddSpectator(mapSpectatorVariables_.at(iVar),'F');
+    
 }
 
 
@@ -82,56 +97,26 @@ void TrainingMVAClass::BookMVATrees (const std::vector<double> & signalGlobalWei
 
 }
 
-// AddTrainingVariables in the MVA
 
-void TrainingMVAClass::AddTrainingVariables ( const std::vector<std::string> & mapTrainingVariables, const std::vector<std::string> & mapSpectatorVariables, const std::string & weightString ){
-
-  SetTrainingVariables(mapTrainingVariables);
-  SetSpectatorVariables(mapSpectatorVariables);
-
-  for( size_t iVar = 0 ; iVar < mapTrainingVariables_.size() ; iVar ++ )
-    factory_->AddVariable((mapTrainingVariables_.at(iVar)+" := "+mapTrainingVariables_.at(iVar)).c_str(), 'F');
-
-  for( size_t iVar = 0 ; iVar < mapSpectatorVariables_.size() ; iVar ++ )
-    factory_->AddSpectator(mapSpectatorVariables_.at(iVar).c_str());
-
-  SetEventWeight(weightString);
-
-}
-
-void TrainingMVAClass::AddPrepareTraining ( const std::string & cutString, const int & nTraining, const int & nTesting, const std::string & splitMode, const std::string & NormMode ){
+void TrainingMVAClass::AddPrepareTraining ( const std::string & cutString, const std::string & weightString, 
+                                            const int & nTraining, const int & nTesting, const std::string & splitMode, const std::string & NormMode){
 
   preselectionCut_ = new TCut (cutString.c_str()) ;
 
-  TString Option = Form("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:nTrain_Signal=%d:nTrain_Background=%d:nTest_Signal=%d:nTest_Background=%d:SplitMode=%s:NormMode=%s:!V",
+  TString Option = Form("nTrain_Signal=%d:nTrain_Background=%d:nTest_Signal=%d:nTest_Background=%d:SplitMode=%s:NormMode=%s:!V",
                          nTraining,nTesting,nTraining,nTesting,splitMode.c_str(),NormMode.c_str());
 
-  factory_->PrepareTrainingAndTestTree( *(preselectionCut_), Option.Data() );
+  SetEventWeight (weightString);
+
+  factory_->PrepareTrainingAndTestTree( *(preselectionCut_),*(preselectionCut_), Option.Data() );
 
 }
 
 
 void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMethod ){
 
-  if(FitMethod!=""){ TString Option = Form("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:FitMethod=%s:EffSel", FitMethod.c_str());
-                     TString Name = Form("Cuts%s",FitMethod.c_str());
-                     factory_->BookMethod( TMVA::Types::kCuts, Name.Data(),Option.Data());
-  }
-
-  else{
-        factory_->BookMethod( TMVA::Types::kCuts, "CutsMC","!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:FitMethod=MC:EffSel:" );
-        factory_->BookMethod( TMVA::Types::kCuts, "CutsGA","!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:FitMethod=GA:EffSel:Steps=40:PopSize=400:SC_steps=10:SC_rate=5:SC_factor=0.95");
-        factory_->BookMethod( TMVA::Types::kCuts, "CutsSA","!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:FitMethod=SA:EffSel:KernelTemp=IncAdaptive:Eps=1e-10:UseDefaultScale" );
-
-  }
-
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
-
-  // Set Output Root File for TMVA Plots
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"_Cuts"+FitMethod+"_"+Label_);
-
-  outputFile_ = new TFile ((outputFileNameComplete_.back()+".root").c_str(),"RECREATE");
 
   // Set Name of the Weight file for TMVA evaluating procedure
   outputFileWeightName_.push_back("TMVAWeight_Cuts"+FitMethod+"_"+Label_);
@@ -139,6 +124,20 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
 
   // Training Testing and Evaluating 
   outputFile_->cd();
+
+  if(FitMethod!=""){ TString Option = Form("!H:!V:CreateMVAPdfs:FitMethod=%s:EffSel", FitMethod.c_str());
+                     TString Name = Form("Cuts%s",FitMethod.c_str());
+                     factory_->BookMethod( TMVA::Types::kCuts, Name.Data(),Option.Data());
+  }
+
+  else{
+        factory_->BookMethod( TMVA::Types::kCuts, "CutsMC","!H:!V:CreateMVAPdfs:FitMethod=MC:EffSel:" );
+        factory_->BookMethod( TMVA::Types::kCuts, "CutsGA","!H:!V:CreateMVAPdfs:FitMethod=GA:EffSel:Steps=40:PopSize=400:SC_steps=10:SC_rate=5:SC_factor=0.95");
+        factory_->BookMethod( TMVA::Types::kCuts, "CutsSA","!H:!V:CreateMVAPdfs:FitMethod=SA:EffSel:KernelTemp=IncAdaptive:Eps=1e-10:UseDefaultScale" );
+
+  }
+
+  factory_->OptimizeAllMethods();
 
   factory_->TrainAllMethods();
 
@@ -150,14 +149,22 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout<< "==> TMVAClassification is done!" << std::endl;
-  
-  outputFile_->Delete();
 
 }
 
 
 void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodType ){
 
+
+  std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
+  system(command.c_str());
+
+  // Set Name of the Weight file for TMVA evaluating procedure
+  outputFileWeightName_.push_back("TMVAWeight_"+LikelihoodType+"_"+Label_);
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+
+  // Training Testing and Evaluating 
+  outputFile_->cd();
 
   if( LikelihoodType == "LikelihoodKDE") 
       factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:!TransformOutput:PDFInterpol=KDE:KDEtype=Gauss:KDEiter=Adaptive:KDEFineFactor=0.3:KDEborder=None:NAvEvtPerBin=5");
@@ -168,21 +175,7 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
 
   else factory_->BookMethod( TMVA::Types::kLikelihood, LikelihoodType.c_str(),"!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:!TransformOutput:PDFInterpol=Spline2:NAvEvtPeDrBin=50");
 
-
-  std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
-
-  // Set Output Root File for TMVA Plots
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"_"+LikelihoodType+"_"+Label_);
-
-  outputFile_ = new TFile ((outputFileNameComplete_.back()+".root").c_str(),"RECREATE");
-
-  // Set Name of the Weight file for TMVA evaluating procedure
-  outputFileWeightName_.push_back("TMVAWeight_"+LikelihoodType+"_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
-
-  // Training Testing and Evaluating 
-  outputFile_->cd();
+  factory_->OptimizeAllMethods();                                                                                                                                                          
 
   factory_->TrainAllMethods();
 
@@ -194,30 +187,27 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
-
-  outputFile_->Delete();
 
 }
 
 void TrainingMVAClass::BookandTrainFisherDiscriminant(){
 
 
-  factory_->BookMethod( TMVA::Types::kFisher, "Fisher", "!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10:Fisher" );
-
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
 
-  // Set Output Root File for TMVA Plots                                                                                                                                                         
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"_Fisher_"+Label_);
+  // Set Name of the Weight file for TMVA evaluating procedure                                                              
 
-  outputFile_ = new TFile ((outputFileNameComplete_.back()+".root").c_str(),"RECREATE");
-
-  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                   
   outputFileWeightName_.push_back("TMVAWeight_Fisher_"+Label_);
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
 
   // Training Testing and Evaluating  
   outputFile_->cd();
+
+  factory_->BookMethod( TMVA::Types::kFisher, "Fisher",
+                        "!H:!V:VarTransform=I,D,P,G,D:CreateMVAPdfs:IgnoreNegWeightsInTraining:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10:Fisher" );
+
+  factory_->OptimizeAllMethods();                                                                                                                                                          
 
   factory_->TrainAllMethods();
 
@@ -230,23 +220,13 @@ void TrainingMVAClass::BookandTrainFisherDiscriminant(){
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
 
-  outputFile_->Delete();
-
 }
 
 void TrainingMVAClass::BookandTrainLinearDiscriminant(){
 
 
-  factory_->BookMethod( TMVA::Types::kLD, "LD", "!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10" );
-
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
-
-  // Set Output Root File for TMVA Plots
-
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"_LD_"+Label_);
-
-  outputFile_ = new TFile ((outputFileNameComplete_.back()+".root").c_str(),"RECREATE");
 
   // Set Name of the Weight file for TMVA evaluating procedure
 
@@ -256,6 +236,10 @@ void TrainingMVAClass::BookandTrainLinearDiscriminant(){
   // Training Testing and Evaluating   
   outputFile_->cd();
 
+  factory_->BookMethod( TMVA::Types::kLD, "LD", "H:!V:VarTransform=I,D,P,G,D:CreateMVAPdfs:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10" );
+
+  factory_->OptimizeAllMethods();
+  
   factory_->TrainAllMethods();
 
   factory_->TestAllMethods();
@@ -267,25 +251,14 @@ void TrainingMVAClass::BookandTrainLinearDiscriminant(){
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
 
-  outputFile_->Delete();
-
 }
 
 void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & HiddenLayers, const std::string & NeuronType,
 				       const std::string & TrainingMethod, const int & TestRate, const int & ConvergenceTests){
 
-  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:NCycles=%d:HiddenLayers=%s:NeuronType=%s:TrainingMethod=%s:TestRate=%d:ConvergenceTests=%d:!UseRegulator",
-                         nCycles,HiddenLayers.c_str(),NeuronType.c_str(),TrainingMethod.c_str(),TestRate,ConvergenceTests);
-
-  factory_->BookMethod( TMVA::Types::kMLP, "MLP", Option.Data());
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
-
-  // Set Output Root File for TMVA Plots
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_);
-
-  outputFile_ = new TFile ((outputFileNameComplete_.back()+".root").c_str(),"RECREATE");
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
 
@@ -295,6 +268,13 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
   // Training Testing and Evaluating                                                  
   outputFile_->cd();
 
+  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:NCycles=%d:HiddenLayers=%s:NeuronType=%s:TrainingMethod=%s:TestRate=%d:ConvergenceTests=%d:!UseRegulator",
+                         nCycles,HiddenLayers.c_str(),NeuronType.c_str(),TrainingMethod.c_str(),TestRate,ConvergenceTests);
+
+  factory_->BookMethod( TMVA::Types::kMLP, "MLP", Option.Data());
+
+  factory_->OptimizeAllMethods();                                                                                                                                                          
+  
   factory_->TrainAllMethods();
 
   factory_->TestAllMethods();
@@ -306,26 +286,15 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
 
-  outputFile_->Delete();
-
 }
 
 
 void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string & BoostType, const float & AdaBoostBeta,
 				         const std::string & PruneMethod, const int & PruneStrength, const int & MaxDepth, const std::string & SeparationType){
 
-  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",
-                         NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
-
-  factory_->BookMethod( TMVA::Types::kBDT, "BDT", Option.Data());
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
-
-  // Set Output Root File for TMVA Plots                                                                                                                         
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"_BDT_"+BoostType+"_"+PruneMethod+"_"+Label_);
-
-  outputFile_ = new TFile ((outputFileNameComplete_.back()+".root").c_str(),"RECREATE");
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                 
 
@@ -335,6 +304,13 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
   // Training Testing and Evaluating                                                                                                                                           
   outputFile_->cd();
 
+  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",
+                         NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
+
+  factory_->BookMethod( TMVA::Types::kBDT, "BDT", Option.Data());
+
+  factory_->OptimizeAllMethods();                                                                                                                                                            
+
   factory_->TrainAllMethods();
 
   factory_->TestAllMethods();
@@ -346,28 +322,16 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
 
-  outputFile_->Delete();
-
 }
 
 void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & GradBaggingFraction, const std::string & PruneMethod,
                        			  const int & PruneStrength, const int & MaxDepth, const std::string & SeparationType){
 
-  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:PruneMethod=%s:PruneStrength=%d:MaxDepth=%d"
-                         ":SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
-
-  factory_->BookMethod( TMVA::Types::kBDT, "BDTG", Option.Data());
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
 
-  // Set Output Root File for TMVA Plots                                                                                                                                                    
-
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"_BDTG_"+PruneMethod+"_"+Label_);
-
-  outputFile_ = new TFile ((outputFileNameComplete_.back()+".root").c_str(),"RECREATE");
-
-  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                   
+  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
 
   outputFileWeightName_.push_back("TMVAWeight_BDTG_"+PruneMethod+"_"+Label_);
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
@@ -375,6 +339,13 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
   // Training Testing and Evaluating 
   outputFile_->cd();
 
+  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:PruneMethod=%s:PruneStrength=%d:MaxDepth=%d"
+                         ":SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
+
+  factory_->BookMethod( TMVA::Types::kBDT, "BDTG", Option.Data());
+
+  factory_->OptimizeAllMethods();                                                                                                                                                           
+
   factory_->TrainAllMethods();
 
   factory_->TestAllMethods();
@@ -385,8 +356,6 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
-
-  outputFile_->Delete();
 
 }
 
@@ -394,27 +363,23 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
 void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & GradBaggingFraction, const std::string & PruneMethod,
                        			  const int & PruneStrength, const int & MaxDepth, const std::string & SeparationType){
 
-  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:UseFisherCuts:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:PruneMethod=%s:PruneStrength=%d"
-                         ":MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
-
-  factory_->BookMethod( TMVA::Types::kBDT, "BDTF", Option.Data());
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
 
-  // Set Output Root File for TMVA Plots                                                                                                                                                         
-  outputFileNameComplete_.push_back(outputFilePath_+"/"+outputFileName_+"_BDTF_"+PruneMethod+"_"+Label_);
-
-  outputFile_ = new TFile ((outputFileNameComplete_.back()+".root").c_str(),"RECREATE");
-
-  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                   
-
+  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                 
   outputFileWeightName_.push_back("TMVAWeight_BDTF_"+PruneMethod+"_"+Label_);
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
 
   // Training Testing and Evaluating 
   outputFile_->cd();
 
+  TString Option = Form ("!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:UseFisherCuts:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:PruneMethod=%s:PruneStrength=%d"
+                         ":MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
+
+  factory_->BookMethod( TMVA::Types::kBDT, "BDTF", Option.Data());
+
+  factory_->OptimizeAllMethods();                                                                                                                                                             
   factory_->TrainAllMethods();
 
   factory_->TestAllMethods();
@@ -425,9 +390,6 @@ void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & Grad
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
-
-  outputFile_->Delete();
-
 }
 
 
@@ -499,8 +461,13 @@ void TrainingMVAClass::SetOutputFile ( const std::string & outputFilePath , cons
  
    outputFilePath_=outputFilePath; 
    outputFileName_=outputFileName;
+
+   outputFileNameComplete_ = outputFilePath_+"/"+outputFileName_+"_"+Label_+".root" ;
+
+   outputFile_ = new TFile((outputFilePath_+"/"+outputFileName_+"_"+Label_+".root").c_str(),"RECREATE");
    
-   }
+ }
+
 }
 
 void TrainingMVAClass::SetGlobalSampleWeight (const std::vector<double> & signalGlobalWeight, const std::vector<double> & backgroundGlobalWeight){
@@ -513,7 +480,7 @@ void TrainingMVAClass::SetGlobalSampleWeight (const std::vector<double> & signal
 
 void TrainingMVAClass::SetEventWeight (const std::string & weightString){
 
-  factory_->SetWeightExpression(weightString.c_str());
+  factory_->SetWeightExpression(weightString);
 
 }
 
@@ -530,40 +497,35 @@ void  TrainingMVAClass::PrintTrainingResults (){
   std::cout << "******************************************************* "<<std::endl;  
 
 
-  for(size_t iRootFile = 0 ; iRootFile < outputFileNameComplete_.size() ; iRootFile++){
+  command = "root -l -b -q ../macros/TMVAMacros/variables.C("+outputFileNameComplete_+")";
+  gROOT->ProcessLine(command.c_str());
 
-    command = "root -l -b -q ../macros/TMVAMacros/variables.C("+outputFileNameComplete_.at(iRootFile)+".root)";
-    gROOT->ProcessLine(command.c_str());
+  command = "root -l -b -q ../macros/TMVAMacros/correlationscatter.C("+outputFileNameComplete_+")";
+  gROOT->ProcessLine(command.c_str());
 
-    command = "root -l -b -q ../macros/TMVAMacros/correlationscatter.C("+outputFileNameComplete_.at(iRootFile)+".root)";
-    gROOT->ProcessLine(command.c_str());
+  command = "root -l -b -q ../macros/TMVAMacros/correlations.C("+outputFileNameComplete_+")";
+  gROOT->ProcessLine(command.c_str());
 
-    command = "root -l -b -q ../macros/TMVAMacros/correlations.C("+outputFileNameComplete_.at(iRootFile)+".root)";
-    gROOT->ProcessLine(command.c_str());
+  command = "root -l -b -q ../macros/TMVAMacros/mvas.C("+outputFileNameComplete_+")";
+  gROOT->ProcessLine(command.c_str());
 
-    command = "root -l -b -q ../macros/TMVAMacros/mvas.C("+outputFileNameComplete_.at(iRootFile)+".root)";
-    gROOT->ProcessLine(command.c_str());
+  command = "root -l -b -q ../macros/TMVAMacros/mvaeffs.C("+outputFileNameComplete_+")";
+  gROOT->ProcessLine(command.c_str());
 
-    command = "root -l -b -q ../macros/TMVAMacros/mvaeffs.C("+outputFileNameComplete_.at(iRootFile)+".root)";
-    gROOT->ProcessLine(command.c_str());
+  command = "root -l -b -q ../macros/TMVAMacros/efficiencies.C("+outputFileNameComplete_+")";
+  gROOT->ProcessLine(command.c_str());
 
-    command = "root -l -b -q ../macros/TMVAMacros/efficiencies.C("+outputFileNameComplete_.at(iRootFile)+".root)";
-    gROOT->ProcessLine(command.c_str());
+  command = " if [ ! -e "+outputFilePath_+"/trainingPlots ] ; then mkdir"+outputFilePath_+"/trainingPlots ; fi";
+  system(command.c_str());
 
-    command = " if [ ! -e "+outputFilePath_+"/trainingPlots ] ; then mkdir"+outputFilePath_+"/trainingPlots ; fi";
-    system(command.c_str());
+  command = " if [ ! -e "+outputFilePath_+"/trainingPlots/"+outputFileNameComplete_+" ] ; then mkdir"+outputFilePath_+"/trainingPlots/"+
+                         outputFileNameComplete_+" ; fi";
+  system(command.c_str());
 
-    command = " if [ ! -e "+outputFilePath_+"/trainingPlots/"+outputFileNameComplete_.at(iRootFile)+" ] ; then mkdir"+outputFilePath_+"/trainingPlots/"+
-                            outputFileNameComplete_.at(iRootFile)+" ; fi";
-    system(command.c_str());
+  command = "mv ./plots/* "+outputFilePath_+"/trainingPlots/"+outputFileNameComplete_+"/" ;
+  system(command.c_str());
 
-    command = "mv ./plots/* "+outputFilePath_+"/trainingPlots/"+outputFileNameComplete_.at(iRootFile)+"/" ;
-    system(command.c_str());
-
-    std::cout << "==> Wrote image files: " << outputFilePath_+"/trainingPlots/"+outputFileNameComplete_.at(iRootFile)+"/" << std::endl;
-    std::cout << "==> TMVA Plots are done!" << std::endl;
-
-  }
-
+  std::cout << "==> Wrote image files: " << outputFilePath_+"/trainingPlots/"+outputFileNameComplete_ << std::endl;
+  std::cout << "==> TMVA Plots are done!" << std::endl;
    
 }
