@@ -101,10 +101,11 @@ class TrainingMVAClass {
   std::string outputFileName_ ;
 
   std::vector<std::string> outputFileNameComplete_;
+  std::vector<std::string> outputFileWeightName_ ;
 
-  TCut* preselectionCut_ ;
+  TCut*  preselectionCut_ ;
 
-  TFile * outputFile_ ;
+  TFile* outputFile_ ;
 
   TMVA::Factory* factory_ ; 
 };
