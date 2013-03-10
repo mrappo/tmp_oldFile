@@ -22,6 +22,25 @@
 
 #include "TrainingMVAClass.h"
 
+std::string getPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType = "none"){
+
+  if( preselectionCutType == "basicPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+            return "issignal==1 && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
+
+  else if(preselectionCutType == "basicPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+            return "issignal==1 && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250" ;
+
+  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+              return "issignal==1 && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
+
+  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+              return "issignal==1 && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
+  
+  else return "v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
+  
+}
+
+
 /// Main Programme                                                                                                                                                                                
 int main (int argc, char** argv){
 
@@ -39,7 +58,7 @@ int main (int argc, char** argv){
 
   std::string InputDirectory        = gConfigParser -> readStringOption("Input::InputDirectory");
   std::string InputSampleList       = gConfigParser -> readStringOption("Input::InputSampleList");
-  std::string InputVariableList     = gConfigParser -> readStringOption("Input::InputVaribleList");
+  std::string InputVariableList     = gConfigParser -> readStringOption("Input::InputVariableList");
   std::string InputSpectatorList    = gConfigParser -> readStringOption("Input::InputSpectatorList");
 
   std::string TreeName ; 
@@ -51,17 +70,19 @@ int main (int argc, char** argv){
 
 
   std::string Label         = gConfigParser -> readStringOption("Input::Label");
+  std::string LeptonType         = gConfigParser -> readStringOption("Input::LeptonType");
 
-  std::cout<<"                      "<<std::endl;
-  std::cout<<" Input Directory      "<<InputDirectory<<std::endl;
-  std::cout<<" Input Sample List    "<<InputSampleList<<std::endl;
-  std::cout<<" Input Variable  List "<<InputVariableList<<std::endl;
-  std::cout<<" Input Spectator List "<<InputSpectatorList<<std::endl;
-  std::cout<<" Input TreeName       "<<TreeName<<std::endl;
-  std::cout<<" Input Label          "<<Label<<std::endl;
-  std::cout<<"                      "<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<" Input Directory      = "<<InputDirectory<<std::endl;
+  std::cout<<" Input Sample List    = "<<InputSampleList<<std::endl;
+  std::cout<<" Input Variable  List = "<<InputVariableList<<std::endl;
+  std::cout<<" Input Spectator List = "<<InputSpectatorList<<std::endl;
+  std::cout<<" Input TreeName       = "<<TreeName<<std::endl;
+  std::cout<<" Input Label          = "<<Label<<std::endl;
+  std::cout<<" Input LeptonType     = "<<LeptonType<<std::endl;
+  std::cout<<std::endl;
 
-
+  
   std::string SignalName ;
   try{ SignalName = gConfigParser -> readStringOption("Option::SignalName"); }
   catch(char const* exceptionString){
@@ -69,7 +90,7 @@ int main (int argc, char** argv){
     std::cerr<<" Signal Name set to --> qqH default "<<std::endl;
   }
 
-  std::cout<<" Option Signal Name "<<SignalName<<std::endl;
+  std::cout<<" Option Signal Name = "<<SignalName<<std::endl;
   std::cout<<std::endl;
 
   std::string EventWeight ;
@@ -80,21 +101,23 @@ int main (int argc, char** argv){
     std::cerr<<" Event Weight set to --> puwt*effwt default "<<std::endl;
   }
 
-  std::cout<<" Option Event Weight "<<EventWeight<<std::endl;
+  std::cout<<" Option Event Weight = "<<EventWeight<<std::endl;
   std::cout<<std::endl;
- 
-  std::string PreselectionCut ;
-  try{ PreselectionCut  = gConfigParser -> readStringOption("Option::PreselectionCut"); }
+  
+  std::string PreselectionCutType ;
+  try{ PreselectionCutType  = gConfigParser -> readStringOption("Option::PreselectionCutType"); }
   catch(char const* exceptionString){
-    PreselectionCut = "";
+    PreselectionCutType = "none";
     std::cerr<<" No preselection cut is set --> all the events are used "<<std::endl;
   }
 
+  std::string TCut = getPreselectionCut(LeptonType,PreselectionCutType);
 
-  std::cout<<" Option Preselection Cut "<<PreselectionCut<<std::endl;
-  std::cout<<"                         "<<std::endl;
+  std::cout<<" Option Preselection Cut = "<<PreselectionCutType<<std::endl;
+  std::cout<<" Option TCut             = "<<TCut<<std::endl;
+  std::cout<<std::endl;
 
-
+  
   std::vector<std::string> UseMethodName;
   try{ UseMethodName = gConfigParser -> readStringListOption("Option::UseMethodName"); }
   catch(char const* exceptionString){ UseMethodName.push_back("Cuts");
@@ -104,13 +127,12 @@ int main (int argc, char** argv){
 
   std::cout << std::endl;
   std::cout << " >>>>> Option::UseMethodName size = " << UseMethodName.size() << std::endl;
-  std::cout << " >>>>> >>>>>  ";
+
   for (unsigned int iCat = 0; iCat < UseMethodName.size(); iCat++){
     std::cout << " " << UseMethodName.at(iCat) << ", ";
   }
   std::cout << std::endl;
-
-
+  
   std::string outputFileDirectory = gConfigParser -> readStringOption("Output::outputFileDirectory"); 
   std::string outputFileName      = gConfigParser -> readStringOption("Output::outputFileName"); 
 
@@ -118,7 +140,7 @@ int main (int argc, char** argv){
   std::cout<<" Outout Directory     "<<outputFileDirectory<<std::endl;
   std::cout<<" Input Sample List    "<<outputFileName<<std::endl;
   std::cout<<"                      "<<std::endl;
-
+  /*
   // read sample input file list to Plot                                                                                                                                                          
 
   std::vector <std::string> NameSample;
@@ -127,6 +149,8 @@ int main (int argc, char** argv){
   std::vector <double> SampleCrossSection;
   std::vector <int> NumEntriesBefore;
 
+  std::cout<<" Read Sample File List "<<std::endl;
+  std::cout<<std::endl;
 
   if(ReadInputSampleFile(InputSampleList,NameSample,NameReducedSample,ColorSample,SampleCrossSection,NumEntriesBefore) <= 0){
     std::cerr<<" Empty Input Sample File or not Exisisting --> Exit "<<std::endl; return -1;}
@@ -135,13 +159,20 @@ int main (int argc, char** argv){
   // Read Input File Variables for Training 
   
   std::vector<std::string> mapTrainingVariables;
+
+  std::cout<<" Read Training Variables File List "<<std::endl;
+  std::cout<<std::endl;
   
   if(ReadInputVariableFile(InputVariableList,mapTrainingVariables) <= 0){
     std::cerr<<" Empty Input Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
   // Read Spectator Variables for Training 
- 
+
   std::vector<std::string> mapSpectatorVariables;
+  
+  std::cout<<" Read Spectator File List "<<std::endl;
+  std::cout<<std::endl;
+
   
   if(ReadInputVariableFile(InputSpectatorList,mapSpectatorVariables) <= 0){
     std::cerr<<" Empty Spectator Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
@@ -152,6 +183,9 @@ int main (int argc, char** argv){
   std::vector <TFile*> backgroundFileList;
   std::vector <TTree*> signalTreeList;
   std::vector <TTree*> backgroundTreeList;
+
+  std::cout<<" Building Tree List for Signal And Background  "<<std::endl;
+  std::cout<<std::endl;
 
 
   for (size_t iSample=0; iSample<NameSample.size(); iSample++){
@@ -181,7 +215,10 @@ int main (int argc, char** argv){
 
   int isSignal = 0;
   int isBackground = 0;
- 
+
+  std::cout<<" Building Global Event Weight  + Add Trees "<<std::endl;
+  std::cout<<std::endl; 
+  
   for(size_t iSample =0; iSample<NameSample.size() ; iSample++){
 
     if( NameSample.at(iSample) == SignalName ) {
@@ -206,14 +243,23 @@ int main (int argc, char** argv){
   WWTraining->BookMVATrees(signalGlobalWeight, backgroundGlobalWeight);
 
   // Set Input and Spectator Variables
+  std::cout<<" Set Training and Spectator Variables  "<<std::endl;
+  std::cout<<std::endl;
 
   WWTraining->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables, EventWeight);
 
   // Prepare and Set the MVA Factory
 
-  WWTraining->AddPrepareTraining ( PreselectionCut ) ;
+  std::cout<<" Prepare MVA  "<<std::endl;
+  std::cout<<std::endl;
+
+  WWTraining->AddPrepareTraining ( TCut ) ;
 
   // Book and Run TMVA Training and testing for the selected methods
+
+  std::cout<<" Loop on the Selected Methods  "<<std::endl;
+  std::cout<<std::endl;
+
 
   for(size_t iMethod =0; iMethod<UseMethodName.size(); iMethod++){
 
@@ -248,10 +294,12 @@ int main (int argc, char** argv){
   }
 
   // Print Output Plots
+  std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
+  std::cout<<std::endl;
 
   WWTraining->PrintTrainingResults ();
     
-
+  */
   return 0 ;
 
 
