@@ -49,6 +49,8 @@ TrainingMVAClass::~TrainingMVAClass(){
  
   if(factory_!=0) factory_->Delete() ;
 
+  if(treeReader_!=0) delete treeReader_;
+
 }
 
 // AddTrainingVariables in the MVA
@@ -98,10 +100,10 @@ void TrainingMVAClass::BookMVATrees (const std::vector<double> & signalGlobalWei
 }
 
 
-void TrainingMVAClass::AddPrepareTraining ( const std::string & cutString, const std::string & weightString, 
+void TrainingMVAClass::AddPrepareTraining ( const std::string & LeptonType, const std::string & preselectionCutType, const std::string & weightString, 
                                             const int & nTraining, const int & nTesting, const std::string & splitMode, const std::string & NormMode){
 
-  preselectionCut_ = new TCut (cutString.c_str()) ;
+  preselectionCut_ = new TCut (GetPreselectionCut(LeptonType,preselectionCutType).c_str()) ;
 
   TString Option = Form("nTrain_Signal=%d:nTrain_Background=%d:nTest_Signal=%d:nTest_Background=%d:SplitMode=%s:NormMode=%s:!V",
                          nTraining,nTesting,nTraining,nTesting,splitMode.c_str(),NormMode.c_str());
@@ -119,8 +121,9 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
   system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure
-  outputFileWeightName_.push_back("TMVAWeight_Cuts"+FitMethod+"_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+  outputFileWeightName_["Cuts"+FitMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_Cuts"+FitMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["Cuts"+FitMethod+"_"+Label_];
+  (TMVA::gConfig().GetIONames()).fWeightFileExtension = "xml" ;
 
   // Training Testing and Evaluating 
   outputFile_->cd();
@@ -160,18 +163,29 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
   system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure
-  outputFileWeightName_.push_back("TMVAWeight_"+LikelihoodType+"_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+  outputFileWeightName_[LikelihoodType+"_"+Label_] = outputFilePath_+"/TMVAWeight_"+LikelihoodType+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_[LikelihoodType+"_"+Label_];
+  (TMVA::gConfig().GetIONames()).fWeightFileExtension = "xml" ;
 
   // Training Testing and Evaluating 
   outputFile_->cd();
 
   if( LikelihoodType == "LikelihoodKDE") 
-      factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:!TransformOutput:PDFInterpol=KDE:KDEtype=Gauss:KDEiter=Adaptive:KDEFineFactor=0.3:KDEborder=None:NAvEvtPerBin=5");
+      factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE",
+                           "!H:!V:!TransformOutput::CreateMVAPdfs:IgnoreNegWeightsInTraining:PDFInterpol=KDE:KDEtype=Gauss:KDEiter=Adaptive:KDEFineFactor=0.3:KDEborder=None:NAvEvtPerBin=5");
 
   else if( LikelihoodType == "PDERS")  
       factory_->BookMethod(TMVA::Types::kPDERS, LikelihoodType.c_str(),
                            "!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:VolumeRangeMode=Adaptive:KernelEstimator=Gauss:DeltaFrac=4:GaussSigma=0.3:NormTree=T");
+
+  else if( LikelihoodType == "PDEFoam")  
+      factory_->BookMethod(TMVA::Types::kPDEFoam, LikelihoodType.c_str(),
+                           "!H:!V::CreateMVAPdfs:IgnoreNegWeightsInTraining:SigBgSeparate=F:TailCut=0.001:VolFrac=0.0666:nActiveCells=500:nSampl=2000:nBin=5:Nmin=100:Kernel=None:Compress=T");
+
+  else if( LikelihoodType == "PDEFoamBoost")  
+      factory_->BookMethod(TMVA::Types::kPDEFoam, LikelihoodType.c_str(),
+                           "!H:!V::CreateMVAPdfs:IgnoreNegWeightsInTraining:Boost_Num=30:Boost_Transform=linear:SigBgSeparate=F:MaxDepth=4:UseYesNoCell=T:DTLogic=MisClassificationError:"
+                           "FillFoamWithOrigWeights=F:TailCut=0:nActiveCells=500:nBin=20:Nmin=400:Kernel=None:Compress=T");
 
   else factory_->BookMethod( TMVA::Types::kLikelihood, LikelihoodType.c_str(),"!H:!V:CreateMVAPdfs:IgnoreNegWeightsInTraining:!TransformOutput:PDFInterpol=Spline2:NAvEvtPeDrBin=50");
 
@@ -198,8 +212,9 @@ void TrainingMVAClass::BookandTrainFisherDiscriminant(){
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                              
 
-  outputFileWeightName_.push_back("TMVAWeight_Fisher_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+  outputFileWeightName_["Fisher"+Label_] = outputFilePath_+"/TMVAWeight_Fisher_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["Fisher"+Label_];
+  (TMVA::gConfig().GetIONames()).fWeightFileExtension = "xml" ;
 
   // Training Testing and Evaluating  
   outputFile_->cd();
@@ -230,8 +245,9 @@ void TrainingMVAClass::BookandTrainLinearDiscriminant(){
 
   // Set Name of the Weight file for TMVA evaluating procedure
 
-  outputFileWeightName_.push_back("TMVAWeight_LD_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+  outputFileWeightName_["LD"+Label_] = outputFilePath_+"/TMVAWeight_LD_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["LD"+Label_];
+  (TMVA::gConfig().GetIONames()).fWeightFileExtension = "xml" ;
 
   // Training Testing and Evaluating   
   outputFile_->cd();
@@ -262,8 +278,9 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
 
-  outputFileWeightName_.push_back("TMVAWeight_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+  outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_];
+  (TMVA::gConfig().GetIONames()).fWeightFileExtension = "xml" ;
 
   // Training Testing and Evaluating                                                  
   outputFile_->cd();
@@ -298,8 +315,9 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                 
 
-  outputFileWeightName_.push_back("TMVAWeight_BDT_"+BoostType+"_"+PruneMethod+"_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+  outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDT_"+BoostType+"_"+PruneMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_];
+  (TMVA::gConfig().GetIONames()).fWeightFileExtension = "xml" ;
 
   // Training Testing and Evaluating                                                                                                                                           
   outputFile_->cd();
@@ -333,8 +351,9 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
 
-  outputFileWeightName_.push_back("TMVAWeight_BDTG_"+PruneMethod+"_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+  outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTG_"+PruneMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_];
+  (TMVA::gConfig().GetIONames()).fWeightFileExtension = "xml" ;
 
   // Training Testing and Evaluating 
   outputFile_->cd();
@@ -368,8 +387,9 @@ void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & Grad
   system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                 
-  outputFileWeightName_.push_back("TMVAWeight_BDTF_"+PruneMethod+"_"+Label_);
-  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_.back();
+  outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTF_"+PruneMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_];
+  (TMVA::gConfig().GetIONames()).fWeightFileExtension = "xml" ;
 
   // Training Testing and Evaluating 
   outputFile_->cd();
@@ -484,6 +504,28 @@ void TrainingMVAClass::SetEventWeight (const std::string & weightString){
 
 }
 
+// Take Preselection Selection 
+
+std::string TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType){
+
+  if( preselectionCutType == "basicPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return "issignal && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
+
+  else if(preselectionCutType == "basicPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return "issignal && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250" ;
+
+  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return "issignal && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
+
+  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return "issignal && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
+
+  else return "v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
+
+}
+
+
+
 // print Training results 
 
 void  TrainingMVAClass::PrintTrainingResults (){
@@ -522,10 +564,188 @@ void  TrainingMVAClass::PrintTrainingResults (){
                          outputFileNameComplete_+" ; fi";
   system(command.c_str());
 
-  command = "mv ./plots/* "+outputFilePath_+"/trainingPlots/"+outputFileNameComplete_+"/" ;
+  command = "mv ./plots/ "+outputFilePath_+"/trainingPlots/"+outputFileNameComplete_+"/" ;
   system(command.c_str());
 
   std::cout << "==> Wrote image files: " << outputFilePath_+"/trainingPlots/"+outputFileNameComplete_ << std::endl;
   std::cout << "==> TMVA Plots are done!" << std::endl;
    
+}
+
+
+void  TrainingMVAClass::ReadWeightFromXML ( const std::string & LeptonType, const std::string & preselectionCutType){
+
+
+  std::cout << "***************************************************************** "<<std::endl;  
+  std::cout << "==> Start Read MVA Ouput related to : " << outputFile_->GetName() << std::endl;
+  std::cout << "***************************************************************** "<<std::endl;  
+   
+
+  reader_ = new TMVA::Reader( "!Color:!Silent" );
+
+  setTrainingVariables_  = new std::vector<Float_t> ( mapTrainingVariables_.size()) ;
+  setSpectatorVariables_ = new std::vector<Float_t> ( mapSpectatorVariables_.size()) ;
+
+  // Set Cut to apply on the events read from initial tree
+
+  int CutType = 0;
+
+  if   (preselectionCutType == "basicPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )             CutType = 0;
+      
+  else if(preselectionCutType == "basicPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )   CutType = 1;
+	
+  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )         CutType = 2;
+	
+  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") ) CutType = 3 ;
+	
+  else CutType = 4;
+ 
+
+  // Set Input and Spectator variables
+
+  for( size_t iVar = 0; iVar< mapTrainingVariables_.size(); iVar++)
+    reader_->AddVariable (mapTrainingVariables_.at(iVar)+" := "+mapTrainingVariables_.at(iVar), &setTrainingVariables_->at(iVar));
+
+  for( size_t iVar = 0; iVar< mapSpectatorVariables_.size(); iVar++)
+    reader_->AddSpectator (mapSpectatorVariables_.at(iVar)+" := "+mapSpectatorVariables_.at(iVar), &setSpectatorVariables_->at(iVar));
+
+  
+  // Fill MVA Value for Signal Tree
+
+  for(size_t iSignal = 0 ; iSignal < signalTreeList_.size(); iSignal++){
+
+   treeReader_ = new treeReader ((TTree*) signalTreeList_.at(iSignal), false) ;
+
+   std::map<std::string,std::string>::const_iterator itMap = outputFileWeightName_.begin();
+
+   int iMethod = 0;
+  
+   std::vector<float> weight (outputFileWeightName_.size(),0.);
+
+   // Loop on all the training method used
+   for( ; itMap != outputFileWeightName_.end() ; ++itMap){
+
+    reader_->BookMVA(itMap->first,itMap->second+".xml");
+
+    std::cout<<" Read for signal weight file : "<<itMap->second+".xml"<<std::endl;
+
+    // Set new Branches for MVA output
+    newBranches_.at(iMethod) =  signalTreeList_.at(iSignal)->Branch((itMap->first).c_str(),&weight.at(iMethod),(itMap->first+"/F").c_str());    
+
+    for( int iEntry = 0; iEntry < signalTreeList_.at(iSignal)->GetEntries(); iEntry++){
+
+      if (iEntry % 10000 == 0) std::cout << "reading event " << iEntry << std::endl ;
+
+      signalTreeList_.at(iSignal)->GetEntry(iEntry);
+    
+      if( CutType == 0 ) {
+	if( treeReader_->getFloat("issignal")[0] == 0 || treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 50 || 
+            treeReader_->getFloat("l_pt")[0] < 30 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ; }
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else if( CutType == 1 ) {
+	if( treeReader_->getFloat("issignal")[0] == 0 || treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 70 || 
+            treeReader_->getFloat("l_pt")[0] < 35 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill(); }
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else if( CutType == 2 ) {
+	if( treeReader_->getFloat("issignal")[0] == 0 || treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 50 || 
+            treeReader_->getFloat("l_pt")[0] < 30 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 || 
+            (treeReader_->getFloat("jet_mass_pr")[0] <=65 || treeReader_->getFloat("jet_mass_pr")[0] >=100) ){ weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else if( CutType == 3 ) {
+      if( treeReader_->getFloat("issignal")[0] ==0 || treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 70 || 
+          treeReader_->getFloat("l_pt")[0] < 35 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 || 
+          (treeReader_->getFloat("jet_mass_pr")[0] <=65 || treeReader_->getFloat("jet_mass_pr")[0] >=100) ){ weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else {
+	if( treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 50 || 
+            treeReader_->getFloat("l_pt")[0] < 30 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill(); }
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      
+
+    } // end event Loop
+    
+    iMethod++; 
+
+   } // end method Loop
+
+    delete treeReader_ ;
+
+    signalTreeList_.at(iSignal)->Write("", TObject::kOverwrite);
+    
+  } // end signal tree loop
+
+  // Fill MVA Value for Background Tree
+
+  for(size_t iBack = 0 ; iBack < backgroundTreeList_.size(); iBack++){
+
+   treeReader_ = new treeReader ((TTree*) backgroundTreeList_.at(iBack), false) ;
+
+   std::map<std::string,std::string>::const_iterator itMap = outputFileWeightName_.begin();
+
+   int iMethod = 0;
+  
+   std::vector<float> weight (outputFileWeightName_.size(),0.);
+
+   // Loop on all the training method used
+   for( ; itMap != outputFileWeightName_.end() ; ++itMap){
+
+    reader_->BookMVA(itMap->first,itMap->second+".xml");
+
+    std::cout<<" Read for background weight file : "<<itMap->second+".xml"<<std::endl;
+
+    // Set new Branches for MVA output
+    newBranches_.at(iMethod) =  backgroundTreeList_.at(iBack)->Branch((itMap->first).c_str(),&weight.at(iMethod),(itMap->first+"/F").c_str());    
+
+    for( int iEntry = 0; iEntry < backgroundTreeList_.at(iBack)->GetEntries(); iEntry++){
+
+      if (iEntry % 10000 == 0) std::cout << "reading event " << iEntry << std::endl ;
+
+      backgroundTreeList_.at(iBack)->GetEntry(iEntry);
+    
+      if( CutType == 0 ) {
+	if( treeReader_->getFloat("issignal")[0] == 0 || treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 50 || 
+            treeReader_->getFloat("l_pt")[0] < 30 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ; }
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else if( CutType == 1 ) {
+	if( treeReader_->getFloat("issignal")[0] == 0 || treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 70 || 
+            treeReader_->getFloat("l_pt")[0] < 35 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill(); }
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else if( CutType == 2 ) {
+	if( treeReader_->getFloat("issignal")[0] == 0 || treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 50 || 
+            treeReader_->getFloat("l_pt")[0] < 30 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 || 
+            (treeReader_->getFloat("jet_mass_pr")[0] <=65 || treeReader_->getFloat("jet_mass_pr")[0] >=100) ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else if( CutType == 3 ) {
+      if( treeReader_->getFloat("issignal")[0] ==0 || treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 70 || 
+          treeReader_->getFloat("l_pt")[0] < 35 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 || 
+          (treeReader_->getFloat("jet_mass_pr")[0] <=65 || treeReader_->getFloat("jet_mass_pr")[0] >=100) ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else {
+	if( treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 50 || 
+            treeReader_->getFloat("l_pt")[0] < 30 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill(); }
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      
+
+    } // end event Loop
+    
+    iMethod++; 
+
+   } // end method Loop
+
+    delete treeReader_ ;
+
+    backgroundTreeList_.at(iBack)->Write("", TObject::kOverwrite);
+    
+  } // end signal tree loop
+
 }

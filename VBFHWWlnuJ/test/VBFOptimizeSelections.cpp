@@ -26,24 +26,6 @@
 
 #include "TrainingMVAClass.h"
 
-std::string getPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType = "none"){
-
-  if( preselectionCutType == "basicPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-            return "issignal && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
-
-  else if(preselectionCutType == "basicPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-            return "issignal && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250" ;
-
-  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-              return "issignal && v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
-
-  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-              return "issignal && v_pt > 250 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 250 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
-  
-  else return "v_pt > 250 && pfMET > 50 && l_pt > 30 && ungroomed_jet_pt > 250" ;
-  
-}
-
 
 /// Main Programme                                                                                                                                                                                
 int main (int argc, char** argv){
@@ -74,9 +56,8 @@ int main (int argc, char** argv){
     std::cerr<<" Tree Name set to --> WJet default "<<std::endl;
   }
 
-
   std::string Label         = gConfigParser -> readStringOption("Input::Label");
-  std::string LeptonType         = gConfigParser -> readStringOption("Input::LeptonType");
+  std::string LeptonType    = gConfigParser -> readStringOption("Input::LeptonType");
 
   std::cout<<std::endl;
   std::cout<<" Input Directory      = "<<InputDirectory<<std::endl;
@@ -87,7 +68,6 @@ int main (int argc, char** argv){
   std::cout<<" Input Label          = "<<Label<<std::endl;
   std::cout<<" Input LeptonType     = "<<LeptonType<<std::endl;
   std::cout<<std::endl;
-
   
   std::string SignalName ;
   try{ SignalName = gConfigParser -> readStringOption("Option::SignalName"); }
@@ -117,13 +97,10 @@ int main (int argc, char** argv){
     std::cerr<<" No preselection cut is set --> all the events are used "<<std::endl;
   }
 
-  std::string TCut = getPreselectionCut(LeptonType,PreselectionCutType);
 
   std::cout<<" Option Preselection Cut = "<<PreselectionCutType<<std::endl;
-  std::cout<<" Option TCut             = "<<TCut<<std::endl;
   std::cout<<std::endl;
 
-  
   std::vector<std::string> UseMethodName;
   try{ UseMethodName = gConfigParser -> readStringListOption("Option::UseMethodName"); }
   catch(char const* exceptionString){ UseMethodName.push_back("Cuts");
@@ -235,15 +212,13 @@ int main (int argc, char** argv){
 
     if( NameReducedSample.at(iSample) == SignalName ) {
        
-           signalGlobalWeight.at(isSignal) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
-           isSignal ++; 
+       signalGlobalWeight.at(isSignal) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
+       isSignal ++; 
     }
-
     else{
-	       backgroundGlobalWeight.at(isBackground) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
-               isBackground ++;    
+	  backgroundGlobalWeight.at(isBackground) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
+          isBackground ++;    
 	 }
-    
   }
   
   WWTraining->BookMVATrees(signalGlobalWeight, backgroundGlobalWeight);
@@ -253,7 +228,7 @@ int main (int argc, char** argv){
   std::cout<<" Prepare MVA  "<<std::endl;
   std::cout<<std::endl;
 
-  WWTraining->AddPrepareTraining ( TCut, EventWeight ) ;
+  WWTraining->AddPrepareTraining ( LeptonType,PreselectionCutType, EventWeight ) ;
   
   // Book and Run TMVA Training and testing for the selected methods
 
@@ -292,11 +267,11 @@ int main (int argc, char** argv){
     if(UseMethodName.at(iMethod) == "BDTF")    WWTraining->BookandTrainBDTF();
     
   }
-  /*
+  
   // Print Output Plots
   std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
   std::cout<<std::endl;
-
+  /*
   WWTraining->PrintTrainingResults ();
     
   */

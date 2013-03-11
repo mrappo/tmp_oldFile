@@ -16,11 +16,14 @@
 
 #include "ntpleUtils.h"
 
+#include "treeReader.h"
+
 #if not defined(__CINT__) || defined(__MAKECINT__)
 #include "TMVA/MsgLogger.h"
 #include "TMVA/Config.h"
 #include "TMVA/Tools.h"
 #include "TMVA/Factory.h"
+#include "TMVA/Reader.h"
 #endif
 
 class TrainingMVAClass {
@@ -41,7 +44,8 @@ class TrainingMVAClass {
 
   void AddTrainingVariables ( const std::vector<std::string> & mapTrainingVariables, const std::vector<std::string> & mapSpectatorVariables);	       
 
-  void AddPrepareTraining (const std::string & cutString,  const std::string & weightString , const int & nTraining = 0, const int & nTesting = 0, const std::string & splitMode = "Random", 
+  void AddPrepareTraining (const std::string & LeptonType, const std::string & preselectionCutType, 
+                           const std::string & weightString , const int & nTraining = 0, const int & nTesting = 0, const std::string & splitMode = "Random", 
                            const std::string & NormMode = "NumEvents");
 
 
@@ -61,8 +65,11 @@ class TrainingMVAClass {
   void BookandTrainBDTF               ( const int & NTrees = 500, const float & GradBaggingFraction = 0.5, const std::string & PruneMethod = "CostComplexity", const int & PruneStrength = 30,
                                         const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
 
+  std::string GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType = "none") ;
+
   void PrintTrainingResults ();
  
+  void ReadWeightFromXML    ( const std::string & LeptonType, const std::string & preselectionCutType = "none");
 
   void SetSignalTree (const std::vector<TFile*> & signalFileList,  const std::string & TreeName = "WJet");
   void SetSignalTree (const std::vector<TTree*> & signalTreeList);
@@ -92,6 +99,9 @@ class TrainingMVAClass {
   std::vector<std::string> mapTrainingVariables_ ;
   std::vector<std::string> mapSpectatorVariables_ ;
 
+  std::vector<Float_t> *setTrainingVariables_ ;
+  std::vector<Float_t> *setSpectatorVariables_ ;
+
   std::vector<double> signalGlobalWeight_ ;
   std::vector<double> backgroundGlobalWeight_ ;
    
@@ -102,13 +112,19 @@ class TrainingMVAClass {
   std::string outputFileName_ ;
   std::string outputFileNameComplete_ ;
 
-  std::vector<std::string> outputFileWeightName_ ;
+  std::map<std::string,std::string> outputFileWeightName_ ;
+
+  std::vector<TBranch*> newBranches_ ;
 
   TCut*  preselectionCut_ ;
 
   TFile* outputFile_ ;
 
   TMVA::Factory* factory_ ; 
+
+  TMVA::Reader*  reader_ ;
+
+  treeReader* treeReader_ ;
 };
 
 #endif
