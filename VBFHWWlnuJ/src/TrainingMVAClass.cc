@@ -33,6 +33,7 @@ TrainingMVAClass::TrainingMVAClass(const std::vector<TTree*> & signalTreeList, c
 
    factory_ = new TMVA::Factory (TreeName_+"_"+Label_,outputFile_, Form("!V:!Silent:%sColor:DrawProgressBar:AnalysisType=Classification", gROOT->IsBatch()?"!":""));
 
+
 }
 
 // Deconstructor
@@ -124,8 +125,6 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
   outputFileWeightName_["Cuts"+FitMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_Cuts"+FitMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["Cuts"+FitMethod+"_"+Label_];
 
-  // Training Testing and Evaluating 
-  outputFile_->cd();
 
   if(FitMethod!=""){ TString Option = Form("!H:!V:CreateMVAPdfs:FitMethod=%s:EffSel", FitMethod.c_str());
                      TString Name = Form("Cuts%s",FitMethod.c_str());
@@ -147,7 +146,7 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
 
   factory_->EvaluateAllMethods();
 
-  outputFile_->Close();
+  factory_->DeleteAllMethods();
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout<< "==> TMVAClassification is done!" << std::endl;
@@ -164,9 +163,6 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
   // Set Name of the Weight file for TMVA evaluating procedure
   outputFileWeightName_[LikelihoodType+"_"+Label_] = outputFilePath_+"/TMVAWeight_"+LikelihoodType+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_[LikelihoodType+"_"+Label_];
-
-  // Training Testing and Evaluating 
-  outputFile_->cd();
 
   if( LikelihoodType == "LikelihoodKDE") 
     factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:!VarTransform=I,D,P,G:TransformOutput::CreateMVAPdfs:IgnoreNegWeightsInTraining:"
@@ -196,7 +192,7 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
 
   factory_->EvaluateAllMethods();
 
-  outputFile_->Close();
+  factory_->DeleteAllMethods();
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
@@ -214,8 +210,6 @@ void TrainingMVAClass::BookandTrainFisherDiscriminant(){
   outputFileWeightName_["Fisher"+Label_] = outputFilePath_+"/TMVAWeight_Fisher_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["Fisher"+Label_];
 
-  // Training Testing and Evaluating  
-  outputFile_->cd();
 
   factory_->BookMethod( TMVA::Types::kFisher, "Fisher",
                         "!H:!V:VarTransform=I,D,P,G,D:CreateMVAPdfs:IgnoreNegWeightsInTraining:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10:Fisher" );
@@ -228,7 +222,7 @@ void TrainingMVAClass::BookandTrainFisherDiscriminant(){
 
   factory_->EvaluateAllMethods();
 
-  outputFile_->Close();
+  factory_->DeleteAllMethods();
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
@@ -259,7 +253,7 @@ void TrainingMVAClass::BookandTrainLinearDiscriminant(){
 
   factory_->EvaluateAllMethods();
 
-  outputFile_->Close();
+  factory_->DeleteAllMethods();
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
@@ -278,9 +272,6 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
   outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_];
 
-  // Training Testing and Evaluating                                                  
-  outputFile_->cd();
-
   TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:NCycles=%d:HiddenLayers=%s:NeuronType=%s:"
                          "TrainingMethod=%s:TestRate=%d:ConvergenceTests=%d:!UseRegulator",nCycles,HiddenLayers.c_str(),NeuronType.c_str(),TrainingMethod.c_str(),TestRate,ConvergenceTests);
 
@@ -294,7 +285,7 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
 
   factory_->EvaluateAllMethods();
 
-  outputFile_->Close();
+  factory_->DeleteAllMethods();
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
@@ -314,9 +305,6 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
   outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDT_"+BoostType+"_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_];
 
-  // Training Testing and Evaluating                                                                                                                                           
-  outputFile_->cd();
-
   TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:"
                          "PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
@@ -330,7 +318,7 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
 
   factory_->EvaluateAllMethods();
 
-  outputFile_->Close();
+  factory_->DeleteAllMethods();
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
@@ -349,9 +337,6 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
   outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTG_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_];
 
-  // Training Testing and Evaluating 
-  outputFile_->cd();
-
   TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:"
                          "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
@@ -364,8 +349,6 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
   factory_->TestAllMethods();
 
   factory_->EvaluateAllMethods();
-
-  outputFile_->Close();
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
@@ -384,9 +367,6 @@ void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & Grad
   outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTF_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_];
 
-  // Training Testing and Evaluating 
-  outputFile_->cd();
-
   TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:UseFisherCuts:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:"
                          "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
@@ -399,7 +379,7 @@ void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & Grad
 
   factory_->EvaluateAllMethods();
 
-  outputFile_->Close();
+  factory_->DeleteAllMethods();
 
   std::cout << "==> Wrote root file: " << outputFile_->GetName() << std::endl;
   std::cout << "==> TMVAClassification is done!" << std::endl;
@@ -479,6 +459,7 @@ void TrainingMVAClass::SetOutputFile ( const std::string & outputFilePath , cons
 
    outputFile_ = new TFile((outputFilePath_+"/"+outputFileName_+"_"+Label_+".root").c_str(),"RECREATE");
    
+   outputFile_->cd();
  }
 
 }

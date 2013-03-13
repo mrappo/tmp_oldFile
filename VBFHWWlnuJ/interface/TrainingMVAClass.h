@@ -68,6 +68,9 @@ class TrainingMVAClass {
   std::string GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType = "none") ;
 
   void PrintTrainingResults ();
+
+  void CloseTrainingAndTesting (){ outputFile_->Close();}
+
  
   void ReadWeightFromXML    ( const std::string & LeptonType, const std::string & preselectionCutType = "none");
 

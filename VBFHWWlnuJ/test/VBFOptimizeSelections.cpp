@@ -237,7 +237,7 @@ int main (int argc, char** argv){
 
 
   for(size_t iMethod =0; iMethod<UseMethodName.size(); iMethod++){
-
+    
     // Rectangular Cuts
     if(UseMethodName.at(iMethod) == "CutsMC" ) WWTraining->BookandTrainRectangularCuts("MC");
     if(UseMethodName.at(iMethod) == "CutsGA" ) WWTraining->BookandTrainRectangularCuts("GA");
@@ -269,7 +269,7 @@ int main (int argc, char** argv){
   }
   
   // Print Output Plots
-  std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
+  /*  std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
   std::cout<<std::endl;
   /*
   WWTraining->PrintTrainingResults ();
