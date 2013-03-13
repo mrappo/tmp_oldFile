@@ -343,7 +343,7 @@ int main (int argc, char **argv){
       
        if(NameReducedSample.at(iSample) == "DATA")  continue;
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
-       //       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.3;
+       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.3;
        histos[iCut][iVar][iSample]->Scale(1.*norm);
      }	
    }
@@ -359,6 +359,7 @@ int main (int argc, char **argv){
   TH1F*    histo_top[CutList.size()][Variables.size()];
   TH1F*    histo_diboson[CutList.size()][Variables.size()];
   TH1F*    histo_WJets[CutList.size()][Variables.size()];
+  TH1F*    histo_ttbar[CutList.size()][Variables.size()];
   TH1F*    histoSum[CutList.size()][Variables.size()];
   TH1F*    RatioDataMC[CutList.size()][Variables.size()];
 
@@ -396,6 +397,11 @@ int main (int argc, char **argv){
           histoName = Form("%s_WJets_%d",Variables.at(iVar).c_str(),int(iCut));
 
 	  histo_WJets[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
+                                             VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+
+          histoName = Form("%s_ttbar_%d",Variables.at(iVar).c_str(),int(iCut));
+
+	  histo_ttbar[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
                                              VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_stack_%d",Variables.at(iVar).c_str(),int(iCut));
@@ -466,7 +472,7 @@ int main (int argc, char **argv){
 	    }
            
 	    
-	    else if (( NameReducedSample.at(iSample)=="STop") || ( NameReducedSample.at(iSample)=="tt_bar") )
+	    else if (( NameReducedSample.at(iSample)=="STop") )
 	    {  
 		histo_top[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_top[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
@@ -478,6 +484,13 @@ int main (int argc, char **argv){
 		histo_WJets[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_WJets[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
 		histo_WJets[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+	    }
+	    else if ( NameReducedSample.at(iSample)=="tt_bar" )
+	    {  
+		histo_ttbar[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
+		histo_ttbar[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
+		histo_ttbar[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    } 
 	    else if (( NameReducedSample.at(iSample)=="WW") || ( NameReducedSample.at(iSample)=="WZ") || ( NameReducedSample.at(iSample)=="ZZ") )
@@ -498,9 +511,11 @@ int main (int argc, char **argv){
 	  
 	  leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Top", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "diBoson", "fl" );
+	  leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "ttbar", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "fl" );
 
 	  hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
+	  hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
      
