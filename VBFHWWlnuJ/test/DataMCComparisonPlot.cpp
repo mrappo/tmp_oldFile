@@ -343,6 +343,7 @@ int main (int argc, char **argv){
       
        if(NameReducedSample.at(iSample) == "DATA")  continue;
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
+       //       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.3;
        histos[iCut][iVar][iSample]->Scale(1.*norm);
      }	
    }
@@ -506,16 +507,11 @@ int main (int argc, char **argv){
           upperPad->cd();
 
 
-	  DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
+	  if(WithoutData) DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
                          
-	  if(!WithoutData){ 
+	  else{ 
 
-           TObjArray* histoList = hs[iCut][iVar] -> GetStack();
-           TH1F* histo          = (TH1F*) histoList->At(histoList -> GetEntries()-1);
-
-	   upperPad->RangeAxis(histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmin(),0.,histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmax(),
-                               fabs(std::max(histos[iCut][iVar][iSampleData]->GetYaxis()->GetXmax(),histo->GetYaxis()->GetXmax())));
-                                                               
+	   DrawStackError(hs[iCut][iVar],0,Variables.at(iVar),histos[iCut][iVar][iSampleData]);
 
             if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
@@ -632,17 +628,12 @@ int main (int argc, char **argv){
 	  upperPadLog->cd();
 	  upperPadLog->SetLogy();
 
-	  DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
+	  if(WithoutData) DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
+                         
+	  else{ 
 
-	  if(!WithoutData){
-
-           TObjArray* histoList = hs[iCut][iVar] -> GetStack();
-           TH1F* histo          = (TH1F*) histoList->At(histoList -> GetEntries()-1);
-
-	   upperPadLog->RangeAxis(histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmin(),0.,histos[iCut][iVar][iSampleData]->GetXaxis()->GetXmax(),
-                                  fabs(std::max(histos[iCut][iVar][iSampleData]->GetYaxis()->GetXmax(),histo->GetYaxis()->GetXmax())));
+	   DrawStackError(hs[iCut][iVar],0,Variables.at(iVar),histos[iCut][iVar][iSampleData]);
                               
-
            if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
                   for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 

@@ -19,6 +19,8 @@
 
 
 
+void DrawStackError(THStack* hs, const double & syst, const std::string & Labels, const TH1F* dataHist);
+
 void DrawStackError(THStack* hs, const double & syst, const std::string & Labels);
 
 void LatexCMS (double lumi);
