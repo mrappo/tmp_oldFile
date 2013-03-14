@@ -165,12 +165,12 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_[LikelihoodType+"_"+Label_];
 
   if( LikelihoodType == "LikelihoodKDE") 
-    factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:!VarTransform=I,D,P,G:TransformOutput::CreateMVAPdfs:IgnoreNegWeightsInTraining:"
-                                                                   "PDFInterpol=KDE:KDEtype=Gauss:KDEiter=Adaptive:KDEFineFactor=0.3:KDEborder=None:NAvEvtPerBin=5");
+    factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:VarTransform=I,D,P,G:TransformOutput::CreateMVAPdfs:IgnoreNegWeightsInTraining:"
+                                                                   "PDFInterpol=KDE:KDEtype=Gauss:KDEiter=Adaptive:KDEFineFactor=0.3:KDEborder=None");
 
   else if( LikelihoodType == "PDERS")  
       factory_->BookMethod(TMVA::Types::kPDERS, LikelihoodType.c_str(),
-                           "!H:!V:VarTransforms=I;D;P;G:CreateMVAPdfs:IgnoreNegWeightsInTraining:VolumeRangeMode=Adaptive:KernelEstimator=Gauss:DeltaFrac=4:GaussSigma=0.3:NormTree=T");
+                           "!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:VolumeRangeMode=Adaptive:KernelEstimator=Gauss:DeltaFrac=4:GaussSigma=0.3:NormTree=T");
 
   else if( LikelihoodType == "PDEFoam")  
       factory_->BookMethod(TMVA::Types::kPDEFoam, LikelihoodType.c_str(),"!H:!V::VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:SigBgSeparate=F:TailCut=0.001"
@@ -178,11 +178,11 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
 
   else if( LikelihoodType == "PDEFoamBoost")  
       factory_->BookMethod(TMVA::Types::kPDEFoam, LikelihoodType.c_str(),
-                           "!H:!V::VarTransforms=I;D;P;G:CreateMVAPdfs:IgnoreNegWeightsInTraining:Boost_Num=30:Boost_Transform=linear:SigBgSeparate=F:MaxDepth=4"
+                           "!H:!V::VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:Boost_Num=30:Boost_Transform=linear:SigBgSeparate=F:MaxDepth=4"
                            ":UseYesNoCell=T:DTLogic=MisClassificationError:FillFoamWithOrigWeights=F:TailCut=0:nActiveCells=500:nBin=20:Nmin=400:Kernel=None:Compress=T");
 
-  else factory_->BookMethod( TMVA::Types::kLikelihood, LikelihoodType.c_str(),"!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:!TransformOutput:PDFInterpol=Spline2"
-                                                                              ":NAvEvtPeDrBin=50");
+  else factory_->BookMethod( TMVA::Types::kLikelihood, LikelihoodType.c_str(),"!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:!TransformOutput:PDFInterpol=Spline2"
+                                                                              ":NSmoothSig[0]=20:NSmoothBkg[0]=20:NSmoothBkg[1]=10:NSmooth=1:NAvEvtPerBin=50");
 
   factory_->OptimizeAllMethods();                                                                                                                                                          
 
@@ -272,7 +272,7 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
   outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:NCycles=%d:HiddenLayers=%s:NeuronType=%s:"
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:NCycles=%d:HiddenLayers=%s:NeuronType=%s:"
                          "TrainingMethod=%s:TestRate=%d:ConvergenceTests=%d:!UseRegulator",nCycles,HiddenLayers.c_str(),NeuronType.c_str(),TrainingMethod.c_str(),TestRate,ConvergenceTests);
 
   factory_->BookMethod( TMVA::Types::kMLP, "MLP", Option.Data());

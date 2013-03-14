@@ -244,9 +244,11 @@ int main (int argc, char** argv){
     if(UseMethodName.at(iMethod) == "CutsSA" ) WWTraining->BookandTrainRectangularCuts("SA");
  
     // Likelihood 
-    if(UseMethodName.at(iMethod) == "Likelihood")    WWTraining->BookandTrainLikelihood(); 
-    if(UseMethodName.at(iMethod) == "LikelihoodKDE") WWTraining->BookandTrainLikelihood("LikelihoodKDE"); 
-    if(UseMethodName.at(iMethod) == "PDERS")         WWTraining->BookandTrainLikelihood("PDERS"); 
+    if(UseMethodName.at(iMethod) == "Likelihood")     WWTraining->BookandTrainLikelihood(); 
+    if(UseMethodName.at(iMethod) == "LikelihoodKDE")  WWTraining->BookandTrainLikelihood("LikelihoodKDE"); 
+    if(UseMethodName.at(iMethod) == "PDERS")          WWTraining->BookandTrainLikelihood("PDERS"); 
+    if(UseMethodName.at(iMethod) == "PDEFoam")        WWTraining->BookandTrainLikelihood("PDEFoam"); 
+    if(UseMethodName.at(iMethod) == "PDEFoamBoost")   WWTraining->BookandTrainLikelihood("PDEFoamBoost"); 
 
     // Fisher Discriminant
     if(UseMethodName.at(iMethod) == "Fisher")  WWTraining->BookandTrainFisherDiscriminant(); 
@@ -268,8 +270,10 @@ int main (int argc, char** argv){
     
   }
   
-  // Print Output Plots
-  /*  std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
+  WWTraining->CloseTrainingAndTesting();
+
+  //Print Output Plots
+  std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
   std::cout<<std::endl;
   /*
   WWTraining->PrintTrainingResults ();
