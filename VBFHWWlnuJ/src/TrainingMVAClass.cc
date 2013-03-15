@@ -126,15 +126,15 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["Cuts"+FitMethod+"_"+Label_];
 
 
-  if(FitMethod!=""){ TString Option = Form("!H:!V:CreateMVAPdfs:FitMethod=%s:EffSel", FitMethod.c_str());
+  if(FitMethod!=""){ TString Option = Form("!H:!V:FitMethod=%s:EffSel", FitMethod.c_str());
                      TString Name = Form("Cuts%s",FitMethod.c_str());
                      factory_->BookMethod( TMVA::Types::kCuts, Name.Data(),Option.Data());
   }
 
   else{
-        factory_->BookMethod( TMVA::Types::kCuts, "CutsMC","!H:!V:CreateMVAPdfs:FitMethod=MC:EffSel:" );
-        factory_->BookMethod( TMVA::Types::kCuts, "CutsGA","!H:!V:CreateMVAPdfs:FitMethod=GA:EffSel:Steps=40:PopSize=400:SC_steps=10:SC_rate=5:SC_factor=0.95");
-        factory_->BookMethod( TMVA::Types::kCuts, "CutsSA","!H:!V:CreateMVAPdfs:FitMethod=SA:EffSel:KernelTemp=IncAdaptive:Eps=1e-10:UseDefaultScale" );
+        factory_->BookMethod( TMVA::Types::kCuts, "CutsMC","!H:!V:FitMethod=MC:EffSel:" );
+        factory_->BookMethod( TMVA::Types::kCuts, "CutsGA","!H:!V:FitMethod=GA:EffSel:Steps=40:PopSize=400:SC_steps=10:SC_rate=5:SC_factor=0.95");
+        factory_->BookMethod( TMVA::Types::kCuts, "CutsSA","!H:!V:FitMethod=SA:EffSel:KernelTemp=IncAdaptive:Eps=1e-10:UseDefaultScale" );
 
   }
 
@@ -165,23 +165,23 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_[LikelihoodType+"_"+Label_];
 
   if( LikelihoodType == "LikelihoodKDE") 
-    factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:VarTransform=I,D,P,G:TransformOutput::CreateMVAPdfs:IgnoreNegWeightsInTraining:"
+    factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:!TransformOutput:"
                                                                    "PDFInterpol=KDE:KDEtype=Gauss:KDEiter=Adaptive:KDEFineFactor=0.3:KDEborder=None");
 
   else if( LikelihoodType == "PDERS")  
       factory_->BookMethod(TMVA::Types::kPDERS, LikelihoodType.c_str(),
-                           "!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:VolumeRangeMode=Adaptive:KernelEstimator=Gauss:DeltaFrac=4:GaussSigma=0.3:NormTree=T");
+                           "!H:!V:VarTransform=I,D,P,G:VolumeRangeMode=Adaptive:KernelEstimator=Gauss:DeltaFrac=4:GaussSigma=0.3:NormTree=T");
 
   else if( LikelihoodType == "PDEFoam")  
-      factory_->BookMethod(TMVA::Types::kPDEFoam, LikelihoodType.c_str(),"!H:!V::VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:SigBgSeparate=F:TailCut=0.001"
+      factory_->BookMethod(TMVA::Types::kPDEFoam, LikelihoodType.c_str(),"!H:!V::VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:SigBgSeparate=F:TailCut=0.001"
                                                                          ":VolFrac=0.0666:nActiveCells=500:nSampl=2000:nBin=5:Nmin=100:Kernel=None:Compress=T");
 
   else if( LikelihoodType == "PDEFoamBoost")  
       factory_->BookMethod(TMVA::Types::kPDEFoam, LikelihoodType.c_str(),
-                           "!H:!V::VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:Boost_Num=30:Boost_Transform=linear:SigBgSeparate=F:MaxDepth=4"
+                           "!H:!V::VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:Boost_Num=30:Boost_Transform=linear:SigBgSeparate=F:MaxDepth=4"
                            ":UseYesNoCell=T:DTLogic=MisClassificationError:FillFoamWithOrigWeights=F:TailCut=0:nActiveCells=500:nBin=20:Nmin=400:Kernel=None:Compress=T");
 
-  else factory_->BookMethod( TMVA::Types::kLikelihood, LikelihoodType.c_str(),"!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:!TransformOutput:PDFInterpol=Spline2"
+  else factory_->BookMethod( TMVA::Types::kLikelihood, LikelihoodType.c_str(),"!H:!V:VarTransform=I,D,P,G:!TransformOutput:IgnoreNegWeightsInTraining:PDFInterpol=Spline2"
                                                                               ":NSmoothSig[0]=20:NSmoothBkg[0]=20:NSmoothBkg[1]=10:NSmooth=1:NAvEvtPerBin=50");
 
   factory_->OptimizeAllMethods();                                                                                                                                                          
@@ -272,7 +272,7 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
   outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:NCycles=%d:HiddenLayers=%s:NeuronType=%s:"
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:NCycles=%d:HiddenLayers=%s:NeuronType=%s:"
                          "TrainingMethod=%s:TestRate=%d:ConvergenceTests=%d:!UseRegulator",nCycles,HiddenLayers.c_str(),NeuronType.c_str(),TrainingMethod.c_str(),TestRate,ConvergenceTests);
 
   factory_->BookMethod( TMVA::Types::kMLP, "MLP", Option.Data());
@@ -305,7 +305,7 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
   outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDT_"+BoostType+"_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:"
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:"
                          "PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
   factory_->BookMethod( TMVA::Types::kBDT, "BDT", Option.Data());
@@ -337,7 +337,7 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
   outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTG_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:"
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:"
                          "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
   factory_->BookMethod( TMVA::Types::kBDT, "BDTG", Option.Data());
@@ -367,7 +367,7 @@ void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & Grad
   outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTF_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeightsInTraining:UseFisherCuts:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:"
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:UseFisherCuts:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:"
                          "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
   factory_->BookMethod( TMVA::Types::kBDT, "BDTF", Option.Data());
