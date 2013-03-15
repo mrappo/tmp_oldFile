@@ -483,30 +483,33 @@ void TrainingMVAClass::SetEventWeight (const std::string & weightString){
 std::string TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType){
 
   if( preselectionCutType == "basicPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 " ;
+    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 " ;
 
   else if(preselectionCutType == "basicPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 " ;
+    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 " ;
 
   else if(preselectionCutType == "basicSBPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )";
+    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )"
+           " && nbjets_csvm_veto == 0";
 
-  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )";
+  else if(preselectionCutType == "basicSBPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )"
+           " && nbjets_csvm_veto == 0";
 
   else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
+    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )"
+           " && nbjets_csvm_veto == 0" ;
 
   else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 )";
+    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 100 ) && nbjets_csvm_veto == 0";
 
   else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 )";
+    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0";
 
   else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 )";
+    return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0";
 
-  else return "v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200" ;
+  else return "v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0" ;
 
 }
 
