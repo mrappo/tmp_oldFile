@@ -506,7 +506,6 @@ std::string TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType
   else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
     return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 )";
 
-
   else return "v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200" ;
 
 }
