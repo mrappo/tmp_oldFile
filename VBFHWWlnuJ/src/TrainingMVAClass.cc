@@ -272,7 +272,7 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
   outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:NCycles=%d:HiddenLayers=%s:NeuronType=%s:"
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:NCycles=%d:HiddenLayers=%s:NeuronType=%s:CreateMVAPdfs:"
                          "TrainingMethod=%s:TestRate=%d:ConvergenceTests=%d:!UseRegulator",nCycles,HiddenLayers.c_str(),NeuronType.c_str(),TrainingMethod.c_str(),TestRate,ConvergenceTests);
 
   factory_->BookMethod( TMVA::Types::kMLP, "MLP", Option.Data());
@@ -305,8 +305,8 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
   outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDT_"+BoostType+"_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:"
-                         "PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G::CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:"
+                         "PruneStrength=%d:MaxDepth=%d:SeparationType=%s:",NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
   factory_->BookMethod( TMVA::Types::kBDT, "BDT", Option.Data());
 
@@ -337,7 +337,8 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
   outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTG_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:"
+
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:IgnoreNegWeights:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:NNodesMax=5:UseBaggedGrad:"
                          "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
   factory_->BookMethod( TMVA::Types::kBDT, "BDTG", Option.Data());
@@ -356,7 +357,7 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
 }
 
 
-void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & GradBaggingFraction, const std::string & PruneMethod,
+void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const std::string & BoostType, const float & AdaBoostBeta, const std::string & PruneMethod,
                        			  const int & PruneStrength, const int & MaxDepth, const std::string & SeparationType){
 
 
@@ -367,12 +368,12 @@ void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const float & Grad
   outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTF_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_];
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:IgnoreNegWeightsInTraining:UseFisherCuts:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:"
-                         "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,G:CreateMVAPdfs:UseFisherCuts:IgnoreNegWeights:NTrees=%d:BoostType=%s:AdaBoostBeta=%f"
+                         "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
-  factory_->BookMethod( TMVA::Types::kBDT, "BDTF", Option.Data());
+  factory_->BookMethod( TMVA::Types::kBDT, "BDTMitFisher", Option.Data());
 
-  factory_->OptimizeAllMethods();                                                                                                                                                             
+  //  factory_->OptimizeAllMethods();                                                                                                                                                             
   factory_->TrainAllMethods();
 
   factory_->TestAllMethods();
