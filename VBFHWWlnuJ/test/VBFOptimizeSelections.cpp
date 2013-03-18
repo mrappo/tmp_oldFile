@@ -240,34 +240,34 @@ int main (int argc, char** argv){
     
     // Rectangular Cuts
     if(UseMethodName.at(iMethod) == "CutsMC" ) WWTraining->BookandTrainRectangularCuts("MC");
-    if(UseMethodName.at(iMethod) == "CutsGA" ) WWTraining->BookandTrainRectangularCuts("GA");
-    if(UseMethodName.at(iMethod) == "CutsSA" ) WWTraining->BookandTrainRectangularCuts("SA");
+    else if(UseMethodName.at(iMethod) == "CutsGA" ) WWTraining->BookandTrainRectangularCuts("GA");
+    else if(UseMethodName.at(iMethod) == "CutsSA" ) WWTraining->BookandTrainRectangularCuts("SA");
  
     // Likelihood 
-    if(UseMethodName.at(iMethod) == "Likelihood")     WWTraining->BookandTrainLikelihood(); 
-    if(UseMethodName.at(iMethod) == "LikelihoodKDE")  WWTraining->BookandTrainLikelihood("LikelihoodKDE"); 
-    if(UseMethodName.at(iMethod) == "PDERS")          WWTraining->BookandTrainLikelihood("PDERS"); 
-    if(UseMethodName.at(iMethod) == "PDEFoam")        WWTraining->BookandTrainLikelihood("PDEFoam"); 
-    if(UseMethodName.at(iMethod) == "PDEFoamBoost")   WWTraining->BookandTrainLikelihood("PDEFoamBoost"); 
+    else if(UseMethodName.at(iMethod) == "Likelihood")     WWTraining->BookandTrainLikelihood(); 
+    else if(UseMethodName.at(iMethod) == "LikelihoodKDE")  WWTraining->BookandTrainLikelihood("LikelihoodKDE"); 
+    else if(UseMethodName.at(iMethod) == "PDERS")          WWTraining->BookandTrainLikelihood("PDERS"); 
+    else if(UseMethodName.at(iMethod) == "PDEFoam")        WWTraining->BookandTrainLikelihood("PDEFoam"); 
+    else if(UseMethodName.at(iMethod) == "PDEFoamBoost")   WWTraining->BookandTrainLikelihood("PDEFoamBoost"); 
 
     // Fisher Discriminant
-    if(UseMethodName.at(iMethod) == "Fisher")  WWTraining->BookandTrainFisherDiscriminant(); 
+    else if(UseMethodName.at(iMethod) == "Fisher")  WWTraining->BookandTrainFisherDiscriminant(); 
     
     // Linear Discriminant
-    if(UseMethodName.at(iMethod) == "LD")      WWTraining->BookandTrainLinearDiscriminant();
+    else if(UseMethodName.at(iMethod) == "LD")      WWTraining->BookandTrainLinearDiscriminant();
     
     // MLP
-    if(UseMethodName.at(iMethod) == "MLP")     WWTraining->BookandTrainMLP();
+    else if(UseMethodName.at(iMethod) == "MLP")     WWTraining->BookandTrainMLP();
 
     // BDT
-    if(UseMethodName.at(iMethod) == "BDT")     WWTraining->BookandTrainBDT();
+    else if(UseMethodName.at(iMethod) == "BDT")     WWTraining->BookandTrainBDT();
 
     // BDTG
-    if(UseMethodName.at(iMethod) == "BDTG")    WWTraining->BookandTrainBDTG();
+    else if(UseMethodName.at(iMethod) == "BDTG")    WWTraining->BookandTrainBDTG();
 
     // BDTF
-    if(UseMethodName.at(iMethod) == "BDTF")    WWTraining->BookandTrainBDTF();
-    
+    else if(UseMethodName.at(iMethod) == "BDTF")    WWTraining->BookandTrainBDTF();
+    else { std::cerr<<" Training Method not implemented in the TMVATrainingClass >> Go to the next one"<<std::endl; std::cout<<std::endl;}
   }
   
   WWTraining->CloseTrainingAndTesting();
@@ -275,10 +275,10 @@ int main (int argc, char** argv){
   //Print Output Plots
   std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
   std::cout<<std::endl;
-  /*
+
   WWTraining->PrintTrainingResults ();
-    
-  */
+
+
   return 0 ;
 
 

@@ -212,7 +212,7 @@ void TrainingMVAClass::BookandTrainFisherDiscriminant(){
 
 
   factory_->BookMethod( TMVA::Types::kFisher, "Fisher",
-                        "!H:!V:VarTransform=I,D,P,G,D:CreateMVAPdfs:IgnoreNegWeightsInTraining:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10:Fisher" );
+                        "!H:!V:VarTransform=I,D,P:CreateMVAPdfs:IgnoreNegWeightsInTraining:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10:Fisher" );
 
   factory_->OptimizeAllMethods();                                                                                                                                                          
 
@@ -243,7 +243,7 @@ void TrainingMVAClass::BookandTrainLinearDiscriminant(){
   // Training Testing and Evaluating   
   outputFile_->cd();
 
-  factory_->BookMethod( TMVA::Types::kLD, "LD", "H:!V:VarTransform=I,D,P,G,D:CreateMVAPdfs:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10" );
+  factory_->BookMethod( TMVA::Types::kLD, "LD", "H:!V:VarTransform=I,D,P:CreateMVAPdfs:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10" );
 
   factory_->OptimizeAllMethods();
   
