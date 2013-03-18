@@ -1,6 +1,6 @@
 #include "DataMCPlotTool.h"
 
-void DrawStackError(THStack* hs, const double & syst, const std::string & Labels){ 
+void DrawStackError(THStack* hs,const std::string & Labels, const std::map<int,double> & SystematicErrorMap, const double & syst){ 
   TObjArray* histos = hs->GetStack () ;
   if (histos) {
 
@@ -13,35 +13,39 @@ void DrawStackError(THStack* hs, const double & syst, const std::string & Labels
     last->GetYaxis()->SetTitleSize(0.04);
 
     last->DrawClone ("hist") ;
+
+    std::vector <double> vErrSys (last->GetNbinsX(),0.) ;
+    std::vector <double> vErrStat (last->GetNbinsX(),0.) ;
+
     for (int i = number-2 ; i >=0 ; --i) {
       TH1F * histo = (TH1F*) histos->At (i) ;
       histo->GetXaxis()->SetTitle(Labels.c_str());
       histo->Draw ("same hist") ;
+      for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
+	vErrSys.at(iBin) = vErrSys.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        vErrStat.at(iBin) = vErrStat.at(iBin) + histo->GetBinError(iBin+1)*histo->GetBinError(iBin+1);  
+      }
     }
+    
     Style_t origStyleLast = last->GetFillStyle ();
     Color_t origColorLast = last->GetFillColor ();
     last->SetFillStyle(3005);
     last->SetFillColor(kBlack);
     last->SetMarkerSize(0);
-  
-    std::vector <double> vErr ;
+    
     for (int iBin = 0 ; iBin < last->GetNbinsX(); iBin++) {
-      double additionalError = last->GetBinContent(iBin+1) * syst;
-      vErr.push_back(last->GetBinError(iBin+1));
-      last->SetBinError(iBin+1,sqrt(additionalError*additionalError + last->GetBinError(iBin+1) * last->GetBinError(iBin+1)) );
+      double additionalError = sqrt(vErrSys.at(iBin) + last->GetBinContent(iBin+1) * last->GetBinContent(iBin+1) * syst * syst );
+      std::cout<<" additional "<<additionalError<<" stat "<<sqrt(vErrStat.at(iBin))<<std::endl;
+      last->SetBinError(iBin+1,sqrt(additionalError*additionalError + vErrStat.at(iBin)));
     }
+    
     last->DrawClone ("sameE2") ;
-    //---- restore hist ----
-    last->SetFillStyle(origStyleLast);
-    last->SetFillColor(origColorLast);
-    for (int iBin = 0 ; iBin < last->GetNbinsX(); iBin++) {
-      last->SetBinError(iBin+1, vErr.at(iBin));
-    }
+
   }
 }
 
 
-void DrawStackError(THStack* hs, const double & syst, const std::string & Labels, const TH1F*  dataHist){ 
+void DrawStackError(THStack* hs, const std::string & Labels, const TH1F*  dataHist, const std::map<int,double> & SystematicErrorMap, const double & syst){ 
   TObjArray* histos = hs->GetStack () ;
   if (histos) {
 
@@ -53,32 +57,37 @@ void DrawStackError(THStack* hs, const double & syst, const std::string & Labels
     last->GetYaxis()->SetTitle("Entries");
     last->GetYaxis()->SetTitleSize(0.04);
     last->SetMaximum(std::max(last->GetBinContent(last->GetMaximumBin())*1.1,dataHist->GetBinContent(dataHist->GetMaximumBin())*1.1)) ;
+    last->SetMinimum(1) ;
 
     last->DrawClone ("hist") ;
+
+    std::vector <double> vErrSys (last->GetNbinsX(),0.) ;
+    std::vector <double> vErrStat (last->GetNbinsX(),0.) ;
+
     for (int i = number-2 ; i >=0 ; --i) {
       TH1F * histo = (TH1F*) histos->At (i) ;
       histo->GetXaxis()->SetTitle(Labels.c_str());
       histo->Draw ("same hist") ;
+      for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
+	vErrSys.at(iBin) = vErrSys.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        vErrStat.at(iBin) = vErrStat.at(iBin) + histo->GetBinError(iBin+1)*histo->GetBinError(iBin+1);  
+      }
     }
+    
     Style_t origStyleLast = last->GetFillStyle ();
     Color_t origColorLast = last->GetFillColor ();
     last->SetFillStyle(3005);
     last->SetFillColor(kBlack);
     last->SetMarkerSize(0);
-  
-    std::vector <double> vErr ;
+    
     for (int iBin = 0 ; iBin < last->GetNbinsX(); iBin++) {
-      double additionalError = last->GetBinContent(iBin+1) * syst;
-      vErr.push_back(last->GetBinError(iBin+1));
-      last->SetBinError(iBin+1,sqrt(additionalError*additionalError + last->GetBinError(iBin+1) * last->GetBinError(iBin+1)) );
+      double additionalError = sqrt(vErrSys.at(iBin) + last->GetBinContent(iBin+1) * last->GetBinContent(iBin+1) * syst * syst );
+      std::cout<<" additional "<<additionalError<<" stat "<<sqrt(vErrStat.at(iBin))<<std::endl;
+      last->SetBinError(iBin+1,sqrt(additionalError*additionalError + vErrStat.at(iBin)));
     }
+    
     last->DrawClone ("sameE2") ;
-    //---- restore hist ----
-    last->SetFillStyle(origStyleLast);
-    last->SetFillColor(origColorLast);
-    for (int iBin = 0 ; iBin < last->GetNbinsX(); iBin++) {
-      last->SetBinError(iBin+1, vErr.at(iBin));
-    }
+
   }
 }
 

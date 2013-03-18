@@ -6,6 +6,7 @@
 #include <vector>
 #include <istream>
 #include <sstream>
+#include <map>
 
 #include "TCanvas.h"
 #include "TH1F.h"
@@ -19,8 +20,8 @@
 
 
 
-void DrawStackError(THStack* hs, const double & syst, const std::string & Labels, const TH1F* dataHist);
+void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHist, const std::map<int,double> & SystematicErrorMap, const double & syst = 0.044);
 
-void DrawStackError(THStack* hs, const double & syst, const std::string & Labels);
+void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int,double> & SystematicErrorMap, const double & syst = 0.044);
 
 void LatexCMS (double lumi);

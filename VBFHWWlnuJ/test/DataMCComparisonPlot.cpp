@@ -343,7 +343,7 @@ int main (int argc, char **argv){
       
        if(NameReducedSample.at(iSample) == "DATA")  continue;
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
-       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.3;
+       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.;
        histos[iCut][iVar][iSample]->Scale(1.*norm);
      }	
    }
@@ -365,15 +365,18 @@ int main (int argc, char **argv){
 
   THStack* hs[CutList.size()][Variables.size()];
 
-  int iSampleData = 0;
-  int iSampleggH = -1;
-  int iSampleqqH = -1;
-  int iSampleRSGPythia = -1;
-  int iSampleRSGHerwig = -1;
-  
+ 
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
 
      for (size_t iVar=0; iVar<Variables.size(); iVar++){
+
+          int iSampleData = 0;
+          int iSampleggH = -1;
+          int iSampleqqH = -1;
+          int iSampleRSGPythia = -1;
+          int iSampleRSGHerwig = -1;
+     
+          std::map<int,double> SystematicErrorMap ;
 
           TString CanvasName = Form("%s_%zu",Variables.at(iVar).c_str(),iCut);         
 	  c[iCut][iVar] = new TCanvas (CanvasName.Data() ,"" ) ;
@@ -382,7 +385,7 @@ int main (int argc, char **argv){
           cLog[iCut][iVar] = new TCanvas (CanvasNameLog.Data() ,"" ) ;
 
 	  leg[iCut][iVar] = new TLegend (0.81, 0.6, 0.99, 0.90) ;
-	  leg[iCut][iVar]->SetFillColor(0);
+  	  leg[iCut][iVar]->SetFillColor(0);
  
           TString histoName = Form("%s_sTop_%d",Variables.at(iVar).c_str(),int(iCut));
 
@@ -439,6 +442,7 @@ int main (int argc, char **argv){
 	  cLog[iCut][iVar] ->cd();
  	  if(!WithoutData) lowerPadLog->Draw();
 	  upperPadLog->Draw();     
+
 	  
 	  for (size_t iSample = 0; iSample<NameSample.size(); iSample++){
 	  
@@ -450,7 +454,6 @@ int main (int argc, char **argv){
               histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.04);
 	      histos[iCut][iVar][iSample]->GetYaxis()->SetTitle("Entries");
               histos[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.04);
-
 	      iSampleData = iSample;                                                                       
 	      leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "ple" ); 
 	    }
@@ -471,12 +474,12 @@ int main (int argc, char **argv){
 	      iSampleRSGHerwig = iSample;
 	    }
            
-	    
-	    else if (( NameReducedSample.at(iSample)=="STop") )
-	    {  
+         
+	    else if (( NameReducedSample.at(iSample)=="STop") ){ 
+ 
 		histo_top[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_top[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
-		histo_top[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histo_top[iCut][iVar]->Add(histos[iCut][iVar][iSample]); 
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    }
 	    else if ( NameReducedSample.at(iSample)=="W+Jets" )
@@ -488,6 +491,7 @@ int main (int argc, char **argv){
 	    }
 	    else if ( NameReducedSample.at(iSample)=="tt_bar" )
 	    {  
+
 		histo_ttbar[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_ttbar[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
 		histo_ttbar[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
@@ -513,20 +517,28 @@ int main (int argc, char **argv){
 	  leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "diBoson", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "ttbar", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "fl" );
-
+ 
 	  hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
-     
+ 
+          // Set the systenatic for each sample 
+
+          SystematicErrorMap[0] = 0. ;
+          SystematicErrorMap[1] = 0.3 ;
+          SystematicErrorMap[2] = 0.07 ;
+          SystematicErrorMap[3] = 0. ;
+          SystematicErrorMap[4] = 0.30 ;
+    
           upperPad->cd();
+	  
 
-
-	  if(WithoutData) DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
+	  if(WithoutData) DrawStackError(hs[iCut][iVar],Variables.at(iVar),SystematicErrorMap);
                          
 	  else{ 
 
-	   DrawStackError(hs[iCut][iVar],0,Variables.at(iVar),histos[iCut][iVar][iSampleData]);
+	    DrawStackError(hs[iCut][iVar],Variables.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap);
 
             if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
@@ -537,9 +549,8 @@ int main (int argc, char **argv){
                 
             }
             else histos[iCut][iVar][iSampleData]->Draw("E same");
-        
           }
-	  
+
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
               
 	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleggH).c_str(),int(SignalScaleFactor));
@@ -629,7 +640,7 @@ int main (int argc, char **argv){
 	            
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
-	  //	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".eps").c_str(),"eps");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".C").c_str(),"C");
 
 	  c[iCut][iVar]->Close();
 	  
@@ -643,11 +654,11 @@ int main (int argc, char **argv){
 	  upperPadLog->cd();
 	  upperPadLog->SetLogy();
 
-	  if(WithoutData) DrawStackError(hs[iCut][iVar],0,Variables.at(iVar));
+	  if(WithoutData) DrawStackError(hs[iCut][iVar],Variables.at(iVar),SystematicErrorMap);
                          
 	  else{ 
 
-	   DrawStackError(hs[iCut][iVar],0,Variables.at(iVar),histos[iCut][iVar][iSampleData]);
+	    DrawStackError(hs[iCut][iVar],Variables.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap);
                               
            if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
@@ -675,7 +686,7 @@ int main (int argc, char **argv){
           
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
-	  //	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".eps").c_str(),"eps");
+	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".C").c_str(),"C");
 
           cLog[iCut][iVar]->Close();
      }
