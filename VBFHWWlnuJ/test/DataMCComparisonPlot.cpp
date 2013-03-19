@@ -344,7 +344,7 @@ int main (int argc, char **argv){
       
        if(NameReducedSample.at(iSample) == "DATA")  continue;
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
-       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.;
+
        histos[iCut][iVar][iSample]->Scale(1.*norm);
      }	
    }
@@ -369,13 +369,15 @@ int main (int argc, char **argv){
  
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
 
-     for (size_t iVar=0; iVar<Variables.size(); iVar++){
-
-          int iSampleData = 0;
+         int iSampleData = 0;
           int iSampleggH = -1;
           int iSampleqqH = -1;
           int iSampleRSGPythia = -1;
           int iSampleRSGHerwig = -1;
+
+     for (size_t iVar=0; iVar<Variables.size(); iVar++){
+
+ 
      
           std::map<int,double> SystematicErrorMap ;
 
@@ -523,7 +525,10 @@ int main (int argc, char **argv){
 	  hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
- 
+
+	  
+
+
           // Set the systenatic for each sample 
 
           SystematicErrorMap[0] = 0. ;
@@ -531,7 +536,7 @@ int main (int argc, char **argv){
           SystematicErrorMap[2] = 0.07 ;
           SystematicErrorMap[3] = 0. ;
           SystematicErrorMap[4] = 0.30 ;
-    
+
           upperPad->cd();
 
 	  std::vector<double> SysError ;
@@ -700,7 +705,41 @@ int main (int argc, char **argv){
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".C").c_str(),"C");
 
           cLog[iCut][iVar]->Close();
+
      }
+
+
+     //Print Signal/Background ratios for every cut
+
+    int iVar=0;
+    histos[iCut][iVar][iSampleqqH]->Scale(1./SignalScaleFactor);
+    histos[iCut][iVar][iSampleggH]->Scale(1./SignalScaleFactor); 
+        std::cout<<"Signal to Background ratios: Cut_"<<iCut<<std::endl;	 
+	std::cout<<"Data Events: \t\t"<<histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	std::cout<<"Top Events: \t\t"<<histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	std::cout<<"WJets Events: \t\t"<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+        std::cout<<"All Backgrounds Events: "<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+	                                 +histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+	                                 +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+	                                 +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	std::cout<<"Signal qqH: \t\t"<<histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	std::cout<<"Signal ggH: \t\t"<<histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	std::cout<<"Signal/Top: \t\t"<<(histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)
+					 +histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1))
+					 /(histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+					 +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1))<<std::endl;
+	std::cout<<"Signal/WJets: \t\t"<<(histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)
+					 +histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1))
+					 /histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+        std::cout<<"Signal/Background: \t"<<(histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)
+	 				 +histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1))
+					 /(histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+					 +histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+					 +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+					 +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1))<<std::endl;
+
+
+     
     }
   
  outputFile->Close();
