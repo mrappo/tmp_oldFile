@@ -24,4 +24,6 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
 
 void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int,double> & SystematicErrorMap, const double & syst = 0.044);
 
+void SetTotalSystematicVector( std::vector<double> & SysError, THStack* hs, const std::map<int,double> & SystematicErrorMap, const double & syst = 0.044);
+
 void LatexCMS (double lumi);

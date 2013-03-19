@@ -35,7 +35,6 @@ void DrawStackError(THStack* hs,const std::string & Labels, const std::map<int,d
     
     for (int iBin = 0 ; iBin < last->GetNbinsX(); iBin++) {
       double additionalError = sqrt(vErrSys.at(iBin) + last->GetBinContent(iBin+1) * last->GetBinContent(iBin+1) * syst * syst );
-      std::cout<<" additional "<<additionalError<<" stat "<<sqrt(vErrStat.at(iBin))<<std::endl;
       last->SetBinError(iBin+1,sqrt(additionalError*additionalError + vErrStat.at(iBin)));
     }
     
@@ -82,7 +81,6 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F*  dataHi
     
     for (int iBin = 0 ; iBin < last->GetNbinsX(); iBin++) {
       double additionalError = sqrt(vErrSys.at(iBin) + last->GetBinContent(iBin+1) * last->GetBinContent(iBin+1) * syst * syst );
-      std::cout<<" additional "<<additionalError<<" stat "<<sqrt(vErrStat.at(iBin))<<std::endl;
       last->SetBinError(iBin+1,sqrt(additionalError*additionalError + vErrStat.at(iBin)));
     }
     
@@ -108,3 +106,24 @@ void LatexCMS (double lumi){
   latex.DrawLatex(0.15,0.962,"CMS preliminary");
 
 }
+
+
+void SetTotalSystematicVector( std::vector<double> & SysError, THStack* hs, const std::map<int,double> & SystematicErrorMap, const double & syst){
+
+ TObjArray* histos = hs->GetStack () ;
+  if (histos) {
+
+    Int_t number = histos->GetEntries();
+    TH1F* last = (TH1F*) histos->At (number-1) ;
+
+    SysError.assign(last->GetNbinsX(),0.);
+    for (int i = number-2 ; i >=0 ; --i) {
+      TH1F * histo = (TH1F*) histos->At (i) ;
+      for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++)
+	SysError.at(iBin) = SysError.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i) + 
+                 	    last->GetBinContent(iBin+1) * last->GetBinContent(iBin+1) * syst * syst;
+    }
+  }
+
+}
+

@@ -19,6 +19,7 @@
 #include "TSystem.h"
 #include "TPaveLabel.h"
 #include "TLatex.h"
+#include "TMath.h"
 
 #include "ntpleUtils.h"
 #include "ConfigParser.h"
@@ -532,7 +533,10 @@ int main (int argc, char **argv){
           SystematicErrorMap[4] = 0.30 ;
     
           upperPad->cd();
-	  
+
+	  std::vector<double> SysError ;
+
+	  SetTotalSystematicVector(SysError,hs[iCut][iVar],SystematicErrorMap);	  
 
 	  if(WithoutData) DrawStackError(hs[iCut][iVar],Variables.at(iVar),SystematicErrorMap);
                          
@@ -611,6 +615,7 @@ int main (int argc, char **argv){
 	  
                             RatioDataMC[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
                             RatioDataMC[iCut][iVar]->Divide(histoSum[iCut][iVar]);
+                            
                             RatioDataMC[iCut][iVar]->SetMinimum(0.4);
                             RatioDataMC[iCut][iVar]->SetMaximum(1.8);
 			
@@ -622,8 +627,14 @@ int main (int argc, char **argv){
 			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitleSize(0.12);
 			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitleOffset(0.4);
 
-	                    RatioDataMC[iCut][iVar]->Draw("PE");
-         
+                            // Propagate Sys Error to the ratio
+
+			    for( int iBin = 0; iBin< RatioDataMC[iCut][iVar]->GetNbinsX() ; iBin++){
+			      RatioDataMC[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
+			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+
+			      }
+	                    RatioDataMC[iCut][iVar]->Draw("PE");         
                             lowerPadLog->cd();
 	                    lowerPadLog->SetGridx();
 	                    lowerPadLog->SetGridy();
