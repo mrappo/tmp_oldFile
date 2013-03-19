@@ -1,0 +1,9 @@
+#####################################################
+########## Cut String For TTree Draw Method #########
+#####################################################
+
+issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && nbjets_csvm_veto == 0
+
+####### ttbbar control region
+
+#pfMET> 70 && v_pt > 200 && l_pt>35  && abs(l_eta)<2.4 && ttb_ca8_ungroomed_pt > 200 && ( ttb_nak5_same_csvm > 0 || ttb_nak5_oppoveto_csvm > 0) && ( ttb_ca8_mass_pr>=50 && ttb_ca8_mass_pr<=120\)
