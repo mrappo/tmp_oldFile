@@ -13,7 +13,7 @@ int ReadInputSampleFile(const std::string & InputSampleList, std::vector<std::st
   
     getline(inputFile,buffer);
 
-    if(buffer.empty() || !buffer.find("#") || buffer=="" ) continue ;
+    if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue ;
     std::stringstream line(buffer);
 
     std::string  NameSampleTemp;
@@ -47,7 +47,7 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
   
     getline(inputFile,buffer);
 
-    if(buffer.empty() || !buffer.find("#") || buffer=="") continue ;
+    if(buffer.empty() || !buffer.find("#") || buffer==" ") continue ;
     std::stringstream line(buffer);
 
     std::string  VariablesTemp;
@@ -79,7 +79,7 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
   
     getline(inputFile,buffer);
 
-    if(buffer.empty() || !buffer.find("#") || buffer=="") continue ;
+    if(buffer.empty() || !buffer.find("#") || buffer==" ") continue ;
     std::stringstream line(buffer);
 
     std::string  VariablesTemp;
@@ -111,7 +111,7 @@ int ReadInputVariableBlindedFile( const std::string & InputVariableList , std::v
   
     getline(inputFile,buffer);
 
-    if(buffer.empty() || !buffer.find("#") || buffer=="") continue ;
+    if(buffer.empty() || !buffer.find("#") || buffer==" ") continue ;
     std::stringstream line(buffer);
 
     std::string  VariablesTemp;
@@ -146,7 +146,7 @@ int ReadInputCutFile( const std::string & InputCutList , std::vector<std::string
   
     getline(inputFile,buffer);
 
-    if(buffer.empty() || !buffer.find("#") || buffer=="") continue ;
+    if(buffer.empty() || !buffer.find("#") || buffer==" ") continue ;
 
     CutList.push_back(buffer);
   }
