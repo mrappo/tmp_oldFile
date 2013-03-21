@@ -509,6 +509,13 @@ std::string TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType
 
   else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
     return "issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0";
+    
+  else if( preselectionCutType == "basicVBFPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return "ggdboostedWevt==1 && GroomedJet_CA8_pt[0]>200 && W_pt>200 && event_met_pfmet>50 &&  W_muon_pt > 30";
+    
+  else if( preselectionCutType == "basicVBFPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return "ggdboostedWevt==1 && GroomedJet_CA8_pt[0]>200 && W_pt>200 && event_met_pfmet>70 && W_electron_pt > 35" ;
+
 
   else return "v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0" ;
 
@@ -604,6 +611,10 @@ void  TrainingMVAClass::ReadWeightFromXML ( const std::string & LeptonType, cons
   else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )       CutType = 6;
 	
   else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") ) CutType = 7;
+  
+  else if(preselectionCutType == "basicVBFPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") ) CutType = 9;
+  
+  else if(preselectionCutType == "basicVBFPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )       CutType = 10;
 	
   else CutType = 8;
  
@@ -700,6 +711,20 @@ void  TrainingMVAClass::ReadWeightFromXML ( const std::string & LeptonType, cons
           (treeReader_->getFloat("jet_mass_pr")[0] <=40 || treeReader_->getFloat("jet_mass_pr")[0] >=130) ){ weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
         else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
       }
+      
+      else if( CutType == 9 ) {
+      if( treeReader_->getInt("ggdboostedWevt")[0] ==0 || treeReader_->getFloat("W_pt")[0] < 200 || treeReader_->getFloat("event_met_pfmet")[0] < 70 ||
+      treeReader_->getFloat("GroomedJet_CA8_pt[0]")[0] < 200 ||
+       treeReader_->getFloat("W_electron_pt")[0] < 35) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      
+      else if( CutType == 10 ) {
+      if( treeReader_->getInt("ggdboostedWevt")[0] ==0 || treeReader_->getFloat("W_pt")[0] < 200 || treeReader_->getFloat("event_met_pfmet")[0] < 50 ||
+      treeReader_->getFloat("GroomedJet_CA8_pt[0]")[0] < 200 ||
+          treeReader_->getFloat("W_Muon_pt")[0] < 30) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }      
 
       else {
 	if( treeReader_->getFloat("v_pt")[0] < 200 || treeReader_->getFloat("pfMET")[0] < 40 || 
@@ -769,6 +794,19 @@ void  TrainingMVAClass::ReadWeightFromXML ( const std::string & LeptonType, cons
           treeReader_->getFloat("l_pt")[0] < 35 || treeReader_->getFloat("ungroomed_jet_pt")[0] < 250 || 
           (treeReader_->getFloat("jet_mass_pr")[0] <=65 || treeReader_->getFloat("jet_mass_pr")[0] >=100) ) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
         else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      else if( CutType == 9 ) {
+      if( treeReader_->getInt("ggdboostedWevt")[0] ==0 || treeReader_->getFloat("W_pt")[0] < 200 || treeReader_->getFloat("event_met_pfmet")[0] < 70 ||
+      treeReader_->getFloat("GroomedJet_CA8_pt[0]")[0] < 200 ||
+          treeReader_->getFloat("W_electron_pt")[0] < 35) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}
+      }
+      
+      else if( CutType == 10 ) {
+      if( treeReader_->getInt("ggdboostedWevt")[0] ==0 || treeReader_->getFloat("W_pt")[0] < 200 || treeReader_->getFloat("event_met_pfmet")[0] < 50 ||
+      treeReader_->getFloat("GroomedJet_CA8_pt[0]")[0] < 200 ||
+          treeReader_->getFloat("W_Muon_pt")[0] < 30) { weight.at(iMethod) = -100 ; newBranches_.at(iMethod)->Fill() ;}
+        else{ weight.at(iMethod) = reader_->EvaluateMVA(itMap->first); newBranches_.at(iMethod)->Fill() ;}      
       }
       else {
 	if( treeReader_->getFloat("v_pt")[0] < 250 || treeReader_->getFloat("pfMET")[0] < 50 || 
