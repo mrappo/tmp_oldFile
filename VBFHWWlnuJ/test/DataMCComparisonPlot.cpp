@@ -131,6 +131,16 @@ int main (int argc, char **argv){
   std::cout<<" SignalRSGHerwigName: "<<SignalRSGHerwigName<<std::endl;
   std::cout<<"      "<<std::endl;
 
+  std::string SignalGravitonName ;
+  try{  SignalGravitonName = gConfigParser -> readStringOption("Input::SignalGraviton");}
+  catch(char const* exceptionString) { SignalGravitonName = "NULL";
+                                       std::cerr<<" No Signal Grvaiton  Name --> NULL "<<std::endl;
+  }
+
+  std::cout<<" SignalGravitonName: "<<SignalGravitonName<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+
 
   bool   WithoutData  = gConfigParser -> readBoolOption("Input::WithoutData");
 
@@ -174,6 +184,15 @@ int main (int argc, char **argv){
   }
 
   std::cout<<" SignalRSGHerwigWeight: "<<SignalRSGHerwigWeight<<std::endl;
+  std::cout<<"      "<<std::endl;
+
+  std::string SignalGravitonWeight;
+  try{ SignalGravitonWeight  = gConfigParser -> readStringOption("Option::SignalGravitonWeight");}
+  catch(char const* exceptionString) { SignalGravitonWeight="1";
+                                       std::cerr<<" Weight Herwig set to --> 1 Default "<<std::endl;
+  }
+
+  std::cout<<" SignalGravitonWeight: "<<SignalGravitonWeight<<std::endl;
   std::cout<<"      "<<std::endl;
 
  
@@ -344,7 +363,11 @@ int main (int argc, char **argv){
       
        if(NameReducedSample.at(iSample) == "DATA")  continue;
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
+<<<<<<< DataMCComparisonPlot.cpp
+       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.3;
+=======
 
+>>>>>>> 1.19
        histos[iCut][iVar][iSample]->Scale(1.*norm);
      }	
    }
@@ -374,10 +397,14 @@ int main (int argc, char **argv){
           int iSampleqqH = -1;
           int iSampleRSGPythia = -1;
           int iSampleRSGHerwig = -1;
+<<<<<<< DataMCComparisonPlot.cpp
+          int iSampleGraviton  = -1;
+=======
 
      for (size_t iVar=0; iVar<Variables.size(); iVar++){
 
  
+>>>>>>> 1.19
      
           std::map<int,double> SystematicErrorMap ;
 
@@ -475,6 +502,10 @@ int main (int argc, char **argv){
 
 	     else if ( NameReducedSample.at(iSample)==SignalRSGHerwigName && SignalRSGHerwigName!="NULL"){
 	      iSampleRSGHerwig = iSample;
+	    }
+           
+            else if ( NameReducedSample.at(iSample)==SignalGravitonName && SignalGravitonName!="NULL"){
+	       iSampleGraviton = iSample;
 	    }
            
          
@@ -607,6 +638,18 @@ int main (int argc, char **argv){
 
                     histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
           }
+
+	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ 
+
+	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleGraviton).c_str(),int(SignalScaleFactor)); 
+               	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
+                                     
+                    histos[iCut][iVar][iSampleGraviton]->SetFillStyle(0);
+                    histos[iCut][iVar][iSampleGraviton]->SetLineWidth(2);
+                    histos[iCut][iVar][iSampleGraviton]->Scale(SignalScaleFactor*1.);
+
+                    histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
+          }
        
 	  leg[iCut][iVar]->Draw("same");
 
@@ -691,6 +734,7 @@ int main (int argc, char **argv){
 	  if(SignalqqHName!="NULL" && iSampleqqH!=-1) histos[iCut][iVar][iSampleqqH]->Draw("hist same");
 	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1) histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
 	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1) histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
+	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1) histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
 
 	  leg[iCut][iVar]->Draw("same");
           LatexCMS(Lumi);
