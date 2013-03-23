@@ -45,7 +45,8 @@ class TrainingMVAClass {
   void AddTrainingVariables ( const std::vector<std::string> & mapTrainingVariables, const std::vector<std::string> & mapSpectatorVariables);	       
 
   void AddPrepareTraining (const std::string & LeptonType, const std::string & preselectionCutType, 
-                           const std::string & weightString , const int & nTraining = 0, const int & nTesting = 0, const std::string & splitMode = "Random", 
+                           const std::string & weightString , std::vector<double> * JetPtBinOfTraining = NULL , const int & pTBin = 0,
+                           const int & nTraining = 0, const int & nTesting = 0, const std::string & splitMode = "Random", 
                            const std::string & NormMode = "NumEvents");
 
 
@@ -66,14 +67,11 @@ class TrainingMVAClass {
                                         const float & AdaBoostBe = 0.5, const std::string & PruneMethod = "CostComplexity", const int & PruneStrength = 30,
                                         const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
 
-  std::string GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType = "none") ;
+  TString GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType = "none") ;
 
   void PrintTrainingResults ();
 
   void CloseTrainingAndTesting (){ outputFile_->Close();}
-
- 
-  void ReadWeightFromXML    ( const std::string & LeptonType, const std::string & preselectionCutType = "none");
 
   void SetSignalTree (const std::vector<TFile*> & signalFileList,  const std::string & TreeName = "WJet");
   void SetSignalTree (const std::vector<TTree*> & signalTreeList);
@@ -96,6 +94,10 @@ class TrainingMVAClass {
   void SetEventWeight ( const std::string & weightString ) ;
 
  private : 
+
+  double pTJetMin_ ;
+
+  double pTJetMax_ ;
 
   std::vector<TTree*> signalTreeList_ ;
   std::vector<TTree*> backgroundTreeList_ ;

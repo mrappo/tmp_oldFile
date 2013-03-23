@@ -115,6 +115,22 @@ int main (int argc, char** argv){
     std::cout << " " << UseMethodName.at(iCat) << ", ";
   }
   std::cout << std::endl;
+
+  std::vector<double> JetPtBinOfTraining;
+  try{ JetPtBinOfTraining = gConfigParser -> readDoubleListOption("Option::JetPtBinOfTraining"); }
+  catch(char const* exceptionString){ JetPtBinOfTraining.push_back(0);
+                                      JetPtBinOfTraining.push_back(2000);
+				      std::cerr<<" Default Method just 1 bin  "<<std::endl;
+  }
+
+  std::cout << std::endl;
+  std::cout << " >>>>> Option::JetPtBinOfTraining size = " << JetPtBinOfTraining.size()/2 +1 << std::endl;
+  
+  for (unsigned int iCat = 0; iCat+1 < JetPtBinOfTraining.size(); iCat++){
+    std::cout << " bin min =  " << JetPtBinOfTraining.at(iCat) << " ;  bin max =  "<<JetPtBinOfTraining.at(iCat+1) <<std::endl;
+  }
+  std::cout << std::endl;
+
   
   std::string outputFileDirectory = gConfigParser -> readStringOption("Output::outputFileDirectory"); 
   std::string outputFileName      = gConfigParser -> readStringOption("Output::outputFileName"); 
@@ -186,29 +202,39 @@ int main (int argc, char** argv){
   }
   std::cout<<std::endl;
   
-  // Book MVA Training Object
-
-  TrainingMVAClass* WWTraining = new TrainingMVAClass(signalTreeList, backgroundTreeList, TreeName, outputFileDirectory, outputFileName, Label);
+  // Book MVA Training Object --> one for each pT bin
+ 
+  std::vector<TrainingMVAClass*> WWTrainingVector ;
   
-  // Set Input and Spectator Variables
-  std::cout<<std::endl;
-  std::cout<<" Set Training and Spectator Variables  "<<std::endl;
-  std::cout<<std::endl;
+  for(size_t pTBin = 0; pTBin+1 < JetPtBinOfTraining.size() ; pTBin++){
 
-  WWTraining->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
+   std::cout<<" pT bin of Training: Min = "<<JetPtBinOfTraining.at(pTBin)<<" Max = "<<JetPtBinOfTraining.at(pTBin+1)<<std::endl;
 
-  // Set Global Weight and signal + background Tree for MVA Training
+   TString Label_ = Form("%s_PTBin_%d_%d",Label.c_str(),int(JetPtBinOfTraining.at(pTBin)),int(JetPtBinOfTraining.at(pTBin+1))) ;
 
-  std::vector<double> signalGlobalWeight (signalTreeList.size(),0.);
-  std::vector<double> backgroundGlobalWeight (backgroundTreeList.size(),0.);
+   std::string tempLabel; tempLabel = Label_ ;
 
-  int isSignal = 0;
-  int isBackground = 0;
+   WWTrainingVector.push_back(new TrainingMVAClass(signalTreeList, backgroundTreeList, TreeName, outputFileDirectory, outputFileName, tempLabel));
 
-  std::cout<<" Building Global Event Weight  + Add Trees "<<std::endl;
-  std::cout<<std::endl; 
+   // Set Input and Spectator Variables
+   std::cout<<std::endl;
+   std::cout<<" Set Training and Spectator Variables  "<<std::endl;
+   std::cout<<std::endl;
+
+   WWTrainingVector.back()->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
+
+   // Set Global Weight and signal + background Tree for MVA Training
+
+   std::vector<double> signalGlobalWeight (signalTreeList.size(),0.);
+   std::vector<double> backgroundGlobalWeight (backgroundTreeList.size(),0.);
+
+   int isSignal = 0;
+   int isBackground = 0;
+
+   std::cout<<" Building Global Event Weight  + Add Trees "<<std::endl;
+   std::cout<<std::endl; 
   
-  for(size_t iSample =0; iSample<NameSample.size() ; iSample++){
+   for(size_t iSample =0; iSample<NameSample.size() ; iSample++){
 
     if( NameReducedSample.at(iSample) == SignalName ) {
        
@@ -219,65 +245,68 @@ int main (int argc, char** argv){
 	  backgroundGlobalWeight.at(isBackground) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
           isBackground ++;    
 	 }
-  }
+   }
   
-  WWTraining->BookMVATrees(signalGlobalWeight, backgroundGlobalWeight);
+   WWTrainingVector.back()->BookMVATrees(signalGlobalWeight, backgroundGlobalWeight);
     
-  // Prepare and Set the MVA Factory
-  std::cout<<std::endl;
-  std::cout<<" Prepare MVA  "<<std::endl;
-  std::cout<<std::endl;
+   // Prepare and Set the MVA Factory
+   std::cout<<std::endl;
+   std::cout<<" Prepare MVA  "<<std::endl;
+   std::cout<<std::endl;
 
-  WWTraining->AddPrepareTraining ( LeptonType,PreselectionCutType, EventWeight ) ;
   
-  // Book and Run TMVA Training and testing for the selected methods
+   WWTrainingVector.back()->AddPrepareTraining ( LeptonType,PreselectionCutType, EventWeight, &JetPtBinOfTraining, pTBin) ;
+  
+   // Book and Run TMVA Training and testing for the selected methods
 
-  std::cout<<" Loop on the Selected Methods  "<<std::endl;
-  std::cout<<std::endl;
+   std::cout<<" Loop on the Selected Methods  "<<std::endl;
+   std::cout<<std::endl;
 
 
-  for(size_t iMethod =0; iMethod<UseMethodName.size(); iMethod++){
+   for(size_t iMethod =0; iMethod<UseMethodName.size(); iMethod++){
     
     // Rectangular Cuts
-    if(UseMethodName.at(iMethod) == "CutsMC" ) WWTraining->BookandTrainRectangularCuts("MC");
-    else if(UseMethodName.at(iMethod) == "CutsGA" ) WWTraining->BookandTrainRectangularCuts("GA");
-    else if(UseMethodName.at(iMethod) == "CutsSA" ) WWTraining->BookandTrainRectangularCuts("SA");
+     if(UseMethodName.at(iMethod) == "CutsMC" )      WWTrainingVector.back()->BookandTrainRectangularCuts("MC");
+     else if(UseMethodName.at(iMethod) == "CutsGA" ) WWTrainingVector.back()->BookandTrainRectangularCuts("GA");
+     else if(UseMethodName.at(iMethod) == "CutsSA" ) WWTrainingVector.back()->BookandTrainRectangularCuts("SA");
  
     // Likelihood 
-    else if(UseMethodName.at(iMethod) == "Likelihood")     WWTraining->BookandTrainLikelihood(); 
-    else if(UseMethodName.at(iMethod) == "LikelihoodKDE")  WWTraining->BookandTrainLikelihood("LikelihoodKDE"); 
-    else if(UseMethodName.at(iMethod) == "PDERS")          WWTraining->BookandTrainLikelihood("PDERS"); 
-    else if(UseMethodName.at(iMethod) == "PDEFoam")        WWTraining->BookandTrainLikelihood("PDEFoam"); 
-    else if(UseMethodName.at(iMethod) == "PDEFoamBoost")   WWTraining->BookandTrainLikelihood("PDEFoamBoost"); 
+     else if(UseMethodName.at(iMethod) == "Likelihood")     WWTrainingVector.back()->BookandTrainLikelihood(); 
+     else if(UseMethodName.at(iMethod) == "LikelihoodKDE")  WWTrainingVector.back()->BookandTrainLikelihood("LikelihoodKDE"); 
+     else if(UseMethodName.at(iMethod) == "PDERS")          WWTrainingVector.back()->BookandTrainLikelihood("PDERS"); 
+     else if(UseMethodName.at(iMethod) == "PDEFoam")        WWTrainingVector.back()->BookandTrainLikelihood("PDEFoam"); 
+     else if(UseMethodName.at(iMethod) == "PDEFoamBoost")   WWTrainingVector.back()->BookandTrainLikelihood("PDEFoamBoost"); 
 
     // Fisher Discriminant
-    else if(UseMethodName.at(iMethod) == "Fisher")  WWTraining->BookandTrainFisherDiscriminant(); 
+     else if(UseMethodName.at(iMethod) == "Fisher")  WWTrainingVector.back()->BookandTrainFisherDiscriminant(); 
     
     // Linear Discriminant
-    else if(UseMethodName.at(iMethod) == "LD")      WWTraining->BookandTrainLinearDiscriminant();
+     else if(UseMethodName.at(iMethod) == "LD")      WWTrainingVector.back()->BookandTrainLinearDiscriminant();
     
     // MLP
-    else if(UseMethodName.at(iMethod) == "MLP")     WWTraining->BookandTrainMLP();
+     else if(UseMethodName.at(iMethod) == "MLP")     WWTrainingVector.back()->BookandTrainMLP();
 
     // BDT
-    else if(UseMethodName.at(iMethod) == "BDT")     WWTraining->BookandTrainBDT();
+     else if(UseMethodName.at(iMethod) == "BDT")     WWTrainingVector.back()->BookandTrainBDT();
 
     // BDTG
-    else if(UseMethodName.at(iMethod) == "BDTG")    WWTraining->BookandTrainBDTG();
+     else if(UseMethodName.at(iMethod) == "BDTG")    WWTrainingVector.back()->BookandTrainBDTG();
 
     // BDTF
-    else if(UseMethodName.at(iMethod) == "BDTF")    WWTraining->BookandTrainBDTF();
-    else { std::cerr<<" Training Method not implemented in the TMVATrainingClass >> Go to the next one"<<std::endl; std::cout<<std::endl;}
-  }
+     else if(UseMethodName.at(iMethod) == "BDTF")    WWTrainingVector.back()->BookandTrainBDTF();
+
+     else { std::cerr<<" Training Method not implemented in the TMVATrainingClass >> Go to the next one"<<std::endl; std::cout<<std::endl;}
+   }
   
-  WWTraining->CloseTrainingAndTesting();
+   WWTrainingVector.back()->CloseTrainingAndTesting();
 
-  //Print Output Plots
-  std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
-  std::cout<<std::endl;
+   //Print Output Plots
+   std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
+   std::cout<<std::endl;
 
-  WWTraining->PrintTrainingResults ();
+   WWTrainingVector.back()->PrintTrainingResults ();
 
+  }
 
   return 0 ;
 
