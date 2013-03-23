@@ -12,7 +12,12 @@
 
 #issignal && v_pt>200 && pfMET>40 && l_pt>50 && ungroomed_jet_pt>200 && abs(l_eta)<2.1 && ((jet_mass_pr>50 && jet_mass_pr<70) || (jet_mass_pr>100 && jet_mass_pr<130)) && nbjets_ssvhem_veto == 0
 
+### Signal Region cut
+
+issignal && v_pt>200 && pfMET>40 && l_pt>50 && ungroomed_jet_pt>200 && abs(l_eta)<2.1 && (jet_mass_pr>65 && jet_mass_pr<100)
+
 issignal && v_pt>200 && pfMET>40 && l_pt>50 && ungroomed_jet_pt>200 && abs(l_eta)<2.1 && (jet_mass_pr>65 && jet_mass_pr<100)  && nbjets_csvm_veto == 0
+
 
 
 ## ttbar cut
