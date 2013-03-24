@@ -138,6 +138,10 @@ void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMetho
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
 
+  // Set Name of the Weight file for TMVA evaluating procedure
+  outputFileWeightName_["Cuts"+FitMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_Cuts"+FitMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["Cuts"+FitMethod+"_"+Label_];
+
   if(FitMethod!=""){ TString Option = Form("!H:!V:FitMethod=%s:EffSel", FitMethod.c_str());
                      TString Name = Form("Cuts%s",FitMethod.c_str());
                      factory_->BookMethod( TMVA::Types::kCuts, Name.Data(),Option.Data());
@@ -171,6 +175,11 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
+
+  // Set Name of the Weight file for TMVA evaluating procedure
+  outputFileWeightName_[LikelihoodType+"_"+Label_] = outputFilePath_+"/TMVAWeight_"+LikelihoodType+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_[LikelihoodType+"_"+Label_];
+
 
   if( LikelihoodType == "LikelihoodKDE") 
     factory_->BookMethod(TMVA::Types::kLikelihood, "LikelihoodKDE","!H:!V:VarTransform=I,D,P:IgnoreNegWeightsInTraining:!TransformOutput:"
@@ -213,6 +222,12 @@ void TrainingMVAClass::BookandTrainFisherDiscriminant(){
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
 
+  // Set Name of the Weight file for TMVA evaluating procedure                                                              
+
+  outputFileWeightName_["Fisher"+Label_] = outputFilePath_+"/TMVAWeight_Fisher_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["Fisher"+Label_];
+
+
   factory_->BookMethod( TMVA::Types::kFisher, "Fisher",
                         "!H:!V:VarTransform=I,D,P:CreateMVAPdfs:IgnoreNegWeightsInTraining:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10:Fisher" );
 
@@ -236,6 +251,11 @@ void TrainingMVAClass::BookandTrainLinearDiscriminant(){
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
+
+  // Set Name of the Weight file for TMVA evaluating procedure
+
+  outputFileWeightName_["LD"+Label_] = outputFilePath_+"/TMVAWeight_LD_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["LD"+Label_];
 
   // Training Testing and Evaluating   
   outputFile_->cd();
@@ -263,6 +283,11 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
+
+  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
+
+  outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_];
 
   TString Option = Form ("!H:!V:VarTransform=I,D,P,D:NCycles=%d:HiddenLayers=%s:NeuronType=%s:CreateMVAPdfs:"
                          "TrainingMethod=%s:TestRate=%d:ConvergenceTests=%d:!UseRegulator",nCycles,HiddenLayers.c_str(),NeuronType.c_str(),TrainingMethod.c_str(),TestRate,ConvergenceTests);
@@ -292,6 +317,11 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
 
+  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                 
+
+  outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDT_"+BoostType+"_"+PruneMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_];
+
   TString Option = Form ("!H:!V:VarTransform=I,D,P,D:CreateMVAPdfs:IgnoreNegWeightsInTraining:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:"
                          "PruneStrength=%d:MaxDepth=%d:SeparationType=%s:",NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
@@ -317,6 +347,11 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
+
+  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
+
+  outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTG_"+PruneMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_];
 
   TString Option = Form ("!H:!V:VarTransform=I,D,P,D:CreateMVAPdfs:IgnoreNegWeights:NTrees=%d:BoostType=Grad:UseBaggedGrad:GradBaggingFraction=%f:NNodesMax=5:"
                          "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,GradBaggingFraction,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
@@ -344,8 +379,12 @@ void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const std::string 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
   system(command.c_str());
 
-  TString Option = Form ("!H:!V:VarTransform=I,D,P,D:CreateMVAPdfs:UseFisherCuts:IgnoreNegWeights:NTrees=%d:BoostType=%s:AdaBoostBeta=%f"
-                         "PruneMethod=%s:PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
+  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                 
+  outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTF_"+PruneMethod+"_"+Label_;
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_];
+
+  TString Option = Form ("!H:!V:VarTransform=I,D,P,D:CreateMVAPdfs:UseFisherCuts:IgnoreNegWeights:NTrees=%d:BoostType=%s:AdaBoostBeta=%f:PruneMethod=%s:"
+                         "PruneStrength=%d:MaxDepth=%d:SeparationType=%s",NTrees,BoostType.c_str(),AdaBoostBeta,PruneMethod.c_str(),PruneStrength,MaxDepth,SeparationType.c_str());
 
   factory_->BookMethod( TMVA::Types::kBDT, "BDTMitFisher", Option.Data());
 
@@ -521,7 +560,6 @@ void  TrainingMVAClass::PrintTrainingResults (){
   std::string command = " if [ ! -e plots ] ; then mkdir plots ; fi";
   system(command.c_str());
 
-
   std::cout << "******************************************************* "<<std::endl;  
   std::cout << "==> Print Output Plots For: " << outputFile_->GetName() << std::endl;
   std::cout << "******************************************************* "<<std::endl;  
@@ -534,41 +572,116 @@ void  TrainingMVAClass::PrintTrainingResults (){
   gROOT->ProcessLine((".x "+ROOTStyle+"/setTDRStyle.C").c_str());
 
   std::string PWD = getenv("PWD");
+
+  // Run macros for plots
+
+  std::cout<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<" #################################################### "<<std::endl;
+  std::cout<<" Run Variables Macro : /macros/TMVAMacro/variables.C  "<<std::endl;
+  std::cout<<" #################################################### "<<std::endl;
+  std::cout<<std::endl;
  
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/variables.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
-  std::cout<<command<<std::endl;
   system(command.c_str());
 
+
+  std::cout<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<" ############################################################## "<<std::endl;
+  std::cout<<" Run Variables Macro : /macros/TMVAMacro/correlationscatters.C  "<<std::endl;
+  std::cout<<" ############################################################## "<<std::endl;
+  std::cout<<std::endl;
+ 
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/correlationscatters.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
   system(command.c_str());
 
+  std::cout<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<" ####################################################### "<<std::endl;
+  std::cout<<" Run Variables Macro : /macros/TMVAMacro/correlations.C  "<<std::endl;
+  std::cout<<" ####################################################### "<<std::endl;
+  std::cout<<std::endl;
+ 
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/correlations.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
   system(command.c_str());
 
+  std::cout<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<" ############################################### "<<std::endl;
+  std::cout<<" Run Variables Macro : /macros/TMVAMacro/mvas.C  "<<std::endl;
+  std::cout<<" ############################################### "<<std::endl;
+  std::cout<<std::endl;
+ 
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/mvas.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
   system(command.c_str());
 
+  std::cout<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<" ####################################################### "<<std::endl;
+  std::cout<<" Run Variables Macro : /macros/TMVAMacro/efficiencies.C  "<<std::endl;
+  std::cout<<" ####################################################### "<<std::endl;
+  std::cout<<std::endl;
+ 
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/efficiencies.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
   system(command.c_str());
 
+  // Output directory for plots
+
+  std::cout<<std::endl;
+  std::cout<<std::endl;
+  std::cout<<" ############################################ "<<std::endl;
+  std::cout<<"  Move Files in the correct output directory  "<<std::endl;
+  std::cout<<" ############################################ "<<std::endl;
+  std::cout<<std::endl;
+ 
   command = " if [ ! -e "+outputFilePath_+"/trainingPlots ] ; then mkdir "+outputFilePath_+"/trainingPlots ; fi";
   system(command.c_str());
+  std::cout<<" command : "<<command<<std::endl;
+  std::cout<<std::endl;
 
   command = " if [ ! -e "+outputFilePath_+"/trainingPlots/"+outputFileName_+"_"+Label_+" ] ; then mkdir "+outputFilePath_+"/trainingPlots/"+
                          outputFileName_+"_"+Label_+" ; fi";
   system(command.c_str());
+  std::cout<<" command : "<<command<<std::endl;
+  std::cout<<std::endl;
   
   command = "mv ./plots/* "+outputFilePath_+"/trainingPlots/"+outputFileName_+"_"+Label_+"/" ;
   system(command.c_str());
+  std::cout<<" command : "<<command<<std::endl;
+  std::cout<<std::endl;
 
-  command = "mv weights/ "+outputFilePath_;
+  // Output Directory for weights -> one directory for all the methods
+
+  command = " if [ ! -e "+outputFilePath_+"/weights ] ; then mkdir "+outputFilePath_+"/weights ; fi";
   system(command.c_str());
+  std::cout<<" command : "<<command<<std::endl;
+  std::cout<<std::endl;
+
+  std::map<std::string,std::string>::const_iterator itMap = outputFileWeightName_.begin();
+
+  for( ; itMap!= outputFileWeightName_.end(); ++itMap){
+
+  command = "scp "+itMap->second+"/* "+outputFilePath_+"/weights/";
+  system(command.c_str());
+  std::cout<<" command : "<<command<<std::endl;
+  std::cout<<std::endl;
+
+  command = "rm -rf "+itMap->second ;
+  system(command.c_str());
+  std::cout<<" command : "<<command<<std::endl;
+  std::cout<<std::endl;
+
+  }
 
   command = "rm -rf ./plots" ;
   system(command.c_str());
+  std::cout<<" command : "<<command<<std::endl;
+  std::cout<<std::endl;
 
   std::cout << "==> Wrote image files: " << outputFilePath_+"/trainingPlots/"+outputFileName_+"_"+Label_ << std::endl;
   std::cout << "==> TMVA Plots are done!" << std::endl;
+  std::cout<<std::endl;
    
 }
 
