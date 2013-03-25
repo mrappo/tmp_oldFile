@@ -37,30 +37,26 @@ namespace TMVAGlob {
                      kGaussDecorr,
                      kNumOfMethods };
 
-   static Int_t c_Canvas         = TColor::GetColor( "#f0f0f0" );
-   static Int_t c_FrameFill      = TColor::GetColor( "#fffffd" );
-   static Int_t c_TitleBox       = TColor::GetColor( "#5D6B7D" );
-   static Int_t c_TitleBorder    = TColor::GetColor( "#7D8B9D" );
-   static Int_t c_TitleText      = TColor::GetColor( "#FFFFFF" );
-   static Int_t c_SignalLine     = TColor::GetColor( "#0000ee" );
-   static Int_t c_SignalFill     = TColor::GetColor( "#7d99d1" );
-   static Int_t c_BackgroundLine = TColor::GetColor( "#ff0000" );
-   static Int_t c_BackgroundFill = TColor::GetColor( "#ff0000" );
-   static Int_t c_NovelBlue      = TColor::GetColor( "#2244a5" );
+  Int_t c_Canvas         = 0 ;
+  Int_t c_FrameFill      = 0 ;
+  Int_t c_TitleBox       = 0 ;
+  Int_t c_TitleText      = 1 ;
+  Int_t c_TitleBorder    = 1 ;
+  Int_t c_SignalLine     = 4 ;
+  Int_t c_SignalFill     = 4 ;
+  Int_t c_BackgroundLine = 2 ;
+  Int_t c_BackgroundFill = 2 ;
 
    // set the style
    void SetSignalAndBackgroundStyle( TH1* sig, TH1* bkg, TH1* all = 0 ) 
    {
       //signal
-      // const Int_t FillColor__S = 38 + 150; // change of Color Scheme in ROOT-5.16.
-      // convince yourself with gROOT->GetListOfColors()->Print()
       Int_t FillColor__S = c_SignalFill;
       Int_t FillStyle__S = 1001;
       Int_t LineColor__S = c_SignalLine;
       Int_t LineWidth__S = 2;
 
       // background
-      //Int_t icolor = UsePaperStyle ? 2 + 100 : 2;
       Int_t FillColor__B = c_BackgroundFill;
       Int_t FillStyle__B = 3554;
       Int_t LineColor__B = c_BackgroundLine;
@@ -124,9 +120,9 @@ namespace TMVAGlob {
       frame->SetLabelOffset( 0.012, "Y" );// label offset on x axis
       frame->GetXaxis()->SetTitleOffset( 1.25 );
       frame->GetYaxis()->SetTitleOffset( 1.22 );
-      frame->GetXaxis()->SetTitleSize( 0.045*scale );
-      frame->GetYaxis()->SetTitleSize( 0.045*scale );
-      Float_t labelSize = 0.04*scale;
+      frame->GetXaxis()->SetTitleSize( 0.035*scale );
+      frame->GetYaxis()->SetTitleSize( 0.035*scale );
+      Float_t labelSize = 0.03*scale;
       frame->GetXaxis()->SetLabelSize( labelSize );
       frame->GetYaxis()->SetLabelSize( labelSize );
 
