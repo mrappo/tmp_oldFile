@@ -108,11 +108,15 @@ public:
 
       // the purity and quality
       purS->SetFillStyle( 0 );
-      purS->SetLineWidth( 2 );
+      purS->SetLineWidth( 3 );
       purS->SetLineStyle( 5 );
+      purS->SetLineColor( kOrange +1 );
+
       effpurS->SetFillStyle( 0 );
-      effpurS->SetLineWidth( 2 );
+      effpurS->SetLineWidth( 3 );
       effpurS->SetLineStyle( 6 );
+      effpurS->SetLineColor( kBlack );
+     
    }
 
    ClassDef(MethodInfo,0)
@@ -139,6 +143,8 @@ class StatDialogMVAEffs {
    virtual ~StatDialogMVAEffs();
    
    void SetFormula(const TString& f) { fFormula = f; }
+   void SetSignalEffType(const bool & type = false) { fType = type; }
+
    TString GetFormula();
    TString GetFormulaString() { return fFormula; }
    TString GetLatexFormula();
@@ -165,6 +171,8 @@ private:
    TGTextButton* fCloseButton;
 
    Int_t maxLenTitle;
+
+   bool fType ;
 
    void UpdateCanvases();
 
@@ -193,6 +201,8 @@ void StatDialogMVAEffs::SetNBackground()
 TString StatDialogMVAEffs::GetFormula() 
 {
    TString f = fFormula;
+   f.ReplaceAll("epsilonS","x");
+   f.ReplaceAll("S","x");
    f.ReplaceAll("S","x");
    f.ReplaceAll("B","y");
    return f;
@@ -205,6 +215,8 @@ TString StatDialogMVAEffs::GetLatexFormula()
    f.ReplaceAll("(","{");
    f.ReplaceAll(")","}");
    f.ReplaceAll("sqrt","#sqrt");
+   f.ReplaceAll("epsilonS","#epsilon_{S}");
+
    return f;
 }
 
@@ -305,7 +317,7 @@ StatDialogMVAEffs::StatDialogMVAEffs(const TGWindow* p, Float_t ns, Float_t nb) 
 void StatDialogMVAEffs::UpdateCanvases() 
 {
    if (fInfoList==0) return;
-   if (fInfoList->First()==0) return;
+  if (fInfoList->First()==0) return;
    MethodInfo* info = (MethodInfo*)fInfoList->First();
    if ( info->canvas==0 ) {
       DrawHistograms();
@@ -337,12 +349,19 @@ void StatDialogMVAEffs::UpdateSignificanceHists()
    Double_t maxSigErr = -1;
    while ((info = (MethodInfo*)next())) {
       for (Int_t i=1; i<=info->origSigE->GetNbinsX(); i++) {
-         Float_t eS = info->origSigE->GetBinContent( i );
-         Float_t S = eS * fNSignal;
+
+	 Float_t eS = info->origSigE->GetBinContent( i );
+         Float_t S  = 0 ;
+
+	 if(!fType) S = eS * fNSignal;
+         else S = eS ;
+
          Float_t B = info->origBgdE->GetBinContent( i ) * fNBackground;
-         info->purS->SetBinContent( i, (S+B==0)?0:S/(S+B) );
-         
+         if(!fType) info->purS->SetBinContent( i, (S+B==0)?0:S/(S+B) );
+         else info->purS->SetBinContent( i, (S*fNSignal+B==0)?0:S*fNSignal/(S*fNSignal+B) );
+
          Double_t sig = f.Eval(S,B);
+
          if (sig > maxSig) {
             maxSig    = sig;
             if (GetFormulaString() == "S/sqrt(B)") {
@@ -351,6 +370,7 @@ void StatDialogMVAEffs::UpdateSignificanceHists()
          }
          info->sSig->SetBinContent( i, sig );
          info->effpurS->SetBinContent( i, eS*info->purS->GetBinContent( i ) );
+         
       }
       
       info->maxSignificance    = info->sSig->GetMaximum();
@@ -423,7 +443,7 @@ void StatDialogMVAEffs::DrawHistograms()
 
    // define Canvas layout here!
    const Int_t width = 600;   // size of canvas
-   Int_t signifColor = TColor::GetColor( "#00aa00" );
+   Int_t signifColor = 210 ;
 
    TIter next(fInfoList);
    MethodInfo* info(0);
@@ -431,7 +451,7 @@ void StatDialogMVAEffs::DrawHistograms()
 
       // create new canvas
       TCanvas *c = new TCanvas( Form("canvas%d", countCanvas+1), 
-                                Form("Cut efficiencies for %s classifier",info->methodTitle.Data()), 
+                                Form("Efficiencies Classifier : %s",info->methodTitle.Data()), 
                                 countCanvas*50+200, countCanvas*20, width, Int_t(width*0.78) ); 
       info->canvas = c;
 
@@ -447,22 +467,23 @@ void StatDialogMVAEffs::DrawHistograms()
       c->SetTopMargin(.2);
       
       // and the signal purity and quality
-      info->effpurS->SetTitle("Cut efficiencies and optimal cut value");
+      info->sigE->SetTitle("Efficiencies and Optimal Cut");
       if (info->methodTitle.Contains("Cuts")) {
-         info->effpurS->GetXaxis()->SetTitle( "Signal Efficiency" );
+         info->sigE->GetXaxis()->SetTitle( "Signal Efficiency" );
       }
       else {
-         info->effpurS->GetXaxis()->SetTitle( TString("Cut value applied on ") + info->methodTitle + " output" );
+         info->sigE->GetXaxis()->SetTitle( info->methodTitle + " output" );
       }
-      info->effpurS->GetYaxis()->SetTitle( "Efficiency (Purity)" );
+      info->sigE->GetYaxis()->SetTitle( "Efficiency (Purity)" );
       TMVAGlob::SetFrameStyle( info->effpurS );
 
       c->SetTicks(0,0);
-      c->SetRightMargin ( 2.0 );
+      c->SetRightMargin ( 5.0 );
 
-      info->effpurS->SetMaximum(1.1);
-      info->effpurS->Draw("histl");
+      info->sigE->GetXaxis()->SetRangeUser(1,0.01);
 
+      info->sigE->Draw("histl");
+      info->effpurS->Draw("samehistl");
       info->purS->Draw("samehistl");      
 
       // overlay signal and background histograms
@@ -479,6 +500,8 @@ void StatDialogMVAEffs::DrawHistograms()
       TLegend *legend1= new TLegend( c->GetLeftMargin(), 1 - c->GetTopMargin(), 
                                      c->GetLeftMargin() + 0.4, 1 - c->GetTopMargin() + 0.12 );
       legend1->SetFillStyle( 1 );
+      legend1->SetFillColor( 0 );
+
       legend1->AddEntry(info->sigE,"Signal efficiency","L");
       legend1->AddEntry(info->bgdE,"Background efficiency","L");
       legend1->Draw("same");
@@ -488,8 +511,13 @@ void StatDialogMVAEffs::DrawHistograms()
       TLegend *legend2= new TLegend( c->GetLeftMargin() + 0.4, 1 - c->GetTopMargin(), 
                                      1 - c->GetRightMargin(), 1 - c->GetTopMargin() + 0.12 );
       legend2->SetFillStyle( 1 );
+      legend2->SetFillColor( 0 );
       legend2->AddEntry(info->purS,"Signal purity","L");
       legend2->AddEntry(info->effpurS,"Signal efficiency*purity","L");
+      std::string formula = GetLatexFormula() ;
+
+        
+
       legend2->AddEntry(info->sSig,GetLatexFormula().Data(),"L");
       legend2->Draw("same");
       legend2->SetBorderSize(1);
@@ -497,7 +525,7 @@ void StatDialogMVAEffs::DrawHistograms()
          
       // line to indicate maximum efficiency
       TLine* effline = new TLine( info->sSig->GetXaxis()->GetXmin(), 1, info->sSig->GetXaxis()->GetXmax(), 1 );
-      effline->SetLineWidth( 1 );
+      effline->SetLineWidth( 2 );
       effline->SetLineColor( 1 );
       effline->Draw();
 
@@ -506,7 +534,10 @@ void StatDialogMVAEffs::DrawHistograms()
       tl.SetNDC();
       tl.SetTextSize( 0.033 );
       Int_t maxbin = info->sSig->GetMaximumBin();
-      info->line1 = tl.DrawLatex( 0.15, 0.23, Form("For %1.0f signal and %1.0f background", fNSignal, fNBackground));
+
+      if(!fType) info->line1 = tl.DrawLatex( 0.15, 0.23, Form("For %1.0f signal and %1.0f background", fNSignal, fNBackground));
+      else info->line1 = tl.DrawLatex( 0.15, 0.23, Form("For %1.0f background", fNSignal, fNBackground));
+
       tl.DrawLatex( 0.15, 0.19, "events the maximum "+GetLatexFormula()+" is");
 
       if (info->maxSignificanceErr > 0) {
@@ -522,21 +553,24 @@ void StatDialogMVAEffs::DrawHistograms()
       }
 
       // add comment for Method cuts
-      if (info->methodTitle.Contains("Cuts")){
+      /*      if (info->methodTitle.Contains("Cuts")){
          tl.DrawLatex( 0.13, 0.77, "Method Cuts provides a bundle of cut selections, each tuned to a");
          tl.DrawLatex(0.13, 0.74, "different signal efficiency. Shown is the purity for each cut selection.");
-      }
+	 }*/
+
       // save canvas to file
       c->Update();
 
       // Draw second axes
       info->rightAxis = new TGaxis(c->GetUxmax(), c->GetUymin(),
                                    c->GetUxmax(), c->GetUymax(),0,1.1*info->maxSignificance,510,"+L");
-      info->rightAxis->SetLineColor ( signifColor );
-      info->rightAxis->SetLabelColor( signifColor );
-      info->rightAxis->SetTitleColor( signifColor );
-
-      info->rightAxis->SetTitleSize( info->sSig->GetXaxis()->GetTitleSize() );
+      info->rightAxis->SetLineColor ( kBlack );
+      info->rightAxis->SetLabelColor( kBlack );
+      info->rightAxis->SetTitleColor( kBlack );
+     
+      info->rightAxis->SetLabelSize( 0.035 );
+      info->rightAxis->SetTitleSize( 0.035 );
+      info->rightAxis->SetTitleOffset( 1.25 );
       info->rightAxis->SetTitle( "Significance" );
       info->rightAxis->Draw();
 
@@ -604,7 +638,7 @@ void StatDialogMVAEffs::PrintResults( const MethodInfo* info )
 }
 
 void mvaeffs( TString fin = "TMVA.root", 
-              Bool_t useTMVAStyle = kTRUE, TString formula="S/sqrt(S+B)" )
+              Bool_t useTMVAStyle = kTRUE, TString formula="epsilonS/(1+sqrt(B))", bool UseSignalEfficiency = true )
 {
    TMVAGlob::Initialize( useTMVAStyle );
 
@@ -613,6 +647,7 @@ void mvaeffs( TString fin = "TMVA.root",
    TFile* file = TMVAGlob::OpenFile( fin );
    gGui->ReadHistograms(file);
    gGui->SetFormula(formula);
+   gGui->SetSignalEffType(UseSignalEfficiency);
    gGui->UpdateSignificanceHists();
    gGui->DrawHistograms();
    gGui->RaiseDialog();   
