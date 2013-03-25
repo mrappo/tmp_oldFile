@@ -58,7 +58,7 @@ namespace TMVAGlob {
 
       // background
       Int_t FillColor__B = c_BackgroundFill;
-      Int_t FillStyle__B = 3554;
+      Int_t FillStyle__B = 3005;
       Int_t LineColor__B = c_BackgroundLine;
       Int_t LineWidth__B = 2;
 

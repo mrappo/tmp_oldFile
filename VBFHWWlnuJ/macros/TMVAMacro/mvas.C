@@ -80,22 +80,22 @@ void mvas( TString fin = "TMVA.root", HistType htype = MVAType, Bool_t useTMVASt
 
          cout << " containing " << hname << "_S/_B" << endl;
          // chop off useless stuff
-         sig->SetTitle( Form("TMVA response for classifier: %s", methodTitle.Data()) );
+         sig->SetTitle( Form("Response for classifier: %s", methodTitle.Data()) );
          if      (htype == ProbaType) 
-            sig->SetTitle( Form("TMVA probability for classifier: %s", methodTitle.Data()) );
+            sig->SetTitle( Form("Probability for classifier: %s", methodTitle.Data()) );
          else if (htype == RarityType) 
-            sig->SetTitle( Form("TMVA Rarity for classifier: %s", methodTitle.Data()) );
+            sig->SetTitle( Form("Rarity for classifier: %s", methodTitle.Data()) );
          else if (htype == CompareType) 
-            sig->SetTitle( Form("TMVA overtraining check for classifier: %s", methodTitle.Data()) );
+            sig->SetTitle( Form("Overtraining check for classifier: %s", methodTitle.Data()) );
          
          // create new canvas
          TString ctitle = ((htype == MVAType) ? 
-                           Form("TMVA response %s",methodTitle.Data()) : 
+                           Form("Response %s",methodTitle.Data()) : 
                            (htype == ProbaType) ? 
-                           Form("TMVA probability %s",methodTitle.Data()) :
+                           Form("Probability %s",methodTitle.Data()) :
                            (htype == CompareType) ? 
-                           Form("TMVA comparison %s",methodTitle.Data()) :
-                           Form("TMVA Rarity %s",methodTitle.Data()));
+                           Form("Comparison %s",methodTitle.Data()) :
+                           Form("Rarity %s",methodTitle.Data()));
          
          c = new TCanvas( Form("canvas%d", countCanvas+1), ctitle, 
                           countCanvas*50+200, countCanvas*20, width, (Int_t)width*0.78 ); 
@@ -130,7 +130,7 @@ void mvas( TString fin = "TMVA.root", HistType htype = MVAType, Bool_t useTMVASt
          frame->GetXaxis()->SetTitle( methodTitle + ((htype == MVAType || htype == CompareType) ? " response" : "") );
          if      (htype == ProbaType  ) frame->GetXaxis()->SetTitle( "Signal probability" );
          else if (htype == RarityType ) frame->GetXaxis()->SetTitle( "Signal rarity" );
-         frame->GetYaxis()->SetTitle("(1/N) dN^{ }/^{ }dx");
+         frame->GetYaxis()->SetTitle("(1/N) dN/dx");
          TMVAGlob::SetFrameStyle( frame );
    
          // eventually: draw the frame
@@ -143,6 +143,9 @@ void mvas( TString fin = "TMVA.root", HistType htype = MVAType, Bool_t useTMVASt
          TLegend *legend= new TLegend( c->GetLeftMargin(), 1 - c->GetTopMargin() - 0.12, 
                                        c->GetLeftMargin() + (htype == CompareType ? 0.40 : 0.3), 1 - c->GetTopMargin() );
          legend->SetFillStyle( 1 );
+         legend->SetFillColor( 0 );
+         legend->SetTextSize ( 0.04 );
+
          legend->AddEntry(sig,TString("Signal")     + ((htype == CompareType) ? " (test sample)" : ""), "F");
          legend->AddEntry(bgd,TString("Background") + ((htype == CompareType) ? " (test sample)" : ""), "F");
          legend->SetBorderSize(1);
