@@ -13,7 +13,7 @@ void plot_efficiencies( TFile* file, Int_t type = 2, TDirectory* BinDir)
    Float_t x1 = 0;
    Float_t x2 = 1;
    Float_t y1 = 0;
-   Float_t y2 = 0.8;
+   Float_t y2 = 1;
 
    // reverse order if "rejection"
    if (type == 2) {
@@ -40,7 +40,7 @@ void plot_efficiencies( TFile* file, Int_t type = 2, TDirectory* BinDir)
       y0H = 1 - y0H + dyH + 0.07;
    }
    TLegend *legend = new TLegend( x0L, y0H-dyH, x0L+dxL, y0H );
-   //legend->SetTextSize( 0.05 );
+   legend->SetTextSize( 0.035 );
    legend->SetHeader( "MVA Method:" );
    legend->SetMargin( 0.4 );
 
@@ -63,7 +63,7 @@ void plot_efficiencies( TFile* file, Int_t type = 2, TDirectory* BinDir)
 
    frame->Draw();
 
-   Int_t color = 1;
+   Int_t color [] = {1,2,4,3,6,7,5,8,9};
    Int_t nmva  = 0;
    TKey *key, *hkey;
 
@@ -75,7 +75,7 @@ void plot_efficiencies( TFile* file, Int_t type = 2, TDirectory* BinDir)
    UInt_t nm = TMVAGlob::GetListOfMethods( methods );
    //   TIter next(file->GetListOfKeys());
    TIter next(&methods);
-
+   int i = 0 ;
    // loop over all methods
    while (key = (TKey*)next()) {
       TDirectory * mDir = (TDirectory*)key->ReadObj();
@@ -94,8 +94,7 @@ void plot_efficiencies( TFile* file, Int_t type = 2, TDirectory* BinDir)
             TString hname = h->GetName();
             if (hname.Contains( hNameRef ) && hname.BeginsWith( "MVA_" )) {
                h->SetLineWidth(3);
-               h->SetLineColor(color);
-               color++; if (color == 5 || color == 10 || color == 11) color++;
+               h->SetLineColor(color[i]); i++;
                h->Draw("csame");
                hists.Add(h);
                nmva++;
