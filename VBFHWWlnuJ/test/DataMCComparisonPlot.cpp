@@ -363,7 +363,7 @@ int main (int argc, char **argv){
       
        if(NameReducedSample.at(iSample) == "DATA")  continue;
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
-       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.3;
+       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.;
        histos[iCut][iVar][iSample]->Scale(1.*norm);
      }	
    }
@@ -406,8 +406,8 @@ int main (int argc, char **argv){
           TString CanvasNameLog = Form("%s_%zu_Log",Variables.at(iVar).c_str(),iCut);
           cLog[iCut][iVar] = new TCanvas (CanvasNameLog.Data() ,"" ) ;
 
-	  leg[iCut][iVar] = new TLegend (0.81, 0.6, 0.99, 0.90) ;
-  	  leg[iCut][iVar]->SetFillColor(0);
+	  leg[iCut][iVar] = new TLegend (0.66, 0.6, 0.86, 0.90) ;
+          leg[iCut][iVar]->SetFillColor(0);
  
           TString histoName = Form("%s_sTop_%d",Variables.at(iVar).c_str(),int(iCut));
 
@@ -642,7 +642,9 @@ int main (int argc, char **argv){
 
                     histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
           }
-       
+
+	  leg[iCut][iVar]->SetFillStyle(0);
+	  leg[iCut][iVar]->SetBorderSize(0);       
 	  leg[iCut][iVar]->Draw("same");
 
           LatexCMS(Lumi);

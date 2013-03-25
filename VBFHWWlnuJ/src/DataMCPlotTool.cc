@@ -55,9 +55,9 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F*  dataHi
     last->GetXaxis()->SetTitleSize(0.04);
     last->GetYaxis()->SetTitle("Entries");
     last->GetYaxis()->SetTitleSize(0.04);
-    last->SetMaximum(std::max(last->GetBinContent(last->GetMaximumBin())*1.1,dataHist->GetBinContent(dataHist->GetMaximumBin())*1.1)) ;
+    last->SetMaximum(std::max(last->GetBinContent(last->GetMaximumBin())*1.3,dataHist->GetBinContent(dataHist->GetMaximumBin())*1.3)) ;
     last->SetMinimum(1) ;
-
+ 
     last->DrawClone ("hist") ;
 
     std::vector <double> vErrSys (last->GetNbinsX(),0.) ;
