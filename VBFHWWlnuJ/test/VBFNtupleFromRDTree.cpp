@@ -37,6 +37,7 @@ int main (int argc, char** argv){
       return -1;
     }
 
+  float Wmass = 80.385;
 
   // parse config file parameter                                                                                                                                                                
   parseConfigFile(argv[1]);
@@ -205,12 +206,126 @@ int main (int argc, char** argv){
     nstepEvents[nStep-1]++;
     nStep = 5;
 
-    // Clean AK5 Jet Collection choosing the hard CA8 as W Hadronic
+
+    //choose the jet corresponding to the hadronic W and fill new branches with its variables
+    
+    float difference = 1000.;
+    int iWHadronic = 0;
+
+    for(size_t i = 0; i < GroomedJet_CA8_Collection.size() ; i ++){
+      if ( MuonTree->fReader->getFloat("GroomedJet_CA8_pt")[i]>JetPtWboostedMin ) {
+	if ( fabs (MuonTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[i] - Wmass) < difference ) {
+	  difference = fabs (MuonTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[i] - Wmass);
+	  iWHadronic = i;
+	}
+      }
+    }
+
+    NewMuonTree -> WHadposition = iWHadronic;   //position of the hadronic W in the CA8Jet collection
+
+    NewMuonTree->Hadronic_W_Jet_mass_uncorr = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_uncorr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_mass_tr_uncorr = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_tr_uncorr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_mass_ft_uncorr = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_ft_uncorr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_mass_pr_uncorr = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_pr_uncorr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_massdrop_pr_uncorr = MuonTree->fReader->getFloat("GroomedJet_CA8_massdrop_pr_uncorr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_tau2tau1 = MuonTree->fReader->getFloat("GroomedJet_CA8_tau2tau1")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_tau1 = MuonTree->fReader->getFloat("GroomedJet_CA8_tau1")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_tau2 = MuonTree->fReader->getFloat("GroomedJet_CA8_tau2")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_tau3 = MuonTree->fReader->getFloat("GroomedJet_CA8_tau3")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_tau4 = MuonTree->fReader->getFloat("GroomedJet_CA8_tau4")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_pt = MuonTree->fReader->getFloat("GroomedJet_CA8_pt")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_eta = MuonTree->fReader->getFloat("GroomedJet_CA8_eta")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_phi = MuonTree->fReader->getFloat("GroomedJet_CA8_phi")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_e = MuonTree->fReader->getFloat("GroomedJet_CA8_e")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_pt_tr_uncorr = MuonTree->fReader->getFloat("GroomedJet_CA8_pt_tr_uncorr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_pt_tr = MuonTree->fReader->getFloat("GroomedJet_CA8_pt_tr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_eta_tr = MuonTree->fReader->getFloat("GroomedJet_CA8_eta_tr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_phi_tr = MuonTree->fReader->getFloat("GroomedJet_CA8_phi_tr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_e_tr = MuonTree->fReader->getFloat("GroomedJet_CA8_e_tr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_pt_ft_uncorr = MuonTree->fReader->getFloat("GroomedJet_CA8_pt_ft_uncorr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_pt_ft = MuonTree->fReader->getFloat("GroomedJet_CA8_pt_ft")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_eta_ft = MuonTree->fReader->getFloat("GroomedJet_CA8_eta_ft")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_phi_ft = MuonTree->fReader->getFloat("GroomedJet_CA8_phi_ft")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_e_ft = MuonTree->fReader->getFloat("GroomedJet_CA8_e_ft")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_pt_pr_uncorr = MuonTree->fReader->getFloat("GroomedJet_CA8_pt_pr_uncorr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_pt_pr = MuonTree->fReader->getFloat("GroomedJet_CA8_pt_tr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_eta_pr = MuonTree->fReader->getFloat("GroomedJet_CA8_eta_pr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_phi_pr = MuonTree->fReader->getFloat("GroomedJet_CA8_phi_pr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_e_pr = MuonTree->fReader->getFloat("GroomedJet_CA8_e_pr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_prsubjet1_px = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_px")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_prsubjet1_py = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_py")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_prsubjet1_pz = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_pz")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_prsubjet1_e = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_e")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_prsubjet2_px = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_px")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_prsubjet2_py = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_py")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_prsubjet2_pz = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_pz")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_prsubjet2_e = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_e")[iWHadronic];  
+    NewMuonTree->Hadronic_W_Jet_mass = MuonTree->fReader->getFloat("GroomedJet_CA8_mass")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_mass_tr = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_tr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_mass_ft = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_ft")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_mass_pr = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[iWHadronic];  
+    NewMuonTree->Hadronic_W_Jet_massdrop = MuonTree->fReader->getFloat("GroomedJet_CA8_massdrop_pr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_area = MuonTree->fReader->getFloat("GroomedJet_CA8_area")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_area_tr = MuonTree->fReader->getFloat("GroomedJet_CA8_area_tr")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_area_ft = MuonTree->fReader->getFloat("GroomedJet_CA8_area_ft")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_area_pr = MuonTree->fReader->getFloat("GroomedJet_CA8_area_pr")[iWHadronic]; 
+    NewMuonTree->Hadronic_W_Jet_jetconsituents = MuonTree->fReader->getFloat("GroomedJet_CA8_jetconstituents")[iWHadronic]; 
+    NewMuonTree->Hadronic_W_Jet_jetcharge = MuonTree->fReader->getFloat("GroomedJet_CA8_jetcharge")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores")[iWHadronic];  
+    NewMuonTree->Hadronic_W_Jet_ptcores = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores")[iWHadronic];  
+    NewMuonTree->Hadronic_W_Jet_planarflow = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow")[iWHadronic];  
+    NewMuonTree->Hadronic_W_Jet_qjetmass = MuonTree->fReader->getFloat("GroomedJet_CA8_qjetmass")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_qjetmassdrop = MuonTree->fReader->getFloat("GroomedJet_CA8_qjetmassdrop")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_deltaR_ljet = MuonTree->fReader->getFloat("GroomedJet_CA8_deltaR_lca8jet")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_deltaphi_METjet = MuonTree->fReader->getFloat("GroomedJet_CA8_deltaphi_METca8jet")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_deltaphi_Vca8jet = MuonTree->fReader->getFloat("GroomedJet_CA8_deltaphi_Vca8jet")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores01 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores01")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores02 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores02")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores03 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores03")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores04 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores04")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores05 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores05")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores06 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores06")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores07 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores07")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores08 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores08")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores09 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores09")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores10 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores10")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_rcores11 = MuonTree->fReader->getFloat("GroomedJet_CA8_rcores11")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores01 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores01")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores02 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores02")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores03 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores03")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores04 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores04")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores05 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores05")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores06 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores06")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores07 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores07")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores08 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores08")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores09 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores09")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores10 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores10")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_ptcores11 = MuonTree->fReader->getFloat("GroomedJet_CA8_ptcores11")[iWHadronic]; 
+    NewMuonTree->Hadronic_W_Jet_planarflow01 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow01")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow02 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow02")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow03 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow03")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow04 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow04")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow05 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow05")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow06 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow06")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow07 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow07")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow08 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow08")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow09 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow09")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow10 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow10")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_planarflow11 = MuonTree->fReader->getFloat("GroomedJet_CA8_planarflow11")[iWHadronic];
+    NewMuonTree->Hadronic_W_Jet_mass_sensi_tr = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_sensi_tr")[iWHadronic]; 
+    NewMuonTree->Hadronic_W_Jet_mass_sensi_ft = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_sensi_ft")[iWHadronic];     
+    NewMuonTree->Hadronic_W_Jet_mass_sensi_pr = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_sensi_pr")[iWHadronic]; 
+    NewMuonTree->Hadronic_W_Jet_qjetmassvolatility = MuonTree->fReader->getFloat("GroomedJet_CA8_qjetmassvolatility")[iWHadronic]; 
+    NewMuonTree->Hadronic_W_Jet_prsubjet1ptoverjetpt = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1ptoverjetpt")[iWHadronic]; 
+    NewMuonTree->Hadronic_W_Jet_prsubjet2ptoverjetpt = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2ptoverjetpt")[iWHadronic]; 
+    NewMuonTree->Hadronic_W_Jet_prsubjet1subjet2_deltaR = MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1subjet2_deltaR")[iWHadronic]; 
+    
+    // Clean AK5 Jet Collection from the hadronic W
 
     for(size_t iJet = 0; iJet < JetPFCor_AK5_Collection.size() ; iJet ++){
 
-      if(deltaR(JetPFCor_AK5_Collection.at(iJet).Momentum_.Phi(),GroomedJet_CA8_Collection.at(0).Phi(),
-                JetPFCor_AK5_Collection.at(iJet).Momentum_.Eta(),GroomedJet_CA8_Collection.at(0).Eta()) < CleaningTreshold ){
+      if(deltaR(JetPFCor_AK5_Collection.at(iJet).Momentum_.Phi(),GroomedJet_CA8_Collection.at(iWHadronic).Phi(),
+                JetPFCor_AK5_Collection.at(iJet).Momentum_.Eta(),GroomedJet_CA8_Collection.at(iWHadronic).Eta()) < CleaningTreshold ){
 	HadronicW_AK5_Collection.push_back(JetPFCor_AK5_Collection.at(iJet)); continue ;}
 
       CleanedJetPFCor_AK5_Collection.push_back(JetPFCor_AK5_Collection.at(iJet));
@@ -300,17 +415,17 @@ int main (int argc, char** argv){
      W_neutrino_2.SetPxPyPzE(nu_pt2 * TMath::Cos(MuonTree->fReader->getFloat("event_met_pfmetPhi")[0]),
                              nu_pt2 * TMath::Sin(MuonTree->fReader->getFloat("event_met_pfmetPhi")[0]), pz, sqrt(nu_pt2*nu_pt2 + pz*pz) );
 
-     if ( fabs((W_mu+W_neutrino_1).M()-80.4) < fabs((W_mu+W_neutrino_2).M()-80.4) )  W_neutrino = W_neutrino_1;
+     if ( fabs((W_mu+W_neutrino_1).M()-Wmass) < fabs((W_mu+W_neutrino_2).M()-Wmass) )  W_neutrino = W_neutrino_1;
      else W_neutrino = W_neutrino_2;
 
     }
     
     TLorentzVector W_subjet1, W_subjet2 ;  // take the two subjet of the hardest CA8 after pruning
    
-    W_subjet1.SetPxPyPzE(MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_px")[0],MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_py")[0],
-         		 MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_pz")[0],MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_e")[0] );
-    W_subjet2.SetPxPyPzE(MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_px")[0],MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_py")[0],
-  		  	 MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_pz")[0],MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_e")[0] );
+    W_subjet1.SetPxPyPzE(MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_px")[iWHadronic],MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_py")[iWHadronic],
+         		 MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_pz")[iWHadronic],MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_e")[iWHadronic] );
+    W_subjet2.SetPxPyPzE(MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_px")[iWHadronic],MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_py")[iWHadronic],
+  		  	 MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_pz")[iWHadronic],MuonTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_e")[iWHadronic] );
 
     if(W_subjet1.Pt() <= 0 || W_subjet2.Pt() <= 0){ std::cerr<<" Problem with subjets "<<std::endl; continue ; }
 
@@ -321,8 +436,8 @@ int main (int argc, char** argv){
 
 
     TLorentzVector W_GroomedJet_CA8_pr; 
-    W_GroomedJet_CA8_pr.SetPtEtaPhiE(MuonTree->fReader->getFloat("GroomedJet_CA8_pt_pr")[0], MuonTree->fReader->getFloat("GroomedJet_CA8_eta_pr")[0],
-                                     MuonTree->fReader->getFloat("GroomedJet_CA8_phi_pr")[0], MuonTree->fReader->getFloat("GroomedJet_CA8_e_pr")[0]);
+    W_GroomedJet_CA8_pr.SetPtEtaPhiE(MuonTree->fReader->getFloat("GroomedJet_CA8_pt_pr")[iWHadronic], MuonTree->fReader->getFloat("GroomedJet_CA8_eta_pr")[iWHadronic],
+                                     MuonTree->fReader->getFloat("GroomedJet_CA8_phi_pr")[iWHadronic], MuonTree->fReader->getFloat("GroomedJet_CA8_e_pr")[iWHadronic]);
 
     if(W_GroomedJet_CA8_pr.Pt() <=0){ std::cerr<<" Problem with pruned CA8 "<<std::endl; continue ;}
 
@@ -339,6 +454,7 @@ int main (int argc, char** argv){
                    NewMuonTree->fit_NDF, NewMuonTree->fit_status, LeptonType);
     
     if(fit_muon.Pt() >0 && fit_neutrino.Pt()>0 && fit_W_subjet1.Pt()>0 && fit_W_subjet2.Pt()>0){
+
 
     NewMuonTree->fit_mu_px = fit_muon.Px();
     NewMuonTree->fit_mu_py = fit_muon.Py(); 
@@ -418,7 +534,10 @@ int main (int argc, char** argv){
     NewMuonTree->vbf_maxpt_j2_m   = outputAK5_PtSorted.at(1).Momentum_.M();
    
     NewMuonTree->vbf_maxpt_jj_deta = fabs(outputAK5_PtSorted.at(0).Momentum_.Eta() - outputAK5_PtSorted.at(1).Momentum_.Eta()) ;
-    NewMuonTree->vbf_maxpt_jj_dphi = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
+    if (fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) < 3.14)
+      NewMuonTree->vbf_maxpt_jj_dphi = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
+    else 
+      NewMuonTree->vbf_maxpt_jj_dphi = 6.28 - fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_PtSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_PtSorted.at(1).NameCollection_ == "JetPFCor"){
       NewMuonTree->vbf_maxpt_jj_type = 1 ;
@@ -695,7 +814,10 @@ int main (int argc, char** argv){
     NewMuonTree->vbf_maxDeta_j2_m   = outputAK5_DEtaSorted.at(1).Momentum_.M();
    
     NewMuonTree->vbf_maxDeta_jj_deta = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Eta() - outputAK5_DEtaSorted.at(1).Momentum_.Eta()) ;
-    NewMuonTree->vbf_maxDeta_jj_dphi = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
+    if (fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) < 3.14)
+      NewMuonTree->vbf_maxDeta_jj_dphi = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
+    else  
+      NewMuonTree->vbf_maxDeta_jj_dphi = 6.28 - fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_DEtaSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_DEtaSorted.at(1).NameCollection_ == "JetPFCor"){
       
@@ -974,7 +1096,10 @@ int main (int argc, char** argv){
     NewMuonTree->vbf_maxMjj_j2_m   = outputAK5_MjjSorted.at(1).Momentum_.M();
    
     NewMuonTree->vbf_maxMjj_jj_deta = fabs(outputAK5_MjjSorted.at(0).Momentum_.Eta() - outputAK5_MjjSorted.at(1).Momentum_.Eta()) ;
-    NewMuonTree->vbf_maxMjj_jj_dphi = fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
+    if (fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi())<3.14)
+      NewMuonTree->vbf_maxMjj_jj_dphi = fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
+    else
+      NewMuonTree->vbf_maxMjj_jj_dphi = 6.28 - fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_MjjSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_MjjSorted.at(1).NameCollection_ == "JetPFCor"){
       
@@ -1363,12 +1488,129 @@ int main (int argc, char** argv){
     nstepEvents[nStep-1]++;
     nStep = 5;
 
+
+
+    //choose the jet corresponding to the hadronic W and fill new branches with its variables
+    
+    float difference = 1000.;
+    int iWHadronic = 0;
+
+    for(size_t i = 0; i < GroomedJet_CA8_Collection.size() ; i ++){
+      if ( ElectronTree->fReader->getFloat("GroomedJet_CA8_pt")[i]>JetPtWboostedMin ) {
+	if ( fabs (ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[i] - Wmass) < difference ) {
+	  difference = fabs (ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[i] - Wmass);
+	  iWHadronic = i;
+	}
+      }
+    }
+
+
+    NewElectronTree -> WHadposition = iWHadronic;   //position of the hadronic W in the CA8Jet collection
+
+    NewElectronTree->Hadronic_W_Jet_mass_uncorr = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_uncorr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_mass_tr_uncorr = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_tr_uncorr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_mass_ft_uncorr = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_ft_uncorr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_mass_pr_uncorr = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr_uncorr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_massdrop_pr_uncorr = ElectronTree->fReader->getFloat("GroomedJet_CA8_massdrop_pr_uncorr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_tau2tau1 = ElectronTree->fReader->getFloat("GroomedJet_CA8_tau2tau1")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_tau1 = ElectronTree->fReader->getFloat("GroomedJet_CA8_tau1")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_tau2 = ElectronTree->fReader->getFloat("GroomedJet_CA8_tau2")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_tau3 = ElectronTree->fReader->getFloat("GroomedJet_CA8_tau3")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_tau4 = ElectronTree->fReader->getFloat("GroomedJet_CA8_tau4")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_pt = ElectronTree->fReader->getFloat("GroomedJet_CA8_pt")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_eta = ElectronTree->fReader->getFloat("GroomedJet_CA8_eta")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_phi = ElectronTree->fReader->getFloat("GroomedJet_CA8_phi")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_e = ElectronTree->fReader->getFloat("GroomedJet_CA8_e")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_pt_tr_uncorr = ElectronTree->fReader->getFloat("GroomedJet_CA8_pt_tr_uncorr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_pt_tr = ElectronTree->fReader->getFloat("GroomedJet_CA8_pt_tr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_eta_tr = ElectronTree->fReader->getFloat("GroomedJet_CA8_eta_tr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_phi_tr = ElectronTree->fReader->getFloat("GroomedJet_CA8_phi_tr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_e_tr = ElectronTree->fReader->getFloat("GroomedJet_CA8_e_tr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_pt_ft_uncorr = ElectronTree->fReader->getFloat("GroomedJet_CA8_pt_ft_uncorr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_pt_ft = ElectronTree->fReader->getFloat("GroomedJet_CA8_pt_ft")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_eta_ft = ElectronTree->fReader->getFloat("GroomedJet_CA8_eta_ft")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_phi_ft = ElectronTree->fReader->getFloat("GroomedJet_CA8_phi_ft")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_e_ft = ElectronTree->fReader->getFloat("GroomedJet_CA8_e_ft")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_pt_pr_uncorr = ElectronTree->fReader->getFloat("GroomedJet_CA8_pt_pr_uncorr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_pt_pr = ElectronTree->fReader->getFloat("GroomedJet_CA8_pt_tr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_eta_pr = ElectronTree->fReader->getFloat("GroomedJet_CA8_eta_pr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_phi_pr = ElectronTree->fReader->getFloat("GroomedJet_CA8_phi_pr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_e_pr = ElectronTree->fReader->getFloat("GroomedJet_CA8_e_pr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_prsubjet1_px = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_px")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_prsubjet1_py = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_py")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_prsubjet1_pz = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_pz")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_prsubjet1_e = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_e")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_prsubjet2_px = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_px")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_prsubjet2_py = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_py")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_prsubjet2_pz = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_pz")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_prsubjet2_e = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_e")[iWHadronic];  
+    NewElectronTree->Hadronic_W_Jet_mass = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_mass_tr = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_tr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_mass_ft = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_ft")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_mass_pr = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[iWHadronic];  
+    NewElectronTree->Hadronic_W_Jet_massdrop = ElectronTree->fReader->getFloat("GroomedJet_CA8_massdrop_pr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_area = ElectronTree->fReader->getFloat("GroomedJet_CA8_area")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_area_tr = ElectronTree->fReader->getFloat("GroomedJet_CA8_area_tr")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_area_ft = ElectronTree->fReader->getFloat("GroomedJet_CA8_area_ft")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_area_pr = ElectronTree->fReader->getFloat("GroomedJet_CA8_area_pr")[iWHadronic]; 
+    NewElectronTree->Hadronic_W_Jet_jetconsituents = ElectronTree->fReader->getFloat("GroomedJet_CA8_jetconstituents")[iWHadronic]; 
+    NewElectronTree->Hadronic_W_Jet_jetcharge = ElectronTree->fReader->getFloat("GroomedJet_CA8_jetcharge")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores")[iWHadronic];  
+    NewElectronTree->Hadronic_W_Jet_ptcores = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores")[iWHadronic];  
+    NewElectronTree->Hadronic_W_Jet_planarflow = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow")[iWHadronic];  
+    NewElectronTree->Hadronic_W_Jet_qjetmass = ElectronTree->fReader->getFloat("GroomedJet_CA8_qjetmass")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_qjetmassdrop = ElectronTree->fReader->getFloat("GroomedJet_CA8_qjetmassdrop")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_deltaR_ljet = ElectronTree->fReader->getFloat("GroomedJet_CA8_deltaR_lca8jet")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_deltaphi_METjet = ElectronTree->fReader->getFloat("GroomedJet_CA8_deltaphi_METca8jet")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_deltaphi_Vca8jet = ElectronTree->fReader->getFloat("GroomedJet_CA8_deltaphi_Vca8jet")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores01 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores01")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores02 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores02")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores03 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores03")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores04 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores04")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores05 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores05")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores06 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores06")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores07 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores07")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores08 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores08")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores09 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores09")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores10 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores10")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_rcores11 = ElectronTree->fReader->getFloat("GroomedJet_CA8_rcores11")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores01 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores01")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores02 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores02")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores03 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores03")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores04 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores04")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores05 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores05")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores06 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores06")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores07 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores07")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores08 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores08")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores09 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores09")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores10 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores10")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_ptcores11 = ElectronTree->fReader->getFloat("GroomedJet_CA8_ptcores11")[iWHadronic]; 
+    NewElectronTree->Hadronic_W_Jet_planarflow01 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow01")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow02 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow02")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow03 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow03")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow04 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow04")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow05 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow05")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow06 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow06")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow07 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow07")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow08 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow08")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow09 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow09")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow10 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow10")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_planarflow11 = ElectronTree->fReader->getFloat("GroomedJet_CA8_planarflow11")[iWHadronic];
+    NewElectronTree->Hadronic_W_Jet_mass_sensi_tr = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_sensi_tr")[iWHadronic]; 
+    NewElectronTree->Hadronic_W_Jet_mass_sensi_ft = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_sensi_ft")[iWHadronic];     
+    NewElectronTree->Hadronic_W_Jet_mass_sensi_pr = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_sensi_pr")[iWHadronic]; 
+    NewElectronTree->Hadronic_W_Jet_qjetmassvolatility = ElectronTree->fReader->getFloat("GroomedJet_CA8_qjetmassvolatility")[iWHadronic]; 
+    NewElectronTree->Hadronic_W_Jet_prsubjet1ptoverjetpt = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1ptoverjetpt")[iWHadronic]; 
+    NewElectronTree->Hadronic_W_Jet_prsubjet2ptoverjetpt = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2ptoverjetpt")[iWHadronic]; 
+    NewElectronTree->Hadronic_W_Jet_prsubjet1subjet2_deltaR = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1subjet2_deltaR")[iWHadronic]; 
+
+
     // Clean AK5 Jet Collection choosing the hard CA8 as W Hadronic
 
     for(size_t iJet = 0; iJet < JetPFCor_AK5_Collection.size() ; iJet ++){
 
-      if(deltaR(JetPFCor_AK5_Collection.at(iJet).Momentum_.Phi(),GroomedJet_CA8_Collection.at(0).Phi(),
-                JetPFCor_AK5_Collection.at(iJet).Momentum_.Eta(),GroomedJet_CA8_Collection.at(0).Eta()) < CleaningTreshold ){
+      if(deltaR(JetPFCor_AK5_Collection.at(iJet).Momentum_.Phi(),GroomedJet_CA8_Collection.at(iWHadronic).Phi(),
+                JetPFCor_AK5_Collection.at(iJet).Momentum_.Eta(),GroomedJet_CA8_Collection.at(iWHadronic).Eta()) < CleaningTreshold ){
 	HadronicW_AK5_Collection.push_back(JetPFCor_AK5_Collection.at(iJet)); continue ;}
 
       CleanedJetPFCor_AK5_Collection.push_back(JetPFCor_AK5_Collection.at(iJet));
@@ -1465,10 +1707,10 @@ int main (int argc, char** argv){
     
     TLorentzVector W_subjet1, W_subjet2 ;  // take the two subjet of the hardest CA8 after pruning
    
-    W_subjet1.SetPxPyPzE(ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_px")[0],ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_py")[0],
-         		 ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_pz")[0],ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_e")[0] );
-    W_subjet2.SetPxPyPzE(ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_px")[0],ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_py")[0],
-  		  	 ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_pz")[0],ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_e")[0] );
+    W_subjet1.SetPxPyPzE(ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_px")[iWHadronic],ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_py")[iWHadronic],
+         		 ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_pz")[iWHadronic],ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1_e")[iWHadronic] );
+    W_subjet2.SetPxPyPzE(ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_px")[iWHadronic],ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_py")[iWHadronic],
+  		  	 ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_pz")[iWHadronic],ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2_e")[iWHadronic] );
 
     if(W_subjet1.Pt() <= 0 || W_subjet2.Pt() <= 0){ std::cerr<<" Problem with subjets "<<std::endl; continue ; }
 
@@ -1576,7 +1818,10 @@ int main (int argc, char** argv){
     NewElectronTree->vbf_maxpt_j2_m   = outputAK5_PtSorted.at(1).Momentum_.M();
    
     NewElectronTree->vbf_maxpt_jj_deta = fabs(outputAK5_PtSorted.at(0).Momentum_.Eta() - outputAK5_PtSorted.at(1).Momentum_.Eta()) ;
-    NewElectronTree->vbf_maxpt_jj_dphi = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
+    if (fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi())<3.14)
+    	NewElectronTree->vbf_maxpt_jj_dphi = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
+    else
+    	NewElectronTree->vbf_maxpt_jj_dphi = 6.28 - fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_PtSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_PtSorted.at(1).NameCollection_ == "JetPFCor"){
       NewElectronTree->vbf_maxpt_jj_type = 1 ;
@@ -1853,7 +2098,10 @@ int main (int argc, char** argv){
     NewElectronTree->vbf_maxDeta_j2_m   = outputAK5_DEtaSorted.at(1).Momentum_.M();
    
     NewElectronTree->vbf_maxDeta_jj_deta = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Eta() - outputAK5_DEtaSorted.at(1).Momentum_.Eta()) ;
-    NewElectronTree->vbf_maxDeta_jj_dphi = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
+    if (fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi())<3.14)
+      NewElectronTree->vbf_maxDeta_jj_dphi = fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi());
+    else
+      NewElectronTree->vbf_maxDeta_jj_dphi = 6.28 - fabs(outputAK5_DEtaSorted.at(0).Momentum_.Phi() - outputAK5_DEtaSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_DEtaSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_DEtaSorted.at(1).NameCollection_ == "JetPFCor"){
       
@@ -2132,7 +2380,10 @@ int main (int argc, char** argv){
     NewElectronTree->vbf_maxMjj_j2_m   = outputAK5_MjjSorted.at(1).Momentum_.M();
    
     NewElectronTree->vbf_maxMjj_jj_deta = fabs(outputAK5_MjjSorted.at(0).Momentum_.Eta() - outputAK5_MjjSorted.at(1).Momentum_.Eta()) ;
-    NewElectronTree->vbf_maxMjj_jj_dphi = fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
+    if (fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi())<3.14)
+      NewElectronTree->vbf_maxMjj_jj_dphi = fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
+    else
+      NewElectronTree->vbf_maxMjj_jj_dphi = 6.28 - fabs(outputAK5_MjjSorted.at(0).Momentum_.Phi() - outputAK5_MjjSorted.at(1).Momentum_.Phi()) ;
 
     if(outputAK5_MjjSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_MjjSorted.at(1).NameCollection_ == "JetPFCor"){
       
