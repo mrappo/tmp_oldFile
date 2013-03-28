@@ -363,7 +363,7 @@ int main (int argc, char **argv){
       
        if(NameReducedSample.at(iSample) == "DATA")  continue;
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
-       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.;
+       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm*1.3;
        histos[iCut][iVar][iSample]->Scale(1.*norm);
      }	
    }
@@ -388,15 +388,15 @@ int main (int argc, char **argv){
  
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
 
-
-     for (size_t iVar=0; iVar<Variables.size(); iVar++){
-
           int iSampleData = 0;
           int iSampleggH = -1;
           int iSampleqqH = -1;
           int iSampleRSGPythia = -1;
           int iSampleRSGHerwig = -1;
           int iSampleGraviton  = -1;
+
+     for (size_t iVar=0; iVar<Variables.size(); iVar++){
+
  
           std::map<int,double> SystematicErrorMap ;
 
@@ -406,8 +406,8 @@ int main (int argc, char **argv){
           TString CanvasNameLog = Form("%s_%zu_Log",Variables.at(iVar).c_str(),iCut);
           cLog[iCut][iVar] = new TCanvas (CanvasNameLog.Data() ,"" ) ;
 
-	  leg[iCut][iVar] = new TLegend (0.66, 0.6, 0.86, 0.90) ;
-          leg[iCut][iVar]->SetFillColor(0);
+	  leg[iCut][iVar] = new TLegend (0.81, 0.6, 0.99, 0.90) ;
+  	  leg[iCut][iVar]->SetFillColor(0);
  
           TString histoName = Form("%s_sTop_%d",Variables.at(iVar).c_str(),int(iCut));
 
@@ -479,6 +479,12 @@ int main (int argc, char **argv){
 	      iSampleData = iSample;                                                                       
 	      leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "ple" ); 
 	    }
+
+	    else if( NameReducedSample.at(iSample) == "DATA" && WithoutData) {
+	      iSampleData = iSample;                                                                       
+	      //leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "ple" ); 
+	    }
+
 	    
 	    else if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL"){
 	      iSampleggH = iSample;
@@ -532,8 +538,8 @@ int main (int argc, char **argv){
 	    }
 	    else
 	    {
-		hs[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
-		leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "fl" );
+	      hs[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+			leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "fl" );
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    }
 
@@ -542,14 +548,12 @@ int main (int argc, char **argv){
 	  leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Top", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "diBoson", "fl" );
 	  leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "ttbar", "fl" );
-	  leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "fl" );
+	   leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "fl" );
  
 	  hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
-	  hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
+	   hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
-
-	  
 
 
           // Set the systenatic for each sample 
@@ -577,33 +581,33 @@ int main (int argc, char **argv){
                   for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
                       iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
 
-                  histos[iCut][iVar][iSampleData]->Draw("E same");
+		  		     histos[iCut][iVar][iSampleData]->Draw("E same");
                 
             }
-            else histos[iCut][iVar][iSampleData]->Draw("E same");
+	    else histos[iCut][iVar][iSampleData]->Draw("E same");
           }
 
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
               
 	            TString Name = Form("%s*%d",NameReducedSample.at(iSampleggH).c_str(),int(SignalScaleFactor));
-                    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], Name.Data(), "l" );
+                 leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], Name.Data(), "l" );
                                      
                     histos[iCut][iVar][iSampleggH]->SetLineWidth(2);
                     histos[iCut][iVar][iSampleggH]->Scale(SignalScaleFactor*1.);
                     histos[iCut][iVar][iSampleggH]->SetFillStyle(0);
 
-                    histos[iCut][iVar][iSampleggH]->Draw("hist same");
+		      histos[iCut][iVar][iSampleggH]->Draw("hist same");
           }
        
           if(SignalqqHName!="NULL" && iSampleqqH!=-1){ 
 
           	    TString Name = Form("%s*%d",NameReducedSample.at(iSampleqqH).c_str(),int(SignalScaleFactor)); 
-               	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleqqH], Name.Data(), "l" );
+		    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleqqH], Name.Data(), "l" );
 	            histos[iCut][iVar][iSampleqqH]->SetFillStyle(0);
                     histos[iCut][iVar][iSampleqqH]->SetLineWidth(2);
           
 	            histos[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
-	            histos[iCut][iVar][iSampleqqH]->Draw("hist same");
+		    		     histos[iCut][iVar][iSampleqqH]->Draw("hist same");
 
           }
 
@@ -642,9 +646,7 @@ int main (int argc, char **argv){
 
                     histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
           }
-
-	  leg[iCut][iVar]->SetFillStyle(0);
-	  leg[iCut][iVar]->SetBorderSize(0);       
+       
 	  leg[iCut][iVar]->Draw("same");
 
           LatexCMS(Lumi);
@@ -744,12 +746,12 @@ int main (int argc, char **argv){
 
           cLog[iCut][iVar]->Close();
 
+	  
      }
 
-
-     /*
+     
      //Print Signal/Background ratios for every cut
-
+     /*          
      int iVar=0;
      histos[iCut][iVar][iSampleqqH]->Scale(1./SignalScaleFactor);
      histos[iCut][iVar][iSampleggH]->Scale(1./SignalScaleFactor); 
@@ -778,6 +780,8 @@ int main (int argc, char **argv){
 	 +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1))<<std::endl;
      */
     }
+
+
   
  outputFile->Close();
 
