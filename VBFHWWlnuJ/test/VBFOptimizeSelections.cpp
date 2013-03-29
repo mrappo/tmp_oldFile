@@ -284,7 +284,10 @@ int main (int argc, char** argv){
      else if(UseMethodName.at(iMethod) == "LD")      WWTrainingVector.back()->BookandTrainLinearDiscriminant();
     
     // MLP
-     else if(UseMethodName.at(iMethod) == "MLP")     WWTrainingVector.back()->BookandTrainMLP();
+     else if(UseMethodName.at(iMethod) == "MLP")        WWTrainingVector.back()->BookandTrainMLP();
+     else if(UseMethodName.at(iMethod) == "MLPBFG")     WWTrainingVector.back()->BookandTrainMLP(1000,"N+5","sigmoid","BFGS",10,10,"tanh");
+     else if(UseMethodName.at(iMethod) == "CFMlpANN")   WWTrainingVector.back()->BookandTrainCFMlpANN();
+     else if(UseMethodName.at(iMethod) == "TMlpANN")    WWTrainingVector.back()->BookandTrainTMlpANN();
 
     // BDT
      else if(UseMethodName.at(iMethod) == "BDT")     WWTrainingVector.back()->BookandTrainBDT();
