@@ -324,8 +324,8 @@ int main (int argc, char **argv){
        TString NameFile = Form("%s/%s.root",InputDirectory.c_str(),NameSample.at(iSample).c_str());
        std::cout<<" Input File : "<< NameFile.Data()<<std::endl;
 
-       FileVect.push_back ( new TFile (NameFile.Data(),"READ") );  
-       TreeVect.push_back( (TTree*) FileVect.at(iSample)->Get(TreeName.c_str()));
+       if( iVar == 0 && iCut == 0) FileVect.push_back ( new TFile (NameFile.Data(),"READ") );  
+       if( iVar == 0 && iCut == 0) TreeVect.push_back( (TTree*) FileVect.at(iSample)->Get(TreeName.c_str()));
         
        hname.Form ("%s_%s_%d",NameSample.at(iSample).c_str(),Variables.at(iVar).c_str(),int(iCut));
        histos[iCut][iVar][iSample] = new TH1F (hname.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar));
@@ -355,6 +355,7 @@ int main (int argc, char **argv){
        histos[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.02);
 
     } 
+
    }
   }
   
@@ -377,7 +378,7 @@ int main (int argc, char **argv){
 
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
 
-       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *1.3;
+       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *1.;
 
        if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL") {
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
@@ -428,17 +429,15 @@ int main (int argc, char **argv){
   
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
 
+     int iSampleData = -1;
+     int iSampleggH = -1;
+     int iSampleqqH = -1;
+     int iSampleRSGPythia = -1;
+     int iSampleRSGHerwig = -1;
+     int iSampleGraviton  = -1;
 
      for (size_t iVar=0; iVar<Variables.size(); iVar++){
 
-          int iSampleData = -1;
-          int iSampleggH = -1;
-          int iSampleqqH = -1;
-          int iSampleRSGPythia = -1;
-          int iSampleRSGHerwig = -1;
-          int iSampleGraviton  = -1;
-
- 
           std::map<int,double> SystematicErrorMap ;
 
           TString CanvasName = Form("%s_%zu",Variables.at(iVar).c_str(),iCut);         
@@ -730,9 +729,9 @@ int main (int argc, char **argv){
 	  std::replace(canvasname.begin(),canvasname.end(),'[','_');
 	  std::replace(canvasname.begin(),canvasname.end(),']','_');
 	            
-	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
+	  //	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
-	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".C").c_str(),"C");
+	  //c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".C").c_str(),"C");
 
 	  c[iCut][iVar]->Close();
 	  
@@ -777,31 +776,69 @@ int main (int argc, char **argv){
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),'[','_');
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),']','_');
           
-	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
+	  //	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
-	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".C").c_str(),"C");
+	  //	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".C").c_str(),"C");
 
           cLog[iCut][iVar]->Close();
   
      }
-
-     
-     //Print Signal/Background ratios for every cut
-     /*          
-     int iVar=0;
-     histos[iCut][iVar][iSampleqqH]->Scale(1./SignalScaleFactor);
-     histos[iCut][iVar][iSampleggH]->Scale(1./SignalScaleFactor); 
-     std::cout<<"Signal to Background ratios: Cut_"<<iCut<<std::endl; 
-     std::cout<<"Data Events: \t\t"<<histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
-     std::cout<<"Top Events: \t\t"<<histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
-     std::cout<<"WJets Events: \t\t"<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
-     std::cout<<"All Backgrounds Events: "<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+    
+    //Print Signal/Background ratios for every cut
+    int iVar = 0 ;
+ 
+    std::cout<<std::endl;
+    std::cout<<" ##################### "<<std::endl;
+    std::cout<< " Event Scaled To Lumi "<<std::endl;
+    std::cout<<" ##################### "<<std::endl;
+   
+    std::cout<<std::endl;
+    std::cout<<" Signal to Background ratios: Cut_"<<int(iCut)<<"  String: "<<CutList.at(iCut)<<std::endl;
+    std::cout<<" Data Events:            "<<histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+    std::cout<<" Top Events:             "<<histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+    std::cout<<" WJets Events:           "<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+    std::cout<<" All Backgrounds Events: "<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
        +histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
        +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
        +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
-     std::cout<<"Signal qqH: \t\t"<<histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
-     std::cout<<"Signal ggH: \t\t"<<histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
-     std::cout<<"Signal/Top: \t\t"<<(histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)
+
+    if(SignalggHName!="NULL" && iSampleggH!=-1){
+      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleqqH]->Scale(1./SignalScaleFactor);
+      else histos[iCut][iVar][iSampleggH]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());     
+      std::cout<<" Signal ggH:           "<<histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+
+    }
+
+    if(SignalqqHName!="NULL" && iSampleqqH!=-1){
+      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleqqH]->Scale(1./SignalScaleFactor);
+      else histos[iCut][iVar][iSampleqqH]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());
+      std::cout<<" Signal qqH:             "<<histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+
+    }
+
+    if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){
+      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGPythia]->Scale(1./SignalScaleFactor);
+      else histos[iCut][iVar][iSampleRSGPythia]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());
+      std::cout<<" Signal RSGPythia:       "<<histos[iCut][iVar][iSampleRSGPythia]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+
+    }
+
+    if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){
+      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGHerwig]->Scale(1./SignalScaleFactor);
+      else histos[iCut][iVar][iSampleRSGHerwig]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());
+      std::cout<<" Signal RSGHerwig:       "<<histos[iCut][iVar][iSampleRSGHerwig]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+
+    }
+
+    if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){
+      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleGraviton]->Scale(1./SignalScaleFactor);
+      else histos[iCut][iVar][iSampleGraviton]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());
+      std::cout<<" Signal Graviton:        "<<histos[iCut][iVar][iSampleGraviton]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+
+    }
+  
+
+    /*    std::cout<<"Signal/Top: \t\t"<<(histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)
 				     +histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1))
        /(histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
 	 +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1))<<std::endl;
