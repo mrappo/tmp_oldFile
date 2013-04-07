@@ -331,21 +331,40 @@ int main (int argc, char **argv){
        histos[iCut][iVar][iSample] = new TH1F (hname.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar));
        histos[iCut][iVar][iSample]->Sumw2();
        
-       if( NameReducedSample.at(iSample) == "DATA" ) TreeVect.at(iSample)-> Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(), (CutList.at(iCut)).c_str() ,"goff");
+       if( NameReducedSample.at(iSample) == "DATA" ){ 
+         TreeVect.at(iSample)-> Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(), (CutList.at(iCut)).c_str() ,"goff");
+	 std::cout<<" Data Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+       }
 	 
-       else if(NameReducedSample.at(iSample) == SignalggHName && SignalggHName!="NULL")
-                TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalggHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
-		
-       else if(NameReducedSample.at(iSample) == SignalqqHName && SignalqqHName!="NULL") 
+       else if(NameReducedSample.at(iSample) == SignalggHName && SignalggHName!="NULL"){
+               TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalggHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+	       std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+       }
+	 
+       else if(NameReducedSample.at(iSample) == SignalqqHName && SignalqqHName!="NULL") {
 	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalqqHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
-
-       else if(NameReducedSample.at(iSample) == SignalRSGPythiaName && SignalRSGPythiaName!="NULL") 
+         std::cout<<" Signal qqH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+       }
+	 
+       else if(NameReducedSample.at(iSample) == SignalRSGPythiaName && SignalRSGPythiaName!="NULL") {
 	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalRSGPythiaWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+         std::cout<<" Signal RSGPythia Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+       }
+	 
+       else if(NameReducedSample.at(iSample) == SignalRSGHerwigName && SignalRSGHerwigName!="NULL") {
+	TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalRSGHerwigWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+        std::cout<<" Signal RSG Herwig Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+       }
+	 
+       else if(NameReducedSample.at(iSample) == SignalGravitonName && SignalGravitonName!="NULL") {
+	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalGravitonWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+	 std::cout<<" Signal Graviton Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weighted events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+       }
 
-       else if(NameReducedSample.at(iSample) == SignalRSGHerwigName && SignalRSGHerwigName!="NULL") 
-	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalRSGHerwigWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
-
-       else  TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+BackgroundWeight+") * ("+CutList.at(iCut)+")").c_str() ,"goff");
+       else {  TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+BackgroundWeight+") * ("+CutList.at(iCut)+")").c_str() ,"goff");
+    	        std::cout<<" Bkg "<<NameSample.at(iSample)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<" weighted events "<<
+                            histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl; 
+        }
 
        histos[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
        histos[iCut][iVar][iSample]->SetLineColor(ColorSample.at(iSample));
@@ -359,10 +378,17 @@ int main (int argc, char **argv){
    }
   }
   
+  std::cout<<std::endl;
+  std::cout<<std::endl;
+
   // Normalization to the lumi of MC samples 
   double norm;
 
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
+
+    std::cout<<std::endl;
+    std::cout<<" Normalization Factor for Cut "<<CutList.at(iCut)<<std::endl;
+    std::cout<<std::endl;
 
     for (size_t iVar=0; iVar<Variables.size(); iVar++){
 
@@ -375,37 +401,48 @@ int main (int argc, char **argv){
       for (size_t iSample=0; iSample<NameSample.size(); iSample++){
       
        if(NameReducedSample.at(iSample) == "DATA") continue;
-
+ 
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
+
+       std::cout<< " Sample to be scaled "<<NameReducedSample.at(iSample)<<" Lumi "<<Lumi<<" xs : "<<SampleCrossSection.at(iSample)<<" numEntries "<<NumEntriesBefore.at(iSample)<<
+	           " Normalization Factor "<<norm<<std::endl;
 
        if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *1.;
 
        if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL") {
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral()); 
+         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)); 
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+
        }
 
        else if ( NameReducedSample.at(iSample)==SignalqqHName && SignalqqHName!="NULL") {
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral());
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGPythiaName && SignalRSGPythiaName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral());
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGHerwigName && SignalRSGHerwigName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral());
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalGravitonName && SignalGravitonName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral());
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
-       else  histos[iCut][iVar][iSample]->Scale(1.*norm);
+       else{  histos[iCut][iVar][iSample]->Scale(1.*norm);
+	     std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<std::endl;
+       }
       }
     }
   }
@@ -446,7 +483,7 @@ int main (int argc, char **argv){
           TString CanvasNameLog = Form("%s_%zu_Log",Variables.at(iVar).c_str(),iCut);
           cLog[iCut][iVar] = new TCanvas (CanvasNameLog.Data() ,"" ) ;
 
-	  leg[iCut][iVar] = new TLegend (0.81, 0.6, 0.99, 0.90) ;
+	  leg[iCut][iVar] = new TLegend (0.66, 0.6, 0.86, 0.90) ;
   	  leg[iCut][iVar]->SetFillColor(0);
  
           TString histoName = Form("%s_sTop_%d",Variables.at(iVar).c_str(),int(iCut));
@@ -838,20 +875,6 @@ int main (int argc, char **argv){
     }
   
 
-    /*    std::cout<<"Signal/Top: \t\t"<<(histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)
-				     +histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1))
-       /(histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
-	 +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1))<<std::endl;
-     std::cout<<"Signal/WJets: \t\t"<<(histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)
-				       +histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1))
-       /histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
-     std::cout<<"Signal/Background: \t"<<(histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)
-					  +histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1))
-       /(histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
-	 +histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
-	 +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
-	 +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1))<<std::endl;
-     */
  }
 
 
