@@ -11,6 +11,9 @@ void DrawStackError(THStack* hs,const std::string & Labels, const std::map<int,d
     last->GetXaxis()->SetTitleSize(0.04);
     last->GetYaxis()->SetTitle("Entries");
     last->GetYaxis()->SetTitleSize(0.04);
+    last->SetMaximum(last->GetBinContent(last->GetMaximumBin())*1.8) ;
+    last->SetMinimum(1) ;
+
 
     last->DrawClone ("hist") ;
 
@@ -90,16 +93,19 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F*  dataHi
 }
 
 
-void LatexCMS (double lumi){
+void LatexCMS (const double & lumi, const std::string & LeptonType){
 
   TLatex latex;
   latex.SetNDC();
   latex.SetTextSize(0.04);
 
   latex.SetTextAlign(31); // align right                                                                                                                        
-  latex.DrawLatex(0.80,0.962,"#sqrt{s} = 8 TeV");
+  latex.DrawLatex(0.68,0.962,"#sqrt{s} = 8 TeV");
   latex.SetTextAlign(31); // align right                                                                                                                        
-  latex.DrawLatex(0.66,0.962,Form("#int #font[12]{L} dt = %.1f pb^{-1}", (float)lumi));
+  latex.DrawLatex(0.5,0.962,Form("#int #font[12]{L} dt = %.1f fb^{-1}", (float)lumi/1000));
+  latex.SetTextAlign(31); // align right                                                                                                                        
+  if(LeptonType=="Muon" || LeptonType=="muon" || LeptonType == "mu" ) latex.DrawLatex(0.85,0.962,Form("mu+jets"));
+  else  latex.DrawLatex(0.85,0.962,Form("el+jets"));
 
   latex.SetTextAlign(11); // align left                                                                                                                         
   //  latex.DrawLatex(0.15,0.93,"CMS,  #sqrt{s} = 7 TeV");//preliminary 2011");                                                                                 
