@@ -1,24 +1,39 @@
-######################################################
-# Variable                      Nbin    Min     Max ##
-######################################################
+####################################################################
+# Variable                      Nbin    Min     Max        Label
+####################################################################
 
-l_pt                             50      0       500
-l_eta                            25   -2.1       2.1
-v_pt                             40    200       800
-pfMET                            35      0       600
-nPV                              40      0       40
-ungroomed_jet_pt                 40    200       800
-jet_mass_pr                      28      0       140
-mass_lvj                         60    200      2000
-#nbjets_csvl_veto                  5      0       5
-#nbjets_csvm_veto                  5      0       5
-#nbjets_ssvhem_veto                5      0       5
-jet_tau2tau1                     35     0       1
-jet_massdrop_pr                  35     0       1
-jet_qjetvol                      35     0       0.6
-#ttb_ca8_mass_pr                   30     0      150
+l_pt                             50      0       500       pT_{l}[GeV]
+l_eta                            25   -2.1       2.1       #eta_{l}
+v_pt                             40    200       800       pT^{W}_{l}[GeV]
+pfMET                            35      0       600       MET[GeV]
+nPV                              40      0       40        nPV
+ungroomed_jet_pt                 40    200       800       pT^{CA8}[GeV]
+jet_mass_pr                      28      0       140       Pruned_Mass[GeV/c^{2}]
+#jet_mass_pr                      20     40       140      Pruned_Mass[GeV/c^{2}] 
+mass_lvj                        60    200       2000       M_{WW}(GeV/c^{2})
+#nbjets_csvl_veto                 5      0       5         N_{bjet}^{csvl}
+#nbjets_csvm_veto                  5      0       5        N_{bjet}^{csvm}
+#nbjets_ssvhem_veto               5      0       5         N_{bjet}^{ssvhe}
+jet_tau2tau1                     35     0.2      1.1       N-subjettines
+jet_massdrop_pr                  35     0.1      1.15      Pruned_Mass_Drop
+jet_qjetvol                      35     0        1         QjetVolatility
+#ttb_ca8_mass_pr                   25     40      140
 #ttb_ht                            35     0      700
 #ttb_ca8_ungroomed_pt              20   200      600
 #ttb_ca8_tau2tau1                  30    0.      1.1
 #ttb_ca8_mu                        20    0.      1.0
 #ttb_mlvj                          40   400     1400
+#jet_grsens_tr                      50    -1       1
+#jet_grsens_ft                      50    -1       1
+#jet_pt1frac                        50    -1       1
+#jet_pt2frac                        50    -1       1
+#jet_sjdr                           50    -1       1.5
+#jet_jetconstituents                50    -1       150
+#jet_rcore4                         50    -1       0.8
+#jet_rcore5                         50    -1       0.8
+#jet_rcore6                         50    -1       0.8
+#jet_rcore7                         50    -1       0.8
+#jet_planarflow04                   50    -1        3
+#jet_planarflow05          50    -1         3
+#jet_planarflow06          50    -1         3
+#jet_planarflow07          50    1-         3
