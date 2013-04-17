@@ -47,7 +47,6 @@ def submitBatchJob( command, fn ):
     outScript.write("\n"+command);
     outScript.close();
 
-#    print "qsub -V -d "+currentDir+" -q shortcms "+currentDir+"/"+fn+".sh " ;
     Lunch = "lancia";
     outLunch=open(Lunch+".sh","a");
     outLunch.write("qsub -V -d "+currentDir+" -q "+options.queque+" "+currentDir+"/"+fn+".sh \n") ;
