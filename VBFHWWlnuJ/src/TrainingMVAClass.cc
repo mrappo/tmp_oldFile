@@ -50,8 +50,6 @@ TrainingMVAClass::~TrainingMVAClass(){
  
   if(factory_!=0) factory_->Delete() ;
 
-  if(treeReader_!=0) delete treeReader_;
-
 }
 
 // AddTrainingVariables in the MVA

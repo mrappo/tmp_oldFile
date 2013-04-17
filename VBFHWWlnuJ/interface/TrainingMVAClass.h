@@ -133,9 +133,6 @@ class TrainingMVAClass {
 
   TMVA::Factory* factory_ ; 
 
-  TMVA::Reader*  reader_ ;
-
-  treeReader* treeReader_ ;
 };
 
 #endif
