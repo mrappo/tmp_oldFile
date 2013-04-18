@@ -16,7 +16,7 @@ m_verbosity (verbosity)
   bre = (TBranchElement*) iBranch ;
   std::string bname = bre->GetClassName () ;      
   std::string branchTitle = iBranch->GetTitle();
-
+  if(branchTitle.find("bsmReweight")!= std::string::npos) continue ;
   if(bname!=""){
 
    if (bname.find ("Event") != std::string::npos) continue ;
