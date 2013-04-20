@@ -42,7 +42,6 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
   std::string buffer;
 
   if(inputFile.fail()) return -1; 
-
   while(!inputFile.eof()){
   
     getline(inputFile,buffer);
@@ -55,9 +54,13 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
     std::string  VariablesMinValueTemp;
     std::string  VariablesMaxValueTemp;
     std::string  VariablesTitleTemp;
-
+    
     line >> VariablesTemp >> VariablesNbinTemp >> VariablesMinValueTemp >> VariablesMaxValueTemp >> VariablesTitleTemp ;
 
+    for(size_t ifound = 0 ; ifound < VariablesTitleTemp.size() ; ifound++) {
+      if(VariablesTitleTemp.at(ifound)=='_' && VariablesTitleTemp.at(ifound+1)!='{') VariablesTitleTemp.at(ifound)=' '; 
+    }
+   
     Variables.push_back(VariablesTemp); VariablesNbin.push_back(atoi(VariablesNbinTemp.c_str())) ; VariablesMinValue.push_back(atof(VariablesMinValueTemp.c_str())); 
     VariablesMaxValue.push_back(atof(VariablesMaxValueTemp.c_str())); VariablesTitle.push_back(VariablesTitleTemp);
 

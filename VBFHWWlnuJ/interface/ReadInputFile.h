@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 
 int ReadInputSampleFile   (const std::string & ,std::vector<std::string> &, std::vector<std::string> &, std::vector<int> &,  std::vector<double> &, std::vector<int> &);
