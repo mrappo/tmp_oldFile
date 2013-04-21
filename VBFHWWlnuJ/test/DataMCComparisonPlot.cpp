@@ -458,7 +458,7 @@ int main (int argc, char **argv){
   }
 
   outputFile->cd();
-
+  
   TCanvas* c[CutList.size()][Variables.size()];
   TCanvas* cLog[CutList.size()][Variables.size()];
   TCanvas* cNoRatio[CutList.size()][Variables.size()];
@@ -503,15 +503,15 @@ int main (int argc, char **argv){
           TString CanvasNameLogNoRatio = Form("%s_%zu_Log_NoRatio",Variables.at(iVar).c_str(),iCut);
           cLogNoRatio[iCut][iVar] = new TCanvas (CanvasNameLogNoRatio.Data() ,"" ) ;
 
-	  leg[iCut][iVar] = new TLegend (0.47, 0.66, 0.76, 0.93) ;
+	  leg[iCut][iVar] = new TLegend (0.47, 0.66, 0.76, 0.93);
   	  leg[iCut][iVar]->SetFillColor(0);
   	  leg[iCut][iVar]->SetFillStyle(3001);
-  	  leg[iCut][iVar]->SetNColumns(2);
+	  leg[iCut][iVar]->SetNColumns(2);
 
 	  legNoRatio[iCut][iVar] = new TLegend (0.47, 0.66, 0.76, 0.93) ;
   	  legNoRatio[iCut][iVar]->SetFillColor(0);
   	  legNoRatio[iCut][iVar]->SetFillStyle(3001);
-  	  legNoRatio[iCut][iVar]->SetNColumns(2);
+	  legNoRatio[iCut][iVar]->SetNColumns(2);
 
           TString histoName = Form("%s_sTop_%d",Variables.at(iVar).c_str(),int(iCut));
 
@@ -542,9 +542,8 @@ int main (int argc, char **argv){
 	  histoSum[iCut][iVar] = new TH1F ( histoName.Data(),"",
 					    VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
-
+          
           TPad* upperPad ; TPad* lowerPad ; TPad* upperPadLog ; TPad* lowerPadLog ;  
-
           TPad* upperPadNoRatio ; TPad *upperPadLogNoRatio ; 
 
           if(!WithoutData){
@@ -553,33 +552,20 @@ int main (int argc, char **argv){
 	      lowerPad = new TPad("lowerPad", "lowerPad", .005, .050, .995, .300);
 
               upperPadLog = new TPad("upperPadLog", "upperPadLog", .005, .220, .995, .950);
+              upperPadLog->SetLogy();
 	      lowerPadLog = new TPad("lowerPadLog", "lowerPadLog", .005, .050, .995, .300);
 
               upperPadNoRatio = new TPad("upperPadLogNoRatio", "upperPadLogNoRatio", .005, .025, .995, .950);
 	      upperPadLogNoRatio = new TPad("lowerPadLogNoRatio", "lowerPadLogNoRatio", .005, .025, .995, .950);
-
+              upperPadLogNoRatio->SetLogy();
           }
           else{
-	        upperPad = new TPad("upperPad", "upperPad", .005, .050, .995, .950); 
-
-                upperPadLog = new TPad("upperPadLog", "upperPadLog", .005, .050, .995, .950);
-
+	        upperPad = new TPad("upperPad", "upperPad", .005, .025, .995, .950); 
+                upperPadLog = new TPad("upperPadLog", "upperPadLog", .005, .025, .995, .950);
+                upperPadLog->SetLogy();
 	  }
 
-	  c[iCut][iVar] ->cd();
-	  upperPad->Draw();     
- 	  if(!WithoutData) lowerPad->Draw();
-
-	  cNoRatio[iCut][iVar] ->cd();
-	  upperPadNoRatio->Draw();     
-
-	  cLog[iCut][iVar] ->cd();
-	  upperPadLog->Draw();     
- 	  if(!WithoutData) lowerPadLog->Draw();
-
-	  cLogNoRatio[iCut][iVar] ->cd();
-	  upperPadLogNoRatio->Draw();     
-
+	  
 	  for (size_t iSample = 0; iSample<NameSample.size(); iSample++){
 	  
 	    if( NameReducedSample.at(iSample) == "DATA"){
@@ -641,25 +627,25 @@ int main (int argc, char **argv){
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    }
 
-	  }
-       
-	  leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
-	  leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ", "f" );
-	  leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
-	  leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "f" );
+	   }
+          
+	  if(histo_top[iCut][iVar]->GetEntries()!=0)     leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
+	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ", "f" );
+	  if(histo_ttbar[iCut][iVar]->GetEntries()!=0)   leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
+	  if(histo_WJets[iCut][iVar]->GetEntries()!=0)   leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "f" );
 
-	  legNoRatio[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
-	  legNoRatio[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ", "f" );
-	  legNoRatio[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
-	  legNoRatio[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "f" );
+	  if(histo_top[iCut][iVar]->GetEntries()!=0)     legNoRatio[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
+	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) legNoRatio[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ", "f" );
+	  if(histo_ttbar[iCut][iVar]->GetEntries()!=0)   legNoRatio[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
+	  if(histo_WJets[iCut][iVar]->GetEntries()!=0)   legNoRatio[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+Jets", "f" );
  
-	  hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
-	  hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
-	  hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
-	  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
-
+	  if(histo_top[iCut][iVar]->GetEntries()!=0)     hs[iCut][iVar]->Add(histo_top[iCut][iVar]);
+	  if(histo_ttbar[iCut][iVar]->GetEntries()!=0)   hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
+	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
+	  if(histo_WJets[iCut][iVar]->GetEntries()!=0)   hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
+	  
           // Set the systenatic for each sample 
-
+          
           SystematicErrorMap[0] = 0. ;
           SystematicErrorMap[1] = 0.3 ;
           SystematicErrorMap[2] = 0.07 ;
@@ -671,10 +657,16 @@ int main (int argc, char **argv){
 	  SetTotalSystematicVector(SysError,hs[iCut][iVar],SystematicErrorMap);	  
 
           THStack* StackNoRatio    = (THStack*) hs[iCut][iVar]->Clone("StackNoRatio");
-          THStack* LogStack        = (THStack*) hs[iCut][iVar]->Clone("LogStack");
-          THStack* LogStackNoRatio = (THStack*) hs[iCut][iVar]->Clone("LogStackNoRatio");
-        
-	  if(WithoutData) DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap);
+
+	  c[iCut][iVar] ->cd();
+	  upperPad->Draw();     
+ 	  if(!WithoutData) lowerPad->Draw();
+
+	  if(!WithoutData) {cNoRatio[iCut][iVar] ->cd();
+	                    upperPadNoRatio->Draw(); }
+
+	  
+	  if(WithoutData) { upperPad->cd(); DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,false,true); }
                          
 	  else{ 
 
@@ -692,7 +684,7 @@ int main (int argc, char **argv){
             }
 	    else{ upperPad->cd(); histos[iCut][iVar][iSampleData]->Draw("E same");  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->Draw("E same"); }
           }
-
+	  
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
               
               	    TString Name ;
@@ -709,7 +701,7 @@ int main (int argc, char **argv){
                     histos[iCut][iVar][iSampleggH]->SetFillStyle(0);
 
 		    upperPad->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same");
-		    upperPadNoRatio->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same"); }
           }
        
           if(SignalqqHName!="NULL" && iSampleqqH!=-1){ 
@@ -726,7 +718,7 @@ int main (int argc, char **argv){
           	    if(!NormalizeSignalToData) histos[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
 
 		    upperPad->cd(); histos[iCut][iVar][iSampleqqH]->Draw("hist same");
-		    upperPadNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->Draw("hist same");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->Draw("hist same"); }
 
           }
 
@@ -745,7 +737,7 @@ int main (int argc, char **argv){
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGPythia]->Scale(SignalScaleFactor*1.);
 
 		    upperPad->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
-		    upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same"); }
           }
        
 	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ 
@@ -762,7 +754,7 @@ int main (int argc, char **argv){
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGHerwig]->Scale(SignalScaleFactor*1.);
 
 		    upperPad->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
-		    upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same"); }
           }
 
 	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ 
@@ -779,12 +771,14 @@ int main (int argc, char **argv){
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleGraviton]->Scale(SignalScaleFactor*1.);
 
 		    upperPad->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
-		    upperPadNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same"); }
 
           }
-       
-	  upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,false);
-	  upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true);
+          
+        
+	  if(!WithoutData) { upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,false);
+                             upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
+          else { upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
 
 	  if(!WithoutData) {
          
@@ -838,17 +832,20 @@ int main (int argc, char **argv){
 
 	  c[iCut][iVar]->Close();
 
-	  cNoRatio[iCut][iVar]->Write();
+	  if(!WithoutData) {
+            
+            cNoRatio[iCut][iVar]->Write();
 
-	  std::string canvasnameNoRatio = CanvasNameNoRatio.Data() ;
-	  std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),'[','_');
-	  std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),']','_');
+	    std::string canvasnameNoRatio = CanvasNameNoRatio.Data() ;
+	    std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),'[','_');
+	    std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),']','_');
 	            
-	  cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".png").c_str(),"png");
-	  cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".pdf").c_str(),"pdf");
+	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".png").c_str(),"png");
+	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".pdf").c_str(),"pdf");
 
-	  cNoRatio[iCut][iVar]->Close();
-	  
+	    cNoRatio[iCut][iVar]->Close();
+	  }
+	            
 	  if(!WithoutData){  lowerPadLog->cd();
                              lowerPadLog->SetGridx();
 	                     lowerPadLog->SetGridy();
@@ -859,11 +856,18 @@ int main (int argc, char **argv){
 
           }
 
-	  upperPadLog->SetLogy();
-	  upperPadLogNoRatio->SetLogy();
+	  cLog[iCut][iVar] ->cd();
+	  upperPadLog->Draw();     
+ 	  if(!WithoutData) lowerPadLog->Draw();
 
-	  if(WithoutData) DrawStackError(LogStack,VariablesTitle.at(iVar),SystematicErrorMap);
-                         
+	  if(!WithoutData) {cLogNoRatio[iCut][iVar] ->cd();
+	                    upperPadLogNoRatio->Draw();}
+
+          THStack* LogStack        = (THStack*) hs[iCut][iVar]->Clone("LogStack");
+          THStack* LogStackNoRatio = (THStack*) hs[iCut][iVar]->Clone("LogStackNoRatio");
+          	  
+	  if(WithoutData){ upperPadLog->cd(); DrawStackError(LogStack,VariablesTitle.at(iVar),SystematicErrorMap,true,false); }
+	
 	  else{ 
 
 	    upperPadLog->cd(); DrawStackError(LogStack,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,true,false);
@@ -880,27 +884,28 @@ int main (int argc, char **argv){
             }
             else{ upperPadLog->cd(); histos[iCut][iVar][iSampleData]->Draw("E same"); upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->Draw("E same"); }
           }
-
+	 
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same");
-                                                       upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same");
+	                                               if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same"); }
 	  }
 	  if(SignalqqHName!="NULL" && iSampleqqH!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleqqH]->Draw("hist same");
-	                                               upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same");
+	                                               if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same"); }
 	  }
 	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
-                                                                   upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
+	                                                           if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same"); }
 	  }
 	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
-	                                                           upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
+	                                                           if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same"); }
 	  }
 	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
- 	                                                         upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
+	                                                         if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same"); }
           }
+	  
+	  if(!WithoutData) { upperPadLog->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,false);
+                             upperPadLogNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
+          else { upperPadLog->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
 
-	  upperPadLog->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,false);
-	  upperPadLogNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true);
-
-       
+	  
 	  cLog[iCut][iVar]->Write();
           std::string canvasnameLog = CanvasNameLog.Data() ;
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),'[','_');
@@ -910,23 +915,31 @@ int main (int argc, char **argv){
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
 
           cLog[iCut][iVar]->Close();
+	  
+	  if(!WithoutData) {
 
-	  cLogNoRatio[iCut][iVar]->Write();
-          std::string canvasnameLogNoRatio = CanvasNameLogNoRatio.Data() ;
-	  std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),'[','_');
-	  std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),']','_');
+            cLogNoRatio[iCut][iVar]->Write();
+            std::string canvasnameLogNoRatio = CanvasNameLogNoRatio.Data() ;
+   	    std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),'[','_');
+	    std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),']','_');
           
-	  cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".png").c_str(),"png");
-	  cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".pdf").c_str(),"pdf");
+	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".png").c_str(),"png");
+	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".pdf").c_str(),"pdf");
 
-          cLogNoRatio[iCut][iVar]->Close();
-
-          delete StackNoRatio; 
-          delete LogStack ;
-          delete LogStackNoRatio ;
-  
+            cLogNoRatio[iCut][iVar]->Close();
+	  }
+	
+          if(!StackNoRatio)    delete StackNoRatio ; 
+          if(!LogStack)        delete LogStack ;
+          if(!LogStackNoRatio) delete LogStackNoRatio ; 
+          if(!upperPad)        delete upperPad ;
+          if(!lowerPad)        delete lowerPad ;
+          if(!upperPadLog)     delete upperPadLog ;
+          if(!lowerPadLog)     delete lowerPadLog ;
+          if(!upperPadNoRatio) delete upperPadNoRatio ;
+          if(!upperPadLogNoRatio) delete upperPadLogNoRatio ;
      }
-    
+	  
     //Print Signal/Background ratios for every cut
     int iVar = 0 ;
  
@@ -982,8 +995,8 @@ int main (int argc, char **argv){
   
  }
 
-
+	  
  outputFile->Close();
-
+  
  return 0 ;
 }

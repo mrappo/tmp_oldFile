@@ -3,6 +3,7 @@
 void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int,double> & SystematicErrorMap,  const bool & isLog, const bool & isLabel, const double & syst){
 
   TObjArray* histos = hs->GetStack () ;
+  
   if (histos) {
 
     Int_t number = histos->GetEntries();
@@ -37,7 +38,7 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
     last->SetFillStyle(3001);
     last->SetLineColor(kBlack);
     last->DrawClone ("hist") ;
-
+     
     std::vector <double> vErrSys (last->GetNbinsX(),0.) ;
     std::vector <double> vErrStat (last->GetNbinsX(),0.) ;
 
