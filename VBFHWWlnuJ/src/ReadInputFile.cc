@@ -59,6 +59,7 @@ int ReadInputVariableFile( const std::string & InputVariableList , std::vector<s
 
     for(size_t ifound = 0 ; ifound < VariablesTitleTemp.size() ; ifound++) {
       if(VariablesTitleTemp.at(ifound)=='_' && VariablesTitleTemp.at(ifound+1)!='{') VariablesTitleTemp.at(ifound)=' '; 
+
     }
    
     Variables.push_back(VariablesTemp); VariablesNbin.push_back(atoi(VariablesNbinTemp.c_str())) ; VariablesMinValue.push_back(atof(VariablesMinValueTemp.c_str())); 
