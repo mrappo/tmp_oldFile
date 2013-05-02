@@ -417,7 +417,7 @@ int main (int argc, char **argv){
        //       std::cout<< " Sample to be scaled "<<NameReducedSample.at(iSample)<<" Lumi "<<Lumi<<" xs : "<<SampleCrossSection.at(iSample)<<" numEntries "<<NumEntriesBefore.at(iSample)<<
        //	           " Normalization Factor "<<norm<<std::endl;
 
-       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *1.;
+       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *1.295;
 
        if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL") {
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
@@ -492,23 +492,25 @@ int main (int argc, char **argv){
           std::map<int,double> SystematicErrorMap ;
 
           TString CanvasName = Form("%s_%zu",Variables.at(iVar).c_str(),iCut);         
-	  c[iCut][iVar] = new TCanvas (CanvasName.Data() ,"" ) ;
+	  c[iCut][iVar] = new TCanvas (CanvasName.Data() ,"",500,525) ;
 
 	  TString CanvasNameNoRatio = Form("%s_%zu_NoRatio",Variables.at(iVar).c_str(),iCut);         
-	  cNoRatio[iCut][iVar] = new TCanvas (CanvasNameNoRatio.Data() ,"" ) ;
+	  cNoRatio[iCut][iVar] = new TCanvas (CanvasNameNoRatio.Data() ,"",500,525) ;
 
           TString CanvasNameLog = Form("%s_%zu_Log",Variables.at(iVar).c_str(),iCut);
-          cLog[iCut][iVar] = new TCanvas (CanvasNameLog.Data() ,"" ) ;
+          cLog[iCut][iVar] = new TCanvas (CanvasNameLog.Data() ,"",500,525) ;
 
           TString CanvasNameLogNoRatio = Form("%s_%zu_Log_NoRatio",Variables.at(iVar).c_str(),iCut);
-          cLogNoRatio[iCut][iVar] = new TCanvas (CanvasNameLogNoRatio.Data() ,"" ) ;
+          cLogNoRatio[iCut][iVar] = new TCanvas (CanvasNameLogNoRatio.Data() ,"",500,525) ;
 
-	  leg[iCut][iVar] = new TLegend (0.47, 0.66, 0.76, 0.93);
+	  //	  leg[iCut][iVar] = new TLegend (0.49, 0.51, 0.85, 0.91);
+	  leg[iCut][iVar] = new TLegend (0.55, 0.65, 0.85, 0.91);
   	  leg[iCut][iVar]->SetFillColor(0);
   	  leg[iCut][iVar]->SetFillStyle(3001);
 	  leg[iCut][iVar]->SetNColumns(2);
 
-	  legNoRatio[iCut][iVar] = new TLegend (0.47, 0.66, 0.76, 0.93) ;
+	  //	  legNoRatio[iCut][iVar] = new TLegend (0.49, 0.51, 0.85, 0.91);
+	  legNoRatio[iCut][iVar] = new TLegend (0.55, 0.65, 0.85, 0.91);
   	  legNoRatio[iCut][iVar]->SetFillColor(0);
   	  legNoRatio[iCut][iVar]->SetFillStyle(3001);
 	  legNoRatio[iCut][iVar]->SetNColumns(2);
@@ -550,13 +552,28 @@ int main (int argc, char **argv){
 
               upperPad = new TPad("upperPad", "upperPad", .005, .220, .995, .950);
 	      lowerPad = new TPad("lowerPad", "lowerPad", .005, .050, .995, .300);
+              upperPad->SetLeftMargin(0.1);
+              upperPad->SetRightMargin(0.1);
+              lowerPad->SetBottomMargin(0.26);
+              lowerPad->SetLeftMargin(0.1);
+              lowerPad->SetRightMargin(0.1);
 
               upperPadLog = new TPad("upperPadLog", "upperPadLog", .005, .220, .995, .950);
               upperPadLog->SetLogy();
 	      lowerPadLog = new TPad("lowerPadLog", "lowerPadLog", .005, .050, .995, .300);
+              lowerPadLog->SetBottomMargin(0.26);
+              upperPadLog->SetLeftMargin(0.1);
+              upperPadLog->SetRightMargin(0.1);
+              lowerPadLog->SetBottomMargin(0.27);
+              lowerPadLog->SetLeftMargin(0.1);
+              lowerPadLog->SetRightMargin(0.1);
 
               upperPadNoRatio = new TPad("upperPadLogNoRatio", "upperPadLogNoRatio", .005, .025, .995, .950);
 	      upperPadLogNoRatio = new TPad("lowerPadLogNoRatio", "lowerPadLogNoRatio", .005, .025, .995, .950);
+              upperPadNoRatio->SetLeftMargin(0.1);
+              upperPadNoRatio->SetRightMargin(0.1);
+              upperPadLogNoRatio->SetLeftMargin(0.1);
+              upperPadLogNoRatio->SetRightMargin(0.1);
               upperPadLogNoRatio->SetLogy();
           }
           else{
@@ -626,10 +643,10 @@ int main (int argc, char **argv){
 	    }
 	    else{  histos[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
                    histos[iCut][iVar][iSample]->SetLineColor(kBlack);
-	      	   hs[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
-	      	   leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "f" );
-	           legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "f" );
-	           histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		   hs[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		   leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "f" );
+		   legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "f" );
+		   histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    }
 
 	   }
@@ -650,6 +667,12 @@ int main (int argc, char **argv){
 	  if(histo_WJets[iCut][iVar]->GetEntries()!=0)   hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	  
           // Set the systenatic for each sample 
+
+          TH1F* MCSysStat = (TH1F*) histo_top[iCut][iVar]->Clone("MCSysStat");
+          MCSysStat->SetLineColor(kBlack);
+          MCSysStat->SetLineWidth(1);
+          MCSysStat->SetFillColor(kBlack);
+          MCSysStat->SetFillStyle(3013);
           
 	  SystematicErrorMap[0] = 0. ;
 	  SystematicErrorMap[1] = 0.3 ;
@@ -667,30 +690,32 @@ int main (int argc, char **argv){
 
 	  c[iCut][iVar] ->cd();
 	  upperPad->Draw();     
- 	  if(!WithoutData) lowerPad->Draw();
+	  if(!WithoutData) lowerPad->Draw();
 
-	  if(!WithoutData) {cNoRatio[iCut][iVar] ->cd();
-	                    upperPadNoRatio->Draw(); }
+	  if(!WithoutData) {cNoRatio[iCut][iVar] ->cd(); upperPadNoRatio->Draw(); }
 
 	  
 	  if(WithoutData) { upperPad->cd(); DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,false,true); }
                          
 	  else{ 
-
-	    upperPad->cd(); DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,false);
-	    upperPadNoRatio->cd(); DrawStackError(StackNoRatio,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,true);
+	        upperPad->cd();  DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,false);
+ 	        upperPadNoRatio->cd(); DrawStackError(StackNoRatio,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,true);
 
             if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
                   for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
                       iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
 
-		  upperPad->cd(); histos[iCut][iVar][iSampleData]->Draw("E same");
-		  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->Draw("E same");
+		  upperPad->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+		  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same");  histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
                 
             }
-	    else{ upperPad->cd(); histos[iCut][iVar][iSampleData]->Draw("E same");  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->Draw("E same"); }
+	    else{ upperPad->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");  
+                  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");  }
           }
+
+	  upperPad->cd(); leg[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f");
+	  upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f"); 
 	  
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
               
@@ -698,18 +723,18 @@ int main (int argc, char **argv){
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleggH).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleggH).c_str());
 
+                    Name = Form("ggH x %d, 600GeV",int(SignalScaleFactor));
+
                     leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], Name.Data(), "l" );
                     legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], Name.Data(), "l" );
                                      
                     histos[iCut][iVar][iSampleggH]->SetLineWidth(3);
-		    //                    histos[iCut][iVar][iSampleggH]->SetLineStyle(5);
 
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleggH]->Scale(SignalScaleFactor*1.);
-
                     histos[iCut][iVar][iSampleggH]->SetFillStyle(0);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same"); }
+		    upperPad->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same");  histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same");histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
           }
        
           if(SignalqqHName!="NULL" && iSampleqqH!=-1){ 
@@ -718,17 +743,19 @@ int main (int argc, char **argv){
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleqqH).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleqqH).c_str());
 
+
+                    Name = Form("qqH x %d, 600GeV",int(SignalScaleFactor));
+
                	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleqqH], Name.Data(), "l" );
                	    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleqqH], Name.Data(), "l" );
 
-                    histos[iCut][iVar][iSampleqqH]->SetLineWidth(2);
-                    histos[iCut][iVar][iSampleqqH]->SetLineStyle(9);
+                    histos[iCut][iVar][iSampleqqH]->SetLineWidth(3);
                     histos[iCut][iVar][iSampleqqH]->SetFillStyle(0);
  
           	    if(!NormalizeSignalToData) histos[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleqqH]->Draw("hist same");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->Draw("hist same"); }
+		    upperPad->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
 
           }
 
@@ -741,14 +768,13 @@ int main (int argc, char **argv){
                	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
                	    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
 
-                    histos[iCut][iVar][iSampleRSGPythia]->SetLineStyle(7);
                     histos[iCut][iVar][iSampleRSGPythia]->SetLineWidth(2);
                     histos[iCut][iVar][iSampleRSGPythia]->SetFillStyle(0);
                                      
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGPythia]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same"); }
+		    upperPad->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
           }
        
 	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ 
@@ -760,14 +786,13 @@ int main (int argc, char **argv){
                	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
                	    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
                                      
-                    histos[iCut][iVar][iSampleRSGHerwig]->SetLineWidth(7);
-                    histos[iCut][iVar][iSampleRSGHerwig]->SetLineStyle(2);
+                    histos[iCut][iVar][iSampleRSGHerwig]->SetLineWidth(2);
                     histos[iCut][iVar][iSampleRSGHerwig]->SetFillStyle(0);
 
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGHerwig]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same"); }
+		    upperPad->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame"); }
           }
 
 	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ 
@@ -780,19 +805,18 @@ int main (int argc, char **argv){
               	    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
                                      
                     histos[iCut][iVar][iSampleGraviton]->SetLineWidth(2);
-                    histos[iCut][iVar][iSampleGraviton]->SetLineStyle(7);
                     histos[iCut][iVar][iSampleGraviton]->SetFillStyle(0);
 
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleGraviton]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same"); }
+		    upperPad->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same"); histos[iCut][iVar][iSampleGraviton]->Draw("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist axissame"); }
 
           }
           
         
 	  if(!WithoutData) { upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,false);
-                             upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
+                 	     upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
           else { upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
 
 	  if(!WithoutData) {
@@ -834,29 +858,34 @@ int main (int argc, char **argv){
                             RatioLine->Draw("same");
 	                    RatioDataMC[iCut][iVar]->Draw("PEsame");
 
+	                    lowerPad->Update();
 	  }
-	  
+
+	  upperPad->Update();     	  
+	  c[iCut][iVar]->Update();
 	  c[iCut][iVar]->Write();
           
 	  std::string canvasname = CanvasName.Data() ;
 	  std::replace(canvasname.begin(),canvasname.end(),'[','_');
 	  std::replace(canvasname.begin(),canvasname.end(),']','_');
 
-	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
 
 	  c[iCut][iVar]->Close();
 
 	  if(!WithoutData) {
             
+            upperPadNoRatio->Update();
+            cNoRatio[iCut][iVar]->Update();
             cNoRatio[iCut][iVar]->Write();
 
 	    std::string canvasnameNoRatio = CanvasNameNoRatio.Data() ;
 	    std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),'[','_');
 	    std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),']','_');
 	            
-	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".png").c_str(),"png");
 	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".pdf").c_str(),"pdf");
+	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".png").c_str(),"png");
 
 	    cNoRatio[iCut][iVar]->Close();
 	  }
@@ -873,6 +902,7 @@ int main (int argc, char **argv){
 
 	  cLog[iCut][iVar] ->cd();
 	  upperPadLog->Draw();     
+
  	  if(!WithoutData) lowerPadLog->Draw();
 
 	  if(!WithoutData) {cLogNoRatio[iCut][iVar] ->cd();
@@ -891,53 +921,62 @@ int main (int argc, char **argv){
                   for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
                       iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
 
-		  upperPadLog->cd(); histos[iCut][iVar][iSampleData]->Draw("E same");
-		  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->Draw("E same");
+		  upperPadLog->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+		  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
                 
             }
-            else{ upperPadLog->cd(); histos[iCut][iVar][iSampleData]->Draw("E same"); upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->Draw("E same"); }
+            else{ upperPadLog->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame"); 
+                  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame"); }
           }
 	 
-	  if(SignalggHName!="NULL" && iSampleggH!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same");
-	                                               if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->Draw("hist same"); }
+	  if(SignalggHName!="NULL" && iSampleggH!=-1){ upperPadLog->cd() ; histos[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
+	                      if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
 	  }
-	  if(SignalqqHName!="NULL" && iSampleqqH!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleqqH]->Draw("hist same");
-	                                               if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->Draw("hist same"); }
+	  if(SignalqqHName!="NULL" && iSampleqqH!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
+	                     if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
 	  }
-	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same");
-	                                                           if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->Draw("hist same"); }
+	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); 
+                                                                   histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
+	     if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
 	  }
-	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same");
-	                                                           if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->Draw("hist same"); }
+	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); 
+                                                                   histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame");
+	     if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame"); }
 	  }
-	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same");
-	                                                         if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same"); }
+	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleGraviton]->DrawCopy("hist same"); 
+                                                                 histos[iCut][iVar][iSampleGraviton]->DrawCopy("hist axissame");
+	     if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->DrawCopy("hist same"); histos[iCut][iVar][iSampleGraviton]->DrawCopy("hist axissame"); }
           }
 	  
 	  if(!WithoutData) { upperPadLog->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,false);
                              upperPadLogNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
           else { upperPadLog->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); }
 
-	  
+	 
+          upperPadLog->Update(); 
+          cLog[iCut][iVar]->Update(); 
 	  cLog[iCut][iVar]->Write();
+         
           std::string canvasnameLog = CanvasNameLog.Data() ;
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),'[','_');
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),']','_');
           
-	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
+	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
 
           cLog[iCut][iVar]->Close();
 	  
 	  if(!WithoutData) {
 
+            upperPadLogNoRatio->Update();
+            cLogNoRatio[iCut][iVar]->Update();
             cLogNoRatio[iCut][iVar]->Write();
             std::string canvasnameLogNoRatio = CanvasNameLogNoRatio.Data() ;
    	    std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),'[','_');
 	    std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),']','_');
           
-	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".png").c_str(),"png");
 	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".pdf").c_str(),"pdf");
+	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".png").c_str(),"png");
 
             cLogNoRatio[iCut][iVar]->Close();
 	  }
@@ -951,6 +990,7 @@ int main (int argc, char **argv){
           if(!lowerPadLog)     delete lowerPadLog ;
           if(!upperPadNoRatio) delete upperPadNoRatio ;
           if(!upperPadLogNoRatio) delete upperPadLogNoRatio ;
+          if(!MCSysStat)       delete MCSysStat ;
      }
 	  
     //Print Signal/Background ratios for every cut

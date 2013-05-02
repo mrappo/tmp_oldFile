@@ -14,7 +14,7 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
     last->GetYaxis()->SetLabelSize(0.035);
     last->GetYaxis()->SetTitleOffset(0.95);
 
-    if(isLog){ last->SetMaximum(last->GetBinContent(last->GetMaximumBin())*10000);
+    if(isLog){ last->SetMaximum(last->GetBinContent(last->GetMaximumBin())*15000);
                last->SetMinimum(0.001) ;
     }
     else { last->SetMaximum(last->GetBinContent(last->GetMaximumBin())*1.6);
@@ -27,7 +27,7 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
                  last->GetXaxis()->SetLabelSize(0.03);
 
                  last->GetYaxis()->SetTitleSize(0.035);
-                 last->GetYaxis()->SetTitleOffset(1.25);
+                 last->GetYaxis()->SetTitleOffset(1.45);
                  last->GetYaxis()->SetLabelSize(0.03);
     }
     else {
@@ -36,7 +36,7 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
     }
 
     //    last->SetFillStyle(3001);
-    last->SetFillStyle(3000);
+    last->SetFillStyle(1001);
     last->SetLineColor(kBlack);
     last->SetLineWidth(2);
     last->DrawClone ("hist") ;
@@ -48,7 +48,7 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
       TH1F * histo = (TH1F*) histos->At (i) ;
       histo->GetXaxis()->SetTitle(Labels.c_str());
       //      histo->SetFillStyle(3001);
-      histo->SetFillStyle(3000);
+      histo->SetFillStyle(1001);
       histo->SetLineColor(kBlack);
       histo->SetLineWidth(2);
       histo->Draw ("same hist") ;
@@ -58,9 +58,9 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
       }
     }
     
-    last->SetFillStyle(3005);
+    last->SetFillStyle(3013);
     last->SetFillColor(kBlack);
-    last->SetLineWidth(2);
+    last->SetLineWidth(3);
     last->SetMarkerSize(0);
     
     for (int iBin = 0 ; iBin < last->GetNbinsX(); iBin++) {
@@ -87,7 +87,7 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
     last->GetYaxis()->SetLabelSize(0.035);
     last->GetYaxis()->SetTitleOffset(0.95);
 
-    if(isLog){ last->SetMaximum(std::max(last->GetBinContent(last->GetMaximumBin())*10000,dataHist->GetBinContent(dataHist->GetMaximumBin())*10000));
+    if(isLog){ last->SetMaximum(std::max(last->GetBinContent(last->GetMaximumBin())*15000,dataHist->GetBinContent(dataHist->GetMaximumBin())*15000));
                last->SetMinimum(0.001) ;
     }
     else { last->SetMaximum(std::max(last->GetBinContent(last->GetMaximumBin())*1.6,dataHist->GetBinContent(dataHist->GetMaximumBin())*1.6));
@@ -100,17 +100,17 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
                  last->GetXaxis()->SetLabelSize(0.03);
 
                  last->GetYaxis()->SetTitleSize(0.035);
-                 last->GetYaxis()->SetTitleOffset(1.25);
+                 last->GetYaxis()->SetTitleOffset(1.45);
                  last->GetYaxis()->SetLabelSize(0.03);
     }
     else {
                  last->GetXaxis()->SetTitleSize(0.);
                  last->GetXaxis()->SetLabelSize(0.);
-
+                 last->GetYaxis()->SetTitleOffset(1.05);
     }
    
     //    last->SetFillStyle(3001);
-    last->SetFillStyle(3000);
+    last->SetFillStyle(1001);
     last->SetLineColor(kBlack);
     last->SetLineWidth(2);
     last->DrawClone ("hist") ;
@@ -123,7 +123,7 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
       histo->GetXaxis()->SetTitle(Labels.c_str());
       histo->SetLineColor(kBlack);
       //      histo->SetFillStyle(3001);
-      histo->SetFillStyle(3000);
+      histo->SetFillStyle(1001);
       histo->SetLineWidth(2);
       histo->Draw ("same hist") ;
       for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
@@ -133,8 +133,8 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
     }
     
 
-    last->SetFillStyle(3005);
-    last->SetLineWidth(2);
+    last->SetFillStyle(3013);
+    last->SetLineWidth(3);
     last->SetFillColor(kBlack);
     last->SetMarkerSize(0);
     
@@ -156,8 +156,8 @@ void LatexCMS (const double & lumi, const std::string & LeptonType, const bool &
   if(isLabel)   latex.SetTextSize(0.032);
   else   latex.SetTextSize(0.04);
 
-  if(LeptonType == "muon" || LeptonType == "mu") latex.DrawLatex(0.54,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W #rightarrow #mu#nu",(float)lumi/1000));
-  else if(LeptonType == "electron" || LeptonType == "el") latex.DrawLatex(0.54,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W #rightarrow e#nu",(float)lumi/1000));
+  if(LeptonType == "muon" || LeptonType == "mu") latex.DrawLatex(0.56,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W #rightarrow #mu#nu",(float)lumi/1000));
+  else if(LeptonType == "electron" || LeptonType == "el") latex.DrawLatex(0.56,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W #rightarrow e#nu",(float)lumi/1000));
 
 }
 
