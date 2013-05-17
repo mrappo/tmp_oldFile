@@ -47,9 +47,9 @@ process.load("ElectroWeakAnalysis.VPlusJets.AllPassFilter_cfi")
 
 ############################################
 if not isMC:
-    process.GlobalTag.globaltag = 'GR_R_53_V10::All'
+    process.GlobalTag.globaltag = 'GR_P_V39_AN3::All'
 else:
-    process.GlobalTag.globaltag = 'START53_V7E::All'
+    process.GlobalTag.globaltag = 'START53_V15::All'
 
 ############################################
 ########################################################################################
@@ -191,7 +191,7 @@ process.VplusJets = cms.EDAnalyzer("VplusJetsAnalysis",
 if isMC:
     process.VplusJets.JEC_GlobalTag_forGroomedJet = cms.string("START53_V15")
 else:
-    process.VplusJets.JEC_GlobalTag_forGroomedJet = cms.string("FT_53_V10_AN3")
+    process.VplusJets.JEC_GlobalTag_forGroomedJet = cms.string("GR_P_V39_AN3")
 
 
 

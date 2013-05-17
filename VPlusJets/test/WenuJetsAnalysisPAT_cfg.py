@@ -48,9 +48,9 @@ process.load("ElectroWeakAnalysis.VPlusJets.AllPassFilter_cfi")
 
 ############################################
 if not isMC:
-    process.GlobalTag.globaltag = 'START53_V15::All'
+    process.GlobalTag.globaltag = 'GR_P_V39_AN3::All'
 else:
-    process.GlobalTag.globaltag = 'GR_P_V42_AN3::All'
+    process.GlobalTag.globaltag = 'START53_V15::All'
 
 ############################################
 ########################################################################################
