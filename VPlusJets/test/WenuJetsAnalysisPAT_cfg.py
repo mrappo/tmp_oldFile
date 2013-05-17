@@ -184,15 +184,6 @@ process.pfMEtSysShiftCorr.src = cms.InputTag('patMETsPFlow')
 process.pfMEtSysShiftCorr.srcMEt = cms.InputTag('patMETsPFlow')
 process.pfMEtSysShiftCorr.srcJets = cms.InputTag('selectedPatJetsPFlow')
 
-pfMEtSysShiftCorrParameters_2012runABCvsNvtx_data = cms.VPSet(cms.PSet(
-        numJetsMin = cms.int32(-1),
-            numJetsMax = cms.int32(-1),
-        ))
-pfMEtSysShiftCorrParameters_2012runABCvsNvtx_mc = cms.VPSet(cms.PSet(
-        numJetsMin = cms.int32(-1),
-            numJetsMax = cms.int32(-1),
-        ))
-
 if isMC:
 # pfMEtSysShiftCorrParameters_2012runAplusBvsNvtx_mc
   process.pfMEtSysShiftCorr.parameter = cms.PSet(
