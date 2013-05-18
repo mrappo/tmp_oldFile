@@ -116,6 +116,7 @@ namespace ewk
         int mQJetsN;
         double mNsubjettinessKappa;
         bool mSaveConstituents;
+        bool mPrintConstituents;
 
     private:
     

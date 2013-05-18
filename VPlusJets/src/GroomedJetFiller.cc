@@ -161,6 +161,12 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
         mSaveConstituents=iConfig.getParameter< bool >("GroomedJet_saveConstituents");
     else mSaveConstituents = true;
 
+
+    if( iConfig.existsAs<bool>("GroomedJet_printConstituents") ) 
+        mPrintConstituents=iConfig.getParameter< bool >("GroomedJet_printConstituents");
+    else mPrintConstituents = false;
+
+
     if (mSaveConstituents){
         tree_->Branch( (lableGen + "GroomedJet_" + jetLabel_ + "_constituents0_eta").c_str(), constituents0_eta, (lableGen + "GroomedJet_" + jetLabel_ + "_constituents0_eta"+"[100]/F").c_str() );
         bnames.push_back( (lableGen + "GroomedJet_" + jetLabel_ + "_constituents0_eta").c_str() );   
@@ -183,11 +189,13 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
         // CORRECTIONS ON THE FLY
         ////////////////////////////////////     
         //// --- groomed jet label -------
+
     if(  iConfig.existsAs<std::string>("srcGroomedJet") )
         mGroomedJet = iConfig.getParameter<std::string>("srcGroomedJet"); 
     else mGroomedJet =  "pfInputsCA8";
     
     mGroomedJet =  srcGroomedJet;
+
     
         // --- Are we running over Monte Carlo ? --- 
     if( iConfig.existsAs<bool>("runningOverMC") ) 
@@ -341,6 +349,8 @@ void ewk::GroomedJetFiller::SetBranch( int* x, std::string name)
 
     // ------------ method called to produce the data  ------------
 void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
+
+  //    std::cout<<" mGroomedJet Label "<<mGroomedJet<<std::endl;
             
         ////----------
         // init
@@ -532,28 +542,34 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
     transformers.push_back(&trimmer);
     transformers.push_back(&filter);
     transformers.push_back(&pruner);
-    
-        // define n-subjettiness
-//    NsubParameters paraNsub = NsubParameters(mNsubjettinessKappa, mJetRadius);   
-//    Nsubjettiness routine(nsub_kt_axes, paraNsub);
-//    Nsubjettiness routine(nsub_1pass_from_kt_axes, paraNsub);
-    
+        
         // Defining Nsubjettiness parameters
     double beta = mNsubjettinessKappa; // power for angular dependence, e.g. beta = 1 --> linear k-means, beta = 2 --> quadratic/classic k-means
     double R0 = mJetRadius; // Characteristic jet radius for normalization	      
     double Rcut = mJetRadius; // maximum R particles can be from axis to be included in jet	      
     
-//    fastjet::Nsubjettiness nSub1KT(1, Njettiness::kt_axes, beta, R0, Rcut);
-
         // -----------------------------------------------
         // -----------------------------------------------
         // s t a r t   l o o p   o n   j e t s
         // -----------------------------------------------
         // -----------------------------------------------
-//      cout<<mJetAlgo<<"\t"<<mJetRadius<<endl;
-
-
     for (unsigned j = 0; j < out_jets.size()&&int(j)<NUM_JET_MAX; j++) {
+
+        std::vector< float > pdgIds;
+        for (unsigned ii = 0; ii < out_jets_basic.at(j).constituents().size(); ii++){
+          for (unsigned jj = 0; jj < FJparticles.size(); jj++){
+             if (FJparticles.at(jj).pt() == out_jets_basic.at(j).constituents().at(ii).pt()){
+                if(!isGenJ) {
+                              if(mJetAlgo == "AK" && fabs(mJetRadius-0.5)<0.001) pdgIds.push_back(PF_id_handle_AK5.at(jj));
+                              else pdgIds.push_back(PF_id_handle->at(jj));
+               
+                 }else pdgIds.push_back(PF_id_handle_Gen.at(jj));
+                  
+                 break;
+              }
+           }
+        }
+
         
         if (mSaveConstituents && j==0){
             if (out_jets_basic.at(j).constituents().size() >= 100) nconstituents0 = 100;
@@ -562,13 +578,26 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
             for (int aa = 0; aa < nconstituents0; aa++){        
                 constituents0_eta[aa] = cur_constituents.at(aa).eta();
                 constituents0_phi[aa] = cur_constituents.at(aa).phi();                
-                constituents0_e[aa] = cur_constituents.at(aa).e();                                
+                constituents0_e[aa] = cur_constituents.at(aa).e();
+                                
             }
         }
+        if (mPrintConstituents && mGroomedJet=="pfInputsCA8"){
+	    int constituentsTemp = 0.;
+            if (out_jets_basic.at(j).constituents().size() >= 100) constituentsTemp = 100;
+            else constituentsTemp = (int) out_jets_basic.at(j).constituents().size();
+      	    std::cout<<" Jet Number "<<j<<" Total constituents "<<constituentsTemp<<std::endl;
+            std::vector<fastjet::PseudoJet> cur_constituents = sorted_by_pt(out_jets_basic.at(j).constituents());
+            for (int aa = 0; aa < constituentsTemp; aa++)
+	      std::cout<<" costituent num "<<aa<<" Pdg ID "<<pdgIds.at(aa)<<" px "<<cur_constituents.at(aa).px()<<" py "<<cur_constituents.at(aa).py()<<" pz "<<cur_constituents.at(aa).pz()<<" e "<<cur_constituents.at(aa).e()<<" eta "<<cur_constituents.at(aa).eta()<<" phi "<<cur_constituents.at(aa).phi()<<std::endl;
+                                
+        }
+
         
         if( !(j< (unsigned int) NUM_JET_MAX) ) break;            
         jetmass_uncorr[j] = out_jets.at(j).m();
         jetpt_uncorr[j] = out_jets.at(j).pt();
+	//std::cout<<" corrected jet "<<std::endl;
         TLorentzVector jet_corr = getCorrectedJet(out_jets.at(j));
         jetmass[j] = jet_corr.M();
         jetpt[j] = jet_corr.Pt();
@@ -749,24 +778,6 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
             }
         }
             // jet charge try (?) computation  -------------
-        std::vector< float > pdgIds;
-        for (unsigned ii = 0; ii < out_jets_basic.at(j).constituents().size(); ii++){
-            for (unsigned jj = 0; jj < FJparticles.size(); jj++){
-//                std::cout << ii << ", " << jj << ": " << FJparticles.at(jj).pt() << ", " << out_jets_basic.at(j).constituents().at(ii).pt() << std::endl;
-                if (FJparticles.at(jj).pt() == out_jets_basic.at(j).constituents().at(ii).pt()){
-                  if(!isGenJ) {
-                    if(mJetAlgo == "AK" && fabs(mJetRadius-0.5)<0.001) {
-                          pdgIds.push_back(PF_id_handle_AK5.at(jj));
-                    }else{
-                          pdgIds.push_back(PF_id_handle->at(jj));
-                    }
-                  }else{
-                    pdgIds.push_back(PF_id_handle_Gen.at(jj));
-                  }
-                  break;
-                }
-            }
-        }
         jetcharge[j] = computeJetCharge(out_jets_basic.at(j).constituents(),pdgIds,out_jets_basic.at(j).e());
         jetchargedMultiplicity[j] = computeJetChargedMultiplicity(out_jets_basic.at(j).constituents(),pdgIds);
         jetneutralMultiplicity[j] = computeJetNeutralMultiplicity(out_jets_basic.at(j).constituents(),pdgIds);
@@ -792,6 +803,7 @@ double ewk::GroomedJetFiller::getJEC(double curJetEta,
     jec_->setRho   ( rhoVal_ );
     jec_->setNPV   ( nPV_ );
     double corr = jec_->getCorrection();
+    //std::cout<< " Jet Val : Eta "<<curJetEta<<" Pt "<<curJetPt<<" E "<<curJetE<<" Area "<<curJetArea<<" rho "<<rhoVal_<<" nPV "<<nPV_<<" correction "<<corr<<std::endl;
     return corr;
 }
 
