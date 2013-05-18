@@ -68,8 +68,8 @@ def WenuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut) :
 
       LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel)
 
-      process.WPath = process.WSequence
-
+      process.WPath = process.WSequence*process.VetoSequence
+      
 
 
  else:
