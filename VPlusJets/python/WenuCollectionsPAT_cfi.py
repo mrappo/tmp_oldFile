@@ -2,7 +2,8 @@ import FWCore.ParameterSet.Config as cms
 
 from ElectroWeakAnalysis.VPlusJets.AllPassFilter_cfi import AllPassFilter
 from ElectroWeakAnalysis.VPlusJets.LooseLeptonVetoPAT_cfi import *
-
+from SHarper.HEEPAnalyzer.HEEPSelectionCuts_cfi import *
+ 
 isMuonAnalyzer = False
 
 
@@ -18,57 +19,102 @@ def WenuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut) :
   looseEleIdLabel = "qcd"
 
 
+ process.WPath = cms.Sequence()
+
  ## modified WP70
- process.tightElectrons = cms.EDProducer("PATElectronIdSelector",
-                                         src = cms.InputTag( "selectedPatElectronsPFlow" ),
-                                         idLabel = cms.string(tightEleIdLabel),  # refers to Higgs Cut Based or MVA WP
-                                         useMVAbasedID_   = cms.bool(True),
-                                         idType = cms.string("")
- )
+ if isHEEPID:
+
+      process.heepPatElectrons = cms.EDProducer("HEEPAttStatusToPAT",
+                                               eleLabel = cms.InputTag("selectedPatElectronsPFlow"),
+                                               barrelCuts = cms.PSet(heepBarrelCuts),
+                                               endcapCuts = cms.PSet(heepEndcapCuts),
+                                               applyRhoCorrToEleIsol = cms.bool(True),
+                                               eleIsolEffectiveAreas = cms.PSet (heepEffectiveAreas),
+                                               eleRhoCorrLabel = cms.InputTag("kt6PFJetsPFlow","rho"),
+                                               verticesLabel = cms.InputTag("offlinePrimaryVerticesWithBS")
+                                               )  
+
+      process.tightElectronFilter = cms.EDFilter("HEEPElectronIDIso",
+        minNumber = cms.untracked.int32(1),
+        maxNumber = cms.untracked.int32(999999),
+        electronCollection = cms.InputTag("heepPatElectrons")                     
+      )
+
+      process.tightLeptonStep = AllPassFilter.clone()
+
+      process.WToEnu = cms.EDProducer("CandViewShallowCloneCombiner",
+                                  decay = cms.string("heepPatElectrons patMetShiftCorrected"),
+                                  cut = cms.string('daughter(0).pt >20 && daughter(1).pt >20  && sqrt(2*daughter(0).pt*daughter(1).pt*(1-cos(daughter(0).phi-daughter(1).phi)))>0'),
+                                  checkCharge = cms.bool(False),
+      )
+
+      if isTransverseMassCut : process.WToEnu.cut = cms.string('daughter(1).pt >20  && sqrt(2*daughter(0).pt*daughter(1).pt*(1-cos(daughter(0).phi-daughter(1).phi)))>30')
 
 
- ## Choose which electron idType ( Higgs or HEEPID )
-
- process.tightElectrons.idType = cms.string("HiggsID")
- if isHEEPID: process.tightElectrons.idType = cms.string("HEEPID")
-
-## tight ele filter
-
- process.tightElectronFilter = cms.EDFilter("PATCandViewCountFilter",
-    minNumber = cms.uint32(1),
-    maxNumber = cms.uint32(999999),
-    src = cms.InputTag("tightElectrons")                     
- )
- process.tightLeptonStep = AllPassFilter.clone()
+      process.bestWToEnu =cms.EDFilter("LargestPtCandViewSelector",
+                                   maxNumber = cms.uint32(10),
+                                   src = cms.InputTag("WToEnu")                 
+      )
+      process.bestWToLepnuStep = AllPassFilter.clone()
 
 
- process.WToEnu = cms.EDProducer("CandViewShallowCloneCombiner",
+      process.WSequence = cms.Sequence(process.heepPatElectrons *
+                         process.tightElectronFilter *
+                         process.tightLeptonStep *
+                         process.WToEnu *
+                         process.bestWToEnu *
+                         process.bestWToLepnuStep
+      )
+
+      LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel)
+
+      process.WPath = process.WSequence
+
+
+
+ else:
+      process.tightElectrons = cms.EDProducer("PATElectronIdSelector",
+                                               src = cms.InputTag( "selectedPatElectronsPFlow" ),
+                                               idLabel = cms.string(tightEleIdLabel),  # refers to Higgs Cut Based or MVA WP
+                                               useMVAbasedID_   = cms.bool(True),
+                                               idType = cms.string("HiggsID")
+      )
+
+      process.tightElectronFilter = cms.EDFilter("PATCandViewCountFilter",
+        minNumber = cms.uint32(1),
+        maxNumber = cms.uint32(999999),
+        src = cms.InputTag("tightElectrons")                     
+      )
+
+      ## tight ele filter
+
+      process.tightLeptonStep = AllPassFilter.clone()
+
+
+      process.WToEnu = cms.EDProducer("CandViewShallowCloneCombiner",
                                   decay = cms.string("tightElectrons patMetShiftCorrected"),
                                   cut = cms.string('daughter(1).pt >20  && sqrt(2*daughter(0).pt*daughter(1).pt*(1-cos(daughter(0).phi-daughter(1).phi)))>0'),
                                   checkCharge = cms.bool(False),
- )
+      )
 
- if isTransverseMassCut : process.WToEnu.cut = cms.string('daughter(1).pt >20  && sqrt(2*daughter(0).pt*daughter(1).pt*(1-cos(daughter(0).phi-daughter(1).phi)))>30')
+      if isTransverseMassCut : process.WToEnu.cut = cms.string('daughter(1).pt >20  && sqrt(2*daughter(0).pt*daughter(1).pt*(1-cos(daughter(0).phi-daughter(1).phi)))>30')
 
 
- process.bestWToEnu =cms.EDFilter("LargestPtCandViewSelector",
+      process.bestWToEnu =cms.EDFilter("LargestPtCandViewSelector",
                                    maxNumber = cms.uint32(10),
                                    src = cms.InputTag("WToEnu")                 
- )
- process.bestWToLepnuStep = AllPassFilter.clone()
+      )
+      process.bestWToLepnuStep = AllPassFilter.clone()
 
 
-## --------- Loose Lepton Filters ----------
+      process.WSequence = cms.Sequence(process.tightElectrons *
+                         process.tightElectronFilter *
+                         process.tightLeptonStep *
+                         process.WToEnu *
+                         process.bestWToEnu *
+                         process.bestWToLepnuStep
+      )
 
- LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel)
+      LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel)
 
- process.WSequence = cms.Sequence(process.tightElectrons *
-                          process.tightElectronFilter *
-                          process.tightLeptonStep *
-                          process.WToEnu *
-                          process.bestWToEnu *
-                          process.bestWToLepnuStep
- )
- 
- process.WPath = cms.Sequence(process.WSequence*process.VetoSequence)
-
+      process.WPath = process.WSequence*process.VetoSequence
