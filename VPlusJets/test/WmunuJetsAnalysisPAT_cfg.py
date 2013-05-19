@@ -75,7 +75,7 @@ process.maxEvents = cms.untracked.PSet(
 
 process.MessageLogger.destinations = ['cout', 'cerr']
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
-process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) )
+process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 OutputFileName = "WmunuJetAnalysisntuple_gr2_207231_920_1260547040.root"
 
@@ -125,7 +125,7 @@ process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
 ##-------- Electron events of interest --------
 process.HLTMu =cms.EDFilter("HLTHighLevel",
      TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),
-     HLTPaths = cms.vstring('HLT_IsoMu24_*','HLT_IsoMu30_*'),
+     HLTPaths = cms.vstring('HLT_Mu40_eta2p1*'),
      eventSetupPathsKey = cms.string(''),
      andOr = cms.bool(True), #----- True = OR, False = AND between the HLTPaths
      throw = cms.bool(False) # throw exception on unknown path names
