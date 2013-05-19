@@ -1,9 +1,9 @@
-
-
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
+
+//trigger                                                                                                                                                                            
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "FWCore/Framework/interface/EDFilter.h"
@@ -27,7 +27,6 @@ class HEEPElectronIDIso : public edm::EDFilter {
   ~HEEPElectronIDIso();
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
-
  private:
   virtual void beginJob() ;
   virtual void endJob() ;
@@ -39,6 +38,9 @@ class HEEPElectronIDIso : public edm::EDFilter {
   virtual bool endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&);
 
   edm::InputTag eleLabel_;
+  std::string   IdLabel_;
+  bool          applyLooseID_;
+  bool          applyTightID_;
   int           maxNumber_;
   int           minNumber_;
 
@@ -50,13 +52,21 @@ HEEPElectronIDIso::HEEPElectronIDIso(const edm::ParameterSet &  iConfig){
     eleLabel_=iConfig.getParameter< edm::InputTag >("electronCollection");
   else eleLabel_= edm::InputTag("heepPatElectrons");
 
-  if( iConfig.existsAs<int>("maxNumber") )
-      maxNumber_=iConfig.getUntrackedParameter<int>("maxNumber");
-  else maxNumber_= 99999 ;
+  if( iConfig.existsAs<std::string>("eleIdType") )
+    IdLabel_=iConfig.getParameter<std::string>("eleIdType");
+  else IdLabel_= std::string("TightID");
 
-  if( iConfig.existsAs<int>("minNumber") )
-      minNumber_=iConfig.getUntrackedParameter<int>("minNumber");
-  else minNumber_= 1 ;
+  maxNumber_=iConfig.getUntrackedParameter<int>("maxNumber", 0);
+  minNumber_=iConfig.getUntrackedParameter<int>("minNumber", 999);
+
+
+  applyTightID_ = false ;
+  applyLooseID_ = false ;
+
+  if( IdLabel_ == "TightID" || IdLabel_ == "Tight" || IdLabel_ == "tightID" || IdLabel_ == "tightId" || IdLabel_ == "tightid" || IdLabel_ == "tight" ) applyTightID_ = true ;
+  if( IdLabel_ == "LooseID" || IdLabel_ == "Loose" || IdLabel_ == "LooseID" || IdLabel_ == "looseId" || IdLabel_ == "looseid" || IdLabel_ == "loose" ) applyLooseID_ = true ;
+
+  
 
 }
 
@@ -70,17 +80,33 @@ bool HEEPElectronIDIso::filter(edm::Event & iEvent, const edm::EventSetup & iSet
   iEvent.getByLabel(eleLabel_,eleHandle);
   const edm::View<pat::Electron>& eles = *(eleHandle.product());
 
-  int nTightElectron = 0;
+  Int_t nTightElectron = 0;
+  Int_t nLooseElectron = 0;
 
   for(size_t eleNr = 0; eleNr != eles.size(); ++eleNr) {
 
    const pat::Electron& ele = eles[eleNr];
+ 
    int eleCutCode = ele.userInt("HEEPId");
-   if(eleCutCode == 0) nTightElectron++ ;
+   Double_t et = ele.caloEnergy()*sin(ele.p4().theta());
+   Double_t scEta = fabs(ele.superCluster()->eta());
+
+   if(eleCutCode == 0 && et > 90 && fabs(ele.eta()) < 2.5 && !(scEta > 1.4442 && scEta < 1.566) && fabs(ele.phi()) < 3.2 ) nTightElectron++ ;
+   if(eleCutCode == 0 && et > 20 && fabs(ele.eta()) < 2.5 && !(scEta > 1.4442 && scEta < 1.566) && fabs(ele.phi()) < 3.2 ) nLooseElectron++ ;
+
   }
 
-  if (nTightElectron >= minNumber_ && nTightElectron <= maxNumber_ ) return true;
-  else return false;
+  if(applyTightID_){
+                    if(nTightElectron >= minNumber_ && nTightElectron <= maxNumber_ ) return true;
+                    else return false ;
+  }
+  
+  if(applyLooseID_){
+   if(nLooseElectron >= minNumber_ && nLooseElectron <= maxNumber_ ) return true;
+   else return false ;
+  }
+
+  return false;
 
 }
 

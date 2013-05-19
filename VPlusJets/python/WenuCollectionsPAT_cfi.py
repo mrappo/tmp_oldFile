@@ -19,8 +19,6 @@ def WenuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut) :
   looseEleIdLabel = "qcd"
 
 
- process.WPath = cms.Sequence()
-
  ## modified WP70
  if isHEEPID:
 
@@ -35,9 +33,10 @@ def WenuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut) :
                                                )  
 
       process.tightElectronFilter = cms.EDFilter("HEEPElectronIDIso",
+        electronCollection = cms.InputTag("heepPatElectrons"),                     
+        eleIdType = cms.string("tightID"),                                         
         minNumber = cms.untracked.int32(1),
         maxNumber = cms.untracked.int32(999999),
-        electronCollection = cms.InputTag("heepPatElectrons")                     
       )
 
       process.tightLeptonStep = AllPassFilter.clone()
@@ -68,7 +67,7 @@ def WenuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut) :
 
       LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel)
 
-      process.WPath = process.WSequence*process.VetoSequence
+      process.WPath = cms.Sequence(process.WSequence*process.VetoSequence)
       
 
 
@@ -117,4 +116,4 @@ def WenuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut) :
 
       LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel)
 
-      process.WPath = process.WSequence*process.VetoSequence
+      process.WPath = cms.Sequence(process.WSequence*process.VetoSequence)

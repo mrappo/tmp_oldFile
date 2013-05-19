@@ -38,6 +38,7 @@ def WmunuCollectionsPAT(process,isQCD, isHEEPID,isTransverseMassCut):
     maxNumber = cms.uint32(999999),
     src = cms.InputTag("tightMuons")                     
  )
+
  process.tightLeptonStep = AllPassFilter.clone()
 
  process.WToMunu = cms.EDProducer("CandViewShallowCloneCombiner",
@@ -53,6 +54,7 @@ def WmunuCollectionsPAT(process,isQCD, isHEEPID,isTransverseMassCut):
     maxNumber = cms.uint32(10),
     src = cms.InputTag("WToMunu")
  )
+
  process.bestWToLepnuStep = AllPassFilter.clone()
  
  ## --------- Loose Lepton Filters ----------
