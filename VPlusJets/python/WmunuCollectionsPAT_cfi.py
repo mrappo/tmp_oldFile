@@ -10,23 +10,30 @@ def WmunuCollectionsPAT(process,isQCD, isHEEPID,isTransverseMassCut):
 
  isolationCutString = cms.string("")
 
- process.tightMuons = cms.EDFilter("PATMuonSelector",
-    src = cms.InputTag("selectedPatMuonsPFlow"),
-    cut = cms.string("")
- )
+ if isHEEPID:
 
+    process.tightMuons = cms.EDFilter("PATMuonSelector",
+                                       src = cms.InputTag("selectedPatMuons"),
+                                       cut = cms.string(""))
+
+ else:
+         process.tightMuons = cms.EDFilter("PATMuonSelector",
+                                            src = cms.InputTag("selectedPatMuonsPFlow"),
+                                            cut = cms.string(""))
+         
 
  if isQCD:
     isolationCutString = "(pfIsolationR04().sumChargedHadronPt+max(0.,pfIsolationR04().sumNeutralHadronEt+pfIsolationR04().sumPhotonEt-0.5*pfIsolationR04().sumPUPt))/pt> 0.12" 
  else:
-     if isHEEPID : isolationCutString = "trackIso()< 0.1"
+     if isHEEPID : isolationCutString = "trackIso()/pt< 0.1"
      else : isolationCutString = "(pfIsolationR04().sumChargedHadronPt+max(0.,pfIsolationR04().sumNeutralHadronEt+pfIsolationR04().sumPhotonEt-0.5*pfIsolationR04().sumPUPt))/pt< 0.12"
 
 
- if isHEEPID : process.tightMuons.cut = cms.string(" isGlobalMuon && pt > 50 && abs(dB)<0.2 && globalTrack().hitPattern().numberOfValidPixelHits() >0 "
+ if isHEEPID : process.tightMuons.cut = cms.string(" isGlobalMuon && pt > 50 && abs(dB) < 0.2 && globalTrack().hitPattern().numberOfValidPixelHits() >0 "
                                           " && globalTrack().hitPattern().numberOfValidMuonHits() >0 && globalTrack().hitPattern().trackerLayersWithMeasurement() > 8 "
                                           " && numberOfMatchedStations() > 1 && abs(eta)< 2.1 && "+ isolationCutString)
-                     
+
+               
  else : process.tightMuons.cut = cms.string(" pt>20 && isGlobalMuon && isPFMuon && abs(eta)<2.4 && globalTrack().normalizedChi2<10"
                                    " && globalTrack().hitPattern().numberOfValidMuonHits>0 && globalTrack().hitPattern().numberOfValidPixelHits>0 && numberOfMatchedStations>1"
                                    " && globalTrack().hitPattern().trackerLayersWithMeasurement>5 && " + isolationCutString)
