@@ -61,7 +61,9 @@ from ElectroWeakAnalysis.VPlusJets.WmunuCollectionsPAT_cfi import*
 WmunuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut)
 
 ##---------  Jet Collection ----------------
-process.load("ElectroWeakAnalysis.VPlusJets.JetCollectionsPAT_cfi")
+from ElectroWeakAnalysis.VPlusJets.JetCollectionsPAT_cfi import*
+
+JetCollectionsPAT(process,isHEEPID)
 
 ##---------  Vertex and track Collections -----------
 process.load("ElectroWeakAnalysis.VPlusJets.TrackCollections_cfi")
@@ -77,11 +79,11 @@ process.MessageLogger.destinations = ['cout', 'cerr']
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
-OutputFileName = "WmunuJetAnalysisntuple_gr2_207231_920_1260547040.root"
+OutputFileName = "WmunuJetAnalysisntuple_195399_159_130828536.root"
 
 
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
-        'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_190703_11_8519680.root',
+        #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_190703_11_8519680.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_191834_99_120189151.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_194199_258_229967752.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_194699_80_97577634.root',
@@ -91,7 +93,7 @@ process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195013_303_44790264.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195099_171_245228003.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195398_899_752941172.root',
-        #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195399_159_130828536.root',
+        'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195399_159_130828536.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195930_83_62880579.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_196438_586_479961054.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_196452_193_232654780.root',
