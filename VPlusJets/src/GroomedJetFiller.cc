@@ -52,6 +52,7 @@
 #include "ElectroWeakAnalysis/VPlusJets/src/NjettinessPlugin.hh"
 #include "ElectroWeakAnalysis/VPlusJets/src/Nsubjettiness.hh"
 #include "ElectroWeakAnalysis/VPlusJets/src/QjetsPlugin.h"
+#include "ElectroWeakAnalysis/VPlusJets/src/GeneralizedEnergyCorrelator.hh"
 #include "TVector3.h"
 #include "TMath.h"
 
@@ -140,6 +141,7 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
     SetBranch( jetcharge, lableGen + "GroomedJet_" + jetLabel_ + "_jetcharge");
     SetBranch( jetchargedMultiplicity, lableGen + "GroomedJet_" + jetLabel_ + "_jetchargedMultiplicity");
     SetBranch( jetneutralMultiplicity, lableGen + "GroomedJet_" + jetLabel_ + "_jetneutralMultiplicity");
+    SetBranch( jetGeneralizedECF, lableGen + "GroomedJet_" + jetLabel_ + "_jetGeneralizedECF");
 
         // cores
     tree_->Branch( (lableGen + "GroomedJet_" + jetLabel_ + "_rcores").c_str(), rcores, (lableGen + "GroomedJet_" + jetLabel_ + "_rcores"+"[11][6]/F").c_str() );
@@ -398,6 +400,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         jetcharge[j] = 0;
         jetchargedMultiplicity[j] = 0;
         jetneutralMultiplicity[j] = 0;
+        jetGeneralizedECF[j] = -1;
         
         prsubjet1_px[j] = 0.;
         prsubjet1_py[j] = 0.;
@@ -554,24 +557,42 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         // -----------------------------------------------
         // -----------------------------------------------
     for (unsigned j = 0; j < out_jets.size()&&int(j)<NUM_JET_MAX; j++) {
+      
+      std::vector< float > pdgIds;
+      for (unsigned ii = 0; ii < out_jets_basic.at(j).constituents().size(); ii++){
+	for (unsigned jj = 0; jj < FJparticles.size(); jj++){
+	  if (FJparticles.at(jj).pt() == out_jets_basic.at(j).constituents().at(ii).pt()){
+	    if(!isGenJ) {
+	      if(mJetAlgo == "AK" && fabs(mJetRadius-0.5)<0.001) pdgIds.push_back(PF_id_handle_AK5.at(jj));
+	      else pdgIds.push_back(PF_id_handle->at(jj));
 
-        std::vector< float > pdgIds;
-        for (unsigned ii = 0; ii < out_jets_basic.at(j).constituents().size(); ii++){
-          for (unsigned jj = 0; jj < FJparticles.size(); jj++){
-             if (FJparticles.at(jj).pt() == out_jets_basic.at(j).constituents().at(ii).pt()){
-                if(!isGenJ) {
-                              if(mJetAlgo == "AK" && fabs(mJetRadius-0.5)<0.001) pdgIds.push_back(PF_id_handle_AK5.at(jj));
-                              else pdgIds.push_back(PF_id_handle->at(jj));
-               
-                 }else pdgIds.push_back(PF_id_handle_Gen.at(jj));
-                  
-                 break;
-              }
-           }
-        }
+	    }else pdgIds.push_back(PF_id_handle_Gen.at(jj));
 
+	    break;
+	  }
+	}
+      }
+
+//    // another test, see if the area is the same as the standard one...
+//    edm::Handle<edm::View<pat::Jet> > jets;
+//    iEvent.getByLabel( "selectedPatJetsCA8PF", jets ); 
+//    int iJet = 0;
+//    edm::View<pat::Jet>::const_iterator jet, endpjets = jets->end(); 
+//    for (jet = jets->begin();  jet != endpjets;  ++jet, ++iJet) {
+//        
+//        if (iJet == 0){
+//            std::cout << "jet pT: " << jet->pt() << ", jet area: " << jet->jetArea() << std::endl;
+//        }
+//    }
+      std::string pfjetlabel = "selectedPatJets"+jetLabel_+"PF";
+      if (jetLabel_ == "AK5") pfjetlabel = "selectedPatJetsPFlow";
+      edm::Handle<edm::View<pat::Jet> > pfjets;
+      if (!isGenJ){
+        iEvent.getByLabel( pfjetlabel, pfjets ); 
+      }
+      
         
-        if (mSaveConstituents && j==0){
+      if (mSaveConstituents && j==0){
             if (out_jets_basic.at(j).constituents().size() >= 100) nconstituents0 = 100;
             else nconstituents0 = (int) out_jets_basic.at(j).constituents().size();
             std::vector<fastjet::PseudoJet> cur_constituents = sorted_by_pt(out_jets_basic.at(j).constituents());
@@ -597,14 +618,17 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         if( !(j< (unsigned int) NUM_JET_MAX) ) break;            
         jetmass_uncorr[j] = out_jets.at(j).m();
         jetpt_uncorr[j] = out_jets.at(j).pt();
-	//std::cout<<" corrected jet "<<std::endl;
-        TLorentzVector jet_corr = getCorrectedJet(out_jets.at(j));
+        if (!isGenJ){
+            jetarea[j] = pfjets->at(j).jetArea();
+            //std::cout << "compare jet areas: " << out_jets.at(j).area() << ", " << pfjets->at(j).jetArea() << std::endl;
+        }
+        else jetarea[j] = out_jets.at(j).area();
+        TLorentzVector jet_corr = getCorrectedJet(out_jets.at(j), jetarea[j]);
         jetmass[j] = jet_corr.M();
         jetpt[j] = jet_corr.Pt();
         jeteta[j] = jet_corr.Eta();
         jetphi[j] = jet_corr.Phi();
         jete[j]   = jet_corr.Energy();
-        jetarea[j] = out_jets.at(j).area();
         jetconstituents[j] = out_jets_basic.at(j).constituents().size();
         
             // pruning, trimming, filtering  -------------
@@ -623,7 +647,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
             if (transctr == 0){ // trimmed
                 jetmass_tr_uncorr[j] = transformedJet.m();
                 jetpt_tr_uncorr[j] = transformedJet.pt();
-                TLorentzVector jet_tr_corr = getCorrectedJet(transformedJet);
+                TLorentzVector jet_tr_corr = getCorrectedJet(transformedJet,transformedJet.area());
                 jetmass_tr[j] = jet_tr_corr.M();
                 jetpt_tr[j] = jet_tr_corr.Pt();
                 jeteta_tr[j] = jet_tr_corr.Eta();
@@ -634,7 +658,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
             else if (transctr == 1){ // filtered
                 jetmass_ft_uncorr[j] = transformedJet.m();
                 jetpt_ft_uncorr[j] = transformedJet.pt();
-                TLorentzVector jet_ft_corr = getCorrectedJet(transformedJet);
+                TLorentzVector jet_ft_corr = getCorrectedJet(transformedJet,transformedJet.area());
                 jetmass_ft[j] = jet_ft_corr.M();
                 jetpt_ft[j] = jet_ft_corr.Pt();
                 jeteta_ft[j] = jet_ft_corr.Eta();
@@ -645,7 +669,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
             else if (transctr == 2){ // pruned
                 jetmass_pr_uncorr[j] = transformedJet.m();
                 jetpt_pr_uncorr[j] = transformedJet.pt();
-                TLorentzVector jet_pr_corr = getCorrectedJet(transformedJet);
+                TLorentzVector jet_pr_corr = getCorrectedJet(transformedJet,transformedJet.area());
                 jetmass_pr[j] = jet_pr_corr.M();
                 jetpt_pr[j] = jet_pr_corr.Pt();
                 jeteta_pr[j] = jet_pr_corr.Eta();
@@ -781,9 +805,19 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         jetcharge[j] = computeJetCharge(out_jets_basic.at(j).constituents(),pdgIds,out_jets_basic.at(j).e());
         jetchargedMultiplicity[j] = computeJetChargedMultiplicity(out_jets_basic.at(j).constituents(),pdgIds);
         jetneutralMultiplicity[j] = computeJetNeutralMultiplicity(out_jets_basic.at(j).constituents(),pdgIds);
+
+        jetcharge[j] = computeJetCharge(out_jets_basic.at(j).constituents(),pdgIds,out_jets_basic.at(j).pt());
+
+        
+        // Generalized energy correlator
+        fastjet::JetDefinition jet_def_forECF(fastjet::antikt_algorithm, 2.0);
+        fastjet::ClusterSequence clust_seq_forECF(out_jets_basic.at(j).constituents(), jet_def_forECF);
+        vector<fastjet::PseudoJet> incluisve_jets_forECF = clust_seq_forECF.inclusive_jets(0);
+        fastjet::GeneralizedEnergyCorrelatorRatio C2beta(2,1.7,fastjet::pT_R); // beta = 1.7
+        jetGeneralizedECF[j] = C2beta(incluisve_jets_forECF[0]);
         
     }
-    
+
 }  
 
 
@@ -803,19 +837,22 @@ double ewk::GroomedJetFiller::getJEC(double curJetEta,
     jec_->setRho   ( rhoVal_ );
     jec_->setNPV   ( nPV_ );
     double corr = jec_->getCorrection();
-    //std::cout<< " Jet Val : Eta "<<curJetEta<<" Pt "<<curJetPt<<" E "<<curJetE<<" Area "<<curJetArea<<" rho "<<rhoVal_<<" nPV "<<nPV_<<" correction "<<corr<<std::endl;
+    if (mGroomedJet=="pfInputsCA8"){
+      std::cout<< " Jet Val : Eta "<<curJetEta<<" Pt "<<curJetPt<<" E "<<curJetE<<" Area "<<curJetArea<<" rho "<<rhoVal_<<" nPV "<<nPV_<<" correction "<<corr<<std::endl;}
     return corr;
 }
 
 
 
 
-TLorentzVector ewk::GroomedJetFiller::getCorrectedJet(fastjet::PseudoJet& jet) {
+TLorentzVector ewk::GroomedJetFiller::getCorrectedJet(fastjet::PseudoJet& jet, double inArea) {
     
     double jecVal = 1.0;
     
-    if(applyJECToGroomedJets_ && !isGenJ) 
-        jecVal = getJEC( jet.eta(), jet.pt(), jet.e(), jet.area() );   
+    if(applyJECToGroomedJets_ && !isGenJ) {
+        //jecVal = getJEC( jet.eta(), jet.pt(), jet.e(), jet.area() );   
+        jecVal = getJEC( jet.eta(), jet.pt(), jet.e(), inArea );       
+    }
     
     TLorentzVector jet_corr(jet.px() * jecVal, 
                             jet.py() * jecVal, 
@@ -890,7 +927,7 @@ void ewk::GroomedJetFiller::computePlanarflow(std::vector<fastjet::PseudoJet> co
    }
 }
 
-float ewk::GroomedJetFiller::computeJetCharge( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet ){
+float ewk::GroomedJetFiller::computeJetCharge( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float PTjet ){
 
    float val = 0.;
    for (unsigned int i = 0; i < pdgIds.size(); i++){
@@ -900,9 +937,9 @@ float ewk::GroomedJetFiller::computeJetCharge( std::vector<fastjet::PseudoJet> c
       }else{
          qq = getPdgIdCharge( pdgIds.at(i) );
       }
-      val += qq*pow(constits.at(i).e(),mJetChargeKappa);
+      val += qq*pow(constits.at(i).pt(),mJetChargeKappa);
    }
-   val /= Ejet;
+   val /= PTjet;
    return val;
 
 }

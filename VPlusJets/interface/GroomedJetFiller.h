@@ -84,13 +84,13 @@ namespace ewk
     void SetBranchSingle( float* x, std::string name);
     void SetBranchSingle( int* x, std::string name);
     double getJEC(double curJetEta, double curJetPt, double curJetE, double curJetArea); 
-    TLorentzVector getCorrectedJet(fastjet::PseudoJet& jet);
+    TLorentzVector getCorrectedJet(fastjet::PseudoJet& jet, double inArea);
     void computeCore( std::vector<fastjet::PseudoJet> constits, double Rval, float &m_core, float &pt_core );
     void computePlanarflow(std::vector<fastjet::PseudoJet> constits,double Rval,fastjet::PseudoJet jet,std::string mJetAlgo,float &planarflow);
-        float computeJetCharge( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet );        
-        float computeJetChargedMultiplicity( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds);        
-        float computeJetNeutralMultiplicity( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds);        
-        float getPdgIdCharge( float fid );        
+    float computeJetCharge( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet );        
+    float computeJetChargedMultiplicity( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds);        
+    float computeJetNeutralMultiplicity( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds);        
+    float getPdgIdCharge( float fid );        
 
     TTree* tree_;
     bool runningOverMC_;
@@ -179,8 +179,9 @@ namespace ewk
     float jetconstituents[NUM_JET_MAX];    
     float jetcharge[NUM_JET_MAX];           
     float jetchargedMultiplicity[NUM_JET_MAX];           
-    float jetneutralMultiplicity[NUM_JET_MAX];           
-       
+    float jetneutralMultiplicity[NUM_JET_MAX];                  
+    float jetGeneralizedECF[NUM_JET_MAX];           
+
     float rcores[11][NUM_JET_MAX];
     float ptcores[11][NUM_JET_MAX];
      
