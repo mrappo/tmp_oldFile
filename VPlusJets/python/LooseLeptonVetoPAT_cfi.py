@@ -7,10 +7,10 @@ def LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel=
  if isHEEPID :
 
                process.looseMuons = cms.EDFilter("PATMuonRefSelector",
-                                                  src = cms.InputTag("selectedPatMuonsPFlow"),
+                                                  src = cms.InputTag("selectedPatMuons"),
                                                   cut = cms.string(""))
 
-               process.looseMuons.cut = cms.string("pt>20 && abs(eta) < 2.4 && abs(phi)<3.2 && trackIso/pt < 0.1 && abs(dB) <0.2"
+               process.looseMuons.cut = cms.string("isGlobalMuon && isTrackerMuon && pt>20 && abs(eta) < 2.4 && abs(phi)<3.2 && trackIso/pt < 0.1 && abs(dB) <0.2"
                                                    " && globalTrack().hitPattern().numberOfValidPixelHits>0 "
                                                    " && globalTrack().hitPattern().numberOfValidMuonHits>0 "
                                                    " && globalTrack().hitPattern().trackerLayersWithMeasurement>8 "
