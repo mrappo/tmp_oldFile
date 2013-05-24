@@ -29,7 +29,7 @@ def WmunuCollectionsPAT(process,isQCD, isHEEPID,isTransverseMassCut):
      else : isolationCutString = "(pfIsolationR04().sumChargedHadronPt+max(0.,pfIsolationR04().sumNeutralHadronEt+pfIsolationR04().sumPhotonEt-0.5*pfIsolationR04().sumPUPt))/pt< 0.12"
 
 
- if isHEEPID : process.tightMuons.cut = cms.string(" isGlobalMuon && pt > 50 && abs(dB) < 0.2 && globalTrack().hitPattern().numberOfValidPixelHits() >0 "
+ if isHEEPID : process.tightMuons.cut = cms.string(" isGlobalMuon && isTrackerMuon && pt > 50 && abs(dB) < 0.2 && globalTrack().hitPattern().numberOfValidPixelHits() >0 "
                                           " && globalTrack().hitPattern().numberOfValidMuonHits() >0 && globalTrack().hitPattern().trackerLayersWithMeasurement() > 8 "
                                           " && numberOfMatchedStations() > 1 && abs(eta)< 2.1 && "+ isolationCutString)
 
