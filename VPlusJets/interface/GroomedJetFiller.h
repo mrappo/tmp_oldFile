@@ -79,17 +79,28 @@ namespace ewk
       // 'mutable' because we will fill it from a 'const' method
       mutable std::vector<std::string> bnames;
      /// Helper function for main constructor
+
     void SetBranch( float* x, std::string name);
     void SetBranch( int* x, std::string name);
+    void SetBranch( bool* x, std::string name);
     void SetBranchSingle( float* x, std::string name);
     void SetBranchSingle( int* x, std::string name);
+    void SetBranchSingle( bool* x, std::string name);
+
     double getJEC(double curJetEta, double curJetPt, double curJetE, double curJetArea); 
     TLorentzVector getCorrectedJet(fastjet::PseudoJet& jet, double inArea);
     void computeCore( std::vector<fastjet::PseudoJet> constits, double Rval, float &m_core, float &pt_core );
     void computePlanarflow(std::vector<fastjet::PseudoJet> constits,double Rval,fastjet::PseudoJet jet,std::string mJetAlgo,float &planarflow);
+
     float computeJetCharge( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet );        
     float computeJetChargedMultiplicity( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds);        
     float computeJetNeutralMultiplicity( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds);        
+    float computeJetPhotonEnergyFraction       ( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet);        
+    float computeJetChargedHadronEnergyFraction( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet);        
+    float computeJetNeutralHadronEnergyFraction( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet);        
+    float computeJetElectronEnergyFraction     ( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet);        
+    float computeJetMuonEnergyFraction         ( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet);        
+
     float getPdgIdCharge( float fid );        
 
     TTree* tree_;
@@ -103,20 +114,21 @@ namespace ewk
     std::string JetsFor_rho;
     std::string JEC_GlobalTag_forGroomedJet;
     edm::InputTag mPrimaryVertex;
+    std::string jetIDLabel_;
     std::string mGroomedJet;
         
             // specific parameters
-        double mJetRadius;
-        std::string mJetAlgo;        
-        std::string lableGen;        
+    double mJetRadius;
+    std::string mJetAlgo;        
+    std::string lableGen;        
         
-        double mJetChargeKappa;
-        bool mDoQJets; 
-        int mQJetsPreclustering;
-        int mQJetsN;
-        double mNsubjettinessKappa;
-        bool mSaveConstituents;
-        bool mPrintConstituents;
+    double mJetChargeKappa;
+    bool mDoQJets; 
+    int mQJetsPreclustering;
+    int mQJetsN;
+    double mNsubjettinessKappa;
+    bool mSaveConstituents;
+    bool mPrintConstituents;
 
     private:
     
@@ -138,6 +150,8 @@ namespace ewk
     float jeteta[NUM_JET_MAX];
     float jetphi[NUM_JET_MAX];
     float jete[NUM_JET_MAX];
+
+    int jetIDflag[NUM_JET_MAX];
 
     float jetpt_tr_uncorr[NUM_JET_MAX];
     float jetpt_tr[NUM_JET_MAX];
@@ -177,9 +191,16 @@ namespace ewk
     float jetarea_pr[NUM_JET_MAX];        
     float massdrop_pr[NUM_JET_MAX];
     float jetconstituents[NUM_JET_MAX];    
+
     float jetcharge[NUM_JET_MAX];           
     float jetchargedMultiplicity[NUM_JET_MAX];           
     float jetneutralMultiplicity[NUM_JET_MAX];                  
+    float jetphotonEnergyFraction[NUM_JET_MAX];
+    float jetneutralHadronEnergyFraction[NUM_JET_MAX];
+    float jetchargedHadronEnergyFraction[NUM_JET_MAX];
+    float jetelectronEnergyFraction[NUM_JET_MAX];
+    float jetmuonEnergyFraction[NUM_JET_MAX];
+
     float jetGeneralizedECF[NUM_JET_MAX];           
 
     float rcores[11][NUM_JET_MAX];
@@ -190,20 +211,20 @@ namespace ewk
     float qjetmass[50];
     float qjetmassdrop[50];
 
-        float constituents0_eta[100];
-        float constituents0_phi[100];        
-        float constituents0_e[100];        
-        int nconstituents0;    
+    float constituents0_eta[100];
+    float constituents0_phi[100];        
+    float constituents0_e[100];        
+    int nconstituents0;    
         
-        float constituents0pr_eta[100];
-        float constituents0pr_phi[100];        
-        float constituents0pr_e[100];        
-        int nconstituents0pr;   
+    float constituents0pr_eta[100];
+    float constituents0pr_phi[100];        
+    float constituents0pr_e[100];        
+    int nconstituents0pr;   
         
-        std::vector<int> neutrals;
-        std::vector<int> positives;
-        std::vector<int> negatives;        
-        std::vector<float>  charge_handle_Gen;
+    std::vector<int> neutrals;
+    std::vector<int> positives;
+    std::vector<int> negatives;        
+    std::vector<float>  charge_handle_Gen;
 
     
     double rhoVal_;

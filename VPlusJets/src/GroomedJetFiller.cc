@@ -108,6 +108,9 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
     SetBranch( jeteta_tr, lableGen + "GroomedJet_" + jetLabel_ + "_eta_tr");
     SetBranch( jetphi_tr, lableGen + "GroomedJet_" + jetLabel_ + "_phi_tr");
     SetBranch( jete_tr, lableGen + "GroomedJet_" + jetLabel_ + "_e_tr");
+
+    SetBranch( jetIDflag, lableGen + "GroomedJet_" + jetLabel_+"_jetIDflag");
+
     SetBranch( jetpt_ft_uncorr, lableGen + "GroomedJet_" + jetLabel_ + "_pt_ft_uncorr");
     SetBranch( jetpt_ft, lableGen + "GroomedJet_" + jetLabel_ + "_pt_ft");
     SetBranch( jeteta_ft, lableGen + "GroomedJet_" + jetLabel_ + "_eta_ft");
@@ -138,9 +141,17 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
     SetBranch( jetarea_ft, lableGen + "GroomedJet_" + jetLabel_ + "_area_ft");
     SetBranch( jetarea_pr, lableGen + "GroomedJet_" + jetLabel_ + "_area_pr");
     SetBranch( jetconstituents, lableGen + "GroomedJet_" + jetLabel_ + "_jetconstituents");
+
     SetBranch( jetcharge, lableGen + "GroomedJet_" + jetLabel_ + "_jetcharge");
     SetBranch( jetchargedMultiplicity, lableGen + "GroomedJet_" + jetLabel_ + "_jetchargedMultiplicity");
     SetBranch( jetneutralMultiplicity, lableGen + "GroomedJet_" + jetLabel_ + "_jetneutralMultiplicity");
+ 
+    SetBranch( jetphotonEnergyFraction, lableGen + "GroomedJet_" + jetLabel_ + "_jetphotonEnergyFraction");
+    SetBranch( jetneutralHadronEnergyFraction, lableGen + "GroomedJet_" + jetLabel_ + "_jetneutralHadronEnergyFraction");
+    SetBranch( jetchargedHadronEnergyFraction, lableGen + "GroomedJet_" + jetLabel_ + "_jetchargedHadronEnergyFraction");
+    SetBranch( jetelectronEnergyFraction, lableGen + "GroomedJet_" + jetLabel_ + "_jetelectronEnergyFraction");
+    SetBranch( jetmuonEnergyFraction, lableGen + "GroomedJet_" + jetLabel_ + "_jetmuonEnergyFraction");
+
     SetBranch( jetGeneralizedECF, lableGen + "GroomedJet_" + jetLabel_ + "_jetGeneralizedECF");
 
         // cores
@@ -198,7 +209,6 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
     
     mGroomedJet =  srcGroomedJet;
 
-    
         // --- Are we running over Monte Carlo ? --- 
     if( iConfig.existsAs<bool>("runningOverMC") ) 
         runningOverMC_=iConfig.getParameter< bool >("runningOverMC");
@@ -209,24 +219,24 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
         applyJECToGroomedJets_=iConfig.getParameter< bool >("applyJECToGroomedJets");
     else applyJECToGroomedJets_ = false;
     
-    
-    
+        
         //// --- fastjet rho label -------
     JetsFor_rho =  iConfig.getParameter<std::string>("srcJetsforRho") ; 
     if(applyJECToGroomedJets_)
         JEC_GlobalTag_forGroomedJet 
         =  iConfig.getParameter<std::string>("JEC_GlobalTag_forGroomedJet") ; 
-    
-    
+        
         //// --- primary vertex -------
     if(  iConfig.existsAs<edm::InputTag>("srcPrimaryVertex") )
         mPrimaryVertex = iConfig.getParameter<edm::InputTag>("srcPrimaryVertex"); 
     else mPrimaryVertex =  edm::InputTag("offlinePrimaryVertices");
+
+        //// --- primary vertex -------
+    if(  iConfig.existsAs<std::string>("jetIDLabel") )
+      jetIDLabel_ = iConfig.getParameter<std::string>("jetIDLabel"); 
+    else jetIDLabel_ =  std::string("loose");
     
     
-    
-        // ---- setting up the jec on-the-fly from text files...    
-//    std::string fDir = "JEC/" + JEC_GlobalTag_forGroomedJet;   
     std::string fDir = JEC_GlobalTag_forGroomedJet;   
     std::vector< JetCorrectorParameters > jecPars;
     std::vector< std::string > jecStr;
@@ -245,7 +255,7 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
         if (!runningOverMC_)
             jecStr.push_back( fDir + "_L2L3Residual_AK7PFchs.txt" );
       }        
-      //      std::cout<<" <<<<<<<<<<<<<<<<<<<<<<<<<<<<< "<<std::endl;  
+
         for (unsigned int i = 0; i < jecStr.size(); ++i){
             JetCorrectorParameters* ijec = new JetCorrectorParameters( jecStr[i] );
             jecPars.push_back( *ijec );
@@ -258,7 +268,6 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
           jecUnc_ = new JetCorrectionUncertainty( fDir + "_Uncertainty_AK7PFchs.txt" );
         }
     }
-    //   std::cout<<" <<<<<<<<<<<<<<<<<<<<<<<<<<<<< "<<std::endl;  
     
         // specific configurations
     if( iConfig.existsAs<double>("GroomedJet_JetChargeKappa") ) 
@@ -323,6 +332,12 @@ void ewk::GroomedJetFiller::SetBranchSingle( float* x, std::string name)
     bnames.push_back( name );
 }
 
+void ewk::GroomedJetFiller::SetBranchSingle( bool* x, std::string name)
+{
+    tree_->Branch( name.c_str(), x, ( name+"/O").c_str() );
+    bnames.push_back( name );
+}
+
 void ewk::GroomedJetFiller::SetBranchSingle( int* x, std::string name)
 {
     tree_->Branch( name.c_str(), x, ( name+"/I").c_str() );
@@ -342,9 +357,11 @@ void ewk::GroomedJetFiller::SetBranch( int* x, std::string name)
     bnames.push_back( name );
 }
 
-    //////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////
-
+void ewk::GroomedJetFiller::SetBranch( bool* x, std::string name)
+{
+    tree_->Branch( name.c_str(), x, ( name+"[6]/O").c_str() );
+    bnames.push_back( name );
+}
 
 
 
@@ -372,6 +389,9 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         jeteta[j] = -10.;
         jetphi[j] = -10.;
         jete[j] = -1.;
+
+        jetIDflag[j] = 0 ;
+
         jetmass[j] = -1.;
         jetmass_tr[j] = -1.;
         jetmass_ft[j] = -1.;
@@ -573,17 +593,6 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
 	}
       }
 
-//    // another test, see if the area is the same as the standard one...
-//    edm::Handle<edm::View<pat::Jet> > jets;
-//    iEvent.getByLabel( "selectedPatJetsCA8PF", jets ); 
-//    int iJet = 0;
-//    edm::View<pat::Jet>::const_iterator jet, endpjets = jets->end(); 
-//    for (jet = jets->begin();  jet != endpjets;  ++jet, ++iJet) {
-//        
-//        if (iJet == 0){
-//            std::cout << "jet pT: " << jet->pt() << ", jet area: " << jet->jetArea() << std::endl;
-//        }
-//    }
       std::string pfjetlabel = "selectedPatJets"+jetLabel_+"PF";
       if (jetLabel_ == "AK5") pfjetlabel = "selectedPatJetsPFlow";
       edm::Handle<edm::View<pat::Jet> > pfjets;
@@ -720,12 +729,6 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         
        //std::cout<< "Beging the n-subjettiness computation" << endl; 
             // n-subjettiness  -------------
-//        tau1[j] = routine.getTau(1, out_jets.at(j).constituents()); 
-//        tau2[j] = routine.getTau(2, out_jets.at(j).constituents());
-//        tau3[j] = routine.getTau(3, out_jets.at(j).constituents());
-//        tau4[j] = routine.getTau(4, out_jets.at(j).constituents());
-//        tau2tau1[j] = tau2[j]/tau1[j];
-//        fastjet::Nsubjettiness nSub1KT(1, Njettiness::kt_axes, beta, R0, Rcut);
         fastjet::Nsubjettiness nSub1KT(1, Njettiness::onepass_kt_axes, beta, R0, Rcut);
         tau1[j] = nSub1KT(out_jets.at(j));
         fastjet::Nsubjettiness nSub2KT(2, Njettiness::onepass_kt_axes, beta, R0, Rcut);
@@ -737,9 +740,6 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         tau2tau1[j] = tau2[j]/tau1[j];
 
         
-       //std::cout<< "End the n-subjettiness computation" << endl;
-            // cores computation  -------------
-        //std::cout<< "Beging the core computation" << endl;
         std::vector<fastjet::PseudoJet> constits = thisClustering.constituents(out_jets.at(j));
         for (int kk = 0; kk < 11; ++kk){
             double coreCtr = (double) kk;    
@@ -750,9 +750,6 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
                 if (tmppt > 0) ptcores[kk][j] = tmppt/out_jets.at(j).pt();
             }
         }
-        //std::cout<< "Ending the core computation" << endl;
-
-        //std::cout<< "Beging the planarflow computation" << endl;
 
         //planarflow computation
         for (int kk = 0; kk < 11; ++kk){
@@ -801,14 +798,32 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
                 
             }
         }
-            // jet charge try (?) computation  -------------
+
+	// Compute Variables for JetID
+
         jetcharge[j] = computeJetCharge(out_jets_basic.at(j).constituents(),pdgIds,out_jets_basic.at(j).e());
+
         jetchargedMultiplicity[j] = computeJetChargedMultiplicity(out_jets_basic.at(j).constituents(),pdgIds);
         jetneutralMultiplicity[j] = computeJetNeutralMultiplicity(out_jets_basic.at(j).constituents(),pdgIds);
 
-        jetcharge[j] = computeJetCharge(out_jets_basic.at(j).constituents(),pdgIds,out_jets_basic.at(j).pt());
+        jetphotonEnergyFraction[j] = computeJetPhotonEnergyFraction(out_jets_basic.at(j).constituents(),pdgIds,out_jets.at(j).e());
+        jetneutralHadronEnergyFraction[j] = computeJetNeutralHadronEnergyFraction(out_jets_basic.at(j).constituents(),pdgIds,out_jets.at(j).e());
+        jetchargedHadronEnergyFraction[j] = computeJetChargedHadronEnergyFraction(out_jets_basic.at(j).constituents(),pdgIds,out_jets.at(j).e());
+        jetelectronEnergyFraction[j] = computeJetElectronEnergyFraction(out_jets_basic.at(j).constituents(),pdgIds,out_jets.at(j).e());
+        jetmuonEnergyFraction[j] = computeJetMuonEnergyFraction(out_jets_basic.at(j).constituents(),pdgIds,out_jets.at(j).e());
 
-        
+
+        bool isGoodJet = false ;
+
+        if(jetIDLabel_ == "loose" || jetIDLabel_ == "Loose" ) isGoodJet = (jetphotonEnergyFraction[j]<0.99 && jetneutralHadronEnergyFraction[j]>0.99 && jetconstituents[j]<1 &&
+                                                                        (jetchargedHadronEnergyFraction[j]>0 || abs(jeteta[j])>2.4) && (jetchargedMultiplicity[j]>0 || abs(jeteta[j])>2.4) &&
+									(jetelectronEnergyFraction[j]<0.99 || abs(jeteta[j])>2.4) && (jetmuonEnergyFraction[j]<0.99 ||  abs(jeteta[j])>2.4));
+
+        if(isGoodJet) jetIDflag[j] = 1 ;
+        else jetIDflag[j] = 0 ;
+
+        if(mGroomedJet == "pfInputsCA8") std::cout<<" jet j "<<j<<" mult charged "<<jetchargedMultiplicity[j]<<" mult neu "<<jetneutralMultiplicity[j]<<" photon "<<jetphotonEnergyFraction[j]<<" neutral "<<jetneutralHadronEnergyFraction[j]<<" charged "<< jetchargedHadronEnergyFraction[j]<<" electron "<<jetelectronEnergyFraction[j]<<" muon "<<jetmuonEnergyFraction[j]<<" flag "<<jetIDflag[j]<<std::endl;
+                                                                         
         // Generalized energy correlator
         fastjet::JetDefinition jet_def_forECF(fastjet::antikt_algorithm, 2.0);
         fastjet::ClusterSequence clust_seq_forECF(out_jets_basic.at(j).constituents(), jet_def_forECF);
@@ -960,7 +975,7 @@ float ewk::GroomedJetFiller::computeJetChargedMultiplicity( std::vector<fastjet:
 
 float ewk::GroomedJetFiller::computeJetNeutralMultiplicity( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds){
 
-   float qq = 0 ;
+   float qq = 0.;
    for (unsigned int i = 0; i < pdgIds.size(); i++){
       if(isGenJ) {
 	if(charge_handle_Gen.at(i) == 0 ) qq ++ ;
@@ -969,6 +984,75 @@ float ewk::GroomedJetFiller::computeJetNeutralMultiplicity( std::vector<fastjet:
       }
    }
    return qq;
+
+}
+
+float ewk::GroomedJetFiller::computeJetPhotonEnergyFraction( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet){
+
+   float val = 0. ;
+   for (unsigned int i = 0; i < pdgIds.size(); i++){
+      if(!isGenJ) {
+	if( fabs(pdgIds.at(i)) == 22 ) val = val +  constits.at(i).e() ;
+      }
+   }
+
+   val = val/Ejet ;
+   return val ;
+
+}
+
+float ewk::GroomedJetFiller::computeJetElectronEnergyFraction( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet){
+
+   float val = 0. ;
+   for (unsigned int i = 0; i < pdgIds.size(); i++){
+     if(!isGenJ){
+	if(  fabs(pdgIds.at(i)) == 11 ) val = val +  constits.at(i).e() ;
+     }
+   }
+ 
+   val = val/Ejet ;
+   return val ;
+}
+
+float ewk::GroomedJetFiller::computeJetMuonEnergyFraction( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet){
+
+   float val = 0. ;
+   for (unsigned int i = 0; i < pdgIds.size(); i++){
+     if(!isGenJ){
+	if(  fabs(pdgIds.at(i)) == 13 ) val = val +  constits.at(i).e() ;
+      }
+   }
+
+   val = val/Ejet ;
+   return val ;
+
+}
+
+float ewk::GroomedJetFiller::computeJetChargedHadronEnergyFraction( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet){
+
+   float val = 0. ;
+   for (unsigned int i = 0; i < pdgIds.size(); i++){
+     if(!isGenJ){
+	if(  fabs(pdgIds.at(i)) == 321 || fabs(pdgIds.at(i)) == 211 || fabs(pdgIds.at(i)) == 2212 ) val = val +  constits.at(i).e() ;
+      }
+   }
+
+   val = val/Ejet ;
+   return val ;
+}
+
+float ewk::GroomedJetFiller::computeJetNeutralHadronEnergyFraction( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float Ejet){
+
+   float val = 0. ;
+   for (unsigned int i = 0; i < pdgIds.size(); i++){
+     if(!isGenJ){
+	if(  fabs(pdgIds.at(i)) == 130 || fabs(pdgIds.at(i)) == 310 || fabs(pdgIds.at(i)) == 311 || fabs(pdgIds.at(i)) == 111 || fabs(pdgIds.at(i)) == 2112) 
+          val = val +  constits.at(i).e() ;
+      }
+   }
+
+   val = val/Ejet ;
+   return val ;
 
 }
 
