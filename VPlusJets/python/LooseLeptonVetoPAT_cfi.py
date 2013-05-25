@@ -23,7 +23,8 @@ def LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel=
                process.looseMuonStep = AllPassFilter.clone()
    
                if isMuonAnalyzer:
-                    process.heepPatElectrons = cms.EDProducer("HEEPAttStatusToPAT",
+
+                   process.heepPatElectrons = cms.EDProducer("HEEPAttStatusToPAT",
                                                               eleLabel = cms.InputTag("selectedPatElectronsPFlow"),
                                                               barrelCuts = cms.PSet(heepBarrelCuts),
                                                               endcapCuts = cms.PSet(heepEndcapCuts),
@@ -33,34 +34,48 @@ def LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel=
                                                               verticesLabel = cms.InputTag("offlinePrimaryVerticesWithBS")
                                                               )
                
-               process.looseElectronFilter = cms.EDFilter("HEEPElectronIDIso",
-                                                          electronCollection = cms.InputTag("heepPatElectrons"),
-                                                          eleIdType = cms.string("LooseID"),
-                                                          maxNumber = cms.untracked.int32(1),
-                                                          minNumber = cms.untracked.int32(1)                                                          
-                                                          )
 
                process.looseElectrons = cms.EDProducer("HEEPElectronProducer",
                                                        electronCollection = cms.InputTag("heepPatElectrons"),
                                                        eleIdType = cms.string("LooseID"),
-                                                     )
+                                                      )
+
+               process.looseElectronFilter = cms.EDFilter("PATCandViewCountFilter",
+                                                           src = cms.InputTag("looseElectrons"),
+                                                           minNumber = cms.uint32(1),
+                                                           maxNumber = cms.uint32(999),
+                                                         )
 
                if isMuonAnalyzer :
                                   process.looseMuonFilter.minNumber = cms.uint32(1)
                                   process.looseMuonFilter.maxNumber = cms.uint32(1)
-                                  process.looseElectronFilter.minNumber = cms.untracked.int32(0)
-                                  process.looseElectronFilter.maxNumber = cms.untracked.int32(0)
+                                  process.looseElectronFilter.minNumber = cms.uint32(0)
+                                  process.looseElectronFilter.maxNumber = cms.uint32(0)
                else :
                                   process.looseMuonFilter.minNumber = cms.uint32(0)
                                   process.looseMuonFilter.maxNumber = cms.uint32(0)
-                                  process.looseElectronFilter.minNumber = cms.untracked.int32(1)
-                                  process.looseElectronFilter.maxNumber = cms.untracked.int32(1)
+                                  process.looseElectronFilter.minNumber = cms.uint32(1)
+                                  process.looseElectronFilter.maxNumber = cms.uint32(1)
                       
                process.looseElectronStep = AllPassFilter.clone()
 
                if isMuonAnalyzer:
-                  process.VetoSequence = cms.Sequence(process.looseMuons*process.looseMuonFilter*process.looseMuonStep*process.heepPatElectrons*process.looseElectrons*process.looseElectronFilter*process.looseElectronStep)
-               else: process.VetoSequence = cms.Sequence(process.looseElectrons*process.looseElectronFilter*process.looseElectronStep*process.looseMuons*process.looseMuonFilter*process.looseMuonStep)
+                  process.VetoSequence = cms.Sequence(process.looseMuons*
+                                                      process.looseMuonFilter*
+                                                      process.looseMuonStep*
+                                                      process.heepPatElectrons*
+                                                      process.looseElectrons*
+                                                      process.looseElectronFilter*
+                                                      process.looseElectronStep
+                                                     )
+                  
+               else: process.VetoSequence = cms.Sequence(process.looseElectrons*
+                                                         process.looseElectronFilter*
+                                                         process.looseElectronStep*
+                                                         process.looseMuons*
+                                                         process.looseMuonFilter*
+                                                         process.looseMuonStep
+                                                        )
                                                 
  else:
 

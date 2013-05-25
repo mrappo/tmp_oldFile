@@ -79,7 +79,7 @@ process.MessageLogger.destinations = ['cout', 'cerr']
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
-OutputFileName = "WmunuJetAnalysisntuple_195399_159_130828536.root"
+OutputFileName = "WmunuJetAnalysisntuple_194712_559_405404310.root"
 
 
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
@@ -93,7 +93,7 @@ process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195013_303_44790264.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195099_171_245228003.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195398_899_752941172.root',
-        'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195399_159_130828536.root',
+        #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195399_159_130828536.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_195930_83_62880579.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_196438_586_479961054.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP1_196452_193_232654780.root',
@@ -118,6 +118,7 @@ process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP2_206476_128_148892985.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP2_206859_764_1094226833.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP2_207231_920_1260547040.root',
+        'file:/afs/cern.ch/user/r/rgerosa/work/CMSSW_5_3_3_patch3/src/SQWaT/TopPAT/test/pat_53X_ofile_mu_GROUP1_195930_83_62880579.root'
         #'/store/user/lnujj/PatTuples_8TeV_53X/custodio/BulkG_WW_lvjj_c0p2_M1500-JHU-v1/SQWaT_PAT_53X_Summer12_v1/829f288d768dd564418efaaf3a8ab9aa/pat_53x_test_v03_4_1_jvg.root'
 ) )
 
@@ -130,7 +131,7 @@ process.HLTMu =cms.EDFilter("HLTHighLevel",
      HLTPaths = cms.vstring('HLT_Mu40_eta2p1*'),
      eventSetupPathsKey = cms.string(''),
      andOr = cms.bool(True), #----- True = OR, False = AND between the HLTPaths
-     throw = cms.bool(False) # throw exception on unknown path names
+     throw = cms.bool(True) # throw exception on unknown path names
 )
 
 process.primaryVertex.src = cms.InputTag("goodOfflinePrimaryVertices");

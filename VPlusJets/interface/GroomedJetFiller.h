@@ -67,7 +67,6 @@ namespace ewk
 
 
     /// Destructor, does nothing 
-      //~GroomedJetFiller(){  if(jec_) delete jec_;  if(jecUnc_) delete jecUnc_; };
       ~GroomedJetFiller(){ };
          
     /// To be called once per event to fill the values for groomed jets
@@ -89,6 +88,7 @@ namespace ewk
 
     double getJEC(double curJetEta, double curJetPt, double curJetE, double curJetArea); 
     TLorentzVector getCorrectedJet(fastjet::PseudoJet& jet, double inArea);
+
     void computeCore( std::vector<fastjet::PseudoJet> constits, double Rval, float &m_core, float &pt_core );
     void computePlanarflow(std::vector<fastjet::PseudoJet> constits,double Rval,fastjet::PseudoJet jet,std::string mJetAlgo,float &planarflow);
 
@@ -117,7 +117,6 @@ namespace ewk
     std::string jetIDLabel_;
     std::string mGroomedJet;
         
-            // specific parameters
     double mJetRadius;
     std::string mJetAlgo;        
     std::string lableGen;        

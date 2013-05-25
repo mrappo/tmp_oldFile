@@ -17,10 +17,6 @@
  * Copyright (C) 2012 FNAL 
  *****************************************************************************/
 
-
-    // user include files
-#include "ElectroWeakAnalysis/VPlusJets/interface/GroomedJetFiller.h" 
-
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/BeamSpot/interface/BeamSpot.h"
@@ -40,7 +36,6 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 
 #include <fastjet/ClusterSequence.hh>
-    //#include <fastjet/ActiveAreaSpec.hh>
 #include <fastjet/GhostedAreaSpec.hh>
 #include <fastjet/ClusterSequenceArea.hh>
 #include "fastjet/tools/Filter.hh"
@@ -48,7 +43,6 @@
 #include "fastjet/tools/MassDropTagger.hh"
 #include "fastjet/GhostedAreaSpec.hh"
 
-//#include "ElectroWeakAnalysis/VPlusJets/interface/Nsubjettiness.h"
 #include "ElectroWeakAnalysis/VPlusJets/src/NjettinessPlugin.hh"
 #include "ElectroWeakAnalysis/VPlusJets/src/Nsubjettiness.hh"
 #include "ElectroWeakAnalysis/VPlusJets/src/QjetsPlugin.h"
@@ -56,22 +50,26 @@
 #include "TVector3.h"
 #include "TMath.h"
 
+#include "ElectroWeakAnalysis/VPlusJets/interface/GroomedJetFiller.h" 
+
+
 ewk::GroomedJetFiller::GroomedJetFiller(const char *name, 
                                         TTree* tree, 
                                         const std::string jetLabel,
                                         const std::string srcGroomedJet,
-                                        const edm::ParameterSet& iConfig,bool isGen)
-{
+                                        const edm::ParameterSet& iConfig,bool isGen){
     tree_     = tree;
     jetLabel_ = jetLabel;
     isGenJ = isGen;
     
     lableGen = "";
     if(isGen) lableGen = "Gen";
+
     // get algo and radius
     unsigned int labelSize = jetLabel.size();
     mJetAlgo = "";
     mJetAlgo.push_back( jetLabel.at(0) ); mJetAlgo.push_back( jetLabel.at(1) );
+
     if (labelSize == 3){
         const char* tmp1 = &jetLabel.at(2);
         mJetRadius = atof( tmp1 );
@@ -83,6 +81,7 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
     else{
         std::cout << "problem in defining jet type!" << std::endl;
     }
+
     std::cout << "jet algo: " << mJetAlgo << ", jet radius: " << mJetRadius << std::endl;
     mJetRadius /= 10.;
     
@@ -201,7 +200,6 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
         ////////////////////////////////////
         // CORRECTIONS ON THE FLY
         ////////////////////////////////////     
-        //// --- groomed jet label -------
 
     if(  iConfig.existsAs<std::string>("srcGroomedJet") )
         mGroomedJet = iConfig.getParameter<std::string>("srcGroomedJet"); 
@@ -209,12 +207,10 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
     
     mGroomedJet =  srcGroomedJet;
 
-        // --- Are we running over Monte Carlo ? --- 
     if( iConfig.existsAs<bool>("runningOverMC") ) 
         runningOverMC_=iConfig.getParameter< bool >("runningOverMC");
     else runningOverMC_= false;
     
-        // --- Are we applying AK7 JEC to our groomed jet ? --- 
     if( iConfig.existsAs<bool>("applyJECToGroomedJets") ) 
         applyJECToGroomedJets_=iConfig.getParameter< bool >("applyJECToGroomedJets");
     else applyJECToGroomedJets_ = false;
@@ -320,45 +316,33 @@ ewk::GroomedJetFiller::GroomedJetFiller(const char *name,
 
 
 
-
-    //////////////////////////////////////////////////////////////////
-    /////// Helper for above function ////////////////////////////////
-    //////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////
-
-void ewk::GroomedJetFiller::SetBranchSingle( float* x, std::string name)
-{
+void ewk::GroomedJetFiller::SetBranchSingle( float* x, std::string name){
     tree_->Branch( name.c_str(), x, ( name+"/F").c_str() );
     bnames.push_back( name );
 }
 
-void ewk::GroomedJetFiller::SetBranchSingle( bool* x, std::string name)
-{
+void ewk::GroomedJetFiller::SetBranchSingle( bool* x, std::string name){
     tree_->Branch( name.c_str(), x, ( name+"/O").c_str() );
     bnames.push_back( name );
 }
 
-void ewk::GroomedJetFiller::SetBranchSingle( int* x, std::string name)
-{
+void ewk::GroomedJetFiller::SetBranchSingle( int* x, std::string name){
     tree_->Branch( name.c_str(), x, ( name+"/I").c_str() );
     bnames.push_back( name );
 }
 
-void ewk::GroomedJetFiller::SetBranch( float* x, std::string name)
-{
+void ewk::GroomedJetFiller::SetBranch( float* x, std::string name){
     tree_->Branch( name.c_str(), x, ( name+"[6]/F").c_str() );
     bnames.push_back( name );
 }
 
 
-void ewk::GroomedJetFiller::SetBranch( int* x, std::string name)
-{
+void ewk::GroomedJetFiller::SetBranch( int* x, std::string name){
     tree_->Branch( name.c_str(), x, ( name+"[6]/I").c_str() );
     bnames.push_back( name );
 }
 
-void ewk::GroomedJetFiller::SetBranch( bool* x, std::string name)
-{
+void ewk::GroomedJetFiller::SetBranch( bool* x, std::string name){
     tree_->Branch( name.c_str(), x, ( name+"[6]/O").c_str() );
     bnames.push_back( name );
 }
@@ -366,13 +350,8 @@ void ewk::GroomedJetFiller::SetBranch( bool* x, std::string name)
 
 
 
-    // ------------ method called to produce the data  ------------
 void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
 
-  //    std::cout<<" mGroomedJet Label "<<mGroomedJet<<std::endl;
-            
-        ////----------
-        // init
     for (int j =0; j< NUM_JET_MAX; ++j) {
         jetmass_uncorr[j] = -1.;
         jetmass_tr_uncorr[j] = -1.;
@@ -493,8 +472,6 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
     }
     nPV_ = nPVval;
     
-        // ----------------------------
-        // ------ start processing ------    
     PF_id_handle_AK5.clear();
     PF_id_handle_Gen.clear();
     charge_handle_Gen.clear();
@@ -542,7 +519,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
     int activeAreaRepeats = 1;
     double ghostArea = 0.01;
     double ghostEtaMax = 5.0;
-        // fastjet::ActiveAreaSpec fjActiveArea(ghostEtaMax,activeAreaRepeats,ghostArea);
+
     fastjet::GhostedAreaSpec fjActiveArea(ghostEtaMax,activeAreaRepeats,ghostArea);
     fjActiveArea.set_fj2_placement(true);
     fastjet::AreaDefinition fjAreaDefinition( fastjet::active_area_explicit_ghosts, fjActiveArea );
@@ -576,6 +553,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         // s t a r t   l o o p   o n   j e t s
         // -----------------------------------------------
         // -----------------------------------------------
+
     for (unsigned j = 0; j < out_jets.size()&&int(j)<NUM_JET_MAX; j++) {
       
       std::vector< float > pdgIds;
@@ -629,9 +607,9 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         jetpt_uncorr[j] = out_jets.at(j).pt();
         if (!isGenJ){
             jetarea[j] = pfjets->at(j).jetArea();
-            //std::cout << "compare jet areas: " << out_jets.at(j).area() << ", " << pfjets->at(j).jetArea() << std::endl;
         }
         else jetarea[j] = out_jets.at(j).area();
+
         TLorentzVector jet_corr = getCorrectedJet(out_jets.at(j), jetarea[j]);
         jetmass[j] = jet_corr.M();
         jetpt[j] = jet_corr.Pt();
@@ -689,10 +667,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
                 if (transformedJet_basic.constituents().size() > 1){
                     int nsubjetstokeep = 2;
                     std::vector<fastjet::PseudoJet> subjets = transformedJet_basic.associated_cluster_sequence()->exclusive_subjets(transformedJet_basic,nsubjetstokeep);    
-                    
-//                    for (unsigned k = 0; k < subjets.size(); k++) {
-//                        std::cout << "subjet " << k << ": mass = " << subjets.at(k).m() << " and pt = " << subjets.at(k).pt() << std::endl;
-//                    }
+
                     TLorentzVector sj1( subjets.at(0).px(),subjets.at(0).py(),subjets.at(0).pz(),subjets.at(0).e());
                     TLorentzVector sj2( subjets.at(1).px(),subjets.at(1).py(),subjets.at(1).pz(),subjets.at(1).e());     
                     
@@ -727,7 +702,6 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
             transctr++;
         }        
         
-       //std::cout<< "Beging the n-subjettiness computation" << endl; 
             // n-subjettiness  -------------
         fastjet::Nsubjettiness nSub1KT(1, Njettiness::onepass_kt_axes, beta, R0, Rcut);
         tau1[j] = nSub1KT(out_jets.at(j));
@@ -761,8 +735,6 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
            }
         }
         
-        //std::cout<< "Ending the planarflow computation" << endl;
-
             // qjets computation  -------------
         if ((mDoQJets)&&(j == 0)){ // do qjets only for the hardest jet in the event!
             double zcut(0.1), dcut_fctr(0.5), exp_min(0.), exp_max(0.), rigidity(0.1);                
@@ -822,7 +794,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         if(isGoodJet) jetIDflag[j] = 1 ;
         else jetIDflag[j] = 0 ;
 
-        if(mGroomedJet == "pfInputsCA8") std::cout<<" jet j "<<j<<" mult charged "<<jetchargedMultiplicity[j]<<" mult neu "<<jetneutralMultiplicity[j]<<" photon "<<jetphotonEnergyFraction[j]<<" neutral "<<jetneutralHadronEnergyFraction[j]<<" charged "<< jetchargedHadronEnergyFraction[j]<<" electron "<<jetelectronEnergyFraction[j]<<" muon "<<jetmuonEnergyFraction[j]<<" flag "<<jetIDflag[j]<<std::endl;
+	//        if(mGroomedJet == "pfInputsCA8") std::cout<<" jet j "<<j<<" mult charged "<<jetchargedMultiplicity[j]<<" mult neu "<<jetneutralMultiplicity[j]<<" photon "<<jetphotonEnergyFraction[j]<<" neutral "<<jetneutralHadronEnergyFraction[j]<<" charged "<< jetchargedHadronEnergyFraction[j]<<" electron "<<jetelectronEnergyFraction[j]<<" muon "<<jetmuonEnergyFraction[j]<<" flag "<<jetIDflag[j]<<std::endl;
                                                                          
         // Generalized energy correlator
         fastjet::JetDefinition jet_def_forECF(fastjet::antikt_algorithm, 2.0);
@@ -842,9 +814,6 @@ double ewk::GroomedJetFiller::getJEC(double curJetEta,
                                      double curJetE, 
                                      double curJetArea){
     
-        // -------
-        // Jet energy corrections, something like this...
-        // -------
     jec_->setJetEta( curJetEta );
     jec_->setJetPt ( curJetPt );
     jec_->setJetE  ( curJetE );
@@ -852,8 +821,8 @@ double ewk::GroomedJetFiller::getJEC(double curJetEta,
     jec_->setRho   ( rhoVal_ );
     jec_->setNPV   ( nPV_ );
     double corr = jec_->getCorrection();
-    if (mGroomedJet=="pfInputsCA8"){
-      std::cout<< " Jet Val : Eta "<<curJetEta<<" Pt "<<curJetPt<<" E "<<curJetE<<" Area "<<curJetArea<<" rho "<<rhoVal_<<" nPV "<<nPV_<<" correction "<<corr<<std::endl;}
+    // if (mGroomedJet=="pfInputsCA8"){
+    // std::cout<< " Jet Val : Eta "<<curJetEta<<" Pt "<<curJetPt<<" E "<<curJetE<<" Area "<<curJetArea<<" rho "<<rhoVal_<<" nPV "<<nPV_<<" correction "<<corr<<std::endl;}
     return corr;
 }
 
@@ -865,7 +834,6 @@ TLorentzVector ewk::GroomedJetFiller::getCorrectedJet(fastjet::PseudoJet& jet, d
     double jecVal = 1.0;
     
     if(applyJECToGroomedJets_ && !isGenJ) {
-        //jecVal = getJEC( jet.eta(), jet.pt(), jet.e(), jet.area() );   
         jecVal = getJEC( jet.eta(), jet.pt(), jet.e(), inArea );       
     }
     
@@ -905,7 +873,6 @@ void ewk::GroomedJetFiller::computePlanarflow(std::vector<fastjet::PseudoJet> co
       std::vector<fastjet::PseudoJet> subconstits = thisClustering.constituents(out_jets.at(0)); 
 
       TLorentzVector jetp4;
-      //jetp4.SetPxPyPzE(out_jets.at(0).px(),out_jets.at(0).py(),out_jets.at(0).pz(),out_jets.at(0).e());
       jetp4.SetPxPyPzE(jet.px(),jet.py(),jet.pz(),jet.e());
    
       TVector3 zaxis = jetp4.Vect().Unit();

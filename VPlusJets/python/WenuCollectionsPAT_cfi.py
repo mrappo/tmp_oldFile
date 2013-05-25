@@ -32,17 +32,21 @@ def WenuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut) :
                                                verticesLabel = cms.InputTag("offlinePrimaryVerticesWithBS")
                                                )  
 
-      process.tightElectronFilter = cms.EDFilter("HEEPElectronIDIso",
-        electronCollection = cms.InputTag("heepPatElectrons"),                     
-        eleIdType = cms.string("tightID"),                                         
-        minNumber = cms.untracked.int32(1),
-        maxNumber = cms.untracked.int32(999999),
-      )
+      process.tightElectrons  = cms.EDProducer("HEEPElectronProducer",
+                                               electronCollection = cms.InputTag("heepPatElectrons"),
+                                               eleIdType = cms.string("TightID"),
+                                              )
 
+      process.tightElectronFilter = cms.EDFilter("PATCandViewCountFilter",
+                                                  minNumber = cms.uint32(1),
+                                                  maxNumber = cms.uint32(999999),
+                                                  src = cms.InputTag("tightElectrons")
+                                                )
+          
       process.tightLeptonStep = AllPassFilter.clone()
 
       process.WToEnu = cms.EDProducer("CandViewShallowCloneCombiner",
-                                  decay = cms.string("heepPatElectrons patMetShiftCorrected"),
+                                  decay = cms.string("tightElectrons patMetShiftCorrected"),
                                   cut = cms.string('daughter(0).pt >20 && daughter(1).pt >20  && sqrt(2*daughter(0).pt*daughter(1).pt*(1-cos(daughter(0).phi-daughter(1).phi)))>0'),
                                   checkCharge = cms.bool(False),
       )
@@ -57,12 +61,13 @@ def WenuCollectionsPAT(process,isQCD,isHEEPID,isTransverseMassCut) :
       process.bestWToLepnuStep = AllPassFilter.clone()
 
 
-      process.WSequence = cms.Sequence(process.heepPatElectrons *
-                         process.tightElectronFilter *
-                         process.tightLeptonStep *
-                         process.WToEnu *
-                         process.bestWToEnu *
-                         process.bestWToLepnuStep
+      process.WSequence = cms.Sequence(process.heepPatElectrons*
+                          process.tightElectrons *
+                          process.tightElectronFilter *
+                          process.tightLeptonStep *
+                          process.WToEnu *
+                          process.bestWToEnu *
+                          process.bestWToLepnuStep
       )
 
       LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer, looseEleIdLabel)

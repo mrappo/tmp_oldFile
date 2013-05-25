@@ -91,7 +91,9 @@ process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
    # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_201602_497_68268345.root',
    # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_202016_935_952022882.root',
    # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_202973_241_260228320.root',
-    'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
+   #  'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
+   'file:/afs/cern.ch/user/r/rgerosa/work/CMSSW_5_3_3_patch3/src/SQWaT/TopPAT/test/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
+   #'file:/afs/cern.ch/user/r/rgerosa/work/CMSSW_5_3_3_patch3/src/SQWaT/TopPAT/test/pat_53X_ofile_el_GROUP1_201191_317_488053419.root',
  #'/store/user/lnujj/PatTuples_8TeV_53X/custodio/BulkG_WW_lvjj_c0p2_M1500-JHU-v1/SQWaT_PAT_53X_Summer12_v1/829f288d768dd564418efaaf3a8ab9aa/pat_53x_test_v03_4_1_jvg.root'
 ) )
 
@@ -104,7 +106,7 @@ process.HLTEle =cms.EDFilter("HLTHighLevel",
      HLTPaths = cms.vstring('HLT_Ele80_CaloIdVT_*'),
      eventSetupPathsKey = cms.string(''),
      andOr = cms.bool(True), #----- True = OR, False = AND between the HLTPaths
-     throw = cms.bool(False) # throw exception on unknown path names
+     throw = cms.bool(True) # throw exception on unknown path names
 )
 
 process.primaryVertex.src = cms.InputTag("goodOfflinePrimaryVertices");
@@ -143,7 +145,7 @@ process.VplusJets = cms.EDAnalyzer("VplusJetsAnalysis",
      srcMet = cms.InputTag("patMetShiftCorrected"),
      srcMetMVA = cms.InputTag("pfMEtMVA"),
      srcGen  = cms.InputTag("ak5GenJets"),
-     srcElectrons  = cms.InputTag("selectedPatElectronsPFlow"),
+     srcElectrons  = cms.InputTag("heepPatElectrons"),
      srcBeamSpot  = cms.InputTag("offlineBeamSpot"),
      srcRawMet  = cms.InputTag("patMETsPFlow"),
      srcgenMet  = cms.InputTag("genMetTrue"),
@@ -175,6 +177,8 @@ process.TFileService = cms.Service(
     fileName = cms.string( OutputFileName ),
     closeFileFast = cms.untracked.bool(False)
 )
+
+
 
 ##
 ## MET shift correction on the fly
@@ -248,9 +252,7 @@ else:
     process.myseq.remove ( process.GenJetPath)
     process.myseq.remove ( process.TagJetPath)
 
-
 process.p = cms.Path( process.myseq * process.VplusJets)
-
 
 
 

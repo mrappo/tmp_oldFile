@@ -45,7 +45,6 @@ def JetCollectionsPAT(process,isHEEPID):
                                               cut = cms.string('pt > 30.0'))
 
 
-  process.ak5cleaningPTCut = AllPassFilter.clone()
 
   process.ak5PFJetsLooseId = cms.EDFilter("PATJetRefSelector",
                                            src = cms.InputTag("ak5PFJetsClean"),
@@ -65,11 +64,10 @@ def JetCollectionsPAT(process,isHEEPID):
 
 
   ############################################
-  if isHEEPID: process.PFJetPath = cms.Sequence( process.ak5PFGoodJets + process.ak5PFJetsClean + process.ak5PFJetsLooseId +  process.ak5PFJetsLooseIdAll + process.ak5cleaningPTCut +
-                                    process.ak5PFJetsLooseIdVBFTag )
+  if isHEEPID: process.PFJetPath = cms.Sequence( process.ak5PFGoodJets + process.ak5PFJetsClean + process.ak5PFJetsLooseId +  process.ak5PFJetsLooseIdAll + process.ak5PFJetsLooseIdVBFTag )
 
   else : process.PFJetPath = cms.Sequence( process.ak5PFnoPUJets +process.ak5PFGoodJets + process.ak5PFJetsClean + process.ak5PFJetsLooseId +  process.ak5PFJetsLooseIdAll +
-                                           process.ak5cleaningPTCut + process.ak5PFJetsLooseIdVBFTag )
+                                           process.ak5PFJetsLooseIdVBFTag )
 
   ########################################################################
   #############  Jets in Monte Carlo  #############
