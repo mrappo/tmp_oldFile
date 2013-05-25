@@ -369,7 +369,7 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
         jetphi[j] = -10.;
         jete[j] = -1.;
 
-        jetIDflag[j] = 0 ;
+        jetIDflag[j] = -1. ;
 
         jetmass[j] = -1.;
         jetmass_tr[j] = -1.;
@@ -787,9 +787,9 @@ void ewk::GroomedJetFiller::fill(const edm::Event& iEvent) {
 
         bool isGoodJet = false ;
 
-        if(jetIDLabel_ == "loose" || jetIDLabel_ == "Loose" ) isGoodJet = (jetphotonEnergyFraction[j]<0.99 && jetneutralHadronEnergyFraction[j]>0.99 && jetconstituents[j]<1 &&
-                                                                        (jetchargedHadronEnergyFraction[j]>0 || abs(jeteta[j])>2.4) && (jetchargedMultiplicity[j]>0 || abs(jeteta[j])>2.4) &&
-									(jetelectronEnergyFraction[j]<0.99 || abs(jeteta[j])>2.4) && (jetmuonEnergyFraction[j]<0.99 ||  abs(jeteta[j])>2.4));
+        if(jetIDLabel_ == "loose" || jetIDLabel_ == "Loose" ) isGoodJet = (jetphotonEnergyFraction[j]<0.99 && jetneutralHadronEnergyFraction[j]<0.99 && jetconstituents[j]>1 &&
+                                                                          (jetchargedHadronEnergyFraction[j]>0 || abs(jeteta[j])>2.4) && (jetchargedMultiplicity[j]>0 || abs(jeteta[j])>2.4) &&
+									  (jetelectronEnergyFraction[j]<0.99 || abs(jeteta[j])>2.4) && (jetmuonEnergyFraction[j]<0.99 ||  abs(jeteta[j])>2.4));
 
         if(isGoodJet) jetIDflag[j] = 1 ;
         else jetIDflag[j] = 0 ;
