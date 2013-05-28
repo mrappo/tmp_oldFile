@@ -12,6 +12,11 @@ def WmunuCollectionsPAT(process,isQCD, isHEEPID,isTransverseMassCut):
 
  if isHEEPID:
 
+#    process.TunePMuon = cms.EDProducer("TunePMuonProducer",
+#                                        mulabel = cms.InputTag("selectedPatMuons")
+#                                       )
+
+
     process.tightMuons = cms.EDFilter("PATMuonSelector",
                                        src = cms.InputTag("selectedPatMuons"),
                                        cut = cms.string(""))
@@ -68,7 +73,8 @@ def WmunuCollectionsPAT(process,isQCD, isHEEPID,isTransverseMassCut):
 
  LooseLeptonVetoPAT(process,isQCD, isHEEPID, isMuonAnalyzer)
 
- process.WSequence = cms.Sequence(process.tightMuons *
+ process.WSequence = cms.Sequence(#process.TunePMuon*
+                         process.tightMuons *
                          process.tightMuonFilter *
                          process.tightLeptonStep *
                          process.WToMunu *
