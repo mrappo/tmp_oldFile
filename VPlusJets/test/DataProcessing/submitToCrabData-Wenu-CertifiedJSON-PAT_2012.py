@@ -1,0 +1,177 @@
+import os,sys
+import string, re
+from time import gmtime, localtime, strftime
+
+physMode   = "WenuJets_"
+ConfigFile = "../WenuJetsAnalysisPAT_cfg.py"
+DefTrig    = "'HLT_Ele_*','HLT_Ele27_*','HLT_Ele32_*'"
+isMC       = "isMC = False"
+isQCD      = "isQCD = False"
+isHEEPID   = "isHEEPID = True"
+isTransverseMassCut = "isTransverseMassCut = False"
+
+dataset    = ["/SingleElectron/jdamgov-SQWaT_PAT_53X_Run2012A-recover-06Aug2012-v1-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/ajkumar-SQWaT_PAT_53X_2012A-13Jul2012-v1-dee4c99a1b5d294b4043f483391f854a/USER",
+              "/SingleElectron/dimatteo-SQWaT_PAT_53X_2012B-13Jul2012-v1_part1-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/custodio-SQWaT_PAT_53X_2012B-13Jul2012-v1_part2-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/dimatteo-SQWaT_PAT_53X_2012C-24Aug2012-v1-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/ajkumar-SQWaT_PAT_53X_2012C-PromptReco-v2-dee4c99a1b5d294b4043f483391f854a/USER",
+              "/SingleElectron/ajkumar-SQWaT_PAT_53X_2012C-PromptReco-v2_pt2-dee4c99a1b5d294b4043f483391f854a/USER",
+              "/SingleElectron/ilyao-SQWaT_PAT_53X_SingleElectron_Run2012C-PromptReco-v2-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/jdamgov-SQWaT_PAT_53X_2012D_pt1-PromptReco-v1-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/jdamgov-SQWaT_PAT_53X_2012D_pt2-PromptReco-v1-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/jdamgov-SQWaT_PAT_53X_2012D_pt3-PromptReco-v1-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/custodio-SQWaT_PAT_53X_2012D-PromptReco-v1_p4-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/custodio-SQWaT_PAT_53X_2012D-PromptReco-v1_p5-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/ajkumar-SQWaT_PAT_53X_2012D-PromptReco-v1_p6-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/custodio-SQWaT_PAT_53X_2012D-PromptReco-v1_p7-3e4086321697e2c39c90dad08848274b/USER",
+              "/SingleElectron/custodio-SQWaT_PAT_53X_2012D-PromptReco-v1_p8-3e4086321697e2c39c90dad08848274b/USER"
+              ]
+channels   = ["SingleElectron_Run2012A-recover-06Aug2012-v1",
+              "SingleElectron_Run2012A-13Jul2012-v1",
+              "SingleElectron_Run2012B-13Jul2012-v1_part1",
+              "SingleElectron_Run2012B-13Jul2012-v1_part2",
+              "SingleElectron_Run2012C-24Aug2012-v1",
+              "SingleElectron_Run2012C-PromptReco-v2_part1",
+              "SingleElectron_Run2012C-PromptReco-v2_part2",
+              "SingleElectron_Run2012C-PromptReco-v2_part3",
+              "SingleElectron_Run2012D-PromptReco-v1_part1",
+              "SingleElectron_Run2012D-PromptReco-v1_part2",
+              "SingleElectron_Run2012D-PromptReco-v1_part3",
+              "SingleElectron_Run2012D-PromptReco-v1_part4",
+              "SingleElectron_Run2012D-PromptReco-v1_part5",
+              "SingleElectron_Run2012D-PromptReco-v1_part6",
+              "SingleElectron_Run2012D-PromptReco-v1_part7",
+              "SingleElectron_Run2012D-PromptReco-v1_part8"
+              ]
+trigname   = [
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'",
+               "'HLT_Ele80_CaloIdVT_*'"]
+RunRange   = [
+    "190782-190949",
+    "190645-196531",
+    "193834-195182",
+    "195182-196531",
+    "196531-198523",
+    "198524-200518",
+    "200518-202016",
+    "202016-203002",
+    "203002-205618",
+    "205618-206513",
+    "205333-206088",
+    "200961-206940",
+    "206744-207469",
+    "207469-207898",
+    "207888-208357",
+    "194480-208686"]
+JSON       = [
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt"  
+    ]
+
+condor     = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] # Total jobs 13 now
+MyResilientArea = "/uscms_data/d3/rgerosa1/CMSSW_5_3_5/src/ElectroWeakAnalysis/VPlusJets/test/DataProcessing/"+physMode
+
+## ------------------------------------------
+
+
+def changeMainConfigFile(trigpath,nowtrigname,MCFlag, isQCD, isHEEPID,isTransverseMassCut):
+    fin  = open(ConfigFile)
+    pset_cfg      = physMode + "py_" + trigpath + ".py"
+    outfile_root  = physMode + trigpath + ".root"
+    fout = open(pset_cfg,"w")
+    for line in fin.readlines():
+        if  line.find("isMC = True")!=-1:
+            line=line.replace("isMC = True",MCFlag)
+            
+        if  line.find("isQCD = True")!=-1: 
+            line=line.replace("isQCD = True",isQCD)
+        if  line.find("isQCD = False")!=-1:
+            line=line.replace("isQCD = False",isQCD)
+
+        if  line.find("isHEEPID = True")!=-1: 
+            line=line.replace("isHEEPID = True",isHEEPID)
+        if  line.find("isHEEPID = False")!=-1:
+            line=line.replace("isHEEPID = False",isHEEPID)
+            
+        if  line.find("isTransverseMassCut = True")!=-1: 
+            line=line.replace("isTransverseMassCut = True", isTransverseMassCut)
+        if  line.find("isTransverseMassCut = False")!=-1:
+            line=line.replace("isTransverseMassCut = False", isTransverseMassCut)
+
+        if line.find("WenuJetAnalysisntuple.root")!=-1:
+            line=line.replace("WenuJetAnalysisntuple.root",outfile_root)
+        if  line.find(DefTrig)!=-1:
+            line=line.replace(DefTrig,nowtrigname)
+        fout.write(line)
+    print pset_cfg + " has been written.\n"
+
+
+def changeCrabTemplateFile(outfile, index, nowJSON, nowRang):
+    fin  = open("crabTemplateData.cfg")
+    pset_cfg      = physMode + "py_" + outfile + ".py"
+    pset_crab     = physMode + "cb_" + outfile + ".cfg"
+    outfile_root  = physMode + outfile + ".root"
+    fout = open(pset_crab,"w")
+    for line in fin.readlines():
+        if  line.find("mydataset")!=-1:
+            line=line.replace("mydataset",dataset[index])
+            fout.write("\n")
+            fout.write("runselection="+RunRange[index]+"\n")
+            fout.write("lumi_mask="+nowJSON+"\n")
+        if line.find("myanalysis")!=-1:
+            line=line.replace("myanalysis",pset_cfg)    
+            fout.write("dbs_url = http://cmsdbsprod.cern.ch/cms_dbs_ph_analysis_02/servlet/DBSServlet"+"\n")
+        if  line.find("myrootfile")!=-1:
+            line=line.replace("myrootfile",outfile_root)
+        if  line.find("myresilient")!=-1:
+            line=line.replace("myresilient",MyResilientArea+nowRang+"_"+outfile)    
+        if line.find("glite")!=-1 and condor[index]!=0:
+            line=line.replace("glite", "condor")
+        if line.find("outputDir")!=-1 :
+            line=line.replace("outputDir",outfile)            
+        fout.write(line)        
+    if condor[index]!=0:
+       fout.write("ce_white_list = cmssrm.fnal.gov")
+        
+    print pset_crab + " has been written.\n"
+
+    
+####################
+## move along channels vector
+
+for i in range(len(channels)):
+    changeMainConfigFile(channels[i],trigname[i],isMC,isQCD, isHEEPID,isTransverseMassCut)
+    changeCrabTemplateFile(channels[i],i,JSON[i],RunRange[i])
+
+for i in range(len(channels)):
+    submitcommand = "crab -create -cfg " + physMode + "cb_" + channels[i] + ".cfg"
+    child   = os.system(submitcommand)
