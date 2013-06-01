@@ -114,9 +114,11 @@
 #include "ElectroWeakAnalysis/VPlusJets/interface/QGLikelihoodCalculator.h"
 #include "MMozer/powhegweight/interface/pwhg_wrapper.h"
 
-const TString inDataDir  = "/data2/rgerosa/SideBandClosureTest/MergedNtuples/ElectronChannel/";
+const TString inDataDir  = "/data2/rgerosa/SideBandClosureTest/MergedNtuples/ElectronChannel_GR_R_53_V10/";
+//const TString inDataDir  = "/data2/rgerosa/SideBandClosureTest/MergedNtuples/ElectronChannel_GR_P_V39_AN3/";
 const TString inQCDDir   = "/gwteray/users/gerosa/MergedNtuples_v1/";
-const TString outDataDir = "/data2/rgerosa/SideBandClosureTest/RD_Trees/ElectronChannel/";
+const TString outDataDir = "/data2/rgerosa/SideBandClosureTest/RD_Trees/GR_R_53_V10/";
+//const TString outDataDir = "/data2/rgerosa/SideBandClosureTest/RD_Trees/GR_P_V39_AN3/";
 
 const std::string fDir   = "EffTable2012/";
 const std::string fInterferenceDir   = "InterferenceTable2012/";
@@ -910,10 +912,10 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       }
 
       if (myflag == 20127001 || myflag == -400){
-	InitCounters( inDataDir + "WenuJetAnalysisntuple_195948_317_51753253.root", h_events, h_events_weighted);             
+	InitCounters( inDataDir + "WenuJetAnalysisntuple_195948_317_517532532.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
-	myChain->Add(                    inDataDir + "WenuJetAnalysisntuple_195948_317_51753253.root"); 
-	Init(myChain);Loop( h_events, h_events_weighted, 20126029,runflag, outDataDir + "RD_WenuJetAnalysisntuple_195948_317_51753253");
+	myChain->Add(                    inDataDir + "WenuJetAnalysisntuple_195948_317_517532532.root"); 
+	Init(myChain);Loop( h_events, h_events_weighted, 20126029,runflag, outDataDir + "RD_WenuJetAnalysisntuple_195948_317_517532532");
       }
       if (myflag == 20127002 || myflag == -400){
 	InitCounters( inDataDir + "WenuJetAnalysisntuple_202016_935_952022882.root", h_events, h_events_weighted);             
@@ -1719,13 +1721,13 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
 
    // For Efficiency Correction
-   EffTableLoader eleIdEff(         fDir + "scaleFactor-Run2012ABCD-GsfElectronToId.txt");
+   EffTableLoader eleIdEff(         fDir + "scaleFactor-Run2012ABCD-HEEPID_4_1.txt");
    EffTableLoader eleRecoEff(       fDir + "scaleFactor-Run2012ABCD-SCToElectron.txt");
-   EffTableLoader eleHLTEff(        fDir + "efficiency-Run2012ABCD-WP80ToHLTEle.txt");
-   EffTableLoader eleJ30Eff(        fDir + "FullyEfficient.txt");
-   EffTableLoader eleJ25NoJ30Eff(   fDir + "FullyEfficient_Jet2NoJet1.txt");
-   EffTableLoader eleMHTEff(        fDir + "FullyEfficient_MHT.txt");
-   EffTableLoader eleWMtEff(        fDir + "FullyEfficient.txt");
+   EffTableLoader eleHLTEff(        fDir + "efficiency-Run2012ABCD-HLT_Ele80_CaloIdVT.txt");
+   //EffTableLoader eleJ30Eff(        fDir + "FullyEfficient.txt");
+   //EffTableLoader eleJ25NoJ30Eff(   fDir + "FullyEfficient_Jet2NoJet1.txt");
+   //EffTableLoader eleMHTEff(        fDir + "FullyEfficient_MHT.txt");
+   //EffTableLoader eleWMtEff(        fDir + "FullyEfficient.txt");
 
    //For Interference Correction
    LOTable interferencetableggH400;
@@ -1954,9 +1956,11 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       effwt = 
          eleIdEff.GetEfficiency(W_electron_pt, W_electron_eta) * 
          eleRecoEff.GetEfficiency(W_electron_pt, W_electron_eta) *
-         eleHLTEff.GetEfficiency(W_electron_pt, W_electron_eta) *
-         eleMHTEff.GetEfficiency(event_met_pfmet, 0) *
-         eleWMtEff.GetEfficiency(W_mt, W_electron_eta);
+ 	 eleHLTEff.GetEfficiency(W_electron_pt, W_electron_eta);
+      //eleMHTEff.GetEfficiency(event_met_pfmet, 0) *
+      //  eleWMtEff.GetEfficiency(W_mt, W_electron_eta);
+
+      //      std::cout<<" Efficiency: pt "<<W_electron_pt<<" eta "<<W_electron_eta<<" trigger "<< eleHLTEff.GetEfficiency(W_electron_pt, W_electron_eta)<<" Reco "<<eleRecoEff.GetEfficiency(W_electron_pt, W_electron_eta)<<" Id "<<eleIdEff.GetEfficiency(W_electron_pt, W_electron_eta) <<std::endl;
 
       // Pile up Re-weighting
       if (wda>20120999) {
@@ -2094,7 +2098,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type0_met = (mup+b_nvp_type0_met).M();  W_pz_type0_met   = (mup+b_nvp_type0_met).Pz();   W_nu1_pz_type0_met = b_nvpz1_type0;  W_nu2_pz_type0_met = b_nvpz2_type0;
 
-      //std::cout<<" type0 : pz1 "<<W_nu1_pz_type0_met<<" pz2 : "<<W_nu2_pz_type0_met<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type0_met<<std::endl;
+      //std::cout<<" type0 : pz1 "<<W_nu1_pz_type0<<" pz2 : "<<W_nu2_pz_type0<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type0_met<<std::endl;
 
       if (b_metpz_type0.IsComplex()) {// if this is a complix, change MET                                                                                                                               
 	double nu_pt1 = b_metpz_type0.getPtneutrino(1);
@@ -2129,7 +2133,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type1_met = (mup+b_nvp_type1_met).M();  W_pz_type1_met   = (mup+b_nvp_type1_met).Pz();   W_nu1_pz_type1_met = b_nvpz1_type1;  W_nu2_pz_type1_met = b_nvpz2_type1;
 
-      //     std::cout<<" type1 : pz1 "<<W_nu1_pz_type1_met<<" pz2 : "<<W_nu2_pz_type1_met<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type1_met<<std::endl;
+      //std::cout<<" type1 : pz1 "<<W_nu1_pz_type1<<" pz2 : "<<W_nu2_pz_type1<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type1_met<<std::endl;
 
       if (b_metpz_type1.IsComplex()) {// if this is a complix, change MET                                                                                                                               
 	double nu_pt1 = b_metpz_type1.getPtneutrino(1);
@@ -2144,7 +2148,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type1 = (mup+b_nvp_type1_met).M();  W_pz_type1   = (mup+b_nvp_type1_met).Pz();   W_nu1_pz_type1 = b_nvpz1_type1;  W_nu2_pz_type1 = b_nvpz2_type1;
 
-     // std::cout<<" type1 : pz1 "<<W_nu1_pz_type1<<" pz2 : "<<W_nu2_pz_type1<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type1<<std::endl;
+      //std::cout<<" type1 : pz1 "<<W_nu1_pz_type1<<" pz2 : "<<W_nu2_pz_type1<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type1<<std::endl;
 
       METzCalculator b_metpz_type2;
 
@@ -2165,7 +2169,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type2_met = (mup+b_nvp_type2_met).M();  W_pz_type2_met   = (mup+b_nvp_type2_met).Pz();   W_nu1_pz_type2_met = b_nvpz1_type2;  W_nu2_pz_type2_met = b_nvpz2_type2;
 
-      //      std::cout<<" type2 : pz1 "<<W_nu1_pz_type2_met<<" pz2 : "<<W_nu2_pz_type2_met<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type2_met<<std::endl;
+      //std::cout<<" type2 : pz1 "<<W_nu1_pz_type2<<" pz2 : "<<W_nu2_pz_type2<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type2_met<<std::endl;
 
       if (b_metpz_type2.IsComplex()) {// if this is a complix, change MET                                                                                                                               
 
@@ -2181,7 +2185,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type2 = (mup+b_nvp_type2).M();  W_pz_type2   = (mup+b_nvp_type2).Pz();   W_nu1_pz_type2 = b_nvpz1_type2;  W_nu2_pz_type2 = b_nvpz2_type2;
 
-      // std::cout<<" type2 : pz1 "<<W_nu1_pz_type2<<" pz2 : "<<W_nu2_pz_type2<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type2<<std::endl;
+      //std::cout<<" type2 : pz1 "<<W_nu1_pz_type2<<" pz2 : "<<W_nu2_pz_type2<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type2<<std::endl;
 
       METzCalculator b_metpz_type3;
 
@@ -2201,7 +2205,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type3_met = (mup+b_nvp_type3).M();  W_pz_type3_met   = (mup+b_nvp_type3).Pz();   W_nu1_pz_type3_met = b_nvpz1_type3;  W_nu2_pz_type3_met = b_nvpz2_type3;
 
-      //     std::cout<<" type3 : pz1 "<<W_nu1_pz_type3_met<<" pz2 : "<<W_nu2_pz_type3_met<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type3_met<<std::endl;
+      //std::cout<<" type3 : pz1 "<<W_nu1_pz_type3<<" pz2 : "<<W_nu2_pz_type3<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type3_met<<std::endl;
 
       if (b_metpz_type3.IsComplex()) {// if this is a complix, change MET                                                                                                                               
 	double nu_pt1 = b_metpz_type3.getPtneutrino(1);
@@ -2215,7 +2219,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type3 = (mup+b_nvp_type3_met).M();  W_pz_type3   = (mup+b_nvp_type3_met).Pz();   W_nu1_pz_type3 = b_nvpz1_type3;  W_nu2_pz_type3 = b_nvpz2_type3;
 
-      // std::cout<<" type3 : pz1 "<<W_nu1_pz_type3<<" pz2 : "<<W_nu2_pz_type3<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type3<<std::endl;
+      //std::cout<<" type3 : pz1 "<<W_nu1_pz_type3<<" pz2 : "<<W_nu2_pz_type3<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type3<<std::endl;
       
       
       TLorentzVector lepwtransversep = mup + b_metpt;
@@ -2463,10 +2467,11 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
 	for(int i = 0; i < numPFCorJets ; i++){
  
-         if(iFlag !=0) break; 
+	 if(iFlag !=0) break; 
 	 
 	 TobecSelection = ( fabs(GroomedJet_CA8_eta[i]) < 1.0 || fabs(GroomedJet_CA8_eta[i]) > 1.5 || (GroomedJet_CA8_jetchargedMultiplicity[i]/GroomedJet_CA8_jetneutralMultiplicity[i] < 2.0));
-	 // std::cout<<" i "<<i<<" pt "<<GroomedJet_CA8_pt[i]<<" eta "<<fabs(GroomedJet_CA8_eta[i])<<" tobec "<<TobecSelection<<" iFlag "<<iFlag<<std::endl;
+	 //	 std::cout<<" i "<<i<<" pt "<<GroomedJet_CA8_pt[i]<<" eta "<<fabs(GroomedJet_CA8_eta[i])<<" tobec "<<GroomedJet_CA8_jetchargedMultiplicity[i]/GroomedJet_CA8_jetneutralMultiplicity[i]<<" iFlag "<<iFlag<<" jet id "<<GroomedJet_CA8_jetIDflag[i]<<std::endl;
+
 
 	 if(GroomedJet_CA8_pt[i] > boostedWJpt && fabs(GroomedJet_CA8_eta[i]) < 2.4 && GroomedJet_CA8_jetIDflag[i] == 1 && iFlag==0){
 	     iFlag++ ;
@@ -2548,32 +2553,32 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                if(tmpdelatR > 0.8) GroomedJet_numberjets = GroomedJet_numberjets + 1;
                
 
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR>0.8)//Veto the AK5 jet in the CA8 jet cone for ttbar control region
                {
                   GroomedJet_numberbjets_csvm = GroomedJet_numberbjets_csvm + 1;
                }
 
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl && tmpdelatR>0.8)//Veto the AK5 jet in the CA8 jet cone for ttbar control region
                {
                   GroomedJet_numberbjets_csvl = GroomedJet_numberbjets_csvl + 1;
                }
 
-               if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
+               if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR>0.8)//Veto the AK5 jet in the CA8 jet for ttbar control region
                {
                   GroomedJet_numberbjets_ssvhem = GroomedJet_numberbjets_ssvhem + 1;
                }
 
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl && tmpdelatR>0.8)//ttbar veto
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl)//ttbar veto
                {
                   GroomedJet_numberbjets_csvl_veto = GroomedJet_numberbjets_csvl_veto + 1;
                }
 
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR>0.8)//ttbar veto
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm)//ttbar veto
                {
                   GroomedJet_numberbjets_csvm_veto = GroomedJet_numberbjets_csvm_veto + 1;
                }
 
-               if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR>0.8)//ttbar veto
+               if(JetPFCor_bDiscriminator[i] > btssv)//ttbar veto
                {
                   GroomedJet_numberbjets_ssvhem_veto = GroomedJet_numberbjets_ssvhem_veto + 1;
                }
@@ -2700,6 +2705,13 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
          boostedW_lvj_phi_type2    = (mup+b_nvp_type2+ca8jetp4).Phi();
          boostedW_lvj_m_type2      = (mup+b_nvp_type2+ca8jetp4).M();
          boostedW_lvj_y_type2      = (mup+b_nvp_type2+ca8jetp4).Rapidity();
+
+         boostedW_lvj_e_type2_met      = (mup+b_nvp_type2_met+ca8jetp4).E();
+         boostedW_lvj_pt_type2_met     = (mup+b_nvp_type2_met+ca8jetp4).Pt();
+         boostedW_lvj_eta_type2_met    = (mup+b_nvp_type2_met+ca8jetp4).Eta();
+         boostedW_lvj_phi_type2_met    = (mup+b_nvp_type2_met+ca8jetp4).Phi();
+         boostedW_lvj_m_type2_met      = (mup+b_nvp_type2_met+ca8jetp4).M();
+         boostedW_lvj_y_type2_met      = (mup+b_nvp_type2_met+ca8jetp4).Rapidity();
 
          boostedW_lvj_e_type3      = (mup+b_nvp_type3+ca8jetp4).E();
          boostedW_lvj_pt_type3     = (mup+b_nvp_type3+ca8jetp4).Pt();

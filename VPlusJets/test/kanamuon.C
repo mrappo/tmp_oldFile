@@ -115,9 +115,11 @@
 #include "ElectroWeakAnalysis/VPlusJets/interface/QGLikelihoodCalculator.h"
 #include "MMozer/powhegweight/interface/pwhg_wrapper.h"
 
-const TString inDataDir  = "/data2/rgerosa/SideBandClosureTest/MergedNtuples/MuonChannel/";
+//const TString inDataDir  = "/data2/rgerosa/SideBandClosureTest/MergedNtuples/MuonChannel_GR_R_53_V10/";
+const TString inDataDir  = "/data2/rgerosa/SideBandClosureTest/MergedNtuples/MuonChannel_GR_P_V39_AN3/";
 const TString inQCDDir   = "/gwteray/users/gerosa/MergedNtuples_v1/";
-const TString outDataDir = "/data2/rgerosa/SideBandClosureTest/RD_Trees/MuonChannel/";
+//const TString outDataDir = "/data2/rgerosa/SideBandClosureTest/RD_Trees/MuonChannel_GR_R_53_V10/";
+const TString outDataDir = "/data2/rgerosa/SideBandClosureTest/RD_Trees/GR_P_V39_AN3/";
 
 const std::string fDir   = "EffTable2012/";
 const std::string fInterferenceDir   = "InterferenceTable2012/";
@@ -158,7 +160,6 @@ void kanamuon::myana(double myflag, bool isQCD, int runflag)
    }
 
    TChain * myChain;
-
    // 2011 data
    if (myflag == 20120000 || myflag == -100){
       myChain = new TChain("WJet");  
@@ -820,6 +821,37 @@ void kanamuon::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 20126029,runflag, outDataDir + "RD_mu_BulkG_WW_lvjj_c0p2_M2500");
       }
 
+      // Single event Test
+
+      if (myflag == 20127001 || myflag == -400){
+         InitCounters( inDataDir + "WmunuJetAnalysisntuple_194712_559_405404310.root", h_events, h_events_weighted);             
+         myChain = new TChain("WJet");  
+         myChain->Add(                    inDataDir + "WmunuJetAnalysisntuple_194712_559_405404310.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 20126029,runflag, outDataDir + "RD_WmunuJetAnalysisntuple_194712_559_405404310");
+      }
+
+      if (myflag == 20127002 || myflag == -400){
+         InitCounters( inDataDir + "WmunuJetAnalysisntuple_204544_102_152417542.root", h_events, h_events_weighted);             
+         myChain = new TChain("WJet");  
+         myChain->Add(                    inDataDir + "WmunuJetAnalysisntuple_204544_102_152417542.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 20126029,runflag, outDataDir + "RD_WmunuJetAnalysisntuple_204544_102_152417542");
+      }
+
+      if (myflag == 20127003 || myflag == -400){
+         InitCounters( inDataDir + "WmunuJetAnalysisntuple_195930_83_62880579.root", h_events, h_events_weighted);             
+         myChain = new TChain("WJet");  
+         myChain->Add(                    inDataDir + "WmunuJetAnalysisntuple_195930_83_62880579.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 20126029,runflag, outDataDir + "RD_WmunuJetAnalysisntuple_195930_83_62880579");
+      }
+
+      if (myflag == 20127004 || myflag == -400){
+         InitCounters( inDataDir + "WmunuJetAnalysisntuple_208487_118_209515269.root", h_events, h_events_weighted);             
+         myChain = new TChain("WJet");  
+         myChain->Add(                    inDataDir + "WmunuJetAnalysisntuple_208487_118_209515269.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 20126029,runflag, outDataDir + "RD_WmunuJetAnalysisntuple_208487_118_209515269");
+      }
+
+
    }
 
 }
@@ -1209,14 +1241,14 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type3 = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type3", &GroomedJet_CA8_deltaphi_METca8jet_type3,"GroomedJet_CA8_deltaphi_METca8jet_type3/F");
    TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type3   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type3", &GroomedJet_CA8_deltaphi_Vca8jet_type3, "GroomedJet_CA8_deltaphi_Vca8jet_type3/F");
 
-   TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type0_met = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type0_met", &GroomedJet_CA8_deltaphi_METca8jet_type0_met,"GroomedJet_CA8_delt\aphi_METca8jet_type0_met/F");
-   TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type0_met   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type0_met", &GroomedJet_CA8_deltaphi_Vca8jet_type0_met, "GroomedJet_CA8_deltaph\i_Vca8jet_type0_met/F");
-   TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type1_met = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type1_met", &GroomedJet_CA8_deltaphi_METca8jet_type1_met,"GroomedJet_CA8_delt\aphi_METca8jet_type1_met/F");
-   TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type1_met   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type1_met", &GroomedJet_CA8_deltaphi_Vca8jet_type1_met, "GroomedJet_CA8_deltaph\i_Vca8jet_type1_met/F");
-   TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type2_met = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type2_met", &GroomedJet_CA8_deltaphi_METca8jet_type2_met,"GroomedJet_CA8_delt\aphi_METca8jet_type2_met/F");
-   TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type2_met   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type2_met", &GroomedJet_CA8_deltaphi_Vca8jet_type2_met, "GroomedJet_CA8_deltaph\i_Vca8jet_type2_met/F");
-   TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type3_met = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type3_met", &GroomedJet_CA8_deltaphi_METca8jet_type3_met,"GroomedJet_CA8_delt\aphi_METca8jet_type3_met/F");
-   TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type3_met   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type3_met", &GroomedJet_CA8_deltaphi_Vca8jet_type3_met, "GroomedJet_CA8_deltaph\i_Vca8jet_type3_met/F");
+   TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type0_met = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type0_met", &GroomedJet_CA8_deltaphi_METca8jet_type0_met,"GroomedJet_CA8_deltaphi_METca8jet_type0_met/F");
+   TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type0_met   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type0_met", &GroomedJet_CA8_deltaphi_Vca8jet_type0_met, "GroomedJet_CA8_deltaphi_Vca8jet_type0_met/F");
+   TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type1_met = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type1_met", &GroomedJet_CA8_deltaphi_METca8jet_type1_met,"GroomedJet_CA8_deltaphi_METca8jet_type1_met/F");
+   TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type1_met   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type1_met", &GroomedJet_CA8_deltaphi_Vca8jet_type1_met, "GroomedJet_CA8_deltaphi_Vca8jet_type1_met/F");
+   TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type2_met = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type2_met", &GroomedJet_CA8_deltaphi_METca8jet_type2_met,"GroomedJet_CA8_deltaphi_METca8jet_type2_met/F");
+   TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type2_met   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type2_met", &GroomedJet_CA8_deltaphi_Vca8jet_type2_met, "GroomedJet_CA8_deltaphi_Vca8jet_type2_met/F");
+   TBranch *branch_GroomedJet_CA8_deltaphi_METca8jet_type3_met = newtree->Branch("GroomedJet_CA8_deltaphi_METca8jet_type3_met", &GroomedJet_CA8_deltaphi_METca8jet_type3_met,"GroomedJet_CA8_deltaphi_METca8jet_type3_met/F");
+   TBranch *branch_GroomedJet_CA8_deltaphi_Vca8jet_type3_met   = newtree->Branch("GroomedJet_CA8_deltaphi_Vca8jet_type3_met", &GroomedJet_CA8_deltaphi_Vca8jet_type3_met, "GroomedJet_CA8_deltaphi_Vca8jet_type3_met/F");
 
    //Some More Variables To be Added in the Reduced Tree Or used in the TMVA Training
    Float_t GroomedJet_CA8_rcores01 = -1, GroomedJet_CA8_rcores02 = -1, GroomedJet_CA8_rcores03 = -1, GroomedJet_CA8_rcores04 = -1;
@@ -1584,7 +1616,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
    // For Efficiency Correction
    EffTableLoader muIDEff(            fDir + "scaleFactor-Run2012ABCD-RecoToIso.txt");
-   EffTableLoader muHLTEff(           fDir + "efficiency-Run2012ABCD-IsoToIsoMuHLT.txt");
+   EffTableLoader muHLTEff(           fDir + "efficiency-Run2012ABCD-HLT_Mu40_eta2p1.txt");
    EffTableLoader muExoEff(           fDir + "scaleFactor-Run2012ABCD-HighPTMuonID.txt");
 
    //For Interference Correction
@@ -1808,9 +1840,11 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       // Calculate efficiency
       effwt = 
-         muIDEff.GetEfficiency(W_muon_pt, W_muon_eta) * 
+	//         muIDEff.GetEfficiency(W_muon_pt, W_muon_eta) * 
          muHLTEff.GetEfficiency(W_muon_pt, W_muon_eta) *
 	 muExoEff.GetEfficiency(W_muon_pt, W_muon_eta) ;
+
+      //      std::cout<<" Efficiency: Pt "<<W_muon_pt<<" eta "<<W_muon_eta<<" trigger "<<muHLTEff.GetEfficiency(W_muon_pt, W_muon_eta)<<" id exo "<<muExoEff.GetEfficiency(W_muon_pt, W_muon_eta)<<std::endl;
 
      // Pile up Re-weighting
       if (wda>20120999) {
@@ -1963,8 +1997,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type0_met = (b_nvp_type0_met+mup).M();  W_pz_type0_met   = (mup+b_nvp_type0_met).Pz();   W_nu1_pz_type0_met = b_nvpz1_type0;  W_nu2_pz_type0_met = b_nvpz2_type0;
 
-      //      std::cout<<" type0_met : pz1 "<<b_nvpz1_type0_met<<" pz2 "<<b_nvpz2_type0_met<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type0_met<<std::endl;
-
       if (b_metpz_type0.IsComplex()) {// if this is a complix, change MET
 
          double nu_pt1 = b_metpz_type0.getPtneutrino(1);
@@ -1978,8 +2010,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
 
       W_mass_type0 = (b_nvp_type0+mup).M();  W_pz_type0   = (mup+b_nvp_type0).Pz();   W_nu1_pz_type0 = b_nvpz1_type0;  W_nu2_pz_type0 = b_nvpz2_type0;
-
-      //      std::cout<<" type0 : pz1 "<<b_nvpz1_type0<<" pz2 "<<b_nvpz2_type0<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type0<<std::endl;
 
       METzCalculator b_metpz_type1;
 
@@ -1997,8 +2027,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type1_met = (mup+b_nvp_type1_met).M();  W_pz_type1_met  = (mup+b_nvp_type1_met).Pz();   W_nu1_pz_type1_met = b_nvpz1_type1;  W_nu2_pz_type1_met = b_nvpz2_type1;
 
-      //      std::cout<<" type1 : pz1 "<<b_nvpz1_type1_met<<" pz2 "<<b_nvpz2_type1_met<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type1_met<<std::endl;
-
       if(!b_metpz_type1.IsComplex()) isReal_type1=1; 
 
       if (b_metpz_type1.IsComplex()) {// if this is a complix, change MET
@@ -2013,8 +2041,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       }
 
       W_mass_type1 = (mup+b_nvp_type1).M();  W_pz_type1   = (mup+b_nvp_type1).Pz();   W_nu1_pz_type1 = b_nvpz1_type1;  W_nu2_pz_type1 = b_nvpz2_type1;
-
-      //      std::cout<<" type1 : pz1 "<<b_nvpz1_type1<<" pz2 "<<b_nvpz2_type1<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type1<<std::endl;
 
       METzCalculator b_metpz_type2;
 
@@ -2032,7 +2058,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type2_met = (mup+b_nvp_type2_met).M();  W_pz_type2_met  = (mup+b_nvp_type2_met).Pz();   W_nu1_pz_type2_met = b_nvpz1_type2;  W_nu2_pz_type2_met = b_nvpz2_type2;
 
-      //      std::cout<<" type2 : pz1 "<<b_nvpz1_type2_met<<" pz2 "<<b_nvpz2_type2_met<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type2_met<<std::endl;
 
       if(!b_metpz_type2.IsComplex()) isReal_type2=1; 
 
@@ -2048,8 +2073,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       }
 
       W_mass_type2 = (mup+b_nvp_type2).M();  W_pz_type2   = (mup+b_nvp_type2).Pz();   W_nu1_pz_type2 = b_nvpz1_type2;  W_nu2_pz_type2 = b_nvpz2_type2;
-
-      //      std::cout<<" type2 : pz1 "<<b_nvpz1_type2<<" pz2 "<<b_nvpz2_type2<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type2<<std::endl;
 
       METzCalculator b_metpz_type3;
 
@@ -2068,8 +2091,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type3_met = (mup+b_nvp_type3_met).M();  W_pz_type3_met  = (mup+b_nvp_type3_met).Pz();   W_nu1_pz_type3_met = b_nvpz1_type3;  W_nu2_pz_type3_met = b_nvpz2_type3;
 
-      //      std::cout<<" type3 : pz1 "<<b_nvpz1_type3_met<<" pz2 "<<b_nvpz2_type3_met<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type3_met<<std::endl;
-
       if(!b_metpz_type3.IsComplex()) isReal_type3=1; 
 
       if (b_metpz_type3.IsComplex()) {// if this is a complix, change MET
@@ -2085,14 +2106,12 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       W_mass_type3 = (mup+b_nvp_type3).M();  W_pz_type3   = (mup+b_nvp_type3).Pz();   W_nu1_pz_type3 = b_nvpz1_type3;  W_nu2_pz_type3 = b_nvpz2_type3;
 
-      //      std::cout<<" type3 : pz1 "<<b_nvpz1_type3<<" pz2 "<<b_nvpz2_type3<<" W_mass "<<W_mass<<" W_mass new "<<W_mass_type3<<std::endl;
-
       //###########Begin Boosted W analysis Flag ###################################
       //Event Flag  Passed The Boosted W analysis Leptonic W Pt > 150GeV
       TLorentzVector lepwtransversep = mup + b_metpt;
       float lepwtransversept = lepwtransversep.Pt();
 
-      //isgengdboostedWevt = 0; //Initialized Already
+      isgengdboostedWevt = 0; //Initialized Already
 
       if(   GroomedJet_CA8_pt[0] > boostedWJpt 
             && W_muon_pt>25.
@@ -2291,14 +2310,14 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             if (JetPFCor_bDiscriminatorCSV[3]>btcsvm) { nbjet++; } else { nbnot++; if (nbnot==1) Aj=3; if (nbnot==2) Bj=3;}
 
             if (nbjet==2 && nbnot==2 && Aj!=-999 && Bj!=-999){
-	       TLorentzVector  mup; mup.SetPtEtaPhiE(W_muon_pt, W_muon_eta, W_muon_phi, W_muon_e);
+	       TLorentzVector  mup1; mup1.SetPtEtaPhiE(W_muon_pt, W_muon_eta, W_muon_phi, W_muon_e);
 	       TLorentzVector  ajp, bjp;  
                ajp.SetPtEtaPhiE(jess * GroomedJet_AK5_pt[Aj], GroomedJet_AK5_eta[Aj], GroomedJet_AK5_phi[Aj], jess * GroomedJet_AK5_e[Aj]  );
                bjp.SetPtEtaPhiE(jess * GroomedJet_AK5_pt[Bj], GroomedJet_AK5_eta[Bj], GroomedJet_AK5_phi[Bj], jess * GroomedJet_AK5_e[Bj]  );
                TopWm   = (ajp+bjp).M(); 
 
                TLorentzVector fit_mup(0,0,0,0), fit_nvp(0,0,0,0), fit_ajp(0,0,0,0), fit_bjp(0,0,0,0) ; Int_t tmpa =0, tmpb=0;
-               doKinematicFit( 1, mup, b_nvp_type0, ajp, bjp,  fit_mup, fit_nvp, fit_ajp, fit_bjp, Tchi2, tmpa, tmpb);
+               doKinematicFit( 1, mup1, b_nvp_type0, ajp, bjp,  fit_mup, fit_nvp, fit_ajp, fit_bjp, Tchi2, tmpa, tmpb);
             }
          }
       }
@@ -2339,7 +2358,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 	 if(iFlag !=0) break;
 
    	 TobecSelection = ( fabs(GroomedJet_CA8_eta[i]) < 1.0 || fabs(GroomedJet_CA8_eta[i]) > 1.5 || (GroomedJet_CA8_jetchargedMultiplicity[i]/GroomedJet_CA8_jetneutralMultiplicity[i] < 2.0));
-	 //std::cout<<" i "<<i<<" pt "<<GroomedJet_CA8_pt[i]<<" eta "<<fabs(GroomedJet_CA8_eta[i])<<" tobec "<<TobecSelection<<" iFlag "<<iFlag<<std::endl;                                      
+	 //	 std::cout<<" i "<<i<<" pt "<<GroomedJet_CA8_pt[i]<<" eta "<<fabs(GroomedJet_CA8_eta[i])<<" charged/neutral "<<GroomedJet_CA8_jetchargedMultiplicity[i]/GroomedJet_CA8_jetneutralMultiplicity[i]<<" JetIDFlag "<<GroomedJet_CA8_jetIDflag[i]<<std::endl;            
 
 	 if(GroomedJet_CA8_pt[i] > boostedWJpt && fabs(GroomedJet_CA8_eta[i]) < 2.4 && GroomedJet_CA8_jetIDflag[i] == 1 && iFlag==0){
 	    iFlag++ ;
@@ -2350,6 +2369,8 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
        if(TobecSelection) GroomedJet_CA8_tobecFlag = 1 ;
        else GroomedJet_CA8_tobecFlag = 0 ;
+
+       //       std::cout<<" Tobec Selection  "<<isWCandidate<<" "<<GroomedJet_CA8_tobecFlag<<std::endl;
 
        //CA8 Jet And we also need to check the AK7 Jet
        TLorentzVector ca8jetp4;
@@ -2421,40 +2442,38 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                   GroomedJet_numberjets = GroomedJet_numberjets + 1;
                }
 
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8 )//Veto the AK5 jet in the CA8 jet cone for ttbar control region
                {
                   GroomedJet_numberbjets_csvm = GroomedJet_numberbjets_csvm + 1;
                }
 
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl && tmpdelatR > 0.8 )//Veto the AK5 jet in the CA8 jet cone for ttbar control region
                {
                   GroomedJet_numberbjets_csvl = GroomedJet_numberbjets_csvl + 1;
                }
 
-               if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
+               if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR > 0.8 )//Veto the AK5 jet in the CA8 jet cone for ttbar control region
                {
                   GroomedJet_numberbjets_ssvhem = GroomedJet_numberbjets_ssvhem + 1;
                }
 
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl && tmpdelatR > 0.8)//ttbar veto
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl)//ttbar veto
                {
                   GroomedJet_numberbjets_csvl_veto = GroomedJet_numberbjets_csvl_veto + 1;
                }
 
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8)//ttbar veto
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm)//ttbar veto
                {
                   GroomedJet_numberbjets_csvm_veto = GroomedJet_numberbjets_csvm_veto + 1;
                }
 
-               if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR > 0.8)//ttbar veto
+               if(JetPFCor_bDiscriminator[i] > btssv)//ttbar veto
                {
                   GroomedJet_numberbjets_ssvhem_veto = GroomedJet_numberbjets_ssvhem_veto + 1;
                }
             }
          }
 
-         //if(GroomedJet_CA8_pt[0] > boostedWJpt && GroomedJet_CA8_pt[1] < boostedWJpt && deltaR_lca8jet > 1.0 && deltaphi_METca8jet > 0.4 && deltaphi_Vca8jet > 2.0) 
-         //if(deltaR_lca8jet > 1.0 && deltaphi_METca8jet > 0.4 && deltaphi_Vca8jet > 2.0) 
          if(deltaR_lca8jet > TMath::Pi()/ 2.0 && deltaphi_METca8jet_type0_met > 2.0 && deltaphi_Vca8jet_type0_met > 2.0)//Tighter Angular Cuts 
          {
             ggdboostedWevt = 1;
@@ -3026,6 +3045,8 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_GroomedJet_CA8_rcores10->Fill();
       branch_GroomedJet_CA8_rcores11->Fill();
 
+      branch_GroomedJet_CA8_tobecFlag->Fill();
+
       branch_GroomedJet_CA8_ptcores01->Fill();
       branch_GroomedJet_CA8_ptcores02->Fill();
       branch_GroomedJet_CA8_ptcores03->Fill();
@@ -3109,12 +3130,12 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_boostedW_lvj_m_type3->Fill();
       branch_boostedW_lvj_y_type3->Fill();
 
-      branch_boostedW_lvj_e_type3->Fill();
-      branch_boostedW_lvj_pt_type3->Fill();
-      branch_boostedW_lvj_eta_type3->Fill();
-      branch_boostedW_lvj_phi_type3->Fill();
-      branch_boostedW_lvj_m_type3->Fill();
-      branch_boostedW_lvj_y_type3->Fill();
+      branch_boostedW_lvj_e_type3_met->Fill();
+      branch_boostedW_lvj_pt_type3_met->Fill();
+      branch_boostedW_lvj_eta_type3_met->Fill();
+      branch_boostedW_lvj_phi_type3_met->Fill();
+      branch_boostedW_lvj_m_type3_met->Fill();
+      branch_boostedW_lvj_y_type3_met->Fill();
 
       branch_boostedW_wjj_ang_ha->Fill();
       branch_boostedW_wjj_ang_hb->Fill();

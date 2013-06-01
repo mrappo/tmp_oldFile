@@ -250,7 +250,7 @@ public :
    Float_t         GroomedJet_AK5_eta[6];
    Float_t         GroomedJet_AK5_phi[6];
    Float_t         GroomedJet_AK5_e[6];
-   Float_t         GroomedJet_AK5_jetIDflag[6];
+   Int_t           GroomedJet_AK5_jetIDflag[6];
    Float_t         GroomedJet_AK5_pt_tr_uncorr[6];
    Float_t         GroomedJet_AK5_pt_tr[6];
    Float_t         GroomedJet_AK5_eta_tr[6];
@@ -326,7 +326,7 @@ public :
    Float_t         GroomedJet_AK7_eta_tr[6];
    Float_t         GroomedJet_AK7_phi_tr[6];
    Float_t         GroomedJet_AK7_e_tr[6];
-   Float_t         GroomedJet_AK7_jetIDflag[6];
+   Int_t           GroomedJet_AK7_jetIDflag[6];
    Float_t         GroomedJet_AK7_pt_ft_uncorr[6];
    Float_t         GroomedJet_AK7_pt_ft[6];
    Float_t         GroomedJet_AK7_eta_ft[6];
@@ -407,7 +407,7 @@ public :
    Float_t         GroomedJet_CA8_eta_pr[6];
    Float_t         GroomedJet_CA8_phi_pr[6];
    Float_t         GroomedJet_CA8_e_pr[6];
-   Float_t         GroomedJet_CA8_jetIDflag[6];
+   Int_t           GroomedJet_CA8_jetIDflag[6];
    Float_t         GroomedJet_CA8_prsubjet1_px[6];
    Float_t         GroomedJet_CA8_prsubjet1_py[6];
    Float_t         GroomedJet_CA8_prsubjet1_pz[6];
