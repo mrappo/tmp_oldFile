@@ -79,10 +79,12 @@ void HEEPElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & 
  
    int eleCutCode = ele.userInt("HEEPId");
    Double_t et = ele.caloEnergy()*sin(ele.p4().theta());
-   Double_t Eta = fabs(ele.eta());
+   Double_t scEta = fabs(ele.superCluster()->eta());
 
-   if(eleCutCode == 0 && et > 90 && fabs(ele.eta()) < 2.5 && !(Eta > 1.4442 && Eta < 1.566) && fabs(ele.phi()) < 3.2 && applyTightID_ ) isPassing[eleNr]=true; 
-   if(eleCutCode == 0 && et > 35 && fabs(ele.eta()) < 2.5 && !(Eta > 1.4442 && Eta < 1.566) && fabs(ele.phi()) < 3.2 && applyLooseID_ ) isPassing[eleNr]=true;
+   if(scEta >= 1.4442 && scEta <= 1.566) continue ;
+
+   if(eleCutCode == 0 && et > 90 && fabs(ele.eta()) < 2.5 && fabs(ele.phi()) < 3.2 && applyTightID_ ) isPassing[eleNr]=true; 
+   if(eleCutCode == 0 && et > 35 && fabs(ele.eta()) < 2.5 && fabs(ele.phi()) < 3.2 && applyLooseID_ ) isPassing[eleNr]=true;
   }
 
   unsigned int counter=0;
