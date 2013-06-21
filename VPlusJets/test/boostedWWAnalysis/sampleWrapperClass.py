@@ -152,6 +152,10 @@ class sampleWrapperClass:
         jet_mass_pr_       = array( 'f', [ 0. ] );
         jet_pt_pr_         = array( 'f', [ 0. ] );
         jet_charge_        = array( 'f', [ 0. ] );
+        jet_charge_k05_    = array( 'f', [ 0. ] );
+        jet_charge_k07_    = array( 'f', [ 0. ] );
+        jet_charge_k10_    = array( 'f', [ 0. ] );
+
         ungroomed_jet_eta_ = array( 'f', [ 0. ] );
         ungroomed_jet_pt_  = array( 'f', [ 0. ] );
         ungroomed_jet_phi_ = array( 'f', [ 0. ] );
@@ -235,8 +239,13 @@ class sampleWrapperClass:
         jet_grsens_tr_ = array( 'f', [ 0. ] );
         jet_massdrop_pr_ = array( 'f', [ 0. ] );    
         jet_qjetvol_ = array( 'f', [ 0. ] ); 
+
         jet_tau2tau1_ = array( 'f', [ 0. ] );     
-        jet_jetconstituents_ = array( 'f', [ 0. ] );     
+        jet_tau2tau1_exkT_ = array( 'f', [ 0. ] );     
+        jet_tau2tau1_pr_ = array( 'f', [ 0. ] );
+        jet_GeneralizedECF_ = array( 'f', [ 0. ] );
+        
+        jet_jetconstituents_  = array( 'f', [ 0. ] );     
         
         jet_rcore4_ = array( 'f', [ 0. ] );
         jet_rcore5_ = array( 'f', [ 0. ] );
@@ -326,7 +335,11 @@ class sampleWrapperClass:
 
         otree.Branch("jet_pt_pr", jet_pt_pr_ , "jet_pt_pr/F");
         otree.Branch("jet_mass_pr", jet_mass_pr_ , "jet_mass_pr/F");
+        otree.Branch("jet_charge_k05", jet_charge_k05_ , "jet_charge_k05/F");
+        otree.Branch("jet_charge_k07", jet_charge_k07_ , "jet_charge_k07/F");
+        otree.Branch("jet_charge_k10", jet_charge_k10_ , "jet_charge_k10/F");
         otree.Branch("jet_charge", jet_charge_ , "jet_charge/F");
+
         otree.Branch("ungroomed_jet_pt", ungroomed_jet_pt_, "ungroomed_jet_pt/F");
         otree.Branch("ungroomed_jet_phi", ungroomed_jet_phi_, "ungroomed_jet_phi/F");
         otree.Branch("ungroomed_jet_eta", ungroomed_jet_eta_, "ungroomed_jet_eta/F");
@@ -373,7 +386,12 @@ class sampleWrapperClass:
         otree.Branch("jet_grsens_tr", jet_grsens_tr_ , "jet_grsens_tr/F");
         otree.Branch("jet_massdrop_pr", jet_massdrop_pr_ , "jet_massdrop_pr/F");
         otree.Branch("jet_qjetvol", jet_qjetvol_ , "jet_qjetvol/F");
+
         otree.Branch("jet_tau2tau1", jet_tau2tau1_ , "jet_tau2tau1/F");
+        otree.Branch("jet_tau2tau1_exkT", jet_tau2tau1_exkT_ , "jet_tau2tau1_exkT/F");
+        otree.Branch("jet_tau2tau1_pr", jet_tau2tau1_pr_ , "jet_tau2tau1_pr/F");
+        otree.Branch("jet_GeneralizedECF", jet_GeneralizedECF_ , "jet_GeneralizedECF/F");
+
         otree.Branch("jet_jetconstituents", jet_jetconstituents_ , "jet_jetconstituents/F");
         otree.Branch("jet_rcore4", jet_rcore4_ , "jet_rcore4/F");
         otree.Branch("jet_rcore5", jet_rcore5_ , "jet_rcore5/F");
@@ -433,6 +451,9 @@ class sampleWrapperClass:
         ttb_ht_  = array( 'f', [ 0. ] );                
         ttb_ca8_mass_pr_  = array( 'f', [ 0. ] );                        
         ttb_ca8_charge_  = array( 'f', [ 0. ] );                        
+        ttb_ca8_charge_k05_  = array( 'f', [ 0. ] );                        
+        ttb_ca8_charge_k07_  = array( 'f', [ 0. ] );                        
+        ttb_ca8_charge_k10_  = array( 'f', [ 0. ] );                        
 
         ttb_ca8_px_  = array( 'f', [ 0. ] );                        
         ttb_ca8_py_  = array( 'f', [ 0. ] );                                
@@ -441,6 +462,9 @@ class sampleWrapperClass:
         
         ttb_ca8_ungroomed_pt_  = array( 'f', [ 0. ] );                        
         ttb_ca8_tau2tau1_  = array( 'f', [ 0. ] );                        
+        ttb_ca8_tau2tau1_exkT_  = array( 'f', [ 0. ] );                        
+        ttb_ca8_tau2tau1_pr_  = array( 'f', [ 0. ] );                        
+        ttb_ca8_GeneralizedECF_  = array( 'f', [ 0. ] );                        
         ttb_ca8_mu_  = array( 'f', [ 0. ] );                        
         ttb_mlvj_  = array( 'f', [ 0. ] );                        
         
@@ -462,6 +486,9 @@ class sampleWrapperClass:
         otree.Branch("ttb_ht", ttb_ht_ , "ttb_ht_/F");                
         otree.Branch("ttb_ca8_mass_pr", ttb_ca8_mass_pr_ , "ttb_ca8_mass_pr/F");                
         otree.Branch("ttb_ca8_charge", ttb_ca8_charge_ , "ttb_ca8_charge/F");                
+        otree.Branch("ttb_ca8_charge_k05", ttb_ca8_charge_k05_ , "ttb_ca8_charge_k05/F");                
+        otree.Branch("ttb_ca8_charge_k07", ttb_ca8_charge_k07_ , "ttb_ca8_charge_k07/F");                
+        otree.Branch("ttb_ca8_charge_k10", ttb_ca8_charge_k10_ , "ttb_ca8_charge_k10/F");                
 
         otree.Branch("ttb_ca8_px", ttb_ca8_px_ , "ttb_ca8_px/F");                
         otree.Branch("ttb_ca8_py", ttb_ca8_py_ , "ttb_ca8_py/F");                
@@ -470,6 +497,9 @@ class sampleWrapperClass:
 
         otree.Branch("ttb_ca8_ungroomed_pt", ttb_ca8_ungroomed_pt_ , "ttb_ca8_ungroomed_pt/F");                
         otree.Branch("ttb_ca8_tau2tau1", ttb_ca8_tau2tau1_ , "ttb_ca8_tau2tau1/F");                
+        otree.Branch("ttb_ca8_tau2tau1_exkT", ttb_ca8_tau2tau1_exkT_ , "ttb_ca8_tau2tau1_exkT/F");                
+        otree.Branch("ttb_ca8_tau2tau1_pr", ttb_ca8_tau2tau1_pr_ , "ttb_ca8_tau2tau1_pr/F");                
+        otree.Branch("ttb_ca8_GeneralizedECF", ttb_ca8_GeneralizedECF_ , "ttb_ca8_GeneralizedECF/F");                
         otree.Branch("ttb_ca8_mu", ttb_ca8_mu_ , "ttb_ca8_mu/F");                
         otree.Branch("ttb_mlvj", ttb_mlvj_ , "ttb_mlvj/F");                
         
@@ -611,6 +641,7 @@ class sampleWrapperClass:
                     l_phi = getattr( self.InputTree_, "W_"+lepLabel+"_phi" )
                     l_charge = getattr( self.InputTree_, "W_"+lepLabel+"_charge" )
                     dR_lj = math.sqrt( (l_eta - j_ca8_eta)**2 + (l_phi - j_ca8_phi)**2 );
+#                    print " dR_lj  ",dR_lj
                     if dR_lj > ROOT.TMath.Pi()/2.: index_ca8_in_oppoHemi.append(i);
 
             minMass = -1;
@@ -620,7 +651,7 @@ class sampleWrapperClass:
                 if curmass > minMass: 
                     minMass = curmass;
                     theca8Index = index_ca8_in_oppoHemi[i];
-
+#                    print " theca8Index ",theca8Index
             index_ak5_in_sameHemi = [];
             index_ak5_in_oppoHemi = [];
             index_ak5_in_oppoHemi_vetoca8 = [];
@@ -638,9 +669,10 @@ class sampleWrapperClass:
         
             if theca8Index >= 0:
                 for i in range(6):
+#                    print " AK5 pt ",getattr( self.InputTree_, "GroomedJet_AK5_pt" )[i]
+                        
                     if getattr( self.InputTree_, "GroomedJet_AK5_pt" )[i] > 30:
                         ttb_ht += getattr( self.InputTree_, "GroomedJet_AK5_pt" )[i]
-                        
                         j_ca8_eta = getattr( self.InputTree_, "GroomedJet_CA8_eta" )[theca8Index]
                         j_ca8_phi = getattr( self.InputTree_, "GroomedJet_CA8_phi" )[theca8Index]
                         j_ak5_eta = getattr( self.InputTree_, "GroomedJet_AK5_eta" )[i]
@@ -684,8 +716,14 @@ class sampleWrapperClass:
                 ttb_ca8_ungroomed_pt_[0] = getattr( self.InputTree_, "GroomedJet_CA8_pt" )[theca8Index];
 
                 ttb_ca8_charge_[0] = getattr( self.InputTree_, "GroomedJet_CA8_jetcharge" )[theca8Index];
+                ttb_ca8_charge_k05_[0] = getattr( self.InputTree_, "GroomedJet_CA8_jetcharge_k05" )[theca8Index];
+                ttb_ca8_charge_k07_[0] = getattr( self.InputTree_, "GroomedJet_CA8_jetcharge_k07" )[theca8Index];
+                ttb_ca8_charge_k10_[0] = getattr( self.InputTree_, "GroomedJet_CA8_jetcharge_k10" )[theca8Index];
                  
                 ttb_ca8_tau2tau1_[0] = getattr( self.InputTree_, "GroomedJet_CA8_tau2tau1" )[theca8Index];
+                ttb_ca8_tau2tau1_exkT_[0] = getattr( self.InputTree_, "GroomedJet_CA8_tau2tau1_exkT" )[theca8Index];
+                ttb_ca8_tau2tau1_pr_[0] = getattr( self.InputTree_, "GroomedJet_CA8_tau2tau1_pr" )[theca8Index];
+                ttb_ca8_GeneralizedECF_[0] = getattr( self.InputTree_, "GroomedJet_CA8_jetGeneralizedECF" )[theca8Index];
                 ttb_ca8_mu_[0] = getattr( self.InputTree_, "GroomedJet_CA8_massdrop_pr" )[theca8Index];
 
                 ttb_ca8J_p4 = ROOT.TLorentzVector();        
@@ -915,6 +953,9 @@ class sampleWrapperClass:
              jet_mass_pr_[0] = getattr( self.InputTree_, prefix + "_mass_pr" )[0];
              jet_mass_pr_exo_[0] = getattr( self.InputTree_, prefix + "_mass_pr" )[index_ca8jet_exo_];
              jet_charge_[0] = getattr( self.InputTree_, prefix + "_jetcharge" )[0];
+             jet_charge_k05_[0] = getattr( self.InputTree_, prefix + "_jetcharge_k05" )[0];
+             jet_charge_k07_[0] = getattr( self.InputTree_, prefix + "_jetcharge_k07" )[0];
+             jet_charge_k10_[0] = getattr( self.InputTree_, prefix + "_jetcharge_k10" )[0];
              
              jet_tobec_filter_[0] = int(getattr( self.InputTree_, prefix + "_tobecFlag" ));
                                 
@@ -1000,6 +1041,9 @@ class sampleWrapperClass:
              jet_jetconstituents_exo_[0] = getattr( self.InputTree_, prefix + "_jetconstituents" )[index_ca8jet_exo_];     
 
              jet_tau2tau1_[0] = getattr( self.InputTree_, prefix + "_tau2tau1" )[0];     
+             jet_tau2tau1_exkT_[0] = getattr( self.InputTree_, prefix + "_tau2tau1_exkT" )[0];     
+             jet_tau2tau1_pr_[0] = getattr( self.InputTree_, prefix + "_tau2tau1_pr" )[0];     
+             jet_GeneralizedECF_[0] = getattr( self.InputTree_, prefix + "_jetGeneralizedECF" )[0];     
              jet_jetconstituents_[0] = getattr( self.InputTree_, prefix + "_jetconstituents" )[0];     
 
              jet_rcore4_[0] = getattr( self.InputTree_, prefix + "_rcores")[3*6 + 0];
@@ -1107,7 +1151,7 @@ class sampleWrapperClass:
         
         prefix = self.JetPrefix_;
         
-        self.InputTree_.SetBranchStatus("*",0);
+        self.InputTree_.SetBranchStatus("*",1);
 
      
         self.InputTree_.SetBranchStatus("event_evtNo",1);
