@@ -155,53 +155,41 @@ int main (int argc, char** argv){
 
     std::cout<<" pT bin of Training: Min = "<<JetPtBinOfTraining.at(pTBin)<<" Max = "<<JetPtBinOfTraining.at(pTBin+1)<<std::endl;
     std::cout<<std::endl;
-    for( size_t iMethod = 0 ; iMethod < UseMethodName.size() && iMethod < MethodLabelName.size() ; iMethod ++){
+    for( size_t iMethod = 0 ; iMethod < UseMethodName.size() ; iMethod ++){
 
-      TString Label_ = Form("otree_%s_PTBin_%d_%d_%s",MethodLabelName.at(iMethod).c_str(),int(JetPtBinOfTraining.at(pTBin)),
+      for( size_t iMethodLabel =0 ; iMethodLabel < MethodLabelName.size() ; iMethodLabel++){
+
+	TString Label_ = Form("otree_%s_PTBin_%d_%d_%s",MethodLabelName.at(iMethodLabel).c_str(),int(JetPtBinOfTraining.at(pTBin)),
                                                       int(JetPtBinOfTraining.at(pTBin+1)),UseMethodName.at(iMethod).c_str()) ;
-      std::string buffer ;
-      if(UseMethodName.at(iMethod)!="MLP"){
+       std::string buffer ;
 
-	system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp.txt ").c_str());
-	//	std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp.txt "<<std::endl;
-	std::ifstream inputFile ("./tmp.txt");
+	system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
+	std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp_"+InputSampleName+".txt "<<std::endl;
+	std::ifstream inputFile (("./tmp_"+InputSampleName+".txt").c_str());
 	while(!inputFile.eof()){ getline(inputFile,buffer); 
 	                         if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue;
                                  weightFile = buffer ;
         }
 	
-        system("rm ./tmp.txt");
+	system(("rm ./tmp_"+InputSampleName+".txt").c_str());
 
-      }
- 
-      else{
-            system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml | grep BFGS > ./tmp.txt").c_str());
-	    //      	    std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml | grep BFGS > ./tmp.txt"<<std::endl;
-	    std::ifstream inputFile ("tmp.txt");
-   	    while(!inputFile.eof()){ getline(inputFile,buffer); 
-	                             if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue;
-                                     weightFile = buffer ;
-	    }
-	    system("rm ./tmp.txt");
-      }
-
-      std::cout<<" Weight File Name " <<weightFile<<std::endl;
-      std::cout<<std::endl;
-
-      WWReaderVector.push_back(new ApplyMVAWeightClass(SampleTreeList, TreeName,InputWeightFilePath, std::string(Label_)));
-           
-      WWReaderVector.back()->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
+       std::cout<<" Weight File Name " <<weightFile<<std::endl;
+       std::cout<<std::endl;
+       /*      
+       WWReaderVector.push_back(new ApplyMVAWeightClass(SampleTreeList, TreeName,InputWeightFilePath, std::string(Label_)));
+            
+       WWReaderVector.back()->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
       
-      WWReaderVector.back()->AddPrepareReader(LeptonType,PreselectionCutType,&JetPtBinOfTraining,pTBin);
+       WWReaderVector.back()->AddPrepareReader(LeptonType,PreselectionCutType,&JetPtBinOfTraining,pTBin);
 
-      TString NameBranch = Form("%s_PTBin_%d_%d",UseMethodName.at(iMethod).c_str(),int(JetPtBinOfTraining.at(pTBin)),int(JetPtBinOfTraining.at(pTBin+1))) ;
+       TString NameBranch = Form("%s_PTBin_%d_%d",UseMethodName.at(iMethod).c_str(),int(JetPtBinOfTraining.at(pTBin)),int(JetPtBinOfTraining.at(pTBin+1))) ;
 
-      WWReaderVector.back()->BookMVAWeight(UseMethodName.at(iMethod),weightFile, std::string(NameBranch));
+       WWReaderVector.back()->BookMVAWeight(UseMethodName.at(iMethod),weightFile, std::string(NameBranch)); 
 
-      WWReaderVector.back()->FillMVAWeight(LeptonType,PreselectionCutType);
-      
+       WWReaderVector.back()->FillMVAWeight(LeptonType,PreselectionCutType);
+       */ 
+    }
    }
-
  }
 
   //Print Output Plots                                                                                                                                                                          
