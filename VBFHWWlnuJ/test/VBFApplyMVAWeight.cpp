@@ -163,6 +163,8 @@ int main (int argc, char** argv){
                                                       int(JetPtBinOfTraining.at(pTBin+1)),UseMethodName.at(iMethod).c_str()) ;
        std::string buffer ;
 
+       if( UseMethodName.at(iMethod).find("MLP")==std::string::npos) {
+
 	system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
 	std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp_"+InputSampleName+".txt "<<std::endl;
 	std::ifstream inputFile (("./tmp_"+InputSampleName+".txt").c_str());
@@ -172,10 +174,46 @@ int main (int argc, char** argv){
         }
 	
 	system(("rm ./tmp_"+InputSampleName+".txt").c_str());
+       }
+
+       else{
+  
+	 if(UseMethodName.at(iMethod).find("BFG")!=std::string::npos){
+ 
+	  Label_ = Form("otree_%s_PTBin_%d_%d_%s",MethodLabelName.at(iMethodLabel).c_str(),int(JetPtBinOfTraining.at(pTBin)),
+			int(JetPtBinOfTraining.at(pTBin+1)),"MLP") ;
+
+  	  system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BFG | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
+	  std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BFG  | grep xml > ./tmp_"+InputSampleName+".txt "<<std::endl;
+
+	  std::ifstream inputFile (("./tmp_"+InputSampleName+".txt").c_str());
+	  while(!inputFile.eof()){ getline(inputFile,buffer); 
+	                         if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue;
+                                 weightFile = buffer ;
+          }
+	
+	  system(("rm ./tmp_"+InputSampleName+".txt").c_str());
+       }
+   
+       else{
+
+   	      system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BP | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
+	      std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BP  | grep xml > ./tmp_"+InputSampleName+".txt "<<std::endl;
+
+	      std::ifstream inputFile (("./tmp_"+InputSampleName+".txt").c_str());
+	      while(!inputFile.eof()){ getline(inputFile,buffer); 
+	                         if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue;
+                                 weightFile = buffer ;
+       }
+	
+       system(("rm ./tmp_"+InputSampleName+".txt").c_str());
+      }
+      
+      }
 
        std::cout<<" Weight File Name " <<weightFile<<std::endl;
        std::cout<<std::endl;
-       /*      
+     
        WWReaderVector.push_back(new ApplyMVAWeightClass(SampleTreeList, TreeName,InputWeightFilePath, std::string(Label_)));
             
        WWReaderVector.back()->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
@@ -187,7 +225,7 @@ int main (int argc, char** argv){
        WWReaderVector.back()->BookMVAWeight(UseMethodName.at(iMethod),weightFile, std::string(NameBranch)); 
 
        WWReaderVector.back()->FillMVAWeight(LeptonType,PreselectionCutType);
-       */ 
+       
     }
    }
  }
