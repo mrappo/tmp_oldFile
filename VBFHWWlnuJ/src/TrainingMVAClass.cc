@@ -74,7 +74,7 @@ void TrainingMVAClass::AddTrainingVariables ( const std::vector<std::string> & m
 // Book MVA Training Variables 
 
 void TrainingMVAClass::BookMVATrees (const std::vector<double> & signalGlobalWeight, const std::vector<double> & backgroundGlobalWeight){
-
+  
   SetGlobalSampleWeight(signalGlobalWeight,backgroundGlobalWeight);
  
   if(signalGlobalWeight.size() == signalTreeList_.size()){
@@ -98,7 +98,7 @@ void TrainingMVAClass::BookMVATrees (const std::vector<double> & signalGlobalWei
     for(size_t iTree = 0; iTree<backgroundTreeList_.size(); iTree ++) 
       factory_->AddBackgroundTree (backgroundTreeList_.at(iTree),1.0) ;
   }
-
+  
 }
 
 
@@ -570,19 +570,19 @@ TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,con
                 pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSBPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )"
+    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 60 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )"
 		" && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSBPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )"
+    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 60 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )"
                 " && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return Form(" issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=60 && jet_mass_pr <= 105 )"
+    return Form(" issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=60 && jet_mass_pr <= 100 )"
                 " && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=60 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=60 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
                 "( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
