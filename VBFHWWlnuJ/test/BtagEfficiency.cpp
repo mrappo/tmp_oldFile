@@ -39,14 +39,12 @@ int main (int argc, char** argv){
   // parse config file parameter                                                                                                                                                                
   parseConfigFile(argv[1]);
 
-  std::string InputFileName  = gConfigParser -> readStringOption("Input::InputFileName");
+  std::string InputFileList  = gConfigParser -> readStringOption("Input::InputFileList");
   std::string TreeName       = gConfigParser -> readStringOption("Input::TreeName");
-  std::string LeptonType     = gConfigParser -> readStringOption("Input::LeptonType");
 
   std::cout<<"                     "<<std::endl;
-  std::cout<<" Input : FileList    "<<InputFileName<<std::endl;
+  std::cout<<" Input : FileList    "<<InputFileList<<std::endl;
   std::cout<<" Input : TreeName    "<<TreeName<<std::endl;
-  std::cout<<" Input : Lepton Type "<<LeptonType<<std::endl;
   std::cout<<"                     "<<std::endl;
 
   std::string bTagAlgorithm = gConfigParser -> readStringOption("Option::bTagAlgorithm");
@@ -89,18 +87,28 @@ int main (int argc, char** argv){
 
   // TChain To be created taking all the input file of  InputFileList
 
-  TFile* inputFile = new TFile (InputFileName.c_str(),"READ");
+  std::ifstream inputFile (InputFileList.c_str());
+  std::string buffer;
 
-  TTree *inputTreeList = (TTree*) inputFile->Get(TreeName.c_str());
+  std::vector<TFile*> inputFileList ;
+  std::vector<TTree*> inputTreeList ;
+
+  if(inputFile.fail()) return -1;
+
+  while(!inputFile.eof()){
+
+    getline(inputFile,buffer);
+    if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue ;
   
-  std::cout << " Input Entries  : " << inputTreeList->GetEntries() << " entries in  MC  sample" << std::endl;
+    inputFileList.push_back(new TFile(buffer.c_str(),"READ"));    
+    inputTreeList.push_back((TTree*) inputFileList.back()->Get(TreeName.c_str()));
 
-  // Read the InpuTree --> set all the branches
-  treeReader* fReaderTree     = new treeReader((TTree*)(inputTreeList), false);
+  }
 
   // Create output root file
 
   TFile* outputFileRoot = new TFile ((OuputFilePath+"/"+OuputFileName+".root").c_str(),"RECREATE");
+  outputFileRoot->cd();
 
   double *EdgesX = &BinXEdges.at(0) ;
   double *EdgesY = &BinYEdges.at(0) ;
@@ -126,17 +134,28 @@ int main (int argc, char** argv){
   TH2F* Efficiency_udsg  = new TH2F("Efficiency_udsg","Efficiency_udsg",NbinsX,EdgesX,NbinsY,EdgesY);
   Efficiency_udsg->Sumw2();
 
+  std::cout<<"       "<<std::endl;
+  std::cout << " Input TreeList Size "<<inputTreeList.size()<< std::endl;
+  std::cout<<"       "<<std::endl;
+
+  
+  for(size_t iTree =0; iTree<inputTreeList.size(); iTree++){
+  
+    
+  std::cout << " Input Entries  : " << inputTreeList.at(iTree)->GetEntries() << " entries in  MC  sample" << std::endl;
 
   std::cout<<"                      "<<std::endl;
   std::cout<<" Start Loop on the Event "<<std::endl;
   std::cout<<"                      "<<std::endl;
-  
-  for( int iEvent = 0; iEvent < inputTreeList->GetEntries()/10000 ; iEvent ++){
+      
+  treeReader* fReaderTree = new treeReader((TTree*)(inputTreeList.back()), false);
+
+  for( int iEvent = 0; iEvent < inputTreeList.at(iTree)->GetEntries() ; iEvent ++){
 
     if(iEvent%10000 ==0) std::cout<<" Event "<<iEvent<<std::endl;
   
-    inputTreeList->GetEntry(iEvent);
-    
+       inputTreeList.at(iTree)->GetEntry(iEvent);
+  
     for( int iJet = 0; iJet < JetCollectionSize ; iJet++){
 
 
@@ -145,23 +164,22 @@ int main (int argc, char** argv){
       //      std::cout<<" Pt "<<fReaderTree->getFloat("JetPFCor_Pt")[iJet]<<" eta "<<fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet])<<std::endl;
 
       // Fill Numerator and denominator for udsg
-      //std::cout<<" Flavor "<<fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet])<<std::endl;
           
       if(fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 1 || fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 2 ||
          fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 3 || fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 21){
-         
+        
 	if(bTagAlgorithm == "CSV") {
-          Denominator_udsg->Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+          Denominator_udsg->Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 	  if( fReaderTree->getFloat("JetPFCor_bDiscriminatorCSV")[iJet] >  bTagWorkingPoint ) 
-	    Numerator_udsg -> Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+	    Numerator_udsg -> Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 
 	}
 
          
 	if(bTagAlgorithm == "SSV") {
-          Denominator_udsg->Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+          Denominator_udsg->Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 	  if( fReaderTree->getFloat("JetPFCor_bDiscriminator")[iJet] >  bTagWorkingPoint ) 
-	    Numerator_udsg -> Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+	    Numerator_udsg -> Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 
 	}
 	    
@@ -171,70 +189,73 @@ int main (int argc, char** argv){
       
     else if(fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 4){
 
+      //       std::cout<<" Flavor "<<fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet])<<std::endl;
          
 	if(bTagAlgorithm == "CSV") {
-          Denominator_c->Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+          Denominator_c->Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 	  if( fReaderTree->getFloat("JetPFCor_bDiscriminatorCSV")[iJet] >  bTagWorkingPoint ) 
-	    Numerator_c -> Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+	    Numerator_c -> Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 
 	}
 
          
 	if(bTagAlgorithm == "SSV") {
-          Denominator_c->Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+          Denominator_c->Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 	  if( fReaderTree->getFloat("JetPFCor_bDiscriminator")[iJet] >  bTagWorkingPoint ) 
-	    Numerator_c -> Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+	    Numerator_c -> Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 
 	}
 
     }
 
    else if(fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 5){
+
+     //      std::cout<<" Flavor "<<fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet])<<std::endl;
          
 	if(bTagAlgorithm == "CSV") {
-          Denominator_b->Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+          Denominator_b->Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
+	  //          std::cout<<" Pt "<<fReaderTree->getFloat("JetPFCor_Pt")[iJet]<<" eta "<<fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet])<<std::endl;
 	  if( fReaderTree->getFloat("JetPFCor_bDiscriminatorCSV")[iJet] >  bTagWorkingPoint ) 
-	    Numerator_b -> Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+	    Numerator_b -> Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 
 	}
 
          
 	if(bTagAlgorithm == "SSV") {
-          Denominator_b->Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+          Denominator_b->Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 	  if( fReaderTree->getFloat("JetPFCor_bDiscriminator")[iJet] >  bTagWorkingPoint ) 
-	    Numerator_b -> Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
+	    Numerator_b -> Fill(fReaderTree->getFloat("JetPFCor_Pt")[iJet],fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]));
 
 	}
 
     }
       
-   }
+    }
     
+   }
+
+  delete  fReaderTree;
   }
   
   // calculate the efficiency with binomial errors
   Efficiency_b->Divide(Numerator_b,Denominator_b,1.,1.,"B");
   Efficiency_c->Divide(Numerator_c,Denominator_c,1.,1.,"B");
   Efficiency_udsg->Divide(Numerator_udsg,Denominator_udsg,1.,1.,"B");
+ 
+  Numerator_b->Write("numerator_b");
+  Denominator_b->Write("denomiantor_b");
+  Efficiency_b->Write("efficiency_b");
 
-  outputFileRoot->cd();
+  Numerator_c->Write("numerator_c");
+  Denominator_c->Write("denominator_c");
+  Efficiency_c->Write("efficiency_c");
 
-
-  Numerator_b->Write("Numerator_b");
-  Denominator_b->Write("Denomiantor_b");
-  Efficiency_b->Write("Efficiency_b");
-
-  Numerator_c->Write("Numerator_c");
-  Denominator_c->Write("Denominator_c");
-  Efficiency_c->Write("Efficiency_c");
-
-  Numerator_udsg->Write("Numerator_udsg");
-  Denominator_udsg->Write("Denominator_udsg");
-  Efficiency_udsg->Write("Efficiency_udsg");
+  Numerator_udsg->Write("numerator_udsg");
+  Denominator_udsg->Write("denominator_udsg");
+  Efficiency_udsg->Write("efficiency_udsg");
 
   outputFileRoot->Close();
 
-  
   return 0 ;
 
 }
