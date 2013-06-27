@@ -21,8 +21,9 @@
 
 int main (int arcg, char** argv){
 
-  std::string nameFileDataMuon     = "/data2/rgerosa/otrees_ExoLeptonID_v2/trainingtrees_mu/ofile_data.root" ;
-  std::string nameFileDataElectron = "/data2/rgerosa/otrees_ExoLeptonID_v2/trainingtrees_el/ofile_data.root" ;
+  std::string nameFileDataMuon     = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis/trainingtrees_mu/ofile_data.root" ;
+  std::string nameFileDataElectron = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis/trainingtrees_el/ofile_data.root" ;
+
 
   TFile* inputFileMuon     = new TFile(nameFileDataMuon.c_str(),"READ");
   TFile* inputFileElectron = new TFile(nameFileDataElectron.c_str(),"READ");
@@ -36,9 +37,9 @@ int main (int arcg, char** argv){
   std::ofstream outFile("output/PickEventList.txt",std::ios::out);
 
   outFile<<" Selection:"<<std::endl;
-  outFile<<" standard lvJ selectio + mWW>1800 GeV, no MT cut, no Wmass cut"<<std::endl;
+  outFile<<" standard lvJ selectio + mWW>1700 GeV, no MT cut, Wmass cut in the signal region [65,105]"<<std::endl;
   outFile<<" Pz neutrino type-2 (smallest of the two root)"<<std::endl;
-  outFile<<" mWW calculated using corrected neutrino pT "<<std::endl;
+  outFile<<" mWW calculated using MET "<<std::endl;
   outFile<<std::endl;
   outFile<<std::endl;
 
@@ -56,16 +57,18 @@ int main (int arcg, char** argv){
 
     if(fReaderMuon->getInt("issignal")[0] && fReaderMuon->getFloat("v_pt")[0] > 200 && fReaderMuon->getFloat("pfMET")[0] > 40 &&
        fReaderMuon->getFloat("l_pt")[0]>50 && fReaderMuon->getFloat("ungroomed_jet_pt")[0]>200 && abs(fReaderMuon->getFloat("l_eta")[0]) < 2.1 && 
-       ((fReaderMuon->getFloat("jet_mass_pr")[0] > 40 && fReaderMuon->getFloat("jet_mass_pr")[0] < 65 ) || (fReaderMuon->getFloat("jet_mass_pr")[0] > 105 && 
-       fReaderMuon->getFloat("jet_mass_pr")[0] < 130 )) && fReaderMuon->getInt("nbjets_csvm_veto")[0] == 0 && fReaderMuon->getFloat("mass_lvj_type2")[0] > 1800 ){
+       // ((fReaderMuon->getFloat("jet_mass_pr")[0] > 40  && fReaderMuon->getFloat("jet_mass_pr")[0] < 65 ) || 
+	//        (fReaderMuon->getFloat("jet_mass_pr")[0] > 105  && fReaderMuon->getFloat("jet_mass_pr")[0] < 130 )) && 
+       (fReaderMuon->getFloat("jet_mass_pr")[0] > 65 && fReaderMuon->getFloat("jet_mass_pr")[0] < 105) &&
+       fReaderMuon->getFloat("nbjets_csvm_veto")[0] == 0 && fReaderMuon->getFloat("mass_lvj")[0] > 1700 && fabs(fReaderMuon->getFloat("ungroomed_jet_eta")[0])<2.4){
 
        outFile<<fReaderMuon->getInt("event_runNo")[0]<<":"<<fReaderMuon->getInt("event_lumi")[0]<<":"<<fReaderMuon->getInt("event")[0]<<std::endl;
 
-       outFile<<fReaderMuon->getInt("event")[0]<<"*"<<fReaderMuon->getInt("event_runNo")[0]<<"*"<<fReaderMuon->getFloat("mass_lvj_type2")[0]<<"*"<<
+       outFile<<fReaderMuon->getInt("event")[0]<<"*"<<fReaderMuon->getInt("event_runNo")[0]<<"*"<<fReaderMuon->getFloat("mass_lvj")[0]<<"*"<<
 	        fReaderMuon->getFloat("l_pt")[0]<<"*"<<fReaderMuon->getFloat("l_eta")[0]<<"*"<<fReaderMuon->getFloat("l_phi")[0]<<"*"<<fReaderMuon->getFloat("pfMET")[0]<<"*"<<
                 fReaderMuon->getFloat("pfMET_Phi")[0]<<"*"<<fReaderMuon->getFloat("v_mt")[0]<<"*"<<fReaderMuon->getFloat("v_pt")[0]<<"*"<<fReaderMuon->getFloat("ungroomed_jet_pt")[0]<<"*"<<
        	        fReaderMuon->getFloat("ungroomed_jet_eta")[0]<<"*"<<fReaderMuon->getFloat("ungroomed_jet_phi")[0]<<"*"<<fReaderMuon->getFloat("jet_mass_pr")[0]<<"*"<<
-                fReaderMuon->getFloat("jet_tau2tau1")[0]<<std::endl;
+	 fReaderMuon->getFloat("jet_tau2tau1")[0]<<std::endl;
 
        outFile<<std::endl;
     
@@ -88,14 +91,16 @@ int main (int arcg, char** argv){
 
     inputTreeElectron->GetEntry(iEntry);
 
-    if(fReaderElectron->getInt("issignal")[0] && fReaderElectron->getFloat("v_pt")[0] > 200 && fReaderElectron->getFloat("pfMET")[0] > 40 &&
-       fReaderElectron->getFloat("l_pt")[0]>50 && fReaderElectron->getFloat("ungroomed_jet_pt")[0]>200 && abs(fReaderElectron->getFloat("l_eta")[0]) < 2.1 && 
-       ((fReaderElectron->getFloat("jet_mass_pr")[0] > 40 && fReaderElectron->getFloat("jet_mass_pr")[0] < 65 ) || (fReaderElectron->getFloat("jet_mass_pr")[0] > 105 && 
-       fReaderElectron->getFloat("jet_mass_pr")[0] < 130 )) && fReaderElectron->getInt("nbjets_csvm_veto")[0] == 0 && fReaderElectron->getFloat("mass_lvj_type2")[0] > 1800 ){
-
+    if(fReaderElectron->getInt("issignal")[0] && fReaderElectron->getFloat("v_pt")[0] > 200 && fReaderElectron->getFloat("pfMET")[0] > 80 &&
+       fReaderElectron->getFloat("l_pt")[0]>90 && fReaderElectron->getFloat("ungroomed_jet_pt")[0]>200 && abs(fReaderElectron->getFloat("l_eta")[0]) < 2.4 && 
+       //       ((fReaderElectron->getFloat("jet_mass_pr")[0] > 40 && fReaderElectron->getFloat("jet_mass_pr")[0] < 65) || 
+       //        (fReaderElectron->getFloat("jet_mass_pr")[0] > 105 && fReaderElectron->getFloat("jet_mass_pr")[0] < 130)) && 
+       (fReaderElectron->getFloat("jet_mass_pr")[0] > 65 && fReaderElectron->getFloat("jet_mass_pr")[0] < 105) &&
+       fReaderElectron->getFloat("nbjets_csvm_veto")[0] == 0 && fReaderElectron->getFloat("mass_lvj")[0] > 1700 && fabs(fReaderElectron->getFloat("ungroomed_jet_eta")[0])<2.4){
+    
        outFile<<fReaderElectron->getInt("event_runNo")[0]<<":"<<fReaderElectron->getInt("event_lumi")[0]<<":"<<fReaderElectron->getInt("event")[0]<<std::endl;
 
-       outFile<<fReaderElectron->getInt("event")[0]<<"*"<<fReaderElectron->getInt("event_runNo")[0]<<"*"<<fReaderElectron->getFloat("mass_lvj_type2")[0]<<"*"<<
+       outFile<<fReaderElectron->getInt("event")[0]<<"*"<<fReaderElectron->getInt("event_runNo")[0]<<"*"<<fReaderElectron->getFloat("mass_lvj")[0]<<"*"<<
 	        fReaderElectron->getFloat("l_pt")[0]<<"*"<<fReaderElectron->getFloat("l_eta")[0]<<"*"<<fReaderElectron->getFloat("l_phi")[0]<<"*"<<fReaderElectron->getFloat("pfMET")[0]<<"*"<<
                 fReaderElectron->getFloat("pfMET_Phi")[0]<<"*"<<fReaderElectron->getFloat("v_mt")[0]<<"*"<<fReaderElectron->getFloat("v_pt")[0]<<"*"<<
                 fReaderElectron->getFloat("ungroomed_jet_pt")[0]<<"*"<<

@@ -110,9 +110,6 @@ class TrainingMVAClass {
   std::vector<std::string> mapTrainingVariables_ ;
   std::vector<std::string> mapSpectatorVariables_ ;
 
-  std::vector<Float_t> *setTrainingVariables_ ;
-  std::vector<Float_t> *setSpectatorVariables_ ;
-
   std::vector<double> signalGlobalWeight_ ;
   std::vector<double> backgroundGlobalWeight_ ;
    
@@ -124,8 +121,6 @@ class TrainingMVAClass {
   std::string outputFileNameComplete_ ;
 
   std::map<std::string,std::string> outputFileWeightName_ ;
-
-  std::vector<TBranch*> newBranches_ ;
 
   TCut*  preselectionCut_ ;
 

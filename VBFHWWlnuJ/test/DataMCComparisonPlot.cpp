@@ -43,7 +43,7 @@ void LatexCMS (double lumi) ;
 
 int main (int argc, char **argv){
 
-  if(argc!=2){ std::cout<<" Not correct number of input parameter --> Need Just one cfg file exit "<<std::endl; return -1; }
+  if(argc!=3){ std::cout<<" Not correct number of input parameter --> Need Just one cfg file exit "<<std::endl; return -1; }
 
   // Load TTree Lybrary                                                                                                                                                                      
 
@@ -228,6 +228,15 @@ int main (int argc, char **argv){
   std::cout<<" Normalize Signal to Data Flag : "<<NormalizeSignalToData<<std::endl;
   std::cout<<"      "<<std::endl;
 
+  bool NormalizeBackgroundToData = false  ;
+  try{ NormalizeBackgroundToData  = gConfigParser -> readBoolOption("Option::NormalizeBackgroundToData");}
+  catch(char const* exceptionString) { NormalizeBackgroundToData = false ;
+                                       std::cerr<<" Normalize Bkg to Data  --> False Default "<<std::endl;
+  }
+
+  std::cout<<" Normalize Bkg to Data Flag : "<<NormalizeBackgroundToData<<std::endl;
+  std::cout<<"      "<<std::endl;
+
   std::string OutputRootDirectory   = gConfigParser -> readStringOption("Output::OutputRootDirectory");
 
   std::cout<<" OutputRootDirectory: "<<OutputRootDirectory<<std::endl;
@@ -353,7 +362,7 @@ int main (int argc, char **argv){
 	 
        else if(NameReducedSample.at(iSample) == SignalqqHName && SignalqqHName!="NULL") {
 	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalqqHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
-         std::cout<<" Signal qqH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+        std::cout<<" Signal qqH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 	 
        else if(NameReducedSample.at(iSample) == SignalRSGPythiaName && SignalRSGPythiaName!="NULL") {
@@ -392,8 +401,10 @@ int main (int argc, char **argv){
   std::cout<<std::endl;
 
   // Normalization to the lumi of MC samples 
-  double norm;
-
+  double norm = 1.;
+  double normalizeToData = 1.;
+  double scaleFactorWjet = std::atof(argv[2]);
+  
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
 
     //    std::cout<<std::endl;
@@ -407,6 +418,8 @@ int main (int argc, char **argv){
       for (size_t iSample=0; iSample<NameSample.size(); iSample++){
 	if(NameReducedSample.at(iSample) == "DATA") iSampleData = iSample ;
       }
+      
+      normalizeToData = 1. ;
 
       for (size_t iSample=0; iSample<NameSample.size(); iSample++){
       
@@ -417,45 +430,54 @@ int main (int argc, char **argv){
        //       std::cout<< " Sample to be scaled "<<NameReducedSample.at(iSample)<<" Lumi "<<Lumi<<" xs : "<<SampleCrossSection.at(iSample)<<" numEntries "<<NumEntriesBefore.at(iSample)<<
        //	           " Normalization Factor "<<norm<<std::endl;
 
-       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *1.295;
+       if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *scaleFactorWjet;
 
        if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL") {
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)); 
-	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
        }
 
        else if ( NameReducedSample.at(iSample)==SignalqqHName && SignalqqHName!="NULL") {
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral());
+         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
 	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGPythiaName && SignalRSGPythiaName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral());
+         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
 	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGHerwigName && SignalRSGHerwigName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral());
+         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
 	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalGravitonName && SignalGravitonName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral()/histos[iCut][iVar][iSample]->Integral());
+         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
 	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
-       else{  histos[iCut][iVar][iSample]->Scale(1.*norm);
-	 //	     std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<std::endl;
-       }
+       else{ if(!NormalizeBackgroundToData) histos[iCut][iVar][iSample]->Scale(1.*norm);
+	     else { histos[iCut][iVar][iSample]->Scale(1.*norm); normalizeToData += histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1) ;
+	       //	             std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<"   "<<normalizeToData<<std::endl;
+                  }
+           }
       }
+      for (size_t iSample=0; iSample<NameReducedSample.size(); iSample++){
+	if(NormalizeBackgroundToData && NameReducedSample.at(iSample)!="DATA" && NameReducedSample.at(iSample)!=SignalGravitonName && NameReducedSample.at(iSample)!=SignalggHName && 
+           NameReducedSample.at(iSample)!=SignalqqHName && NameReducedSample.at(iSample)!=SignalRSGHerwigName && NameReducedSample.at(iSample)!=SignalRSGPythiaName ) 
+	  histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/normalizeToData);
+      }
+
     }
   }
+
 
   outputFile->cd();
   
@@ -871,6 +893,8 @@ int main (int argc, char **argv){
 
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".root").c_str(),"root");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".cxx").c_str(),"cxx");
 
 	  c[iCut][iVar]->Close();
 
@@ -886,6 +910,8 @@ int main (int argc, char **argv){
 	            
 	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".pdf").c_str(),"pdf");
 	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".png").c_str(),"png");
+	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".root").c_str(),"root");
+	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".cxx").c_str(),"cxx");
 
 	    cNoRatio[iCut][iVar]->Close();
 	  }
@@ -963,6 +989,8 @@ int main (int argc, char **argv){
           
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
+	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".root").c_str(),"root");
+	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".cxx").c_str(),"cxx");
 
           cLog[iCut][iVar]->Close();
 	  
@@ -977,6 +1005,8 @@ int main (int argc, char **argv){
           
 	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".pdf").c_str(),"pdf");
 	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".png").c_str(),"png");
+	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".root").c_str(),"root");
+	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".cxx").c_str(),"cxx");
 
             cLogNoRatio[iCut][iVar]->Close();
 	  }
@@ -1050,7 +1080,6 @@ int main (int argc, char **argv){
   
  }
 
-	  
  outputFile->Close();
   
  return 0 ;

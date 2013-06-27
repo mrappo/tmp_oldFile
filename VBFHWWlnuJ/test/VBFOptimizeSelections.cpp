@@ -56,6 +56,7 @@ int main (int argc, char** argv){
     std::cerr<<" Tree Name set to --> WJet default "<<std::endl;
   }
 
+ 
   std::string Label         = gConfigParser -> readStringOption("Input::Label");
   std::string LeptonType    = gConfigParser -> readStringOption("Input::LeptonType");
 
@@ -141,7 +142,6 @@ int main (int argc, char** argv){
   std::cout<<"                      "<<std::endl;
   
   // read sample input file list to Plot                                                                                                                                                          
-
   std::vector <std::string> NameSample;
   std::vector <std::string> NameReducedSample;
   std::vector <int> ColorSample;
