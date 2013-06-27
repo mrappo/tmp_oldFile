@@ -67,8 +67,10 @@ int main (int argc, char** argv){
 
   int NbinsX        = gConfigParser -> readDoubleOption("Option::NbinsX");
   int NbinsY        = gConfigParser -> readDoubleOption("Option::NbinsY");
+
   std::vector<double> BinXEdges       = gConfigParser -> readDoubleListOption("Option::BinXEdges");
-  std::vector<double> BinYEdges       = gConfigParser -> readDoubleListOption("Option:BinYEdges");
+  std::vector<double> BinYEdges       = gConfigParser -> readDoubleListOption("Option::BinYEdges");
+
 
   std::cout<<"                      "<<std::endl;
   std::cout<<" Option : NbinsX      "<<NbinsX<<std::endl;
@@ -104,45 +106,49 @@ int main (int argc, char** argv){
   double *EdgesY = &BinYEdges.at(0) ;
 
   TH2F* Numerator_b   = new TH2F("Numerator_b","Numerator_b",NbinsX,EdgesX,NbinsY,EdgesY);
-  Numerator_b->sumw2();
+  Numerator_b->Sumw2();
   TH2F* Denominator_b = new TH2F("Denominator_b","Denominator_b",NbinsX,EdgesX,NbinsY,EdgesY);
-  Denominator_b->sumw2();
+  Denominator_b->Sumw2();
   TH2F* Efficiency_b  = new TH2F("Efficiency_b","Efficiency_b",NbinsX,EdgesX,NbinsY,EdgesY);
-  Efficiency_b->sumw2();
+  Efficiency_b->Sumw2();
 
   TH2F* Numerator_c   = new TH2F("Numerator_c","Numerator_c",NbinsX,EdgesX,NbinsY,EdgesY);
-  Numerator_c->sumw2();
+  Numerator_c->Sumw2();
   TH2F* Denominator_c = new TH2F("Denominator_c","Denominator_c",NbinsX,EdgesX,NbinsY,EdgesY);
-  Denominator_c->sumw2();
+  Denominator_c->Sumw2();
   TH2F* Efficiency_c  = new TH2F("Efficiency_c","Efficiency_c",NbinsX,EdgesX,NbinsY,EdgesY);
-  Efficiency_b->sumw2();
+  Efficiency_c->Sumw2();
 
   TH2F* Numerator_udsg   = new TH2F("Numerator_udsg","Numerator_udsg",NbinsX,EdgesX,NbinsY,EdgesY);
-  Numerator_udsg->sumw2();
+  Numerator_udsg->Sumw2();
   TH2F* Denominator_udsg = new TH2F("Denominator_udsg","Denominator_udsg",NbinsX,EdgesX,NbinsY,EdgesY);
-  Denominator_udsg->sumw2();
+  Denominator_udsg->Sumw2();
   TH2F* Efficiency_udsg  = new TH2F("Efficiency_udsg","Efficiency_udsg",NbinsX,EdgesX,NbinsY,EdgesY);
-  Efficiency_udsg->sumw2();
+  Efficiency_udsg->Sumw2();
 
 
+  std::cout<<"                      "<<std::endl;
   std::cout<<" Start Loop on the Event "<<std::endl;
-
-  for( int iEvent = 0; iEvent < inputTreeList->GetEntries() ; iEvent ++){
+  std::cout<<"                      "<<std::endl;
+  
+  for( int iEvent = 0; iEvent < inputTreeList->GetEntries()/10000 ; iEvent ++){
 
     if(iEvent%10000 ==0) std::cout<<" Event "<<iEvent<<std::endl;
   
     inputTreeList->GetEntry(iEvent);
-
+    
     for( int iJet = 0; iJet < JetCollectionSize ; iJet++){
+
 
       if(fReaderTree->getFloat("JetPFCor_Pt")[iJet] < JetPtCutMin ) continue ;
       if(fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet]) > JetEtaCutMax ) continue ;
+      //      std::cout<<" Pt "<<fReaderTree->getFloat("JetPFCor_Pt")[iJet]<<" eta "<<fabs(fReaderTree->getFloat("JetPFCor_Eta")[iJet])<<std::endl;
 
       // Fill Numerator and denominator for udsg
-
+      //std::cout<<" Flavor "<<fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet])<<std::endl;
+          
       if(fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 1 || fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 2 ||
          fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 3 || fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 21){
-
          
 	if(bTagAlgorithm == "CSV") {
           Denominator_udsg->Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
@@ -158,12 +164,12 @@ int main (int argc, char** argv){
 	    Numerator_udsg -> Fill(fReaderTree->getInt("JetPFCor_Pt")[iJet],fabs(fReaderTree->getInt("JetPFCor_Eta")[iJet]));
 
 	}
-
+	    
     }
 
       // Fill Numerator and denominator for c
-
-   else if(fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 4){
+      
+    else if(fabs(fReaderTree->getInt("JetPFCor_partonFlavour")[iJet]) == 4){
 
          
 	if(bTagAlgorithm == "CSV") {
@@ -201,17 +207,18 @@ int main (int argc, char** argv){
 	}
 
     }
-
+      
    }
-
+    
   }
-
+  
   // calculate the efficiency with binomial errors
   Efficiency_b->Divide(Numerator_b,Denominator_b,1.,1.,"B");
   Efficiency_c->Divide(Numerator_c,Denominator_c,1.,1.,"B");
   Efficiency_udsg->Divide(Numerator_udsg,Denominator_udsg,1.,1.,"B");
 
   outputFileRoot->cd();
+
 
   Numerator_b->Write("Numerator_b");
   Denominator_b->Write("Denomiantor_b");
@@ -225,6 +232,9 @@ int main (int argc, char** argv){
   Denominator_udsg->Write("Denominator_udsg");
   Efficiency_udsg->Write("Efficiency_udsg");
 
+  outputFileRoot->Close();
+
+  
   return 0 ;
 
 }
