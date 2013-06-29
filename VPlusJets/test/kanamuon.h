@@ -12,14 +12,58 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TH1F.h>
+#include <TH2D.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include "TLorentzVector.h"
 
 class kanamuon {
+
 public :
+
+   kanamuon(TTree *tree=0);
+   virtual ~kanamuon();
+
+   virtual void     SetBtagEfficiencyMap(const std::string & BtagEfficiencyName); 
+   virtual Int_t    GetEntry(Long64_t entry);
+   virtual void     Init(TTree *tree);
+
+   virtual void     myana(double myflag = -999, bool isQCD = false, int runflag=0);
+   virtual void     Loop(TH1F* h_events, TH1F* h_events_weighted,int wda, int runflag, const char * outfilename, bool isQCD = false);
+
+   virtual double   getDeltaPhi(double phi1, double phi2);
+   virtual bool     doKinematicFit(Int_t                 fflage,
+				   const TLorentzVector     mup, 
+				   const TLorentzVector     nvp,
+				   const TLorentzVector     ajp, 
+				   const TLorentzVector     bjp, 
+				   TLorentzVector     & fit_mup, 
+				   TLorentzVector     & fit_nvp,
+				   TLorentzVector     & fit_ajp, 
+				   TLorentzVector     & fit_bjp, 
+				   Float_t            & fit_chi2,
+				   Int_t              & fit_NDF, 
+				   Int_t              & fit_status);
+
+   virtual void     calculateAngles( TLorentzVector& thep4M11, TLorentzVector& thep4M12, TLorentzVector& thep4M21, TLorentzVector& thep4M22, 
+                                     double& costheta1, double& costheta2, double& phi, double& costhetastar, double& phistar1, double& phistar2);
+   virtual void     InitCounters(const char* input_file_name, TH1F* h_events, TH1F* h_events_weighted);
+
+   virtual void     GetBTagEfficiency (double  pt, double  eta, int flavor);
+   virtual void     GetBTagScaleFactor (double  pt, double eta, int flavor);
+
+   std::vector<double> jetEff;
+   std::vector<double> jetEff_e;
+   std::vector<double> jetSF;
+   std::vector<double> jetSF_e_up;
+   std::vector<double> jetSF_e_down;
+
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
-
+   TFile          *BtagEfficiency;
    // Declaration of leaf types
    Int_t           numPFCorJets;
    Int_t           numPFCorJetBTags;
@@ -27,6 +71,7 @@ public :
    Float_t         JetPFCor_Pt[6];
    Float_t         JetPFCor_Eta[6];
    Float_t         JetPFCor_Phi[6];
+
    Float_t         JetPFCor_Theta[6];
    Float_t         JetPFCor_Px[6];
    Float_t         JetPFCor_Py[6];
@@ -38,6 +83,7 @@ public :
    Float_t         JetPFCor_phiphiMoment[6];
    Float_t         JetPFCor_etaphiMoment[6];
    Float_t         JetPFCor_maxDistance[6];
+   Int_t           JetPFCor_partonFlavour[6];
    Int_t           JetPFCor_nConstituents[6];
    Float_t         JetPFCor_Area[6];
    Float_t         VplusPFCorJet_Mass[6];
@@ -901,6 +947,7 @@ public :
    TBranch        *b_JetPFCor_etaphiMoment;   //!
    TBranch        *b_JetPFCor_maxDistance;   //!
    TBranch        *b_JetPFCor_nConstituents;   //!
+   TBranch        *b_JetPFCor_partonFlavour;   //!
    TBranch        *b_JetPFCor_Area;   //!
    TBranch        *b_VplusPFCorJet_Mass;   //!
    TBranch        *b_JetPFCor_dphiBoson;   //!
@@ -1744,54 +1791,15 @@ public :
    TBranch        *b_event_mcPU_bx;   //!
    TBranch        *b_event_mcPU_nvtx;   //!
 
-   kanamuon(TTree *tree=0);
-   virtual ~kanamuon();
-   virtual Int_t    Cut(Long64_t entry);
-   virtual Int_t    GetEntry(Long64_t entry);
-   virtual Long64_t LoadTree(Long64_t entry);
-   virtual void     Init(TTree *tree);
-   virtual Bool_t   Notify();
-   virtual void     Show(Long64_t entry = -1);
-
-   virtual void     myana(double myflag = -999, bool isQCD = false, int runflag=0);
-   virtual void     Loop(TH1F* h_events, 
-                         TH1F* h_events_weighted,
-                         int wda, 
-                         int runflag, 
-                         const char * outfilename, 
-                         bool isQCD = false);
-   virtual double   getDeltaPhi(double phi1, double phi2);
-   virtual bool     doKinematicFit(Int_t                 fflage,
-				   const TLorentzVector     mup, 
-				   const TLorentzVector     nvp,
-				   const TLorentzVector     ajp, 
-				   const TLorentzVector     bjp, 
-				   TLorentzVector     & fit_mup, 
-				   TLorentzVector     & fit_nvp,
-				   TLorentzVector     & fit_ajp, 
-				   TLorentzVector     & fit_bjp, 
-				   Float_t            & fit_chi2,
-				   Int_t              & fit_NDF, 
-				   Int_t              & fit_status);
-    virtual bool    dottHKinematicFit(const TLorentzVector     mup, 
-                                      const TLorentzVector     nvp, 
-                                      const TLorentzVector     wajp,
-                                      const TLorentzVector     wbjp,
-                                      const TLorentzVector     topajp,
-                                      const TLorentzVector     topbjp,
-                                       Float_t            & fit_chi2,
-                                       Int_t              & fit_NDF,
-                                       Int_t              & fit_status);
-   virtual void     calculateAngles( TLorentzVector& thep4M11, TLorentzVector& thep4M12, TLorentzVector& thep4M21, TLorentzVector& thep4M22, double& costheta1, double& costheta2, double& phi, double& costhetastar, double& phistar1, double& phistar2);
-   virtual void     InitCounters(const char* input_file_name, TH1F* h_events, TH1F* h_events_weighted);
 
 };
 
 #endif
 
 #ifdef kanamuon_cxx
-kanamuon::kanamuon(TTree *tree)
-{
+
+kanamuon::kanamuon(TTree *tree){
+
    if (tree == 0) {
       TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/gwteray/users/gerosa/MergedNtuples_v1/ElectronChannel/el_HWWMH600_CMSSW532_private.root");
       if (!f) {
@@ -1803,35 +1811,158 @@ kanamuon::kanamuon(TTree *tree)
    Init(tree);
 }
 
-kanamuon::~kanamuon()
-{
+kanamuon::~kanamuon(){
+
    if (!fChain) return;
    delete fChain->GetCurrentFile();
+
+   if (!BtagEfficiency) BtagEfficiency->Delete();
 }
 
-Int_t kanamuon::GetEntry(Long64_t entry)
-{
+void kanamuon::SetBtagEfficiencyMap( const std::string & BtagEfficiencyName){
+
+  BtagEfficiency = new TFile (BtagEfficiencyName.c_str(),"READ");
+ 
+}
+
+
+Int_t kanamuon::GetEntry(Long64_t entry){
 // Read contents of entry.
    if (!fChain) return 0;
    return fChain->GetEntry(entry);
 }
-Long64_t kanamuon::LoadTree(Long64_t entry)
-{
-// Set the environment to read one entry
-   if (!fChain) return -5;
-   Long64_t centry = fChain->LoadTree(entry);
-   if (centry < 0) return centry;
-   if (!fChain->InheritsFrom(TChain::Class()))  return centry;
-   TChain *chain = (TChain*)fChain;
-   if (chain->GetTreeNumber() != fCurrent) {
-      fCurrent = chain->GetTreeNumber();
-      Notify();
-   }
-   return centry;
+
+
+void kanamuon::GetBTagEfficiency(double pt, double eta, int flavor){
+
+  double eff=1.0;
+  double eff_e=0.0;
+
+  std::string HistName;
+
+  flavor = abs(flavor);
+  eta    = fabs(eta);
+
+  if(flavor==1 || flavor==2 || flavor==3 || flavor==21) HistName="efficiency_udsg";
+  else if(flavor==4)HistName="efficiency_c";
+  else if(flavor==5)HistName="efficiency_b";
+  else  HistName="efficiency_udsg";
+  
+  TH2D* EfficiencyMap ;
+  if(BtagEfficiency!=0 && BtagEfficiency!=NULL) EfficiencyMap = (TH2D*) BtagEfficiency->Get(HistName.c_str());
+  else return ;
+
+  int binx = EfficiencyMap->GetXaxis()->FindBin(pt);
+  int biny = EfficiencyMap->GetYaxis()->FindBin(eta);
+
+  eff = EfficiencyMap->GetBinContent(binx,biny);
+  eff_e = EfficiencyMap->GetBinError(binx,biny);
+  jetEff.push_back(eff);
+  jetEff_e.push_back(eff_e);
+
+  delete EfficiencyMap;
+
+  return ;
 }
 
-void kanamuon::Init(TTree *tree)
-{
+void  kanamuon::GetBTagScaleFactor (double pt, double eta, int flavor){
+
+  double SF=1.0;
+  double SF_e_up=0.0;
+  double SF_e_down=0.0;
+  const int nbins = 16;
+  double ptmin[nbins] = {20, 30, 40, 50, 60, 70, 80, 100, 120, 160, 210, 260, 320, 400, 500, 600};
+  double ptmax[nbins] = {30, 40, 50, 60, 70, 80,100, 120, 160, 210, 260, 320, 400, 500, 600, 800};
+
+  flavor=abs(flavor);
+  
+  // Values for Moriond Prescription for b and c quarks
+  if(flavor==4 || flavor==5){
+
+      //Tagger: CSVM within 20 < pt < 800 GeV, fabs(eta) < 2.4, x = pt
+      if(fabs(eta)>2.4){
+	  jetSF.push_back(SF);
+	  jetSF_e_up.push_back(SF_e_up);
+	  jetSF_e_down.push_back(SF_e_down);
+	  return;
+      }
+      if(pt<20){
+	SF=(0.938887+(0.00017124*20))+(-2.76366e-07*(20*20));
+	SF_e_up=SF_e_down=0.0415707*2;
+      }
+      else if(pt>800){
+	SF = (0.938887+(0.00017124*800))+(-2.76366e-07*(800*800));
+	SF_e_up=SF_e_down=0.0596716*2;
+      }
+      else{//20 < pt < 800
+
+	SF = (0.938887+(0.00017124*pt))+(-2.76366e-07*(pt*pt));
+
+	double SFb_error[nbins] = {0.0415707,0.0204209,0.0223227,0.0206655,0.0199325,0.0174121,0.0202332,0.0182446,0.0159777,0.0218531,0.0204688,0.0265191,0.0313175,
+	                           0.0415417,0.0740446,0.0596716 };
+	for (int i=0;i<nbins;i++){
+	    if(pt>=ptmin[i]&&pt<=ptmax[i])
+		SF_e_up=SF_e_down=SFb_error[i];
+	}
+      }//end of 20 < pt < 800 GeV
+
+      if (flavor==4) {//SFc = SFb with twice the quoted uncertainty
+	  SF_e_up = 2*SF_e_up;
+	  SF_e_down = 2*SF_e_down;
+	}
+    }//end of b,c
+
+  else { // light flavor
+
+      double SF_low;
+      double SF_high;
+      double pt_max;
+      bool overmax=0;
+
+      if( fabs(eta)<0.8){
+	  pt_max=1000;
+	  if(pt>pt_max){pt=pt_max;overmax=1;}
+	  SF = ((1.07541+(0.00231827*pt))+(-4.74249e-06*(pt*pt)))+(2.70862e-09*(pt*(pt*pt)));
+	  SF_low = ((0.964527+(0.00149055*pt))+(-2.78338e-06*(pt*pt)))+(1.51771e-09*(pt*(pt*pt)));
+	  SF_high = ((1.18638+(0.00314148*pt))+(-6.68993e-06*(pt*pt)))+(3.89288e-09*(pt*(pt*pt)));
+      }
+      else if(fabs(eta)>0.8&&fabs(eta)<1.6){
+	  pt_max=1000;
+	  if(pt>pt_max){pt=pt_max;overmax=1;}
+	  SF = ((1.05613+(0.00114031*pt))+(-2.56066e-06*(pt*pt)))+(1.67792e-09*(pt*(pt*pt)));
+	  SF_low = ((0.946051+(0.000759584*pt))+(-1.52491e-06*(pt*pt)))+(9.65822e-10*(pt*(pt*pt)));
+	  SF_high = ((1.16624+(0.00151884*pt))+(-3.59041e-06*(pt*pt)))+(2.38681e-09*(pt*(pt*pt)));
+      }
+      else if( fabs(eta)>1.6&&fabs(eta)<2.4){
+	  pt_max=850;
+	  if(pt>pt_max){pt=pt_max;overmax=1;}
+	  SF = ((1.05625+(0.000487231*pt))+(-2.22792e-06*(pt*pt)))+(1.70262e-09*(pt*(pt*pt)));
+	  SF_low = ((0.956736+(0.000280197*pt))+(-1.42739e-06*(pt*pt)))+(1.0085e-09*(pt*(pt*pt)));
+	  SF_high = ((1.15575+(0.000693344*pt))+(-3.02661e-06*(pt*pt)))+(2.39752e-09*(pt*(pt*pt)));
+      }
+      else {
+	     jetSF.push_back(SF);
+	     jetSF_e_up.push_back(SF_e_up);
+	     jetSF_e_down.push_back(SF_e_down);
+	     return;
+      }
+      SF_e_up = SF_high - SF;
+      SF_e_down = SF - SF_low;
+
+      if(overmax==1){SF_e_up=2*SF_e_up;SF_e_down=2*SF_e_down;}
+
+    }//endl of light flavor
+
+  jetSF.push_back(SF);
+  jetSF_e_up.push_back(SF_e_up);
+  jetSF_e_down.push_back(SF_e_down);
+  return;
+
+}
+
+
+void kanamuon::Init(TTree *tree){
+
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
    // pointers of the tree will be set.
@@ -1864,6 +1995,7 @@ void kanamuon::Init(TTree *tree)
    fChain->SetBranchAddress("JetPFCor_etaphiMoment", JetPFCor_etaphiMoment, &b_JetPFCor_etaphiMoment);
    fChain->SetBranchAddress("JetPFCor_maxDistance", JetPFCor_maxDistance, &b_JetPFCor_maxDistance);
    fChain->SetBranchAddress("JetPFCor_nConstituents", JetPFCor_nConstituents, &b_JetPFCor_nConstituents);
+   fChain->SetBranchAddress("JetPFCor_partonFlavour", JetPFCor_partonFlavour, &b_JetPFCor_partonFlavour);
    fChain->SetBranchAddress("JetPFCor_Area", JetPFCor_Area, &b_JetPFCor_Area);
    fChain->SetBranchAddress("VplusPFCorJet_Mass", VplusPFCorJet_Mass, &b_VplusPFCorJet_Mass);
    fChain->SetBranchAddress("JetPFCor_dphiBoson", JetPFCor_dphiBoson, &b_JetPFCor_dphiBoson);
@@ -2707,33 +2839,8 @@ void kanamuon::Init(TTree *tree)
    fChain->SetBranchAddress("event_mcPU_bx", event_mcPU_bx, &b_event_mcPU_bx);
    fChain->SetBranchAddress("event_mcPU_nvtx", event_mcPU_nvtx, &b_event_mcPU_nvtx);
 
-   Notify();
 }
 
-Bool_t kanamuon::Notify()
-{
-   // The Notify() function is called when a new file is opened. This
-   // can be either for a new TTree in a TChain or when when a new TTree
-   // is started when using PROOF. It is normally not necessary to make changes
-   // to the generated code, but the routine can be extended by the
-   // user if needed. The return value is currently not used.
 
-   return kTRUE;
-}
 
-void kanamuon::Show(Long64_t entry)
-{
-// Print contents of entry.
-// If entry is not specified, print current entry
-   if (!fChain) return;
-   fChain->Show(entry);
-}
-Int_t kanamuon::Cut(Long64_t entry)
-{
-// This function may be called from Loop.
-// returns  1 if entry is accepted.
-// returns -1 otherwise.
-   Long64_t tmp; tmp=entry;
-   return 1;
-}
 #endif // #ifdef kanamuon_cxx

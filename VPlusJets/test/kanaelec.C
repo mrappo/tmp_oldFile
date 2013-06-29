@@ -114,14 +114,13 @@
 #include "ElectroWeakAnalysis/VPlusJets/interface/QGLikelihoodCalculator.h"
 #include "MMozer/powhegweight/interface/pwhg_wrapper.h"
 
-const TString inDataDir  = "/data2/rgerosa/SideBandClosureTest/MergedNtuples/ElectronChannel_GR_R_53_V10/";
-//const TString inDataDir  = "/data2/rgerosa/SideBandClosureTest/MergedNtuples/ElectronChannel_GR_P_V39_AN3/";
+const TString inDataDir  = "/gwteray/users/gerosa/MergedNtuples_v1/ElectronChannelExoLeptonID_Analysis/";
 const TString inQCDDir   = "/gwteray/users/gerosa/MergedNtuples_v1/";
-const TString outDataDir = "/data2/rgerosa/SideBandClosureTest/RD_Trees/GR_R_53_V10/";
-//const TString outDataDir = "/data2/rgerosa/SideBandClosureTest/RD_Trees/GR_P_V39_AN3/";
+const TString outDataDir = "/gwteray/users/gerosa/RD_Trees_Production/RD_Trees_ExoLeptonID_Analysis/";
 
 const std::string fDir   = "EffTable2012/";
 const std::string fInterferenceDir   = "InterferenceTable2012/";
+const std::string BtagDir = "BTagEfficiency/";
 
 
 void kanaelec::myana(double myflag, bool isQCD, int runflag)
@@ -187,42 +186,49 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       if (myflag == 20121002 || myflag == -200){
          InitCounters( inDataDir + "el_STopS_Tbar_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"STopS_Tbar_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_STopS_Tbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121002,runflag, outDataDir + "RD_el_STopS_Tbar_CMSSW532");
       }
       if (myflag == 20121003 || myflag == -200){
          InitCounters( inDataDir + "el_STopS_T_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"STopS_T_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_STopS_T_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121003,runflag, outDataDir + "RD_el_STopS_T_CMSSW532");
       }
       if (myflag == 20121004 || myflag == -200){
          InitCounters( inDataDir + "el_STopT_Tbar_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"STopT_Tbar_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_STopT_Tbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121004,runflag, outDataDir + "RD_el_STopT_Tbar_CMSSW532");
       }
       if (myflag == 20121005 || myflag == -200){
          InitCounters( inDataDir + "el_STopT_T_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"STopT_T_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_STopT_T_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121005,runflag, outDataDir + "RD_el_STopT_T_CMSSW532");
       }
       if (myflag == 20121006 || myflag == -200){
          InitCounters( inDataDir + "el_STopTW_Tbar_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"STopTW_Tbar_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_STopTW_Tbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121006,runflag, outDataDir + "RD_el_STopTW_Tbar_CMSSW532");
       }
       if (myflag == 20121007 || myflag == -200){
          InitCounters( inDataDir + "el_STopTW_T_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"STopTW_T_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_STopTW_T_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121007,runflag, outDataDir + "RD_el_STopTW_T_CMSSW532");
       }
       if (myflag == 20121008 || myflag == -200){
          InitCounters( inDataDir + "el_TTbar_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"TTbar_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_TTbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121008,runflag, outDataDir + "RD_el_TTbar_CMSSW532");
       }
@@ -264,18 +270,21 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       if (myflag == 20121015 || myflag == -200){
          InitCounters( inDataDir + "el_WW_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"WW_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_WW_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121015,runflag, outDataDir + "RD_el_WW_CMSSW532");
       }
       if (myflag == 20121016 || myflag == -200){
          InitCounters( inDataDir + "el_WZ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"WZ_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_WZ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121016,runflag, outDataDir + "RD_el_WZ_CMSSW532");
       }
       if (myflag == 20121017 || myflag == -200){
          InitCounters( inDataDir + "el_ZpJ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
+         SetBtagEfficiencyMap(std::string(BtagDir+"ZpJ_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_ZpJ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121017,runflag, outDataDir + "RD_el_ZpJ_CMSSW532");
       }
@@ -283,17 +292,20 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          InitCounters( inDataDir + "el_TTbar_powheg_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_TTbar_powheg_CMSSW532.root"); 
+         SetBtagEfficiencyMap(std::string(BtagDir+"TTbar_Powheg_CMSSW532.root"));
          Init(myChain);Loop( h_events, h_events_weighted, 20121022,runflag, outDataDir + "RD_el_TTbar_powheg_CMSSW532");
 	 }
       if (myflag == 20121023 || myflag == -200){
          InitCounters( inDataDir + "el_ZZ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_ZZ_CMSSW532.root"); 
+         SetBtagEfficiencyMap(std::string(BtagDir+"ZZ_CMSSW532.root"));
          Init(myChain);Loop( h_events, h_events_weighted, 20121023,runflag, outDataDir + "RD_el_ZZ_CMSSW532");
       }
       if (myflag == 20121024 || myflag == -200){
          InitCounters( inDataDir + "el_WpJ_PT100_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
+         SetBtagEfficiencyMap(std::string(BtagDir+"WjetsPt100_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_WpJ_PT100_CMSSW532.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121024,runflag, outDataDir + "RD_el_WpJPt100_CMSSW532");
       }
@@ -336,6 +348,7 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       if (myflag == 20121031 || myflag == -200){
          InitCounters( inDataDir + "el_WpJ_PT100_Herwig_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
+         SetBtagEfficiencyMap(std::string(BtagDir+"WjetsPt100_herwig_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_WpJ_PT100_Herwig_CMSSW532.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121031,runflag, outDataDir + "RD_el_WpJPt100_herwig_CMSSW532");
       }
@@ -361,6 +374,7 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       if (myflag == 20121035 || myflag == -200){
          InitCounters( inDataDir + "el_WpJ_PT180_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
+         SetBtagEfficiencyMap(std::string(BtagDir+"WjetsPt180_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_WpJ_PT180_CMSSW532.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121035,runflag, outDataDir + "RD_el_WpJ_PT180_CMSSW532");
       }
@@ -369,6 +383,7 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          InitCounters( inDataDir + "el_TTbar_matchingup_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
          myChain->Add(                    inDataDir + "el_TTbar_matchingup_CMSSW532.root");
+         SetBtagEfficiencyMap(std::string(BtagDir+"TTbar_matchingup_CMSSW532.root"));
          Init(myChain);Loop(  h_events, h_events_weighted,20121036,runflag, outDataDir + "RD_el_TTbar_matchingup_CMSSW532");
       }
 
@@ -376,12 +391,14 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          InitCounters( inDataDir + "el_TTbar_matchingdown_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
          myChain->Add(                    inDataDir + "el_TTbar_matchingdown_CMSSW532.root");
+         SetBtagEfficiencyMap(std::string(BtagDir+"TTbar_matchingdown_CMSSW532.root"));
          Init(myChain);Loop(  h_events, h_events_weighted,20121037,runflag, outDataDir + "RD_el_TTbar_matchingdown_CMSSW532");
       }
 
       if (myflag == 20121038 || myflag == -200){
          InitCounters( inDataDir + "el_TTbar_scaleup_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
+         SetBtagEfficiencyMap(std::string(BtagDir+"TTbar_scaleup_CMSSW532.root"));
          myChain->Add(                    inDataDir + "el_TTbar_scaleup_CMSSW532.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121038,runflag, outDataDir + "RD_el_TTbar_scaleup_CMSSW532");
       }
@@ -390,6 +407,7 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          InitCounters( inDataDir + "el_TTbar_scaledown_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
          myChain->Add(                    inDataDir + "el_TTbar_scaledown_CMSSW532.root");
+         SetBtagEfficiencyMap(std::string(BtagDir+"TTbar_scaledown_CMSSW532.root"));
          Init(myChain);Loop(  h_events, h_events_weighted,20121039,runflag, outDataDir + "RD_el_TTbar_scaledown_CMSSW532");
       }
 
@@ -592,40 +610,39 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          myChain->Add(                    inDataDir + "el_HWWMH550_CMSSW532_private.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20122550,runflag, outDataDir + "RD_el_HWWMH550_CMSSW532_private");
       }
-      if (myflag == 20112600 || myflag == -300){
-         InitCounters( inDataDir + "el_HWWMH600_CMSSW428.root", h_events, h_events_weighted);
-         myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "el_HWWMH600_CMSSW428.root"); 
-         Init(myChain);Loop( h_events, h_events_weighted, 20112600,runflag, outDataDir + "RD_el_HWWMH600_CMSSW428");
-      }
       if (myflag == 20122600 || myflag == -300){
          InitCounters( inDataDir + "el_HWWMH600_CMSSW532_private.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_HWWMH600_CMSSW532_private.root"); 
+         SetBtagEfficiencyMap(std::string(BtagDir+"HWW_CMSSW532.root"));
          Init(myChain);Loop(h_events, h_events_weighted ,20122600,runflag, outDataDir + "RD_el_HWWMH600_CMSSW532_private");
       }
       if (myflag == 20122700 || myflag == -300){
          InitCounters( inDataDir + "el_HWWMH700_CMSSW532_private.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_HWWMH700_CMSSW532_private.root"); 
+         SetBtagEfficiencyMap(std::string(BtagDir+"HWW_CMSSW532.root"));
          Init(myChain);Loop( h_events, h_events_weighted, 20122700,runflag, outDataDir + "RD_el_HWWMH700_CMSSW532_private");
       }
       if (myflag == 20122800 || myflag == -300){
          InitCounters( inDataDir + "el_HWWMH800_CMSSW532_private.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_HWWMH800_CMSSW532_private.root"); 
+         SetBtagEfficiencyMap(std::string(BtagDir+"HWW_CMSSW532.root"));
          Init(myChain);Loop( h_events, h_events_weighted, 20122800,runflag, outDataDir + "RD_el_HWWMH800_CMSSW532_private");
       }
       if (myflag == 20122900 || myflag == -300){
          InitCounters( inDataDir + "el_HWWMH900_CMSSW532_private.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_HWWMH900_CMSSW532_private.root"); 
+         SetBtagEfficiencyMap(std::string(BtagDir+"HWW_CMSSW532.root"));
          Init(myChain);Loop( h_events, h_events_weighted, 20122900,runflag, outDataDir + "RD_el_HWWMH900_CMSSW532_private");
       }
       if (myflag == 201221000 || myflag == -300){
          InitCounters( inDataDir + "el_HWWMH1000_CMSSW532_private.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_HWWMH1000_CMSSW532_private.root"); 
+         SetBtagEfficiencyMap(std::string(BtagDir+"HWW_CMSSW532.root"));
          Init(myChain);Loop( h_events, h_events_weighted, 201221000,runflag, outDataDir + "RD_el_HWWMH1000_CMSSW532_private");
       }
 
@@ -789,53 +806,62 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M600.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M600.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126010,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M600");
       }
       if (myflag == 20126011 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M700.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M700.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126011,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M700");
       }
       if (myflag == 20126012 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M800.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M800.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126012,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M800");
       }
       if (myflag == 20126013 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M900.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M900.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126013,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M900");
       }
       if (myflag == 20126014 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1000.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1000.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126014,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1000");
       }
       if (myflag == 20126015 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1100.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1100.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126015,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1100");
       }
       if (myflag == 20126016 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1200.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1200.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126016,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1200");
       }
       if (myflag == 20126017 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1300.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1300.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126017,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1300");
       }
       if (myflag == 20126018 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1400.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1400.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126018,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1400");
       }
@@ -843,6 +869,7 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       if (myflag == 20126019 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1500.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1500.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126019,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1500");
       }
@@ -850,6 +877,7 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       if (myflag == 20126020 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1600.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1600.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126020,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1600");
       }
@@ -858,12 +886,14 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1700.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1700.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126021,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1700");
       }
 
       if (myflag == 20126022 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1800.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1800.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126022,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1800");
       }
@@ -872,17 +902,20 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M1900.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M1900.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126023,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M1900");
       }
       if (myflag == 20126024 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M2000.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M2000.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126024,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M2000");
       }
       if (myflag == 20126025 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M2100.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M2100.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126025,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M2100");
       }
@@ -890,26 +923,96 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M2200.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M2200.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	Init(myChain);Loop( h_events, h_events_weighted, 20126026,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M2200");
       }
       if (myflag == 20126027 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M2300.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M2300.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126027,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M2300");
       }
       if (myflag == 20126028 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M2400.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M2400.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126028,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M2400");
       }
       if (myflag == 20126029 || myflag == -400){
 	InitCounters( inDataDir + "el_BulkG_WW_lvjj_c0p2_M2500.root", h_events, h_events_weighted);             
 	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
 	myChain->Add(                    inDataDir + "el_BulkG_WW_lvjj_c0p2_M2500.root"); 
 	Init(myChain);Loop( h_events, h_events_weighted, 20126029,runflag, outDataDir + "RD_el_BulkG_WW_lvjj_c0p2_M2500");
       }
+
+      if (myflag == 20126030 || myflag == -400){
+	InitCounters( inDataDir + "el_X_WW_lvjj_PS600p-narrow-JHU.root", h_events, h_events_weighted);             
+	myChain = new TChain("WJet");  
+	myChain->Add(                    inDataDir + "el_X_WW_lvjj_PS600p-narrow-JHU.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
+	Init(myChain);Loop( h_events, h_events_weighted, 20126030,runflag, outDataDir + "RD_el_X_WW_lvjj_PS600p-narrow-JHU");
+      }
+
+
+      if (myflag == 20126031 || myflag == -400){
+	InitCounters( inDataDir + "el_X_WW_lvjj_SM600p-narrow-JHU.root", h_events, h_events_weighted);             
+	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
+	myChain->Add(                    inDataDir + "el_X_WW_lvjj_SM600p-narrow-JHU.root"); 
+	Init(myChain);Loop( h_events, h_events_weighted, 20126031,runflag, outDataDir + "RD_el_X_WW_lvjj_SM600p-narrow-JHU");
+      }
+
+      if (myflag == 20126032 || myflag == -400){
+	InitCounters( inDataDir + "el_X_WW_lvjj_SM600m-narrow-JHU.root", h_events, h_events_weighted);             
+	myChain = new TChain("WJet");  
+	myChain->Add(                    inDataDir + "el_X_WW_lvjj_SM600m-narrow-JHU.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
+	Init(myChain);Loop( h_events, h_events_weighted, 20126032,runflag, outDataDir + "RD_el_X_WW_lvjj_SM600m-narrow-JHU");
+      }
+
+      if (myflag == 20126033 || myflag == -400){
+	InitCounters( inDataDir + "el_X_WW_lvjj_PS600m-narrow-JHU.root", h_events, h_events_weighted);             
+	myChain = new TChain("WJet");  
+	myChain->Add(                    inDataDir + "el_X_WW_lvjj_PS600m-narrow-JHU.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
+	Init(myChain);Loop( h_events, h_events_weighted, 20126033,runflag, outDataDir + "RD_el_X_WW_lvjj_PS600m-narrow-JHU");
+      }
+
+      if (myflag == 20126034 || myflag == -400){
+	InitCounters( inDataDir + "el_X_WW_lvjj_SM1000m-narrow-JHU.root", h_events, h_events_weighted);             
+	myChain = new TChain("WJet");  
+	myChain->Add(                    inDataDir + "el_X_WW_lvjj_SM1000m-narrow-JHU.root"); 
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
+	Init(myChain);Loop( h_events, h_events_weighted, 20126034,runflag, outDataDir + "RD_el_X_WW_lvjj_SM1000m-narrow-JHU");
+      }
+
+      if (myflag == 20126035 || myflag == -400){
+	InitCounters( inDataDir + "el_X_WW_lvjj_PS1000m-narrow-JHU.root", h_events, h_events_weighted);             
+	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
+	myChain->Add(                    inDataDir + "el_X_WW_lvjj_PS1000m-narrow-JHU.root"); 
+	Init(myChain);Loop( h_events, h_events_weighted, 20126035,runflag, outDataDir + "RD_el_X_WW_lvjj_PS1000m-narrow-JHU");
+      }
+
+      if (myflag == 20126036 || myflag == -400){
+	InitCounters( inDataDir + "el_X_WW_lvjj_SM2000m-narrow-JHU.root", h_events, h_events_weighted);             
+	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
+	myChain->Add(                    inDataDir + "el_X_WW_lvjj_SM2000m-narrow-JHU.root"); 
+	Init(myChain);Loop( h_events, h_events_weighted, 20126036,runflag, outDataDir + "RD_el_X_WW_lvjj_SM2000m-narrow-JHU");
+      }
+
+      if (myflag == 20126037 || myflag == -400){
+	InitCounters( inDataDir + "el_X_WW_lvjj_PS2000m-narrow-JHU.root", h_events, h_events_weighted);             
+	myChain = new TChain("WJet");  
+	SetBtagEfficiencyMap(std::string(BtagDir+"Bulk_CMSSW532.root"));
+	myChain->Add(                    inDataDir + "el_X_WW_lvjj_PS2000m-narrow-JHU.root"); 
+	Init(myChain);Loop( h_events, h_events_weighted, 20126037,runflag, outDataDir + "RD_el_X_WW_lvjj_PS2000m-narrow-JHU");
+      }
+
 
       if (myflag == 20127001 || myflag == -400){
 	InitCounters( inDataDir + "WenuJetAnalysisntuple_195948_317_517532532.root", h_events, h_events_weighted);             
@@ -991,8 +1094,8 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TTree *newtree = fChain->CloneTree();
    Long64_t nentries = newtree->GetEntries();
    char textfn[100]; 
-   sprintf(textfn,"%s.txt", rootfn);
-   FILE *textfile = fopen(textfn,"w");
+   //   sprintf(textfn,"%s.txt", rootfn);
+   //FILE *textfile = fopen(textfn,"w");
 
    Int_t   ggdevt   =0,   evtNJ     =0;
    Int_t   ggdevtinclusive   =0; //For inclusive Jet Bin
@@ -1220,11 +1323,17 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch * branch_2jdibnoqgel   =  newtree->Branch("mva2jdibnoqgel",   &mva2jdibnoqgel,    "mva2jdibnoqgel/F");
    TBranch * branch_3jdibnoqgel   =  newtree->Branch("mva3jdibnoqgel",   &mva3jdibnoqgel,    "mva3jdibnoqgel/F");
 
-   Float_t effwt = 1.0, puwt = 1.0, puwt_up = 1.0, puwt_down = 1.0;
+   Float_t effwt = 1.0, puwt = 1.0, puwt_up = 1.0, puwt_down = 1.0, eff_btag = 1.0, eff_btag_up = 1.0, eff_btag_dw = 1.0, eff_btag_up_dw = 1.0, eff_btag_dw_up = 1.0;
    TBranch * branch_effwt          =  newtree->Branch("effwt",       &effwt,        "effwt/F");
    TBranch * branch_puwt           =  newtree->Branch("puwt",        &puwt,         "puwt/F");
    TBranch * branch_puwt_up        =  newtree->Branch("puwt_up",     &puwt_up,      "puwt_up/F");
    TBranch * branch_puwt_down      =  newtree->Branch("puwt_down",   &puwt_down,    "puwt_down/F");
+   TBranch * branch_eff_btag       =  newtree->Branch("eff_btag",   &eff_btag,    "eff_btag/F");
+   TBranch * branch_eff_btag_up      =  newtree->Branch("eff_btag_up",   &eff_btag_up,    "eff_btag_up/F");
+   TBranch * branch_eff_btag_dw      =  newtree->Branch("eff_btag_dw",   &eff_btag_dw,    "eff_btag_dw/F");
+   TBranch * branch_eff_btag_up_dw      =  newtree->Branch("eff_btag_up_dw",   &eff_btag_up_dw,    "eff_btag_up_dw/F");
+   TBranch * branch_eff_btag_dw_up      =  newtree->Branch("eff_btag_dw_up",   &eff_btag_dw_up,    "eff_btag_dw_up/F");
+
 
    Float_t interferencewtggH400 = 1.0, interferencewtggH450 = 1.0, interferencewtggH500 = 1.0, interferencewtggH550 = 1.0, interferencewtggH600 = 1.0, interferencewtggH700 = 1.0, interferencewtggH800 = 1.0, interferencewtggH900 = 1.0, interferencewtggH1000 = 1.0;
    Float_t interferencewt_upggH400 = 1.0, interferencewt_upggH450 = 1.0, interferencewt_upggH500 = 1.0, interferencewt_upggH550 = 1.0, interferencewt_upggH600 = 1.0, interferencewt_upggH700 = 1.0, interferencewt_upggH800 = 1.0, interferencewt_upggH900 = 1.0, interferencewt_upggH1000 = 1.0;
@@ -1422,7 +1531,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_GroomedJet_CA8_prsubjet1subjet2_deltaR = newtree->Branch("GroomedJet_CA8_prsubjet1subjet2_deltaR", &GroomedJet_CA8_prsubjet1subjet2_deltaR, "GroomedJet_CA8_prsubjet1subjet2_deltaR/F");
 
    Int_t GroomedJet_CA8_tobecFlag = -1;
-   TBranch *branch_GroomedJet_CA8_tobecFlag = newtree->Branch("GroomedJet_CA8_tobecFlag", &GroomedJet_CA8_tobecFlag, "GroomedJet_CA8_tobecFlag/F");
+   TBranch *branch_GroomedJet_CA8_tobecFlag = newtree->Branch("GroomedJet_CA8_tobecFlag", &GroomedJet_CA8_tobecFlag, "GroomedJet_CA8_tobecFlag/I");
 
    Float_t boostedW_lvj_e_type0=-999.,   boostedW_lvj_pt_type0=-999.,   boostedW_lvj_eta_type0=-999.,   boostedW_lvj_phi_type0=-999.,   boostedW_lvj_m_type0=-999.,  boostedW_lvj_y_type0=-999.;
 
@@ -1862,7 +1971,8 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       mva2jdibosonel = 999; mva3jdibosonel = 999; mva2jdibnoqgel = 999; mva3jdibnoqgel = 999;
   
 
-      effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0;
+      effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0; eff_btag = 1.0; eff_btag_up = 1.0; eff_btag_dw = 1.0 ; eff_btag_up_dw = 1.0; eff_btag_dw_up=1.0;
+
       qgld_Spring11[0]= -1;       qgld_Spring11[1]= -1;       qgld_Spring11[2]= -1;       qgld_Spring11[3]= -1;       qgld_Spring11[4]= -1;       qgld_Spring11[5]= -1;
       qgld_Summer11[0]= -1;       qgld_Summer11[1]= -1;       qgld_Summer11[2]= -1;       qgld_Summer11[3]= -1;       qgld_Summer11[4]= -1;       qgld_Summer11[5]= -1;
       qgld_Summer11CHS[0]= -1;    qgld_Summer11CHS[1]= -1;    qgld_Summer11CHS[2]= -1;    qgld_Summer11CHS[3]= -1;    qgld_Summer11CHS[4]= -1;    qgld_Summer11CHS[5]= -1;
@@ -1960,7 +2070,124 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       //eleMHTEff.GetEfficiency(event_met_pfmet, 0) *
       //  eleWMtEff.GetEfficiency(W_mt, W_electron_eta);
 
-      //      std::cout<<" Efficiency: pt "<<W_electron_pt<<" eta "<<W_electron_eta<<" trigger "<< eleHLTEff.GetEfficiency(W_electron_pt, W_electron_eta)<<" Reco "<<eleRecoEff.GetEfficiency(W_electron_pt, W_electron_eta)<<" Id "<<eleIdEff.GetEfficiency(W_electron_pt, W_electron_eta) <<std::endl;
+
+      // Calculate Btag scale factor --> Loop on the AK5 central jets                                                                                                                            
+
+      if (wda>20120999) { // consider only MC samples                                                                                                                                            
+
+        double weight=1.0;
+
+        //clean the vectors                                                                                                                                                                      
+        jetEff.clear();
+        jetEff_e.clear();
+        jetSF.clear();
+        jetSF_e_up.clear();
+        jetSF_e_down.clear();
+
+        int nbtagsM=0;
+        int nbtagscleanM=0;
+	std::vector<int> btaggedM;
+	std::vector<int> bvetoedM;
+	std::vector<int> btaggedcleanM;
+	std::vector<int> bvetoedcleanM;
+
+        for(int iJet = 0; iJet < numPFCorJets ; iJet++){
+
+          if(JetPFCor_Pt[iJet] < 0.) continue ;
+
+          GetBTagEfficiency(JetPFCor_Pt[iJet], JetPFCor_Eta[iJet], JetPFCor_partonFlavour[iJet]) ;
+          GetBTagScaleFactor(JetPFCor_Pt[iJet], JetPFCor_Eta[iJet], JetPFCor_partonFlavour[iJet]) ;
+
+          if(JetPFCor_bDiscriminatorCSV[iJet]>btcsvm) {btaggedM.push_back(iJet); nbtagsM++; }
+          else bvetoedM.push_back(iJet);
+
+          bool isclean = 1;
+          if( TMath::Sqrt( fabs(JetPFCor_Eta[iJet]-GroomedJet_CA8_phi[0])*fabs(JetPFCor_Eta[iJet]-GroomedJet_CA8_eta[0])+
+                           getDeltaPhi(JetPFCor_Phi[iJet],GroomedJet_CA8_phi[0])*getDeltaPhi(JetPFCor_Phi[iJet],GroomedJet_CA8_phi[0])) < 0.8 ) isclean = 0;
+
+	  if(JetPFCor_bDiscriminatorCSV[iJet]>btcsvm && isclean==1) { btaggedcleanM.push_back(iJet); nbtagscleanM++;}
+	  else bvetoedcleanM.push_back(iJet);
+        }
+
+
+	double PMC=1.;
+        double PDATA=1.;
+        double PMC_up=1.;
+        double PDATA_up=1.;
+        double PMC_dw=1.;
+        double PDATA_dw=1.;
+        double PMC_dw_up=1.;
+        double PDATA_dw_up=1.;
+        double PMC_up_dw=1.;
+        double PDATA_up_dw=1.;
+
+        for( int iJet = 0; iJet < (bvetoedM.size()+btaggedM.size()) ; iJet++){
+
+          if(iJet >= int(jetSF.size()) || iJet >= int(jetSF_e_up.size()) || iJet >= int(jetSF_e_down.size()) || iJet >= int(jetEff.size()) ) continue;
+
+          double SF_central = jetSF.at(iJet);
+          double SF_up      = jetSF.at(iJet) + jetSF_e_up.at(iJet);
+          double SF_down    = jetSF.at(iJet) - jetSF_e_down.at(iJet);
+
+	  double temp_eff_mc = 1.;
+          double temp_eff_data = 1.;
+          double temp_eff_mc_up = 1.;
+          double temp_eff_data_up = 1.;
+          double temp_eff_mc_dw = 1.;
+          double temp_eff_data_dw = 1.;
+          double temp_eff_mc_up_dw = 1.;
+          double temp_eff_data_up_dw = 1.;
+          double temp_eff_mc_dw_up = 1.;
+          double temp_eff_data_dw_up = 1.;
+
+          if(std::find(btaggedM.begin(), btaggedM.end(), iJet)!=btaggedM.end()) {
+	    temp_eff_mc = jetEff.at(iJet) ; temp_eff_data = jetEff.at(iJet)*SF_central;
+	    temp_eff_mc_up = jetEff.at(iJet)+jetEff_e.at(iJet) ; temp_eff_data_up = (jetEff.at(iJet)+jetEff_e.at(iJet) )*SF_up;
+	    temp_eff_mc_dw = jetEff.at(iJet)-jetEff_e.at(iJet) ; temp_eff_data_dw = (jetEff.at(iJet)-jetEff_e.at(iJet) )*SF_down;
+	    temp_eff_mc_up_dw = jetEff.at(iJet)+jetEff_e.at(iJet) ; temp_eff_data_up_dw = (jetEff.at(iJet)+jetEff_e.at(iJet) )*SF_down;
+	    temp_eff_mc_dw_up = jetEff.at(iJet)-jetEff_e.at(iJet) ; temp_eff_data_dw_up = (jetEff.at(iJet)-jetEff_e.at(iJet) )*SF_up;
+          }
+          else if (std::find(bvetoedM.begin(), bvetoedM.end(), iJet)!=bvetoedM.end()) {
+	    temp_eff_mc = 1.-jetEff.at(iJet); temp_eff_data = 1.-jetEff.at(iJet)*SF_central;
+	    temp_eff_mc_up = 1.-(jetEff.at(iJet)+jetEff_e.at(iJet)) ; temp_eff_data_up = 1.-(jetEff.at(iJet)+jetEff_e.at(iJet) )*SF_up;
+	    temp_eff_mc_dw = 1.-(jetEff.at(iJet)-jetEff_e.at(iJet)) ; temp_eff_data_dw = 1.-(jetEff.at(iJet)-jetEff_e.at(iJet) )*SF_down;
+	    temp_eff_mc_up_dw = 1.-(jetEff.at(iJet)+jetEff_e.at(iJet)) ; temp_eff_data_up_dw = 1.-(jetEff.at(iJet)+jetEff_e.at(iJet) )*SF_down;
+	    temp_eff_mc_dw_up = 1.-(jetEff.at(iJet)-jetEff_e.at(iJet)) ; temp_eff_data_dw_up = 1.-(jetEff.at(iJet)-jetEff_e.at(iJet) )*SF_up;
+          }
+
+	  PMC=PMC*temp_eff_mc;
+	  PDATA=PDATA*temp_eff_data;
+
+	  PMC_up=PMC_up*temp_eff_mc_up;
+	  PDATA_up=PDATA_up*temp_eff_data_up;
+
+	  PMC_dw=PMC_dw*temp_eff_mc_dw;
+	  PDATA_dw=PDATA_dw*temp_eff_data_dw;
+
+	  PMC_up_dw   = PMC_up_dw*temp_eff_mc_up_dw;
+	  PDATA_up_dw = PDATA_up_dw*temp_eff_data_up_dw;
+
+	  PMC_dw_up   = PMC_dw_up*temp_eff_mc_dw_up;
+	  PDATA_dw_up = PDATA_dw_up*temp_eff_data_dw_up;
+
+        }
+
+        if(PMC==0) eff_btag = 1 ;
+        else       eff_btag = PDATA/PMC;
+
+        if(PMC_up==0) eff_btag_up = 1 ;
+        else          eff_btag_up = PDATA_up/PMC_up;
+
+        if(PMC_dw==0) eff_btag_dw = 1 ;
+        else          eff_btag_dw = PDATA_dw/PMC_dw;
+
+        if(PMC_dw_up==0) eff_btag_dw_up = 1 ;
+        else             eff_btag_dw_up = PDATA_dw_up/PMC_dw_up;
+
+        if(PMC_up_dw==0) eff_btag_up_dw = 1 ;
+        else             eff_btag_up_dw = PDATA_up_dw/PMC_up_dw;
+
+      }
 
       // Pile up Re-weighting
       if (wda>20120999) {
@@ -3049,6 +3276,12 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_puwt_up->Fill();
       branch_puwt_down->Fill();
 
+      branch_eff_btag->Fill();
+      branch_eff_btag_up->Fill();
+      branch_eff_btag_dw->Fill();
+      branch_eff_btag_dw_up->Fill();
+      branch_eff_btag_up_dw->Fill();
+
       branch_interferencewtggH400->Fill();
       branch_interferencewtggH450->Fill();
       branch_interferencewtggH500->Fill();
@@ -3333,7 +3566,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
     h_events_weighted->Write();
     delete newtree;
     fresults.Close();
-    fclose(textfile);
+    //    fclose(textfile);
     std::cout <<  wda << " Finish :: " << outfilename << "    "<< nentries  << std::endl;
    
 }
@@ -3350,139 +3583,6 @@ double kanaelec::getDeltaPhi(double phi1, double phi2  ){
       return result;
 }
 
-bool kanaelec::dottHKinematicFit(const TLorentzVector mup, const TLorentzVector nvp, const TLorentzVector wajp, const TLorentzVector wbjp, const TLorentzVector topajp, const TLorentzVector topbjp, Float_t & fit_chi2, Int_t & fit_NDF, Int_t & fit_status){
-
-      bool OK                     = false;
-      Resolution* resolution      = new Resolution();
-
-      TMatrixD m1(3,3);
-      TMatrixD m2(3,3);
-      TMatrixD m3(3,3);
-      TMatrixD m4(3,3);
-      TMatrixD m5(3,3);
-      TMatrixD m6(3,3);
-      m1.Zero();
-      m2.Zero();
-      m3.Zero();
-      m4.Zero();
-      m5.Zero();
-      m6.Zero();
-
-      double etRes, etaRes, phiRes;
-      // lepton resolution
-      const std::string& leptonName = "muon";  const TLorentzVector lepton   = mup;
-      if(leptonName == "electron") {
-         OK = resolution->electronResolution(lepton.Et(), lepton.Eta(), etRes, etaRes, phiRes);
-         if(!OK) return OK;
-      } else {
-         OK = resolution->muonResolution(lepton.Et(), lepton.Eta(), etRes, etaRes, phiRes);
-         if(!OK) return OK;
-      }
-      m1(0,0) = resolution->square(etRes);
-      m1(1,1) = resolution->square(etaRes);
-      m1(2,2) = resolution->square(phiRes);
-      // MET resolution
-      OK = resolution->PFMETResolution( nvp.Et(), etRes, etaRes, phiRes);
-      if(!OK) return OK;
-      m2(0,0) = resolution->square(etRes);
-      m2(1,1) = 0.01; // resolution->square(etaRes)
-      m2(2,2) = resolution->square(phiRes);
-      // W aJet resolution
-      OK = resolution->udscPFJetResolution( wajp.Et(), wajp.Eta(), etRes, etaRes, phiRes);
-      if(!OK) return OK;
-      m3(0,0) = resolution->square(etRes);
-      m3(1,1) = resolution->square(etaRes);
-      m3(2,2) = resolution->square(phiRes);
-      // W bJet resolution
-      OK = resolution->udscPFJetResolution( wbjp.Et(), wbjp.Eta(), etRes, etaRes, phiRes);
-      if(!OK) return OK;
-      m4(0,0) = resolution->square(etRes);
-      m4(1,1) = resolution->square(etaRes);
-      m4(2,2) = resolution->square(phiRes);
-      //Top aJet resolution
-      OK = resolution->bPFJetResolution( topajp.Et(), topajp.Eta(), etRes, etaRes, phiRes);
-      if(!OK) return OK;
-      m5(0,0) = resolution->square(etRes);
-      m5(1,1) = resolution->square(etaRes);
-      m5(2,2) = resolution->square(phiRes);
-      //Top bJet resolution
-      OK = resolution->bPFJetResolution( topbjp.Et(), topbjp.Eta(), etRes, etaRes, phiRes);
-      if(!OK) return OK;
-      m6(0,0) = resolution->square(etRes);
-      m6(1,1) = resolution->square(etaRes);
-      m6(2,2) = resolution->square(phiRes);
-
-      TLorentzVector tmp_mup = mup;
-      TLorentzVector tmp_nvp = nvp;
-      TLorentzVector tmp_ajp = wajp;
-      TLorentzVector tmp_bjp = wbjp;
-      TLorentzVector tmp_topajp = topajp;
-      TLorentzVector tmp_topbjp = topbjp;
-
-      // Fit Particle
-      TFitParticleEtEtaPhi* particle1 = new TFitParticleEtEtaPhi( "Lepton",   "Lepton",   &tmp_mup,    &m1 );
-      TFitParticleEtEtaPhi* particle2 = new TFitParticleEtEtaPhi( "Neutrino", "Neutrino", &tmp_nvp,    &m2 );
-      TFitParticleEtEtaPhi* particle3 = new TFitParticleEtEtaPhi( "Jeta",     "Jeta",     &tmp_ajp,    &m3 );
-      TFitParticleEtEtaPhi* particle4 = new TFitParticleEtEtaPhi( "Jetb",     "Jetb",     &tmp_bjp,    &m4 );
-      TFitParticleEtEtaPhi* particle5 = new TFitParticleEtEtaPhi( "TopJeta",     "TopJeta",     &tmp_topajp,    &m5 );
-      TFitParticleEtEtaPhi* particle6 = new TFitParticleEtEtaPhi( "TopJetb",     "TopJetb",     &tmp_topbjp,    &m6 );
-
-      // Constraint
-      TFitConstraintMGaus* mCons1 = new TFitConstraintMGaus( "W1MassConstraint", "W1Mass-Constraint", 0, 0 , 80.399, 2.085);
-      mCons1->addParticles1( particle1, particle2 );
-
-      TFitConstraintMGaus* mCons2 = new TFitConstraintMGaus( "W2MassConstraint", "W2Mass-Constraint", 0, 0 , 80.399, 2.085);
-      mCons2->addParticles1( particle3, particle4 );
-
-      TFitConstraintMGaus* mCons3 = new TFitConstraintMGaus( "Top1MassConstraint", "Top1Mass-Constraint", 0, 0 , 172.5, 13.1);
-      mCons3->addParticles1( particle1, particle2, particle5 );
-
-      TFitConstraintMGaus* mCons4 = new TFitConstraintMGaus( "Top2MassConstraint", "Top2Mass-Constraint", 0, 0 , 172.5, 13.1);
-      mCons4->addParticles1( particle3, particle4, particle6 );
-
-      //Definition of the fitter
-      TKinFitter* fitter = new TKinFitter("fitter", "fitter");
-      fitter->addMeasParticle( particle1 );
-      fitter->addMeasParticle( particle2 );
-      fitter->addMeasParticle( particle3 );
-      fitter->addMeasParticle( particle4 );
-      fitter->addMeasParticle( particle5 );
-      fitter->addMeasParticle( particle6 );
-      fitter->addConstraint( mCons1 );
-      fitter->addConstraint( mCons2 );
-      fitter->addConstraint( mCons3 );
-      fitter->addConstraint( mCons4 );
-
-      //Set convergence criteria
-      fitter->setMaxNbIter( 50 );
-      fitter->setMaxDeltaS( 1e-2 );
-      fitter->setMaxF( 1e-1 );
-      fitter->setVerbosity(1);
-      fitter->fit();
-
-      //Return the kinematic fit results
-      fit_status   = fitter->getStatus();
-      fit_chi2     = fitter->getS();
-      fit_NDF      = fitter->getNDF();
-
-      if(fitter->getStatus() == 0) { OK = true;  } else { OK = false;  }
-      delete resolution;
-      delete particle1;
-      delete particle2;
-      delete particle3;
-      delete particle4;
-      delete particle5;
-      delete particle6;
-      delete mCons1;
-      delete mCons2;
-      delete mCons3;
-      delete mCons4;
-      delete fitter;
-
-      return OK;
-
-
-}
 
 bool kanaelec::doKinematicFit(Int_t                 fflage,
          const TLorentzVector     mup, 
