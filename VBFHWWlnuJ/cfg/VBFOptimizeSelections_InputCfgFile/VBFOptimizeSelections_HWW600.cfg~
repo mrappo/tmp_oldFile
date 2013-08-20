@@ -1,8 +1,8 @@
 [Input]
 
-InputDirectory       = /data2/rgerosa/otrees_Higgs/trainingtrees_mu/
+InputDirectory       = /data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis_v2/trainingtrees_mu/
 
-InputSampleList      = cfg/VBFOptimizeSelections_InputCfgFile/SampleListBulkGraviton_600_kMpl01_mu.txt
+InputSampleList      = cfg/VBFOptimizeSelections_InputCfgFile/SampleListHWW600_RD_otree.txt
 
 InputVariableList    = cfg/VBFOptimizeSelections_InputCfgFile/VariablesInputRSG.txt
 
@@ -10,21 +10,21 @@ InputSpectatorList   = cfg/VBFOptimizeSelections_InputCfgFile/VariablesSpectator
 
 TreeName             = otree
 
-Label                = mu_MLP_rank2
+Label                = mu_tau2tau1_exkT
 
 LeptonType           = muon
 
 [Option]
 
-SignalName           = BulkGraviton
+SignalName           = ggH
 
-EventWeight          = eff_and_pu_Weight
+EventWeight          = eff_and_pu_Weight*cps_Weight_H600*interference_Weight_H600
 
 PreselectionCutType  = basicSRPreselectionCut
 
-UseMethodName        = MLP, MLPBFG, CFMlpANN 
+UseMethodName        = CutsGA
 
-JetPtBinOfTraining   = 0, 285, 400
+JetPtBinOfTraining   = 250, 400
 
 
 [Output]
