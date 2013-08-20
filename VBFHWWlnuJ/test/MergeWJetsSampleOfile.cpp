@@ -21,11 +21,11 @@
 
 int main (int arcg, char** argv){
 
-  std::string nameWJetsPT100  = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis/trainingtrees_el/ofile_WJets_Pythia.root";
-  std::string nameWJetsPT180  = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis/trainingtrees_el/ofile_WJets_Pythia180.root";
-  std::string nameWJetsMerge1 = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis/trainingtrees_el/ofile_WJets_PythiaMerged1.root";
-  std::string nameWJetsMerge2 = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis/trainingtrees_el/ofile_WJets_PythiaMerged2.root";
-  std::string nameWJetsMerge  = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis/trainingtrees_el/ofile_WJets_PythiaMerged.root";
+  std::string nameWJetsPT100  = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis_v2/trainingtrees_mu/ofile_WJets_Pythia.root";
+  std::string nameWJetsPT180  = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis_v2/trainingtrees_mu/ofile_WJets_Pythia180.root";
+  std::string nameWJetsMerge1 = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis_v2/trainingtrees_mu/ofile_WJets_PythiaMerged1.root";
+  std::string nameWJetsMerge2 = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis_v2/trainingtrees_mu/ofile_WJets_PythiaMerged2.root";
+  std::string nameWJetsMerge  = "/data2/rgerosa/OTREES/otrees_ExoLeptonID_Analysis_v2/trainingtrees_mu/ofile_WJets_PythiaMerged.root";
 
   double WJets100WeightMuon = 34.29*(8955318/289.2)*(1/(9739464+(34.29/289.2)*8955318)) ;
   double WJets180WeightMuon = 9739464/(9739464+(34.29/289.2)*8955318) ;

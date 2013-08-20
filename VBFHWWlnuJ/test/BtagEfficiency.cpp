@@ -147,7 +147,7 @@ int main (int argc, char** argv){
   std::cout<<"                      "<<std::endl;
   std::cout<<" Start Loop on the Event "<<std::endl;
   std::cout<<"                      "<<std::endl;
-      
+
   treeReader* fReaderTree = new treeReader((TTree*)(inputTreeList.back()), false);
 
   for( int iEvent = 0; iEvent < inputTreeList.at(iTree)->GetEntries() ; iEvent ++){
@@ -233,8 +233,7 @@ int main (int argc, char** argv){
     }
     
    }
-
-  delete  fReaderTree;
+  
   }
   
   // calculate the efficiency with binomial errors
