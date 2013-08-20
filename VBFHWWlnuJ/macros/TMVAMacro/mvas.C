@@ -86,7 +86,7 @@ void mvas( TString fin = "TMVA.root", HistType htype = MVAType, Bool_t useTMVASt
          else if (htype == RarityType) 
             sig->SetTitle( Form("Rarity for classifier: %s", methodTitle.Data()) );
          else if (htype == CompareType) 
-            sig->SetTitle( Form("Overtraining check for classifier: %s", methodTitle.Data()) );
+	   //           sig->SetTitle( Form("Overtraining check for classifier: %s", methodTitle.Data()) );
          
          // create new canvas
          TString ctitle = ((htype == MVAType) ? 

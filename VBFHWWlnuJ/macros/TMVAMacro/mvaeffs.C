@@ -144,6 +144,7 @@ class StatDialogMVAEffs {
    
    void SetFormula(const TString& f) { fFormula = f; }
    void SetSignalEffType(const bool & type = false) { fType = type; }
+   void SetBackgroundEffType(const bool & type = false) { BType = type; }
 
    TString GetFormula();
    TString GetFormulaString() { return fFormula; }
@@ -173,6 +174,7 @@ private:
    Int_t maxLenTitle;
 
    bool fType ;
+   bool BType ;
 
    void UpdateCanvases();
 
@@ -204,6 +206,7 @@ TString StatDialogMVAEffs::GetFormula()
    f.ReplaceAll("epsilonS","x");
    f.ReplaceAll("S","x");
    f.ReplaceAll("S","x");
+   f.ReplaceAll("epsilonB","y");
    f.ReplaceAll("B","y");
    return f;
 }
@@ -216,6 +219,7 @@ TString StatDialogMVAEffs::GetLatexFormula()
    f.ReplaceAll(")","}");
    f.ReplaceAll("sqrt","#sqrt");
    f.ReplaceAll("epsilonS","#epsilon_{S}");
+   f.ReplaceAll("epsilonB","#epsilon_{B}");
 
    return f;
 }
@@ -356,7 +360,10 @@ void StatDialogMVAEffs::UpdateSignificanceHists()
 	 if(!fType) S = eS * fNSignal;
          else S = eS ;
 
-         Float_t B = info->origBgdE->GetBinContent( i ) * fNBackground;
+         Float_t B = 0. ;
+         if(!BType) B = info->origBgdE->GetBinContent( i ) * fNBackground;
+         else B = info->origBgdE->GetBinContent( i ) ;
+
          if(!fType) info->purS->SetBinContent( i, (S+B==0)?0:S/(S+B) );
          else info->purS->SetBinContent( i, (S*fNSignal+B==0)?0:S*fNSignal/(S*fNSignal+B) );
 
@@ -483,8 +490,8 @@ void StatDialogMVAEffs::DrawHistograms()
       info->sigE->GetXaxis()->SetRangeUser(1,0.01);
 
       info->sigE->Draw("histl");
-      info->effpurS->Draw("samehistl");
-      info->purS->Draw("samehistl");      
+      //   info->effpurS->Draw("samehistl");
+      //   info->purS->Draw("samehistl");      
 
       // overlay signal and background histograms
       info->sigE->Draw("samehistl");
@@ -512,8 +519,8 @@ void StatDialogMVAEffs::DrawHistograms()
                                      1 - c->GetRightMargin(), 1 - c->GetTopMargin() + 0.12 );
       legend2->SetFillStyle( 1 );
       legend2->SetFillColor( 0 );
-      legend2->AddEntry(info->purS,"Signal purity","L");
-      legend2->AddEntry(info->effpurS,"Signal efficiency*purity","L");
+      //      legend2->AddEntry(info->purS,"Signal purity","L");
+      //  legend2->AddEntry(info->effpurS,"Signal efficiency*purity","L");
       std::string formula = GetLatexFormula() ;
 
         
@@ -541,13 +548,13 @@ void StatDialogMVAEffs::DrawHistograms()
       tl.DrawLatex( 0.15, 0.19, "events the maximum "+GetLatexFormula()+" is");
 
       if (info->maxSignificanceErr > 0) {
-         info->line2 = tl.DrawLatex( 0.15, 0.15, Form("%5.2f +- %4.2f when cutting at %5.2f", 
+         info->line2 = tl.DrawLatex( 0.15, 0.15, Form("%5.3f +- %4.3f when cutting at %5.2f", 
                                                       info->maxSignificance, 
                                                       info->maxSignificanceErr, 
                                                       info->sSig->GetXaxis()->GetBinCenter(maxbin)) );
       }
       else {
-         info->line2 = tl.DrawLatex( 0.15, 0.15, Form("%4.2f when cutting at %5.2f", 
+         info->line2 = tl.DrawLatex( 0.15, 0.15, Form("%4.3f when cutting at %5.3f", 
                                                       info->maxSignificance, 
                                                       info->sSig->GetXaxis()->GetBinCenter(maxbin)) );
       }
@@ -638,7 +645,7 @@ void StatDialogMVAEffs::PrintResults( const MethodInfo* info )
 }
 
 void mvaeffs( TString fin = "TMVA.root", 
-              Bool_t useTMVAStyle = kTRUE, TString formula="epsilonS/(1+sqrt(B))", bool UseSignalEfficiency = true )
+              Bool_t useTMVAStyle = kTRUE, TString formula="epsilonS/(sqrt(epsilonB))", bool UseSignalEfficiency = true, bool UseBackgroundEfficiency = true )
 {
    TMVAGlob::Initialize( useTMVAStyle );
 
@@ -648,6 +655,7 @@ void mvaeffs( TString fin = "TMVA.root",
    gGui->ReadHistograms(file);
    gGui->SetFormula(formula);
    gGui->SetSignalEffType(UseSignalEfficiency);
+   gGui->SetBackgroundEffType(UseBackgroundEfficiency);
    gGui->UpdateSignificanceHists();
    gGui->DrawHistograms();
    gGui->RaiseDialog();   

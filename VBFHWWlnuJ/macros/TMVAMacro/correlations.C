@@ -21,7 +21,7 @@ void correlations( TString fin = "TMVA.root", Bool_t isRegression = kFALSE,
    Int_t ncls = (isRegression ? 1 : 2 );
    TString hName[2] = { "CorrelationMatrixS", "CorrelationMatrixB" };
    if (isRegression) hName[0]= "CorrelationMatrix";
-   const Int_t width = 600;
+   const Int_t width = 500;
    for (Int_t ic=0; ic<ncls; ic++) {
 
       TH2* h2 = file->Get( hName[ic] );
@@ -36,11 +36,13 @@ void correlations( TString fin = "TMVA.root", Bool_t isRegression = kFALSE,
                                 ic*(width+5)+200, 0, width, width ); 
       Float_t newMargin1 = 0.13;
       Float_t newMargin2 = 0.15;
+      Float_t newMargin3 = 0.20;
+
       if (TMVAGlob::UsePaperStyle) newMargin2 = 0.13;
 
       c->SetGrid();
       c->SetTicks();
-      c->SetLeftMargin  ( newMargin2 );
+      c->SetLeftMargin  ( newMargin3 );
       c->SetBottomMargin( newMargin2 );
       c->SetRightMargin ( newMargin1 );
       c->SetTopMargin   ( newMargin1 );
@@ -51,7 +53,7 @@ void correlations( TString fin = "TMVA.root", Bool_t isRegression = kFALSE,
 
       h2->SetMarkerSize( 1.5 );
       h2->SetMarkerColor( 0 );
-      Float_t labelSize = 0.040;
+      Float_t labelSize = 0.035;
       h2->GetXaxis()->SetLabelSize( labelSize );
       h2->GetYaxis()->SetLabelSize( labelSize );
       h2->LabelsOption( "d" );
