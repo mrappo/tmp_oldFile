@@ -5,8 +5,8 @@
  * \brief A class which keeps track of the entire configuration of the
  * analysis
  *
- * $Date: 2010/06/02 09:24:20 $
- * $Author: abenagli $
+ * $Date: 2013/02/05 11:24:28 $
+ * $Author: rgerosa $
  * 
  * The class is initialized by calling the init() proceedure which
  * takes the command line arguments. Afterwards a configuration file

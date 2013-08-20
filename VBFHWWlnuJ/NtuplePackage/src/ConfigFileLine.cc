@@ -6,8 +6,8 @@
  * file, that is a pair of an option name and a (list of) value(s) 
  *  
  *
- * $Date: 2010/06/02 09:24:20 $
- * $Author: abenagli $
+ * $Date: 2013/02/05 11:24:28 $
+ * $Author: rgerosa $
  *
  * The class ConfigFileLine is used by the config_parser during
  * parsing of the analyis configuration file. Every parsed line is put
