@@ -2,6 +2,5 @@
 ## Spectator Variable List ######
 #################################
 ungroomed_jet_pt
+mass_lvj
 jet_mass_pr
-nPV
-jet_massdrop_pr
