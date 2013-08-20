@@ -3,8 +3,8 @@
 // A class representing the configuration of the analysis program,
 // gathered from the configuration file and the command line
 //
-// last change : $Date: 2010/06/02 09:32:37 $
-// by          : $Author: abenagli $
+// last change : $Date: 2013/02/05 11:22:49 $
+// by          : $Author: rgerosa $
 //
 
 #ifndef CONFIGPARSER_H

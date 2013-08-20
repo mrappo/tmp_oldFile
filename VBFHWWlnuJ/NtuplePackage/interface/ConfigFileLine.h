@@ -3,8 +3,8 @@
 // A class representing a (continued) line in the configuration
 // file, that is a pair of an option name and a (list of) value(s) 
 //
-// last change : $Date: 2010/06/02 09:32:37 $
-// by          : $Author: abenagli $
+// last change : $Date: 2013/02/05 11:22:36 $
+// by          : $Author: rgerosa $
 //
 
 #ifndef CONFIGFILELINE_H
