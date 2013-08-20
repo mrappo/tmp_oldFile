@@ -1,9 +1,10 @@
 #####################################################################################################################
 #  Sample Name 					            Reduced Name      Color     XSec (pb)    NumEntriesBefore
 ######################################################################################################################
-ofile_WJets_Pythia                                              W+Jets           2            289.2      8955318
+ofile_data                                                      DATA             1               1            1
+oflie_WJets_Pythia                                              W+Jets           2           289.2      8955318
 #ofile_WJets_Herwig                                              W+Jets           2           289.2      13256090
-ofile_WJets_Pythia180                                           W+Jets            2           289.2      9739464
+ofile_WJets_Pythia180                                           W+Jets            2           34.88      9739464
 #ofile_WW                                                        WW               4          54.838     10000431
 #ofile_WZ                                                        WZ               4         32.3161     10000283
 #ofile_ZJets                                                     Z+Jets           5            3503     30459503
@@ -20,5 +21,5 @@ ofile_WJets_Pythia180                                           W+Jets          
 #ofile_TTbar_scaleUp                                             tt_bar           210         225.197      5009488
 #ofile_TTbar_scaleUp                                             tt_bar           210         228.0        5387181
 #ofile_TTbar_Powheg                                              tt_bar           210         225.197      21675970
-ofile_BulkG_c0p2_M600                                          BulkGraviton      1           0.00130      48949
- 
+ofile_ggH600                                                    ggH              4           0.1276       197170
+#ofile_vbfH600                                                   qqH              1           0.0236       198900

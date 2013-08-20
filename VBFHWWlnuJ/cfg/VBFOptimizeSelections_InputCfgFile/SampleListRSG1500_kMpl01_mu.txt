@@ -9,6 +9,6 @@ ofile_WJets_Pythia180                                            W+Jets         
 #ofile_tch                                                       STop             210            59.5      3758227
 #ofile_tWch                                                      STop             210            11.2       493460
 #ofile_tWch_bar                                                  STop             210            11.2       497658
-#ofile_TTbar_Powheg                                              tt_bar           210         225.197      21675970
+ofile_TTbar_Powheg                                              tt_bar           210         225.197      21675970
 ofile_rsg1500_kMpl01_py                                          RSG_kMpl01_py     1          0.03298        30000
 #ofile_rsg1500_kMpl01_hw                                         RSG_kMpl01_hw     4          0.03298        30000
