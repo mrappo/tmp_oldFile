@@ -60,16 +60,17 @@ class TrainingMVAClass {
 
   void BookandTrainCFMlpANN           ( const int & nCycles = 1000, const std::string & HiddenLayers = "N+5") ;
 
-  void BookandTrainTMlpANN            ( const int & nCycles = 100, const std::string & HiddenLayers = "N+5",const std::string & TrainingMethod = "BFGS", const float & ValidationFraction=0.3);
+  void BookandTrainTMlpANN            ( const int & nCycles = 500, const std::string & HiddenLayers = "N+5",const std::string & TrainingMethod = "BFGS", const float & ValidationFraction=0.3);
 
-  void BookandTrainBDT                ( const int & NTrees = 1000, const std::string & BoostType = "AdaBoost", const float & AdaBoostBeta = 0.5, 
-                                        const std::string & PruneMethod = "CostComplexity", const int & PruneStrength=25, 
-                                        const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
-  void BookandTrainBDTG               ( const int & NTrees = 1000, const float & GradBaggingFraction = 0.5, const std::string & PruneMethod = "CostComplexity", const int & PruneStrength = 30,
+  void BookandTrainBDT                ( const int & NTrees = 500, const std::string & BoostType = "AdaBoost", const float & AdaBoostBeta = 0.5, 
+                                        const std::string & PruneMethod = "CostComplexity", const int & PruneStrength=5, 
                                         const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
 
-  void BookandTrainBDTF               ( const int & NTrees = 1000, const std::string & BoostType = "AdaBoost", 
-                                        const float & AdaBoostBeta = 0.5, const std::string & PruneMethod = "CostComplexity", const int & PruneStrength = 25,
+  void BookandTrainBDTG               ( const int & NTrees = 2000, const float & GradBaggingFraction = 0.5, const std::string & PruneMethod = "CostComplexity", const int & PruneStrength = 50,
+                                        const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
+
+  void BookandTrainBDTF               ( const int & NTrees = 500, const std::string & BoostType = "AdaBoost", 
+                                        const float & AdaBoostBeta = 0.5, const std::string & PruneMethod = "NoPruning", const int & PruneStrength = 5,
                                         const int & MaxDepth = 5, const std::string & SeparationType = "GiniIndex");
 
   TString GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType = "none") ;
