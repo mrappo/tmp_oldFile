@@ -28,13 +28,15 @@
 #include <map>
 #include <fstream>
 
+#include "TFile.h"
+#include "TTree.h"
+
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h" 
-
-#include "TFile.h"
-#include "TTree.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "ElectroWeakAnalysis/VPlusJets/interface/JetTreeFiller.h"
 #include "ElectroWeakAnalysis/VPlusJets/interface/GroomedJetFiller.h"
@@ -42,15 +44,15 @@
 #include "ElectroWeakAnalysis/VPlusJets/interface/VtoElectronTreeFiller.h"
 #include "ElectroWeakAnalysis/VPlusJets/interface/VtoMuonTreeFiller.h"
 #include "ElectroWeakAnalysis/VPlusJets/interface/MCTreeFiller.h"
-#include "FWCore/ServiceRegistry/interface/Service.h"
-#include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 //
 // class decleration
 //
+
 namespace ewk
 {
   class VplusJetsAnalysis : public edm::EDAnalyzer {
+
   public:
     explicit VplusJetsAnalysis(const edm::ParameterSet&);
     ~VplusJetsAnalysis();
@@ -62,12 +64,15 @@ namespace ewk
 
 
   private:
+
     // ----------member data ---------------------------
     // names of modules, producing object collections
      
     /// output ROOT file for the tree and histograms
+
     TTree*  myTree;
     edm::Service<TFileService> fs;
+
     bool runningOverMC_;
     std::string VBosonType_;
     std::string LeptonType_;
@@ -77,9 +82,9 @@ namespace ewk
     edm::InputTag mInputMet;
     edm::InputTag mInputRawMet;
     edm::InputTag mInputMetMVA;
-        std::string JetsFor_rho;
-	edm::InputTag mInputgenMet;
-	bool runoverAOD;
+    std::string JetsFor_rho;
+    edm::InputTag mInputgenMet;
+    bool runoverAOD;
 
     /// The objects that actually computes variables and fill the tree 
     std::auto_ptr<ewk::JetTreeFiller> CorrectedPFJetFiller;
@@ -138,6 +143,15 @@ namespace ewk
     float mcPUtotnvtx;
     float mcPUbx[3];
     float mcPUnvtx[3];
+      
+      float genP_id_stat3[20];
+      float genP_px_stat3[20];
+      float genP_py_stat3[20];
+      float genP_pz_stat3[20];
+      float genP_e_stat3[20];      
+
+    float evtWeight;
+
   };
 }
 #endif
