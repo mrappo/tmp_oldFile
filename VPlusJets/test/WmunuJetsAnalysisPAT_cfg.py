@@ -3,7 +3,7 @@ import pprint
 
 
 ### set some important flags
-isMC = False
+isMC = True
 isQCD = False
 isHEEPID = True
 isTransverseMassCut = False
@@ -69,7 +69,7 @@ JetCollectionsPAT(process,isHEEPID)
 process.load("ElectroWeakAnalysis.VPlusJets.TrackCollections_cfi")
 #
 
-numEventsToRun = -1
+numEventsToRun = 5
 
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(numEventsToRun)
@@ -79,7 +79,7 @@ process.MessageLogger.destinations = ['cout', 'cerr']
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
-OutputFileName = "WmunuJetAnalysisntuple_194712_559_405404310.root"
+OutputFileName = "WmunuJetAnalysisntuple.root"
 
 
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
@@ -118,8 +118,9 @@ process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP2_206476_128_148892985.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP2_206859_764_1094226833.root',
         #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_mu_GROUP2_207231_920_1260547040.root',
-        'file:/afs/cern.ch/user/r/rgerosa/work/CMSSW_5_3_3_patch3/src/SQWaT/TopPAT/test/pat_53X_ofile_mu_GROUP1_195930_83_62880579.root'
-        #'/store/user/lnujj/PatTuples_8TeV_53X/custodio/BulkG_WW_lvjj_c0p2_M1500-JHU-v1/SQWaT_PAT_53X_Summer12_v1/829f288d768dd564418efaaf3a8ab9aa/pat_53x_test_v03_4_1_jvg.root'
+        #'file:/afs/cern.ch/user/r/rgerosa/work/CMSSW_5_3_3_patch3/src/SQWaT/TopPAT/test/pat_53X_ofile_mu_GROUP1_195930_83_62880579.root'
+        #'file:/uscms_data/d3/rgerosa1/CMSSW_5_3_2_patch4/src/SQWaT/TopPAT/test/pat_53x_test_v03_data_1_1_k4R.root'
+         '/store/user/lnujj/PatTuples_8TeV_53X/custodio/BulkG_WW_lvjj_c0p2_M2000-JHU-v1/SQWaT_PAT_53X_Summer12_v1/829f288d768dd564418efaaf3a8ab9aa/pat_53x_test_v03_1_1_0XJ.root'
 ) )
 
 
