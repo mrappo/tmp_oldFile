@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 import pprint
 
 ### set some important flags
-isMC = False
+isMC = True
 isQCD = False
 isHEEPID = True
 isTransverseMassCut = False
@@ -79,22 +79,22 @@ process.MessageLogger.destinations = ['cout', 'cerr']
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
-OutputFileName = "WenuJetAnalysisntuple_195655_60_73510965.root"
+OutputFileName = "WenuJetAnalysisntuple.root"
 
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
-   # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195013_114_117238404.root',
-   # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195397_899_1123713321.root',
-   # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
-   # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195948_317_51753253.root',
-   #  'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_201191_317_488053419.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195013_114_117238404.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195397_899_1123713321.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195948_317_51753253.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_201191_317_488053419.root',
    #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_201278_532_72515017.root',
-   # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_201602_497_68268345.root',
-   # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_202016_935_952022882.root',
-   # 'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_202973_241_260228320.root',
-   #  'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
-   'file:/afs/cern.ch/user/r/rgerosa/work/CMSSW_5_3_3_patch3/src/SQWaT/TopPAT/test/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_201602_497_68268345.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_202016_935_952022882.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_202973_241_260228320.root',
+   #'file:/data2/rgerosa/SideBandClosureTest/PAT53X_Sideband/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
+   #'file:/afs/cern.ch/user/r/rgerosa/work/CMSSW_5_3_3_patch3/src/SQWaT/TopPAT/test/pat_53X_ofile_el_GROUP1_195655_60_73510965.root',
    #'file:/afs/cern.ch/user/r/rgerosa/work/CMSSW_5_3_3_patch3/src/SQWaT/TopPAT/test/pat_53X_ofile_el_GROUP1_201191_317_488053419.root',
- #'/store/user/lnujj/PatTuples_8TeV_53X/custodio/BulkG_WW_lvjj_c0p2_M1500-JHU-v1/SQWaT_PAT_53X_Summer12_v1/829f288d768dd564418efaaf3a8ab9aa/pat_53x_test_v03_4_1_jvg.root'
+    '/store/user/lnujj/PatTuples_8TeV_53X/jdamgov/TT_8TeV-mcatnlo/SQWaT_PAT_53X_Summer12_WWgamma23J_PT100/829f288d768dd564418efaaf3a8ab9aa/pat_53x_test_v03_1000_1_KGM.root'
 ) )
 
 

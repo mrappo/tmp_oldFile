@@ -4,7 +4,7 @@ from time import gmtime, localtime, strftime
 
 physMode   = "WenuJets_"
 ConfigFile = "../WenuJetsAnalysisPAT_cfg.py"
-DefTrig    = "'HLT_Ele_*','HLT_Ele27_*','HLT_Ele32_*'"
+DefTrig    = "'HLT_Ele80_CaloIdVT_*'"
 isMC       = "isMC = False"
 isQCD      = "isQCD = False"
 isHEEPID   = "isHEEPID = True"
@@ -61,44 +61,48 @@ trigname   = [
                "'HLT_Ele80_CaloIdVT_*'",
                "'HLT_Ele80_CaloIdVT_*'",
                "'HLT_Ele80_CaloIdVT_*'"]
+
 RunRange   = [
-    "190782-190949",
-    "190645-196531",
-    "193834-195182",
-    "195182-196531",
-    "196531-198523",
-    "198524-200518",
-    "200518-202016",
-    "202016-203002",
-    "203002-205618",
-    "205618-206513",
-    "205333-206088",
-    "200961-206940",
-    "206744-207469",
-    "207469-207898",
-    "207888-208357",
-    "194480-208686"]
+        "190782-190949",
+        "190456-196531",
+        "193834-195182",
+        "195183-196531",
+        "190645-208686",
+        "190645-208686",
+        "200519-202016",
+        "194631-203002",
+        "203894-205618",
+        "205620-206539",
+        "205339-206088",
+        "200961-206940",
+        "206744-207469",
+        "207477-207898",
+        "207889-208357",
+        "190645-208686",
+]
+
 JSON       = [
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
-    "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt"  
-    ]
+        "json/Cert_190782-190949_8TeV_06Aug2012ReReco_Collisions12_JSON.txt",
+        "json/Cert_190456-196531_8TeV_13Jul2012ReReco_Collisions12_JSON.txt",
+        "json/Cert_190456-196531_8TeV_13Jul2012ReReco_Collisions12_JSON.txt",
+        "json/Cert_190456-196531_8TeV_13Jul2012ReReco_Collisions12_JSON.txt",
+        "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_200519-202016_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_194631-203002_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_203894-205618_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_205620-206539_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_205339-206088_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_200961-206940_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_206744-207469_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_207477-207898_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_207889-208357_8TeV_PromptReco_Collisions12_JSON.txt",
+        "json/Cert_194480-208686_8TeV_PromptReco_Collisions12_JSON.txt",
+        ]
+
 
 condor     = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] # Total jobs 13 now
-MyResilientArea = "/uscms_data/d3/rgerosa1/CMSSW_5_3_5/src/ElectroWeakAnalysis/VPlusJets/test/DataProcessing/"+physMode
+MyResilientArea = "/uscms_data/d3/rgerosa1/CMSSW_5_3_3_patch3/src/ElectroWeakAnalysis/VPlusJets/test/DataProcessing/"+physMode
 
 ## ------------------------------------------
 
