@@ -2,6 +2,8 @@
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
+
+//trigger                                                                                                                                                                            
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "FWCore/Framework/interface/EDProducer.h"
@@ -82,7 +84,7 @@ void HEEPElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & 
    Double_t scEta = fabs(ele.superCluster()->eta());
 
    if(eleCutCode == 0 && et > 90 && fabs(ele.eta()) < 2.5 && !(scEta > 1.4442 && scEta < 1.566) && fabs(ele.phi()) < 3.2 && applyTightID_ ) isPassing[eleNr]=true; 
-   if(eleCutCode == 0 && et > 35 && fabs(ele.eta()) < 2.5 && !(scEta > 1.4442 && scEta < 1.566) && fabs(ele.phi()) < 3.2 && applyLooseID_ ) isPassing[eleNr]=true;
+   if(eleCutCode == 0 && et > 20 && fabs(ele.eta()) < 2.5 && !(scEta > 1.4442 && scEta < 1.566) && fabs(ele.phi()) < 3.2 && applyLooseID_ ) isPassing[eleNr]=true;
   }
 
   unsigned int counter=0;
