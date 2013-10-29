@@ -61,21 +61,20 @@ void VBFElectronClass::SetTree(TTree* inputTree){
 
 void VBFElectronClass::SetBranchAddressAndStatus ( TTree* inputTree){
 
-
   fTree->SetBranchStatus("MassV*",0);
   fTree->SetBranchStatus("Mass*j*",0);
   fTree->SetBranchStatus("cosTheta*",0);
   fTree->SetBranchStatus("cosJackson*",0);
   fTree->SetBranchStatus("colorCorr*", 0);
-  fTree->SetBranchStatus("JetGen*",0);
-  fTree->SetBranchStatus("numGenJets*",0);
   fTree->SetBranchStatus("Photon*",0);
   fTree->SetBranchStatus("*Photon*",0);
   fTree->SetBranchStatus("W_Hb*",0);
   fTree->SetBranchStatus("W_Lepton*",0);
   fTree->SetBranchStatus("W_Met*",0);
   fTree->SetBranchStatus("W_tLepton*",0);
+  fTree->SetBranchStatus("W_tParton*",0);
   fTree->SetBranchStatus("W_tMet*",0);
+  fTree->SetBranchStatus("W_tbb*",0);
 
   fTree->SetBranchStatus("fit_*",0);
   fTree->SetBranchStatus("ang_*",0);
@@ -87,25 +86,26 @@ void VBFElectronClass::SetBranchAddressAndStatus ( TTree* inputTree){
   fTree->SetBranchStatus("mva3j*",0);
   fTree->SetBranchStatus("mvavbf*",0);
   fTree->SetBranchStatus("GroomedJet_number*",0);
-  fTree->SetBranchStatus("GroomedJet*ak7",0);
-  fTree->SetBranchStatus("boostedW_*",0);
-  fTree->SetBranchStatus("vbf_*",0);
-  fTree->SetBranchStatus("ttH_*",0);
-  
-  fTree->SetBranchStatus("Hadronic_W_*",0);
-  fTree->SetBranchStatus("WHadposition,",0);
+  fTree->SetBranchStatus("GroomedJet_AK7*",0);
+  fTree->SetBranchStatus("GenGroomedJet_AK7*",0);
+  fTree->SetBranchStatus("GroomedJet_AK5*",0);
+  fTree->SetBranchStatus("GenGroomedJet_AK5*",0);
+  fTree->SetBranchStatus("vbf*",0);
+  fTree->SetBranchStatus("boostedW*",0);
+  fTree->SetBranchStatus("ttH*",0);
 
+  fTree->SetBranchStatus("Hadronic_W_*",0);
+  fTree->SetBranchStatus("WHadposition",0);
 
 
 }
-
-
 
 
 void VBFElectronClass::SetNewBranches ( TTree* inputTree){
 
 
     inputTree->Branch("WHadposition",&WHadposition,"WHadposition/I"); 
+    inputTree->Branch("numberJetBin",&numberJetBin,"numberJetBin/I"); 
 
     inputTree->Branch("Hadronic_W_Jet_mass_uncorr",&Hadronic_W_Jet_mass_uncorr,"Hadronic_W_Jet_mass_uncorr/F");
     inputTree->Branch("Hadronic_W_Jet_mass_tr_uncorr",&Hadronic_W_Jet_mass_tr_uncorr,"Hadronic_W_Jet_mass_tr_uncorr/F");
@@ -205,64 +205,260 @@ void VBFElectronClass::SetNewBranches ( TTree* inputTree){
     inputTree->Branch("Hadronic_W_Jet_prsubjet1subjet2_deltaR",&Hadronic_W_Jet_prsubjet1subjet2_deltaR,"Hadronic_W_Jet_prsubjet1subjet2_deltaR/F"); 
 
 
-   inputTree->Branch("fit_el_px",&fit_el_px,"fit_el_px/F");
-   inputTree->Branch("fit_el_py",&fit_el_py,"fit_el_py/F");
-   inputTree->Branch("fit_el_pz",&fit_el_pz,"fit_el_pz/F"); 
-   inputTree->Branch("fit_el_e",&fit_el_e,"fit_el_e/F");
-   inputTree->Branch("fit_nv_px",&fit_nv_px,"fit_nv_px/F");
-   inputTree->Branch("fit_nv_py",&fit_nv_py,"fit_nv_py/F");
-   inputTree->Branch("fit_nv_pz",&fit_nv_pz,"fit_nv_pz/F");
-   inputTree->Branch("fit_nv_e",&fit_nv_px,"fit_nv_e/F");
-   inputTree->Branch("fit_subjet1_px",&fit_subjet1_px,"fit_subjet1_px/F");
-   inputTree->Branch("fit_subjet1_py",&fit_subjet1_py,"fit_subjet1_py/F");
-   inputTree->Branch("fit_subjet1_pz",&fit_subjet1_pz,"fit_subjet1_pz/F");
-   inputTree->Branch("fit_subjet1_e",&fit_subjet1_e,"fit_subjet1_e/F");
-   inputTree->Branch("fit_subjet2_px",&fit_subjet2_px,"fit_subjet2_px/F");
-   inputTree->Branch("fit_subjet2_py",&fit_subjet2_py,"fit_subjet2_py/F");
-   inputTree->Branch("fit_subjet2_pz",&fit_subjet2_pz,"fit_subjet2_pz/F");
-   inputTree->Branch("fit_subjet2_e",&fit_subjet2_e,"fit_subjet2_e/F");
-   inputTree->Branch("fit_subjet1_m",&fit_subjet1_m,"fit_subjet1_m/F");
-   inputTree->Branch("fit_subjet2_m",&fit_subjet2_m,"fit_subjet2_m/F");
-   inputTree->Branch("fit_lvj_m",&fit_lvj_m,"fit_lvj_m/F");
-   inputTree->Branch("fit_lv_m",&fit_lv_m,"fit_lv_m/F");
-   inputTree->Branch("fit_j_m",&fit_j_m,"fit_j_m/F");
-   inputTree->Branch("fit_lvj_pt",&fit_lvj_pt,"fit_lvj_pt/F");
-   inputTree->Branch("fit_lvj_eta", &fit_lvj_eta,"fit_lvj_eta/F");
-   inputTree->Branch("fit_lvj_phi",&fit_lvj_phi,"fit_lvj_phi/F");
-   inputTree->Branch("fit_lvj_e",&fit_lvj_e,"fit_lvj_e/F");
-   inputTree->Branch("fit_chi2",&fit_chi2,"fit_chi2/F");
-   inputTree->Branch("fit_NDF",&fit_NDF,"fit_NDF/I");
-   inputTree->Branch("fit_status",&fit_status,"fit_status/I");
+    /// kinematic fit branches                                                                                                                                                             
+    inputTree->Branch("fit_el_px_type0_met",&fit_el_px_type0_met,"fit_el_px_type0_met/F");
+    inputTree->Branch("fit_el_py_type0_met",&fit_el_py_type0_met,"fit_el_py_type0_met/F");
+    inputTree->Branch("fit_el_pz_type0_met",&fit_el_pz_type0_met,"fit_el_pz_type0_met/F");
+    inputTree->Branch("fit_el_e_type0_met",&fit_el_e_type0_met,"fit_el_e_type0_met/F");
+    inputTree->Branch("fit_nv_px_type0_met",&fit_el_px_type0_met,"fit_nv_px_type0_met/F");
+    inputTree->Branch("fit_nv_py_type0_met",&fit_nv_py_type0_met,"fit_nv_py_type0_met/F");
+    inputTree->Branch("fit_nv_pz_type0_met",&fit_nv_pz_type0_met,"fit_nv_pz_type0_met/F");
+    inputTree->Branch("fit_nv_e_type0_met",&fit_nv_px_type0_met,"fit_nv_e_type0_met/F");
+    inputTree->Branch("fit_subjet1_px_type0_met",&fit_subjet1_px_type0_met,"fit_subjet1_px_type0_met/F");
+    inputTree->Branch("fit_subjet1_py_type0_met",&fit_subjet1_py_type0_met,"fit_subjet1_py_type0_met/F");
+    inputTree->Branch("fit_subjet1_pz_type0_met",&fit_subjet1_pz_type0_met,"fit_subjet1_pz_type0_met/F");
+    inputTree->Branch("fit_subjet1_e_type0_met",&fit_subjet1_e_type0_met,"fit_subjet1_e_type0_met/F");
+    inputTree->Branch("fit_subjet2_px_type0_met",&fit_subjet2_px_type0_met,"fit_subjet2_px_type0_met/F");
+    inputTree->Branch("fit_subjet2_py_type0_met",&fit_subjet2_py_type0_met,"fit_subjet2_py_type0_met/F");
+    inputTree->Branch("fit_subjet2_pz_type0_met",&fit_subjet2_pz_type0_met,"fit_subjet2_pz_type0_met/F");
+    inputTree->Branch("fit_subjet2_e_type0_met",&fit_subjet2_e_type0_met,"fit_subjet2_e_type0_met/F");
+    inputTree->Branch("fit_subjet1_m_type0_met",&fit_subjet1_m_type0_met,"fit_subjet1_m_type0_met/F");
+    inputTree->Branch("fit_subjet2_m_type0_met",&fit_subjet2_m_type0_met,"fit_subjet2_m_type0_met/F");
+    inputTree->Branch("fit_lvj_m_type0_met",&fit_lvj_m_type0_met,"fit_lvj_m_type0_met/F");
+    inputTree->Branch("fit_lv_m_type0_met",&fit_lv_m_type0_met,"fit_lv_m_type0_met/F");
+    inputTree->Branch("fit_j_m_type0_met",&fit_j_m_type0_met,"fit_j_m_type0_met/F");
+    inputTree->Branch("fit_lvj_pt_type0_met",&fit_lvj_pt_type0_met,"fit_lvj_pt_type0_met/F");
+    inputTree->Branch("fit_lvj_eta_type0_met", &fit_lvj_eta_type0_met,"fit_lvj_eta_type0_met/F");
+    inputTree->Branch("fit_lvj_phi_type0_met",&fit_lvj_phi_type0_met,"fit_lvj_phi_type0_met/F");
+    inputTree->Branch("fit_lvj_e_type0_met",&fit_lvj_e_type0_met,"fit_lvj_e_type0_met/F");
+    inputTree->Branch("fit_chi2_type0_met",&fit_chi2_type0_met,"fit_chi2_type0_met/F");
+    inputTree->Branch("fit_NDF_type0_met",&fit_NDF_type0_met,"fit_NDF_type0_met/I");
+    inputTree->Branch("fit_status_type0_met",&fit_status_type0_met,"fit_status_type0_met/I");
+
+    inputTree->Branch("fit_el_px_type0",&fit_el_px_type0,"fit_el_px_type0/F");
+    inputTree->Branch("fit_el_py_type0",&fit_el_py_type0,"fit_el_py_type0/F");
+    inputTree->Branch("fit_el_pz_type0",&fit_el_pz_type0,"fit_el_pz_type0/F"); 
+    inputTree->Branch("fit_el_e_type0",&fit_el_e_type0,"fit_el_e_type0/F");
+    inputTree->Branch("fit_nv_px_type0",&fit_el_px_type0,"fit_nv_px_type0/F");
+    inputTree->Branch("fit_nv_py_type0",&fit_nv_py_type0,"fit_nv_py_type0/F");
+    inputTree->Branch("fit_nv_pz_type0",&fit_nv_pz_type0,"fit_nv_pz_type0/F");
+    inputTree->Branch("fit_nv_e_type0",&fit_nv_px_type0,"fit_nv_e_type0/F");
+    inputTree->Branch("fit_subjet1_px_type0",&fit_subjet1_px_type0,"fit_subjet1_px_type0/F");
+    inputTree->Branch("fit_subjet1_py_type0",&fit_subjet1_py_type0,"fit_subjet1_py_type0/F");
+    inputTree->Branch("fit_subjet1_pz_type0",&fit_subjet1_pz_type0,"fit_subjet1_pz_type0/F");
+    inputTree->Branch("fit_subjet1_e_type0",&fit_subjet1_e_type0,"fit_subjet1_e_type0/F");
+    inputTree->Branch("fit_subjet2_px_type0",&fit_subjet2_px_type0,"fit_subjet2_px_type0/F");
+    inputTree->Branch("fit_subjet2_py_type0",&fit_subjet2_py_type0,"fit_subjet2_py_type0/F");
+    inputTree->Branch("fit_subjet2_pz_type0",&fit_subjet2_pz_type0,"fit_subjet2_pz_type0/F");
+    inputTree->Branch("fit_subjet2_e_type0",&fit_subjet2_e_type0,"fit_subjet2_e_type0/F");
+    inputTree->Branch("fit_subjet1_m_type0",&fit_subjet1_m_type0,"fit_subjet1_m_type0/F");
+    inputTree->Branch("fit_subjet2_m_type0",&fit_subjet2_m_type0,"fit_subjet2_m_type0/F");
+    inputTree->Branch("fit_lvj_m_type0",&fit_lvj_m_type0,"fit_lvj_m_type0/F");
+    inputTree->Branch("fit_lv_m_type0",&fit_lv_m_type0,"fit_lv_m_type0/F");
+    inputTree->Branch("fit_j_m_type0",&fit_j_m_type0,"fit_j_m_type0/F");
+    inputTree->Branch("fit_lvj_pt_type0",&fit_lvj_pt_type0,"fit_lvj_pt_type0/F");
+    inputTree->Branch("fit_lvj_eta_type0", &fit_lvj_eta_type0,"fit_lvj_eta_type0/F");
+    inputTree->Branch("fit_lvj_phi_type0",&fit_lvj_phi_type0,"fit_lvj_phi_type0/F");
+    inputTree->Branch("fit_lvj_e_type0",&fit_lvj_e_type0,"fit_lvj_e_type0/F");
+    inputTree->Branch("fit_chi2_type0",&fit_chi2_type0,"fit_chi2_type0/F");
+    inputTree->Branch("fit_NDF_type0",&fit_NDF_type0,"fit_NDF_type0/I");
+    inputTree->Branch("fit_status_type0",&fit_status_type0,"fit_status_type0/I");
 
 
-   inputTree->Branch("boosted_lvj_e",&boosted_lvj_e,"boosted_lvj_e/F");
-   inputTree->Branch("boosted_lvj_pt",&boosted_lvj_pt,"boosted_lvj_pt/F");
-   inputTree->Branch("boosted_lvj_eta",&boosted_lvj_eta,"boosted_lvj_eta/F");
-   inputTree->Branch("boosted_lvj_phi",&boosted_lvj_phi,"boosted_lvj_phi/F");
-   inputTree->Branch("boosted_lvj_m",&boosted_lvj_m,"boosted_lvj_m/F");
-   inputTree->Branch("boosted_j_m",&boosted_j_m,"boosted_j_m/F");
-   inputTree->Branch("boosted_subjet1_m",&boosted_subjet1_m,"boosted_subjet1_m/F");
-   inputTree->Branch("boosted_subjet2_m",&boosted_subjet2_m,"boosted_subjet2_m/F");
-   inputTree->Branch("boosted_lv_m",&boosted_lv_m,"boosted_lv_m/F");
+    inputTree->Branch("fit_el_px_type2",&fit_el_px_type2,"fit_el_px_type2/F");
+    inputTree->Branch("fit_el_py_type2",&fit_el_py_type2,"fit_el_py_type2/F");
+    inputTree->Branch("fit_el_pz_type2",&fit_el_pz_type2,"fit_el_pz_type2/F"); 
+    inputTree->Branch("fit_el_e_type2",&fit_el_e_type2,"fit_el_e_type2/F");
+    inputTree->Branch("fit_nv_px_type2",&fit_el_px_type2,"fit_nv_px_type2/F");
+    inputTree->Branch("fit_nv_py_type2",&fit_nv_py_type2,"fit_nv_py_type2/F");
+    inputTree->Branch("fit_nv_pz_type2",&fit_nv_pz_type2,"fit_nv_pz_type2/F");
+    inputTree->Branch("fit_nv_e_type2",&fit_nv_px_type2,"fit_nv_e_type2/F");
+    inputTree->Branch("fit_subjet1_px_type2",&fit_subjet1_px_type2,"fit_subjet1_px_type2/F");
+    inputTree->Branch("fit_subjet1_py_type2",&fit_subjet1_py_type2,"fit_subjet1_py_type2/F");
+    inputTree->Branch("fit_subjet1_pz_type2",&fit_subjet1_pz_type2,"fit_subjet1_pz_type2/F");
+    inputTree->Branch("fit_subjet1_e_type2",&fit_subjet1_e_type2,"fit_subjet1_e_type2/F");
+    inputTree->Branch("fit_subjet2_px_type2",&fit_subjet2_px_type2,"fit_subjet2_px_type2/F");
+    inputTree->Branch("fit_subjet2_py_type2",&fit_subjet2_py_type2,"fit_subjet2_py_type2/F");
+    inputTree->Branch("fit_subjet2_pz_type2",&fit_subjet2_pz_type2,"fit_subjet2_pz_type2/F");
+    inputTree->Branch("fit_subjet2_e_type2",&fit_subjet2_e_type2,"fit_subjet2_e_type2/F");
+    inputTree->Branch("fit_subjet1_m_type2",&fit_subjet1_m_type2,"fit_subjet1_m_type2/F");
+    inputTree->Branch("fit_subjet2_m_type2",&fit_subjet2_m_type2,"fit_subjet2_m_type2/F");
+    inputTree->Branch("fit_lvj_m_type2",&fit_lvj_m_type2,"fit_lvj_m_type2/F");
+    inputTree->Branch("fit_lv_m_type2",&fit_lv_m_type2,"fit_lv_m_type2/F");
+    inputTree->Branch("fit_j_m_type2",&fit_j_m_type2,"fit_j_m_type2/F");
+    inputTree->Branch("fit_lvj_pt_type2",&fit_lvj_pt_type2,"fit_lvj_pt_type2/F");
+    inputTree->Branch("fit_lvj_eta_type2", &fit_lvj_eta_type2,"fit_lvj_eta_type2/F");
+    inputTree->Branch("fit_lvj_phi_type2",&fit_lvj_phi_type2,"fit_lvj_phi_type2/F");
+    inputTree->Branch("fit_lvj_e_type2",&fit_lvj_e_type2,"fit_lvj_e_type2/F");
+    inputTree->Branch("fit_chi2_type2",&fit_chi2_type2,"fit_chi2_type2/F");
+    inputTree->Branch("fit_NDF_type2",&fit_NDF_type2,"fit_NDF_type2/I");
+    inputTree->Branch("fit_status_type2",&fit_status_type2,"fit_status_type2/I");
 
-   inputTree->Branch("boostedW_lvj_e",&boostedW_lvj_e,"boostedW_lvj_e/F");
-   inputTree->Branch("boostedW_lvj_pt",&boostedW_lvj_pt,"boostedW_lvj_pt/F");
-   inputTree->Branch("boostedW_lvj_eta",&boostedW_lvj_eta,"boostedW_lvj_eta/F");
-   inputTree->Branch("boostedW_lvj_phi",&boostedW_lvj_phi,"boostedW_lvj_phi/F");
-   inputTree->Branch("boostedW_lvj_m",&boostedW_lvj_m,"boostedW_lvj_m/F");
-   inputTree->Branch("boostedW_j_m",&boostedW_j_m,"boostedW_j_m/F");
-   inputTree->Branch("boostedW_subjet1_m",&boostedW_subjet1_m,"boostedW_subjet1_m/F");
-   inputTree->Branch("boostedW_subjet2_m",&boostedW_subjet2_m,"boostedW_subjet2_m/F");
-   inputTree->Branch("boostedW_lv_m",&boostedW_lv_m,"boostedW_lv_m/F");
+    inputTree->Branch("fit_el_px_type2_met",&fit_el_px_type2_met,"fit_el_px_type2_met/F");
+    inputTree->Branch("fit_el_py_type2_met",&fit_el_py_type2_met,"fit_el_py_type2_met/F");
+    inputTree->Branch("fit_el_pz_type2_met",&fit_el_pz_type2_met,"fit_el_pz_type2_met/F"); 
+    inputTree->Branch("fit_el_e_type2_met",&fit_el_e_type2_met,"fit_el_e_type2_met/F");
+    inputTree->Branch("fit_nv_px_type2_met",&fit_el_px_type2_met,"fit_nv_px_type2_met/F");
+    inputTree->Branch("fit_nv_py_type2_met",&fit_nv_py_type2_met,"fit_nv_py_type2_met/F");
+    inputTree->Branch("fit_nv_pz_type2_met",&fit_nv_pz_type2_met,"fit_nv_pz_type2_met/F");
+    inputTree->Branch("fit_nv_e_type2_met",&fit_nv_px_type2_met,"fit_nv_e_type2_met/F");
+    inputTree->Branch("fit_subjet1_px_type2_met",&fit_subjet1_px_type2_met,"fit_subjet1_px_type2_met/F");
+    inputTree->Branch("fit_subjet1_py_type2_met",&fit_subjet1_py_type2_met,"fit_subjet1_py_type2_met/F");
+    inputTree->Branch("fit_subjet1_pz_type2_met",&fit_subjet1_pz_type2_met,"fit_subjet1_pz_type2_met/F");
+    inputTree->Branch("fit_subjet1_e_type2_met",&fit_subjet1_e_type2_met,"fit_subjet1_e_type2_met/F");
+    inputTree->Branch("fit_subjet2_px_type2_met",&fit_subjet2_px_type2_met,"fit_subjet2_px_type2_met/F");
+    inputTree->Branch("fit_subjet2_py_type2_met",&fit_subjet2_py_type2_met,"fit_subjet2_py_type2_met/F");
+    inputTree->Branch("fit_subjet2_pz_type2_met",&fit_subjet2_pz_type2_met,"fit_subjet2_pz_type2_met/F");
+    inputTree->Branch("fit_subjet2_e_type2_met",&fit_subjet2_e_type2_met,"fit_subjet2_e_type2_met/F");
+    inputTree->Branch("fit_subjet1_m_type2_met",&fit_subjet1_m_type2_met,"fit_subjet1_m_type2_met/F");
+    inputTree->Branch("fit_subjet2_m_type2_met",&fit_subjet2_m_type2_met,"fit_subjet2_m_type2_met/F");
+    inputTree->Branch("fit_lvj_m_type2_met",&fit_lvj_m_type2_met,"fit_lvj_m_type2_met/F");
+    inputTree->Branch("fit_lv_m_type2_met",&fit_lv_m_type2_met,"fit_lv_m_type2_met/F");
+    inputTree->Branch("fit_j_m_type2_met",&fit_j_m_type2_met,"fit_j_m_type2_met/F");
+    inputTree->Branch("fit_lvj_pt_type2_met",&fit_lvj_pt_type2_met,"fit_lvj_pt_type2_met/F");
+    inputTree->Branch("fit_lvj_eta_type2_met", &fit_lvj_eta_type2_met,"fit_lvj_eta_type2_met/F");
+    inputTree->Branch("fit_lvj_phi_type2_met",&fit_lvj_phi_type2_met,"fit_lvj_phi_type2_met/F");
+    inputTree->Branch("fit_lvj_e_type2_met",&fit_lvj_e_type2_met,"fit_lvj_e_type2_met/F");
+    inputTree->Branch("fit_chi2_type2_met",&fit_chi2_type2_met,"fit_chi2_type2_met/F");
+    inputTree->Branch("fit_NDF_type2_met",&fit_NDF_type2_met,"fit_NDF_type2_met/I");
+    inputTree->Branch("fit_status_type2_met",&fit_status_type2_met,"fit_status_type2_met/I");
 
-   inputTree->Branch("boosted_wjj_ang_ha",&boosted_wjj_ang_ha,"boosted_wjj_ang_ha/F");
-   inputTree->Branch("boosted_wjj_ang_hb",&boosted_wjj_ang_ha,"boosted_wjj_ang_ha/F");
-   inputTree->Branch("boosted_wjj_ang_hs",&boosted_wjj_ang_hs,"boosted_wjj_ang_hs/F");
-   inputTree->Branch("boosted_wjj_ang_phi",&boosted_wjj_ang_phi,"boosted_wjj_ang_phi/F");
-   inputTree->Branch("boosted_wjj_ang_phia",&boosted_wjj_ang_phia,"boosted_wjj_ang_phia/F");
-   inputTree->Branch("boosted_wjj_ang_phib",&boosted_wjj_ang_phib,"boosted_wjj_ang_phib/F");
+    // new branch for pz of the neutrino                                                                                                                                                     
+    inputTree->Branch("W_mass_type0_met",&W_mass_type0_met,"W_mass_type0_met/F");
+    inputTree->Branch("W_mass_type2_met",&W_mass_type2_met,"W_mass_type2_met/F");
 
-   // max pt
+    inputTree->Branch("W_mass_type0",&W_mass_type0,"W_mass_type0/F");
+    inputTree->Branch("W_mass_type2",&W_mass_type2,"W_mass_type2/F");
+
+    inputTree->Branch("W_pz_type0_met",&W_pz_type0_met,"W_pz_type0_met/F");
+    inputTree->Branch("W_pz_type2_met",&W_pz_type2_met,"W_pz_type2_met/F");
+
+    inputTree->Branch("W_pz_type0",&W_pz_type0,"W_pz_type0/F");
+    inputTree->Branch("W_pz_type2",&W_pz_type2,"W_pz_type2/F");
+
+    inputTree->Branch("W_nu1_pz_type0_met",&W_nu1_pz_type0_met,"W_nu1_pz_type0_met/F");
+    inputTree->Branch("W_nu1_pz_type2_met",&W_nu1_pz_type2_met,"W_nu1_pz_type2_met/F");
+
+    inputTree->Branch("W_nu1_pz_type0",&W_nu1_pz_type0,"W_nu1_pz_type0/F");
+    inputTree->Branch("W_nu1_pz_type2",&W_nu1_pz_type2,"W_nu1_pz_type2/F");
+
+    inputTree->Branch("W_nu2_pz_type0_met",&W_nu2_pz_type0_met,"W_nu2_pz_type0_met/F");
+    inputTree->Branch("W_nu2_pz_type2_met",&W_nu2_pz_type2_met,"W_nu2_pz_type2_met/F");
+
+    inputTree->Branch("W_nu2_pz_type0",&W_nu2_pz_type0,"W_nu2_pz_type0/F");
+    inputTree->Branch("W_nu2_pz_type2",&W_nu2_pz_type2,"W_nu2_pz_type2/F");
+ 
+    //////////////////////////////
+    inputTree->Branch("boosted_lvj_e_type0",&boosted_lvj_e_type0,"boosted_lvj_e_type0/F");
+    inputTree->Branch("boosted_lvj_pt_type0",&boosted_lvj_pt_type0,"boosted_lvj_pt_type0/F");
+    inputTree->Branch("boosted_lvj_eta_type0",&boosted_lvj_eta_type0,"boosted_lvj_eta_type0/F");
+    inputTree->Branch("boosted_lvj_phi_type0",&boosted_lvj_phi_type0,"boosted_lvj_phi_type0/F");
+    inputTree->Branch("boosted_lvj_m_type0",&boosted_lvj_m_type0,"boosted_lvj_m_type0/F");
+    inputTree->Branch("boosted_j_m_type0",&boosted_j_m_type0,"boosted_j_m_type0/F");
+    inputTree->Branch("boosted_subjet1_m_type0",&boosted_subjet1_m_type0,"boosted_subjet1_m_type0/F");
+    inputTree->Branch("boosted_subjet2_m_type0",&boosted_subjet2_m_type0,"boosted_subjet2_m_type0/F");
+    inputTree->Branch("boosted_lv_m_type0",&boosted_lv_m_type0,"boosted_lv_m_type0/F");
+
+    inputTree->Branch("boostedW_lvj_e_type0",&boostedW_lvj_e_type0,"boostedW_lvj_e_type0/F");
+    inputTree->Branch("boostedW_lvj_pt_type0",&boostedW_lvj_pt_type0,"boostedW_lvj_pt_type0/F");
+    inputTree->Branch("boostedW_lvj_eta_type0",&boostedW_lvj_eta_type0,"boostedW_lvj_eta_type0/F");
+    inputTree->Branch("boostedW_lvj_phi_type0",&boostedW_lvj_phi_type0,"boostedW_lvj_phi_type0/F");
+    inputTree->Branch("boostedW_lvj_m_type0",&boostedW_lvj_m_type0,"boostedW_lvj_m_type0/F");
+    inputTree->Branch("boostedW_j_m_type0",&boostedW_j_m_type0,"boostedW_j_m_type0/F");
+    inputTree->Branch("boostedW_subjet1_m_type0",&boostedW_subjet1_m_type0,"boostedW_subjet1_m_type0/F");
+    inputTree->Branch("boostedW_subjet2_m_type0",&boostedW_subjet2_m_type0,"boostedW_subjet2_m_type0/F");
+    inputTree->Branch("boostedW_lv_m_type0",&boostedW_lv_m_type0,"boostedW_lv_m_type0/F");
+
+    inputTree->Branch("boosted_wjj_ang_ha_type0",&boosted_wjj_ang_ha_type0,"boosted_wjj_ang_ha_type0/F");
+    inputTree->Branch("boosted_wjj_ang_hb_type0",&boosted_wjj_ang_ha_type0,"boosted_wjj_ang_ha_type0/F");
+    inputTree->Branch("boosted_wjj_ang_hs_type0",&boosted_wjj_ang_hs_type0,"boosted_wjj_ang_hs_type0/F");
+    inputTree->Branch("boosted_wjj_ang_phi_type0",&boosted_wjj_ang_phi_type0,"boosted_wjj_ang_phi_type0/F");
+    inputTree->Branch("boosted_wjj_ang_phia_type0",&boosted_wjj_ang_phia_type0,"boosted_wjj_ang_phia_type0/F");
+    inputTree->Branch("boosted_wjj_ang_phib_type0",&boosted_wjj_ang_phib_type0,"boosted_wjj_ang_phib_type0/F");
+
+    inputTree->Branch("boosted_lvj_e_type2",&boosted_lvj_e_type2,"boosted_lvj_e_type2/F");
+    inputTree->Branch("boosted_lvj_pt_type2",&boosted_lvj_pt_type2,"boosted_lvj_pt_type2/F");
+    inputTree->Branch("boosted_lvj_eta_type2",&boosted_lvj_eta_type2,"boosted_lvj_eta_type2/F");
+    inputTree->Branch("boosted_lvj_phi_type2",&boosted_lvj_phi_type2,"boosted_lvj_phi_type2/F");
+    inputTree->Branch("boosted_lvj_m_type2",&boosted_lvj_m_type2,"boosted_lvj_m_type2/F");
+    inputTree->Branch("boosted_j_m_type2",&boosted_j_m_type2,"boosted_j_m_type2/F");
+    inputTree->Branch("boosted_subjet1_m_type2",&boosted_subjet1_m_type2,"boosted_subjet1_m_type2/F");
+    inputTree->Branch("boosted_subjet2_m_type2",&boosted_subjet2_m_type2,"boosted_subjet2_m_type2/F");
+    inputTree->Branch("boosted_lv_m_type2",&boosted_lv_m_type2,"boosted_lv_m_type2/F");
+
+    inputTree->Branch("boostedW_lvj_e_type2",&boostedW_lvj_e_type2,"boostedW_lvj_e_type2/F");
+    inputTree->Branch("boostedW_lvj_pt_type2",&boostedW_lvj_pt_type2,"boostedW_lvj_pt_type2/F");
+    inputTree->Branch("boostedW_lvj_eta_type2",&boostedW_lvj_eta_type2,"boostedW_lvj_eta_type2/F");
+    inputTree->Branch("boostedW_lvj_phi_type2",&boostedW_lvj_phi_type2,"boostedW_lvj_phi_type2/F");
+    inputTree->Branch("boostedW_lvj_m_type2",&boostedW_lvj_m_type2,"boostedW_lvj_m_type2/F");
+    inputTree->Branch("boostedW_j_m_type2",&boostedW_j_m_type2,"boostedW_j_m_type2/F");
+    inputTree->Branch("boostedW_subjet1_m_type2",&boostedW_subjet1_m_type2,"boostedW_subjet1_m_type2/F");
+    inputTree->Branch("boostedW_subjet2_m_type2",&boostedW_subjet2_m_type2,"boostedW_subjet2_m_type2/F");
+    inputTree->Branch("boostedW_lv_m_type2",&boostedW_lv_m_type2,"boostedW_lv_m_type2/F");
+
+
+    inputTree->Branch("boosted_wjj_ang_ha_type2",&boosted_wjj_ang_ha_type2,"boosted_wjj_ang_ha_type2/F");
+    inputTree->Branch("boosted_wjj_ang_hb_type2",&boosted_wjj_ang_ha_type2,"boosted_wjj_ang_ha_type2/F");
+    inputTree->Branch("boosted_wjj_ang_hs_type2",&boosted_wjj_ang_hs_type2,"boosted_wjj_ang_hs_type2/F");
+    inputTree->Branch("boosted_wjj_ang_phi_type2",&boosted_wjj_ang_phi_type2,"boosted_wjj_ang_phi_type2/F");
+    inputTree->Branch("boosted_wjj_ang_phia_type2",&boosted_wjj_ang_phia_type2,"boosted_wjj_ang_phia_type2/F");
+    inputTree->Branch("boosted_wjj_ang_phib_type2",&boosted_wjj_ang_phib_type2,"boosted_wjj_ang_phib_type2/F");
+
+    inputTree->Branch("boosted_lvj_e_type0_met",&boosted_lvj_e_type0_met,"boosted_lvj_e_type0_met/F");
+    inputTree->Branch("boosted_lvj_pt_type0_met",&boosted_lvj_pt_type0_met,"boosted_lvj_pt_type0_met/F");
+    inputTree->Branch("boosted_lvj_eta_type0_met",&boosted_lvj_eta_type0_met,"boosted_lvj_eta_type0_met/F");
+    inputTree->Branch("boosted_lvj_phi_type0_met",&boosted_lvj_phi_type0_met,"boosted_lvj_phi_type0_met/F");
+    inputTree->Branch("boosted_lvj_m_type0_met",&boosted_lvj_m_type0_met,"boosted_lvj_m_type0_met/F");
+    inputTree->Branch("boosted_j_m_type0_met",&boosted_j_m_type0_met,"boosted_j_m_type0_met/F");
+    inputTree->Branch("boosted_subjet1_m_type0_met",&boosted_subjet1_m_type0_met,"boosted_subjet1_m_type0_met/F");
+    inputTree->Branch("boosted_subjet2_m_type0_met",&boosted_subjet2_m_type0_met,"boosted_subjet2_m_type0_met/F");
+    inputTree->Branch("boosted_lv_m_type0_met",&boosted_lv_m_type0_met,"boosted_lv_m_type0_met/F");
+
+    inputTree->Branch("boostedW_lvj_e_type0_met",&boostedW_lvj_e_type0_met,"boostedW_lvj_e_type0_met/F");
+    inputTree->Branch("boostedW_lvj_pt_type0_met",&boostedW_lvj_pt_type0_met,"boostedW_lvj_pt_type0_met/F");
+    inputTree->Branch("boostedW_lvj_eta_type0_met",&boostedW_lvj_eta_type0_met,"boostedW_lvj_eta_type0_met/F");
+    inputTree->Branch("boostedW_lvj_phi_type0_met",&boostedW_lvj_phi_type0_met,"boostedW_lvj_phi_type0_met/F");
+    inputTree->Branch("boostedW_lvj_m_type0_met",&boostedW_lvj_m_type0_met,"boostedW_lvj_m_type0_met/F");
+    inputTree->Branch("boostedW_j_m_type0_met",&boostedW_j_m_type0_met,"boostedW_j_m_type0_met/F");
+    inputTree->Branch("boostedW_subjet1_m_type0_met",&boostedW_subjet1_m_type0_met,"boostedW_subjet1_m_type0_met/F");
+    inputTree->Branch("boostedW_subjet2_m_type0_met",&boostedW_subjet2_m_type0_met,"boostedW_subjet2_m_type0_met/F");
+    inputTree->Branch("boostedW_lv_m_type0_met",&boostedW_lv_m_type0_met,"boostedW_lv_m_type0_met/F");
+
+    inputTree->Branch("boosted_wjj_ang_ha_type0_met",&boosted_wjj_ang_ha_type0_met,"boosted_wjj_ang_ha_type0_met/F");
+    inputTree->Branch("boosted_wjj_ang_hb_type0_met",&boosted_wjj_ang_ha_type0_met,"boosted_wjj_ang_ha_type0_met/F");
+    inputTree->Branch("boosted_wjj_ang_hs_type0_met",&boosted_wjj_ang_hs_type0_met,"boosted_wjj_ang_hs_type0_met/F");
+    inputTree->Branch("boosted_wjj_ang_phi_type0_met",&boosted_wjj_ang_phi_type0_met,"boosted_wjj_ang_phi_type0_met/F");
+    inputTree->Branch("boosted_wjj_ang_phia_type0_met",&boosted_wjj_ang_phia_type0_met,"boosted_wjj_ang_phia_type0_met/F");
+    inputTree->Branch("boosted_wjj_ang_phib_type0_met",&boosted_wjj_ang_phib_type0_met,"boosted_wjj_ang_phib_type0_met/F");
+
+    inputTree->Branch("boosted_lvj_e_type2_met",&boosted_lvj_e_type2_met,"boosted_lvj_e_type2_met/F");
+    inputTree->Branch("boosted_lvj_pt_type2_met",&boosted_lvj_pt_type2_met,"boosted_lvj_pt_type2_met/F");
+    inputTree->Branch("boosted_lvj_eta_type2_met",&boosted_lvj_eta_type2_met,"boosted_lvj_eta_type2_met/F");
+    inputTree->Branch("boosted_lvj_phi_type2_met",&boosted_lvj_phi_type2_met,"boosted_lvj_phi_type2_met/F");
+    inputTree->Branch("boosted_lvj_m_type2_met",&boosted_lvj_m_type2_met,"boosted_lvj_m_type2_met/F");
+    inputTree->Branch("boosted_j_m_type2_met",&boosted_j_m_type2_met,"boosted_j_m_type2_met/F");
+    inputTree->Branch("boosted_subjet1_m_type2_met",&boosted_subjet1_m_type2_met,"boosted_subjet1_m_type2_met/F");
+    inputTree->Branch("boosted_subjet2_m_type2_met",&boosted_subjet2_m_type2_met,"boosted_subjet2_m_type2_met/F");
+    inputTree->Branch("boosted_lv_m_type2_met",&boosted_lv_m_type2_met,"boosted_lv_m_type2_met/F");
+
+    inputTree->Branch("boostedW_lvj_e_type2_met",&boostedW_lvj_e_type2_met,"boostedW_lvj_e_type2_met/F");
+    inputTree->Branch("boostedW_lvj_pt_type2_met",&boostedW_lvj_pt_type2_met,"boostedW_lvj_pt_type2_met/F");
+    inputTree->Branch("boostedW_lvj_eta_type2_met",&boostedW_lvj_eta_type2_met,"boostedW_lvj_eta_type2_met/F");
+    inputTree->Branch("boostedW_lvj_phi_type2_met",&boostedW_lvj_phi_type2_met,"boostedW_lvj_phi_type2_met/F");
+    inputTree->Branch("boostedW_lvj_m_type2_met",&boostedW_lvj_m_type2_met,"boostedW_lvj_m_type2_met/F");
+    inputTree->Branch("boostedW_j_m_type2_met",&boostedW_j_m_type2_met,"boostedW_j_m_type2_met/F");
+    inputTree->Branch("boostedW_subjet1_m_type2_met",&boostedW_subjet1_m_type2_met,"boostedW_subjet1_m_type2_met/F");
+    inputTree->Branch("boostedW_subjet2_m_type2_met",&boostedW_subjet2_m_type2_met,"boostedW_subjet2_m_type2_met/F");
+    inputTree->Branch("boostedW_lv_m_type2_met",&boostedW_lv_m_type2_met,"boostedW_lv_m_type2_met/F");
+
+    inputTree->Branch("boosted_wjj_ang_ha_type2_met",&boosted_wjj_ang_ha_type2_met,"boosted_wjj_ang_ha_type2_met/F");
+    inputTree->Branch("boosted_wjj_ang_hb_type2_met",&boosted_wjj_ang_ha_type2_met,"boosted_wjj_ang_ha_type2_met/F");
+    inputTree->Branch("boosted_wjj_ang_hs_type2_met",&boosted_wjj_ang_hs_type2_met,"boosted_wjj_ang_hs_type2_met/F");
+    inputTree->Branch("boosted_wjj_ang_phi_type2_met",&boosted_wjj_ang_phi_type2_met,"boosted_wjj_ang_phi_type2_met/F");
+    inputTree->Branch("boosted_wjj_ang_phia_type2_met",&boosted_wjj_ang_phia_type2_met,"boosted_wjj_ang_phia_type2_met/F");
+    inputTree->Branch("boosted_wjj_ang_phib_type2_met",&boosted_wjj_ang_phib_type2_met,"boosted_wjj_ang_phib_type2_met/F");
+
+    ///////// max pt
  
    inputTree->Branch("vbf_maxpt_jj_e",&vbf_maxpt_jj_e,"vbf_maxpt_jj_e/F");
    inputTree->Branch("vbf_maxpt_jj_pt",&vbf_maxpt_jj_pt,"vbf_maxpt_jj_pt/F");
@@ -589,7 +785,8 @@ void VBFElectronClass::InitializateVariables(){
 
 
 
-    WHadposition=-999;  
+    WHadposition=-999; 
+    numberJetBin = 0 ; 
 
     Hadronic_W_Jet_mass_uncorr = -999;   
     Hadronic_W_Jet_mass_tr_uncorr = -999;  
@@ -689,24 +886,83 @@ void VBFElectronClass::InitializateVariables(){
     Hadronic_W_Jet_prsubjet1subjet2_deltaR = -999;
 
 
+    // new branch for pz of the neutrino                                                                                                                                                     
+    W_mass_type0_met = 0. , W_pz_type0_met = -9999.,  W_nu1_pz_type0_met = -9999., W_nu2_pz_type0_met = -9999.;
+    W_mass_type2_met = 0. , W_pz_type2_met = -9999.,  W_nu1_pz_type2_met = -9999., W_nu2_pz_type2_met = -9999.;
 
- fit_el_px=0 ,  fit_el_py=0 ,  fit_el_pz=0 ,  fit_el_e=0 ;
- fit_nv_px=0 ,  fit_nv_py=0 ,  fit_nv_pz=0 ,  fit_nv_e=0 ;
- fit_subjet1_px=0 ,  fit_subjet1_py=0 ,  fit_subjet1_pz=0 ,  fit_subjet1_e =0 ;
- fit_subjet2_px=0 ,  fit_subjet2_py=0 ,  fit_subjet2_pz=0 ,  fit_subjet2_e =0 ;
+    W_mass_type0 = 0. , W_pz_type0 = -9999.,  W_nu1_pz_type0 = -9999., W_nu2_pz_type0 = -9999.;
+    W_mass_type2 = 0. , W_pz_type2 = -9999.,  W_nu1_pz_type2 = -9999., W_nu2_pz_type2 = -9999.;
 
- fit_lvj_m=0  , fit_lv_m =-999 , fit_j_m=-999, fit_chi2=-999 , fit_lvj_pt = -999, fit_lvj_eta = -999, fit_lvj_phi = -999 ;
- fit_lvj_phi=-999 ; fit_subjet1_m =-999; fit_subjet2_m=-999; 
- fit_NDF=-999, fit_status=-999 ;
+    fit_el_px_type0=-999 ,  fit_el_py_type0=-999 ,  fit_el_pz_type0=-999 ,  fit_el_e_type0=-999 ;
+    fit_nv_px_type0=-999 ,  fit_nv_py_type0=-999 ,  fit_nv_pz_type0=-999 ,  fit_nv_e_type0=-999 ;
+    fit_subjet1_px_type0=-999 ,  fit_subjet1_py_type0=-999 ,  fit_subjet1_pz_type0=-999 ,  fit_subjet1_e_type0 =-999 ;
+    fit_subjet2_px_type0=-999 ,  fit_subjet2_py_type0=-999 ,  fit_subjet2_pz_type0=-999 ,  fit_subjet2_e_type0 =-999 ;
+    fit_lvj_m_type0= -999  , fit_lv_m_type0 =-999 , fit_j_m_type0=-999, fit_chi2_type0=-999 , fit_lvj_pt_type0 = -999, fit_lvj_eta_type0 = -999, fit_lvj_phi_type0 = -999 ;
+    fit_lvj_phi_type0=-999 ; fit_subjet1_m_type0 =-999; fit_subjet2_m_type0=-999; 
+    fit_NDF_type0=-999, fit_status_type0=-999 ;
+
+    fit_el_px_type2=-999 ,  fit_el_py_type2=-999 ,  fit_el_pz_type2=-999 ,  fit_el_e_type2=-999 ;
+    fit_nv_px_type2=-999 ,  fit_nv_py_type2=-999 ,  fit_nv_pz_type2=-999 ,  fit_nv_e_type2=-999 ;
+    fit_subjet1_px_type2=-999 ,  fit_subjet1_py_type2=-999 ,  fit_subjet1_pz_type2=-999 ,  fit_subjet1_e_type2 =-999 ;
+    fit_subjet2_px_type2=-999 ,  fit_subjet2_py_type2=-999 ,  fit_subjet2_pz_type2=-999 ,  fit_subjet2_e_type2 =-999 ;
+    fit_lvj_m_type2= -999  , fit_lv_m_type2 =-999 , fit_j_m_type2=-999, fit_chi2_type2=-999 , fit_lvj_pt_type2 = -999, fit_lvj_eta_type2 = -999, fit_lvj_phi_type2 = -999 ;
+    fit_lvj_phi_type2=-999 ; fit_subjet1_m_type2 =-999; fit_subjet2_m_type2=-999; 
+    fit_NDF_type2=-999, fit_status_type2=-999 ;
+
+    fit_el_px_type0_met=-999 ,  fit_el_py_type0_met=-999 ,  fit_el_pz_type0_met=-999 ,  fit_el_e_type0_met=-999 ;
+    fit_nv_px_type0_met=-999 ,  fit_nv_py_type0_met=-999 ,  fit_nv_pz_type0_met=-999 ,  fit_nv_e_type0_met=-999 ;
+    fit_subjet1_px_type0_met=-999 ,  fit_subjet1_py_type0_met=-999 ,  fit_subjet1_pz_type0_met=-999 ,  fit_subjet1_e_type0_met =-999 ;
+    fit_subjet2_px_type0_met=-999 ,  fit_subjet2_py_type0_met=-999 ,  fit_subjet2_pz_type0_met=-999 ,  fit_subjet2_e_type0_met =-999 ;
+    fit_lvj_m_type0_met= -999  , fit_lv_m_type0_met =-999 , fit_j_m_type0_met=-999, fit_chi2_type0_met=-999 , fit_lvj_pt_type0_met = -999, fit_lvj_eta_type0_met = -999, fit_lvj_phi_type0_met = -999 ;
+    fit_lvj_phi_type0_met=-999 ; fit_subjet1_m_type0_met =-999; fit_subjet2_m_type0_met=-999; 
+    fit_NDF_type0_met=-999, fit_status_type0_met=-999 ;
+
+    fit_el_px_type2_met=-999 ,  fit_el_py_type2_met=-999 ,  fit_el_pz_type2_met=-999 ,  fit_el_e_type2_met=-999 ;
+    fit_nv_px_type2_met=-999 ,  fit_nv_py_type2_met=-999 ,  fit_nv_pz_type2_met=-999 ,  fit_nv_e_type2_met=-999 ;
+    fit_subjet1_px_type2_met=-999 ,  fit_subjet1_py_type2_met=-999 ,  fit_subjet1_pz_type2_met=-999 ,  fit_subjet1_e_type2_met =-999 ;
+    fit_subjet2_px_type2_met=-999 ,  fit_subjet2_py_type2_met=-999 ,  fit_subjet2_pz_type2_met=-999 ,  fit_subjet2_e_type2_met =-999 ;
+    fit_lvj_m_type2_met= -999  , fit_lv_m_type2_met =-999 , fit_j_m_type2_met=-999, fit_chi2_type2_met=-999 , fit_lvj_pt_type2_met = -999, fit_lvj_eta_type2_met = -999, fit_lvj_phi_type2_met = -999 ;
+    fit_lvj_phi_type2_met=-999 ; fit_subjet1_m_type2_met =-999; fit_subjet2_m_type2_met=-999; 
+    fit_NDF_type2_met=-999, fit_status_type2_met=-999 ;
 
 
- boosted_lvj_m =-999 , boosted_j_m=-999, boosted_subjet1_m=-999, boosted_subjet2_m=-999, boosted_lv_m=-999 , boosted_lvj_pt=-999;
- boosted_lvj_phi=-999, boosted_lvj_eta=-999, boosted_lvj_e=-999 ;
+    /////////////////////
 
- boostedW_lvj_m =-999 , boostedW_j_m=-999, boostedW_subjet1_m=-999, boostedW_subjet2_m=-999, boostedW_lv_m=-999 , boostedW_lvj_pt=-999;
- boostedW_lvj_phi=-999, boostedW_lvj_eta=-999, boostedW_lvj_e=-999 ;
+    /////////////////////
 
- boosted_wjj_ang_ha=-999, boosted_wjj_ang_hb=-999, boosted_wjj_ang_hs=-999, boosted_wjj_ang_phi=-999, boosted_wjj_ang_phia=-999, boosted_wjj_ang_phib=-999;
+    boosted_lvj_m_type0 =-999 , boosted_j_m_type0=-999, boosted_subjet1_m_type0=-999, boosted_subjet2_m_type0=-999, boosted_lv_m_type0=-999 , boosted_lvj_pt_type0=-999;
+    boosted_lvj_phi_type0=-999, boosted_lvj_eta_type0=-999, boosted_lvj_e_type0=-999 ;
+
+    boostedW_lvj_m_type0 =-999 , boostedW_j_m_type0=-999, boostedW_subjet1_m_type0=-999, boostedW_subjet2_m_type0=-999, boostedW_lv_m_type0=-999 , boostedW_lvj_pt_type0=-999;
+    boostedW_lvj_phi_type0=-999, boostedW_lvj_eta_type0=-999, boostedW_lvj_e_type0=-999 ;
+
+    boosted_wjj_ang_ha_type0=-999, boosted_wjj_ang_hb_type0=-999, boosted_wjj_ang_hs_type0=-999, boosted_wjj_ang_phi_type0=-999, boosted_wjj_ang_phia_type0=-999, boosted_wjj_ang_phib_type0=-999;
+
+    boosted_lvj_m_type0_met =-999 , boosted_j_m_type0_met=-999, boosted_subjet1_m_type0_met=-999, boosted_subjet2_m_type0_met=-999, boosted_lv_m_type0_met=-999 , boosted_lvj_pt_type0_met=-999;
+    boosted_lvj_phi_type0_met=-999, boosted_lvj_eta_type0_met=-999, boosted_lvj_e_type0_met=-999 ;
+
+    boostedW_lvj_m_type0_met =-999 , boostedW_j_m_type0_met=-999, boostedW_subjet1_m_type0_met=-999, boostedW_subjet2_m_type0_met=-999, boostedW_lv_m_type0_met=-999 , boostedW_lvj_pt_type0_met=-999;
+    boostedW_lvj_phi_type0_met=-999, boostedW_lvj_eta_type0_met=-999, boostedW_lvj_e_type0_met=-999 ;
+
+    boosted_wjj_ang_ha_type0_met=-999, boosted_wjj_ang_hb_type0_met=-999, boosted_wjj_ang_hs_type0_met=-999, boosted_wjj_ang_phi_type0_met=-999, boosted_wjj_ang_phia_type0_met=-999, boosted_wjj_ang_phib_type0_met=-999;
+
+    boosted_lvj_m_type2 =-999 , boosted_j_m_type2=-999, boosted_subjet1_m_type2=-999, boosted_subjet2_m_type2=-999, boosted_lv_m_type2=-999 , boosted_lvj_pt_type2=-999;
+    boosted_lvj_phi_type2=-999, boosted_lvj_eta_type2=-999, boosted_lvj_e_type2=-999 ;
+
+    boostedW_lvj_m_type2 =-999 , boostedW_j_m_type2=-999, boostedW_subjet1_m_type2=-999, boostedW_subjet2_m_type2=-999, boostedW_lv_m_type2=-999 , boostedW_lvj_pt_type2=-999;
+    boostedW_lvj_phi_type2=-999, boostedW_lvj_eta_type2=-999, boostedW_lvj_e_type2=-999 ;
+
+    boosted_wjj_ang_ha_type2=-999, boosted_wjj_ang_hb_type2=-999, boosted_wjj_ang_hs_type2=-999, boosted_wjj_ang_phi_type2=-999, boosted_wjj_ang_phia_type2=-999, boosted_wjj_ang_phib_type2=-999;
+
+    boosted_lvj_m_type2_met =-999 , boosted_j_m_type2_met=-999, boosted_subjet1_m_type2_met=-999, boosted_subjet2_m_type2_met=-999, boosted_lv_m_type2_met=-999 , boosted_lvj_pt_type2_met=-999;
+    boosted_lvj_phi_type2_met=-999, boosted_lvj_eta_type2_met=-999, boosted_lvj_e_type2_met=-999 ;
+
+    boostedW_lvj_m_type2_met =-999 , boostedW_j_m_type2_met=-999, boostedW_subjet1_m_type2_met=-999, boostedW_subjet2_m_type2_met=-999, boostedW_lv_m_type2_met=-999 , boostedW_lvj_pt_type2_met=-999;
+    boostedW_lvj_phi_type2_met=-999, boostedW_lvj_eta_type2_met=-999, boostedW_lvj_e_type2_met=-999 ;
+
+    boosted_wjj_ang_ha_type2_met=-999, boosted_wjj_ang_hb_type2_met=-999, boosted_wjj_ang_hs_type2_met=-999, boosted_wjj_ang_phi_type2_met=-999, boosted_wjj_ang_phia_type2_met=-999, boosted_wjj_ang_phib_type2_met=-999;
+
+    //////////////
 
  vbf_maxpt_jj_e=-999,   vbf_maxpt_jj_pt=-999 ,   vbf_maxpt_jj_eta=-999 ,  vbf_maxpt_jj_phi=-999 , vbf_maxpt_jj_m=-999 ;
  vbf_maxpt_j1_e=-999 ,   vbf_maxpt_j1_pt=-999 ,   vbf_maxpt_j1_eta=-999 ,  vbf_maxpt_j1_phi=-999 , vbf_maxpt_j1_m=-999 ;
