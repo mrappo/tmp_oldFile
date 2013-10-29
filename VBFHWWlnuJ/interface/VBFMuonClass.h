@@ -42,119 +42,166 @@ class VBFMuonClass {
   
   //variables for the hadronic W
   
-    int WHadposition;  
+  int WHadposition;  
+  int numberJetBin;
 
-    float Hadronic_W_Jet_mass_uncorr;   
-    float Hadronic_W_Jet_mass_tr_uncorr;  
-    float Hadronic_W_Jet_mass_ft_uncorr;   
-    float Hadronic_W_Jet_mass_pr_uncorr;   
-    float Hadronic_W_Jet_massdrop_pr_uncorr;   
-    float Hadronic_W_Jet_tau2tau1;  
-    float Hadronic_W_Jet_tau1;  
-    float Hadronic_W_Jet_tau2;   
-    float Hadronic_W_Jet_tau3;   
-    float Hadronic_W_Jet_tau4;   
-    float Hadronic_W_Jet_pt;   
-    float Hadronic_W_Jet_eta;   
-    float Hadronic_W_Jet_phi;   
-    float Hadronic_W_Jet_e;   
-    float Hadronic_W_Jet_pt_tr_uncorr;   
-    float Hadronic_W_Jet_pt_tr;   
-    float Hadronic_W_Jet_eta_tr;   
-    float Hadronic_W_Jet_phi_tr;   
-    float Hadronic_W_Jet_e_tr;  
-    float Hadronic_W_Jet_pt_ft_uncorr;   
-    float Hadronic_W_Jet_pt_ft;   
-    float Hadronic_W_Jet_eta_ft;   
-    float Hadronic_W_Jet_phi_ft;   
-    float Hadronic_W_Jet_e_ft;   
-    float Hadronic_W_Jet_pt_pr_uncorr;   
-    float Hadronic_W_Jet_pt_pr;   
-    float Hadronic_W_Jet_eta_pr;   
-    float Hadronic_W_Jet_phi_pr;   
-    float Hadronic_W_Jet_e_pr;   
-    float Hadronic_W_Jet_prsubjet1_px;  
-    float Hadronic_W_Jet_prsubjet1_py;  
-    float Hadronic_W_Jet_prsubjet1_pz;   
-    float Hadronic_W_Jet_prsubjet1_e;   
-    float Hadronic_W_Jet_prsubjet2_px;   
-    float Hadronic_W_Jet_prsubjet2_py;   
-    float Hadronic_W_Jet_prsubjet2_pz;   
-    float Hadronic_W_Jet_prsubjet2_e;   
-    float Hadronic_W_Jet_mass;  
-    float Hadronic_W_Jet_mass_tr;   
-    float Hadronic_W_Jet_mass_ft;  
-    float Hadronic_W_Jet_mass_pr;   
-    float Hadronic_W_Jet_massdrop;   
-    float Hadronic_W_Jet_area;   
-    float Hadronic_W_Jet_area_tr;   
-    float Hadronic_W_Jet_area_ft;   
-    float Hadronic_W_Jet_area_pr;   
-    float Hadronic_W_Jet_jetconsituents;   
-    float Hadronic_W_Jet_jetcharge;   
-    float Hadronic_W_Jet_rcores;   
-    float Hadronic_W_Jet_ptcores;   
-    float Hadronic_W_Jet_planarflow;   
-    float Hadronic_W_Jet_qjetmass;   
-    float Hadronic_W_Jet_qjetmassdrop;   
-    float Hadronic_W_Jet_deltaR_ljet;   
-    float Hadronic_W_Jet_deltaphi_METjet;   
-    float Hadronic_W_Jet_deltaphi_Vca8jet;   
-    float Hadronic_W_Jet_rcores01;  
-    float Hadronic_W_Jet_rcores02;  
-    float Hadronic_W_Jet_rcores03;   
-    float Hadronic_W_Jet_rcores04;   
-    float Hadronic_W_Jet_rcores05;   
-    float Hadronic_W_Jet_rcores06;   
-    float Hadronic_W_Jet_rcores07;  
-    float Hadronic_W_Jet_rcores08;   
-    float Hadronic_W_Jet_rcores09;   
-    float Hadronic_W_Jet_rcores10;  
-    float Hadronic_W_Jet_rcores11;   
-    float Hadronic_W_Jet_ptcores01;  
-    float Hadronic_W_Jet_ptcores02;   
-    float Hadronic_W_Jet_ptcores03;  
-    float Hadronic_W_Jet_ptcores04;   
-    float Hadronic_W_Jet_ptcores05;   
-    float Hadronic_W_Jet_ptcores06;   
-    float Hadronic_W_Jet_ptcores07;   
-    float Hadronic_W_Jet_ptcores08;   
-    float Hadronic_W_Jet_ptcores09;   
-    float Hadronic_W_Jet_ptcores10;   
-    float Hadronic_W_Jet_ptcores11;  
-    float Hadronic_W_Jet_planarflow01;  
-    float Hadronic_W_Jet_planarflow02;   
-    float Hadronic_W_Jet_planarflow03;   
-    float Hadronic_W_Jet_planarflow04;   
-    float Hadronic_W_Jet_planarflow05;  
-    float Hadronic_W_Jet_planarflow06;  
-    float Hadronic_W_Jet_planarflow07;   
-    float Hadronic_W_Jet_planarflow08;   
-    float Hadronic_W_Jet_planarflow09;  
-    float Hadronic_W_Jet_planarflow10;   
-    float Hadronic_W_Jet_planarflow11;   
-    float Hadronic_W_Jet_mass_sensi_tr;   
-    float Hadronic_W_Jet_mass_sensi_ft;  
-    float Hadronic_W_Jet_mass_sensi_pr;   
-    float Hadronic_W_Jet_qjetmassvolatility;  
-    float Hadronic_W_Jet_prsubjet1ptoverjetpt;   
-    float Hadronic_W_Jet_prsubjet2ptoverjetpt; 
-    float Hadronic_W_Jet_prsubjet1subjet2_deltaR;
-  
+  float Hadronic_W_Jet_mass_uncorr;   
+  float Hadronic_W_Jet_mass_tr_uncorr;  
+  float Hadronic_W_Jet_mass_ft_uncorr;   
+  float Hadronic_W_Jet_mass_pr_uncorr;   
+  float Hadronic_W_Jet_massdrop_pr_uncorr;   
+  float Hadronic_W_Jet_tau2tau1;  
+  float Hadronic_W_Jet_tau1;  
+  float Hadronic_W_Jet_tau2;   
+  float Hadronic_W_Jet_tau3;   
+  float Hadronic_W_Jet_tau4;   
+  float Hadronic_W_Jet_pt;   
+  float Hadronic_W_Jet_eta;   
+  float Hadronic_W_Jet_phi;   
+  float Hadronic_W_Jet_e;   
+  float Hadronic_W_Jet_pt_tr_uncorr;   
+  float Hadronic_W_Jet_pt_tr;   
+  float Hadronic_W_Jet_eta_tr;   
+  float Hadronic_W_Jet_phi_tr;   
+  float Hadronic_W_Jet_e_tr;  
+  float Hadronic_W_Jet_pt_ft_uncorr;   
+  float Hadronic_W_Jet_pt_ft;   
+  float Hadronic_W_Jet_eta_ft;   
+  float Hadronic_W_Jet_phi_ft;   
+  float Hadronic_W_Jet_e_ft;   
+  float Hadronic_W_Jet_pt_pr_uncorr;   
+  float Hadronic_W_Jet_pt_pr;   
+  float Hadronic_W_Jet_eta_pr;   
+  float Hadronic_W_Jet_phi_pr;   
+  float Hadronic_W_Jet_e_pr;   
+  float Hadronic_W_Jet_prsubjet1_px;  
+  float Hadronic_W_Jet_prsubjet1_py;  
+  float Hadronic_W_Jet_prsubjet1_pz;   
+  float Hadronic_W_Jet_prsubjet1_e;   
+  float Hadronic_W_Jet_prsubjet2_px;   
+  float Hadronic_W_Jet_prsubjet2_py;   
+  float Hadronic_W_Jet_prsubjet2_pz;   
+  float Hadronic_W_Jet_prsubjet2_e;   
+  float Hadronic_W_Jet_mass;  
+  float Hadronic_W_Jet_mass_tr;   
+  float Hadronic_W_Jet_mass_ft;  
+  float Hadronic_W_Jet_mass_pr;   
+  float Hadronic_W_Jet_massdrop;   
+  float Hadronic_W_Jet_area;   
+  float Hadronic_W_Jet_area_tr;   
+  float Hadronic_W_Jet_area_ft;   
+  float Hadronic_W_Jet_area_pr;   
+  float Hadronic_W_Jet_jetconsituents;   
+  float Hadronic_W_Jet_jetcharge;   
+  float Hadronic_W_Jet_rcores;   
+  float Hadronic_W_Jet_ptcores;   
+  float Hadronic_W_Jet_planarflow;   
+  float Hadronic_W_Jet_qjetmass;   
+  float Hadronic_W_Jet_qjetmassdrop;   
+  float Hadronic_W_Jet_deltaR_ljet;   
+  float Hadronic_W_Jet_deltaphi_METjet;   
+  float Hadronic_W_Jet_deltaphi_Vca8jet;   
+  float Hadronic_W_Jet_rcores01;  
+  float Hadronic_W_Jet_rcores02;  
+  float Hadronic_W_Jet_rcores03;   
+  float Hadronic_W_Jet_rcores04;   
+  float Hadronic_W_Jet_rcores05;   
+  float Hadronic_W_Jet_rcores06;   
+  float Hadronic_W_Jet_rcores07;  
+  float Hadronic_W_Jet_rcores08;   
+  float Hadronic_W_Jet_rcores09;   
+  float Hadronic_W_Jet_rcores10;  
+  float Hadronic_W_Jet_rcores11;   
+  float Hadronic_W_Jet_ptcores01;  
+  float Hadronic_W_Jet_ptcores02;   
+  float Hadronic_W_Jet_ptcores03;  
+  float Hadronic_W_Jet_ptcores04;   
+  float Hadronic_W_Jet_ptcores05;   
+  float Hadronic_W_Jet_ptcores06;   
+  float Hadronic_W_Jet_ptcores07;   
+  float Hadronic_W_Jet_ptcores08;   
+  float Hadronic_W_Jet_ptcores09;   
+  float Hadronic_W_Jet_ptcores10;   
+  float Hadronic_W_Jet_ptcores11;  
+  float Hadronic_W_Jet_planarflow01;  
+  float Hadronic_W_Jet_planarflow02;   
+  float Hadronic_W_Jet_planarflow03;   
+  float Hadronic_W_Jet_planarflow04;   
+  float Hadronic_W_Jet_planarflow05;  
+  float Hadronic_W_Jet_planarflow06;  
+  float Hadronic_W_Jet_planarflow07;   
+  float Hadronic_W_Jet_planarflow08;   
+  float Hadronic_W_Jet_planarflow09;  
+  float Hadronic_W_Jet_planarflow10;   
+  float Hadronic_W_Jet_planarflow11;   
+  float Hadronic_W_Jet_mass_sensi_tr;   
+  float Hadronic_W_Jet_mass_sensi_ft;  
+  float Hadronic_W_Jet_mass_sensi_pr;   
+  float Hadronic_W_Jet_qjetmassvolatility;  
+  float Hadronic_W_Jet_prsubjet1ptoverjetpt;   
+  float Hadronic_W_Jet_prsubjet2ptoverjetpt; 
+  float Hadronic_W_Jet_prsubjet1subjet2_deltaR;
+
+  // new branch for pz of the neutrino
+  float W_mass_type0_met , W_pz_type0_met ,  W_nu1_pz_type0_met, W_nu2_pz_type0_met ;
+  float W_mass_type2_met , W_pz_type2_met ,  W_nu1_pz_type2_met, W_nu2_pz_type2_met ;
+
+  float W_mass_type0, W_pz_type0,  W_nu1_pz_type0, W_nu2_pz_type0 ;
+  float W_mass_type2, W_pz_type2,  W_nu1_pz_type2, W_nu2_pz_type2 ;
   
   // new Branch for kinematic fit result
 
-  float fit_mu_px ,  fit_mu_py ,  fit_mu_pz ,  fit_mu_e ;
-  float fit_nv_px ,  fit_nv_py ,  fit_nv_pz ,  fit_nv_e ;
-  float fit_subjet1_px ,  fit_subjet1_py ,  fit_subjet1_pz ,  fit_subjet1_e ;
-  float fit_subjet2_px ,  fit_subjet2_py ,  fit_subjet2_pz ,  fit_subjet2_e ;
-  float fit_lvj_m  ,  fit_lv_m , fit_j_m , fit_subjet1_m, fit_subjet2_m, fit_lvj_pt, fit_lvj_phi, fit_lvj_eta, fit_lvj_e, fit_chi2  ;
-  int   fit_NDF   , fit_status ;
+  float fit_mu_px_type0 ,  fit_mu_py_type0 ,  fit_mu_pz_type0 ,  fit_mu_e_type0 ;
+  float fit_nv_px_type0 ,  fit_nv_py_type0 ,  fit_nv_pz_type0 ,  fit_nv_e_type0 ;
+  float fit_subjet1_px_type0 ,  fit_subjet1_py_type0 ,  fit_subjet1_pz_type0 ,  fit_subjet1_e_type0 ;
+  float fit_subjet2_px_type0 ,  fit_subjet2_py_type0 ,  fit_subjet2_pz_type0 ,  fit_subjet2_e_type0 ;
+  float fit_lvj_m_type0  ,  fit_lv_m_type0 , fit_j_m_type0 , fit_subjet1_m_type0, fit_subjet2_m_type0, fit_lvj_pt_type0, fit_lvj_phi_type0, fit_lvj_eta_type0, fit_lvj_e_type0, fit_chi2_type0  ;
+  int   fit_NDF_type0   , fit_status_type0 ;
 
-  float boosted_lvj_m , boosted_j_m, boosted_subjet1_m, boosted_subjet2_m, boosted_lv_m , boosted_lvj_pt, boosted_lvj_phi, boosted_lvj_eta, boosted_lvj_e ;
-  float boostedW_lvj_m , boostedW_j_m, boostedW_subjet1_m, boostedW_subjet2_m, boostedW_lv_m , boostedW_lvj_pt, boostedW_lvj_phi, boostedW_lvj_eta, boostedW_lvj_e ;
+  float fit_mu_px_type2 ,  fit_mu_py_type2 ,  fit_mu_pz_type2 ,  fit_mu_e_type2 ;
+  float fit_nv_px_type2 ,  fit_nv_py_type2 ,  fit_nv_pz_type2 ,  fit_nv_e_type2 ;
+  float fit_subjet1_px_type2 ,  fit_subjet1_py_type2 ,  fit_subjet1_pz_type2 ,  fit_subjet1_e_type2 ;
+  float fit_subjet2_px_type2 ,  fit_subjet2_py_type2 ,  fit_subjet2_pz_type2 ,  fit_subjet2_e_type2 ;
+  float fit_lvj_m_type2  ,  fit_lv_m_type2 , fit_j_m_type2 , fit_subjet1_m_type2, fit_subjet2_m_type2, fit_lvj_pt_type2, fit_lvj_phi_type2, fit_lvj_eta_type2, fit_lvj_e_type2, fit_chi2_type2  ;
+  int   fit_NDF_type2   , fit_status_type2 ;
 
-  float boosted_wjj_ang_ha, boosted_wjj_ang_hb, boosted_wjj_ang_hs, boosted_wjj_ang_phi, boosted_wjj_ang_phia, boosted_wjj_ang_phib;
+
+  float fit_mu_px_type0_met ,  fit_mu_py_type0_met ,  fit_mu_pz_type0_met ,  fit_mu_e_type0_met ;
+  float fit_nv_px_type0_met ,  fit_nv_py_type0_met ,  fit_nv_pz_type0_met ,  fit_nv_e_type0_met ;
+  float fit_subjet1_px_type0_met ,  fit_subjet1_py_type0_met ,  fit_subjet1_pz_type0_met ,  fit_subjet1_e_type0_met ;
+  float fit_subjet2_px_type0_met ,  fit_subjet2_py_type0_met ,  fit_subjet2_pz_type0_met ,  fit_subjet2_e_type0_met ;
+  float fit_lvj_m_type0_met  ,  fit_lv_m_type0_met , fit_j_m_type0_met , fit_subjet1_m_type0_met, fit_subjet2_m_type0_met, fit_lvj_pt_type0_met, fit_lvj_phi_type0_met, fit_lvj_eta_type0_met, fit_lvj_e_type0_met, fit_chi2_type0_met  ;
+  int   fit_NDF_type0_met   , fit_status_type0_met ;
+
+  float fit_mu_px_type2_met ,  fit_mu_py_type2_met ,  fit_mu_pz_type2_met ,  fit_mu_e_type2_met ;
+  float fit_nv_px_type2_met ,  fit_nv_py_type2_met ,  fit_nv_pz_type2_met ,  fit_nv_e_type2_met ;
+  float fit_subjet1_px_type2_met ,  fit_subjet1_py_type2_met ,  fit_subjet1_pz_type2_met ,  fit_subjet1_e_type2_met ;
+  float fit_subjet2_px_type2_met ,  fit_subjet2_py_type2_met ,  fit_subjet2_pz_type2_met ,  fit_subjet2_e_type2_met ;
+  float fit_lvj_m_type2_met  ,  fit_lv_m_type2_met , fit_j_m_type2_met , fit_subjet1_m_type2_met, fit_subjet2_m_type2_met, fit_lvj_pt_type2_met, fit_lvj_phi_type2_met, fit_lvj_eta_type2_met, fit_lvj_e_type2_met, fit_chi2_type2_met  ;
+  int   fit_NDF_type2_met   , fit_status_type2_met ;
+
+
+  //////////////////////
+
+  float boosted_lvj_m_type0 , boosted_j_m_type0, boosted_subjet1_m_type0, boosted_subjet2_m_type0, boosted_lv_m_type0 , boosted_lvj_pt_type0, boosted_lvj_phi_type0, boosted_lvj_eta_type0, boosted_lvj_e_type0 ;
+  float boostedW_lvj_m_type0 , boostedW_j_m_type0, boostedW_subjet1_m_type0, boostedW_subjet2_m_type0, boostedW_lv_m_type0 , boostedW_lvj_pt_type0, boostedW_lvj_phi_type0, boostedW_lvj_eta_type0, boostedW_lvj_e_type0 ;
+
+  float boosted_wjj_ang_ha_type0, boosted_wjj_ang_hb_type0, boosted_wjj_ang_hs_type0, boosted_wjj_ang_phi_type0, boosted_wjj_ang_phia_type0, boosted_wjj_ang_phib_type0;
+
+  float boosted_lvj_m_type0_met , boosted_j_m_type0_met, boosted_subjet1_m_type0_met, boosted_subjet2_m_type0_met, boosted_lv_m_type0_met , boosted_lvj_pt_type0_met, boosted_lvj_phi_type0_met, boosted_lvj_eta_type0_met, boosted_lvj_e_type0_met ;
+  float boostedW_lvj_m_type0_met , boostedW_j_m_type0_met, boostedW_subjet1_m_type0_met, boostedW_subjet2_m_type0_met, boostedW_lv_m_type0_met , boostedW_lvj_pt_type0_met, boostedW_lvj_phi_type0_met, boostedW_lvj_eta_type0_met, boostedW_lvj_e_type0_met ;
+
+  float boosted_wjj_ang_ha_type0_met, boosted_wjj_ang_hb_type0_met, boosted_wjj_ang_hs_type0_met, boosted_wjj_ang_phi_type0_met, boosted_wjj_ang_phia_type0_met, boosted_wjj_ang_phib_type0_met;
+
+  float boosted_lvj_m_type2 , boosted_j_m_type2, boosted_subjet1_m_type2, boosted_subjet2_m_type2, boosted_lv_m_type2 , boosted_lvj_pt_type2, boosted_lvj_phi_type2, boosted_lvj_eta_type2, boosted_lvj_e_type2 ;
+  float boostedW_lvj_m_type2 , boostedW_j_m_type2, boostedW_subjet1_m_type2, boostedW_subjet2_m_type2, boostedW_lv_m_type2 , boostedW_lvj_pt_type2, boostedW_lvj_phi_type2, boostedW_lvj_eta_type2, boostedW_lvj_e_type2 ;
+
+  float boosted_wjj_ang_ha_type2, boosted_wjj_ang_hb_type2, boosted_wjj_ang_hs_type2, boosted_wjj_ang_phi_type2, boosted_wjj_ang_phia_type2, boosted_wjj_ang_phib_type2;
+
+  float boosted_lvj_m_type2_met , boosted_j_m_type2_met, boosted_subjet1_m_type2_met, boosted_subjet2_m_type2_met, boosted_lv_m_type2_met , boosted_lvj_pt_type2_met, boosted_lvj_phi_type2_met, boosted_lvj_eta_type2_met, boosted_lvj_e_type2_met ;
+  float boostedW_lvj_m_type2_met , boostedW_j_m_type2_met, boostedW_subjet1_m_type2_met, boostedW_subjet2_m_type2_met, boostedW_lv_m_type2_met , boostedW_lvj_pt_type2_met, boostedW_lvj_phi_type2_met, boostedW_lvj_eta_type2_met, boostedW_lvj_e_type2_met ;
+
+  float boosted_wjj_ang_ha_type2_met, boosted_wjj_ang_hb_type2_met, boosted_wjj_ang_hs_type2_met, boosted_wjj_ang_phi_type2_met, boosted_wjj_ang_phia_type2_met, boosted_wjj_ang_phib_type2_met;
 
   
   // vbf variables for couple with high pt
