@@ -67,15 +67,15 @@ void VBFMuonClass::SetBranchAddressAndStatus ( TTree* inputTree){
   fTree->SetBranchStatus("cosTheta*",0);
   fTree->SetBranchStatus("cosJackson*",0);
   fTree->SetBranchStatus("colorCorr*", 0);
-  fTree->SetBranchStatus("JetGen*",0);
-  fTree->SetBranchStatus("numGenJets*",0);
   fTree->SetBranchStatus("Photon*",0);
   fTree->SetBranchStatus("*Photon*",0);
   fTree->SetBranchStatus("W_Hb*",0);
   fTree->SetBranchStatus("W_Lepton*",0);
   fTree->SetBranchStatus("W_Met*",0);
   fTree->SetBranchStatus("W_tLepton*",0);
+  fTree->SetBranchStatus("W_tParton*",0);
   fTree->SetBranchStatus("W_tMet*",0);
+  fTree->SetBranchStatus("W_tbb*",0);
 
   fTree->SetBranchStatus("fit_*",0);
   fTree->SetBranchStatus("ang_*",0);
@@ -87,10 +87,13 @@ void VBFMuonClass::SetBranchAddressAndStatus ( TTree* inputTree){
   fTree->SetBranchStatus("mva3j*",0);
   fTree->SetBranchStatus("mvavbf*",0);
   fTree->SetBranchStatus("GroomedJet_number*",0);
-  fTree->SetBranchStatus("GroomedJet*ak7",0);
-  fTree->SetBranchStatus("boostedW_*",0);
-  fTree->SetBranchStatus("vbf_*",0);
-  fTree->SetBranchStatus("ttH_*",0);
+  fTree->SetBranchStatus("GroomedJet_AK7*",0);
+  fTree->SetBranchStatus("GenGroomedJet_AK7*",0);
+  fTree->SetBranchStatus("GroomedJet_AK5*",0);
+  fTree->SetBranchStatus("GenGroomedJet_AK5*",0);
+  fTree->SetBranchStatus("vbf*",0);
+  fTree->SetBranchStatus("boostedW*",0);
+  fTree->SetBranchStatus("ttH*",0);
 
   fTree->SetBranchStatus("Hadronic_W_*",0);
   fTree->SetBranchStatus("WHadposition",0);
@@ -101,163 +104,364 @@ void VBFMuonClass::SetBranchAddressAndStatus ( TTree* inputTree){
 
 void VBFMuonClass::SetNewBranches ( TTree* inputTree){
 
-    inputTree->Branch("WHadposition",&WHadposition,"WHadposition/I"); 
+   inputTree->Branch("WHadposition",&WHadposition,"WHadposition/I"); 
+   inputTree->Branch("numberJetBin",&numberJetBin,"numberJetBin/I"); 
 
-    inputTree->Branch("Hadronic_W_Jet_mass_uncorr",&Hadronic_W_Jet_mass_uncorr,"Hadronic_W_Jet_mass_uncorr/F");
-    inputTree->Branch("Hadronic_W_Jet_mass_tr_uncorr",&Hadronic_W_Jet_mass_tr_uncorr,"Hadronic_W_Jet_mass_tr_uncorr/F");
-    inputTree->Branch("Hadronic_W_Jet_mass_ft_uncorr",&Hadronic_W_Jet_mass_ft_uncorr,"Hadronic_W_Jet_mass_ft_uncorr/F");
-    inputTree->Branch("Hadronic_W_Jet_mass_pr_uncorr",&Hadronic_W_Jet_mass_pr_uncorr,"Hadronic_W_Jet_mass_pr_uncorr/F");
-    inputTree->Branch("Hadronic_W_Jet_massdrop_pr_uncorr",&Hadronic_W_Jet_massdrop_pr_uncorr,"Hadronic_W_Jet_massdrop_pr_uncorr/F");
-    inputTree->Branch("Hadronic_W_Jet_tau2tau1",&Hadronic_W_Jet_tau2tau1,"Hadronic_W_Jet_tau2tau1/F");
-    inputTree->Branch("Hadronic_W_Jet_tau1",&Hadronic_W_Jet_tau1,"Hadronic_W_Jet_tau1/F");
-    inputTree->Branch("Hadronic_W_Jet_tau2",&Hadronic_W_Jet_tau2,"Hadronic_W_Jet_tau2/F");
-    inputTree->Branch("Hadronic_W_Jet_tau3",&Hadronic_W_Jet_tau3,"Hadronic_W_Jet_tau3/F");
-    inputTree->Branch("Hadronic_W_Jet_tau4",&Hadronic_W_Jet_tau4,"Hadronic_W_Jet_tau4/F");
-    inputTree->Branch("Hadronic_W_Jet_pt",&Hadronic_W_Jet_pt,"Hadronic_W_Jet_pt/F");
-    inputTree->Branch("Hadronic_W_Jet_eta",&Hadronic_W_Jet_eta,"Hadronic_W_Jet_eta/F");
-    inputTree->Branch("Hadronic_W_Jet_phi",&Hadronic_W_Jet_phi,"Hadronic_W_Jet_phi/F");
-    inputTree->Branch("Hadronic_W_Jet_e",&Hadronic_W_Jet_e,"Hadronic_W_Jet_e/F");
-    inputTree->Branch("Hadronic_W_Jet_pt_tr_uncorr",&Hadronic_W_Jet_pt_tr_uncorr,"Hadronic_W_Jet_pt_tr_uncorr/F");
-    inputTree->Branch("Hadronic_W_Jet_pt_tr",&Hadronic_W_Jet_pt_tr,"Hadronic_W_Jet_pt_tr/F");
-    inputTree->Branch("Hadronic_W_Jet_eta_tr",&Hadronic_W_Jet_eta_tr,"Hadronic_W_Jet_eta_tr/F");
-    inputTree->Branch("Hadronic_W_Jet_phi_tr",&Hadronic_W_Jet_phi_tr,"Hadronic_W_Jet_phi_tr/F");
-    inputTree->Branch("Hadronic_W_Jet_e_tr",&Hadronic_W_Jet_e_tr,"Hadronic_W_Jet_e_tr/F");
-    inputTree->Branch("Hadronic_W_Jet_pt_ft_uncorr",&Hadronic_W_Jet_pt_ft_uncorr,"Hadronic_W_Jet_pt_ft_uncorr/F");
-    inputTree->Branch("Hadronic_W_Jet_pt_ft",&Hadronic_W_Jet_pt_ft,"Hadronic_W_Jet_pt_ft/F");
-    inputTree->Branch("Hadronic_W_Jet_eta_ft",&Hadronic_W_Jet_eta_ft,"Hadronic_W_Jet_eta_ft/F");
-    inputTree->Branch("Hadronic_W_Jet_phi_ft",&Hadronic_W_Jet_phi_ft,"Hadronic_W_Jet_phi_ft/F");
-    inputTree->Branch("Hadronic_W_Jet_e_ft",&Hadronic_W_Jet_e_ft,"Hadronic_W_Jet_e_ft/F");
-    inputTree->Branch("Hadronic_W_Jet_pt_pr_uncorr",&Hadronic_W_Jet_pt_pr_uncorr,"Hadronic_W_Jet_pt_pr_uncorr/F");
-    inputTree->Branch("Hadronic_W_Jet_pt_pr",&Hadronic_W_Jet_pt_pr,"Hadronic_W_Jet_pt_pr/F");
-    inputTree->Branch("Hadronic_W_Jet_eta_pr",&Hadronic_W_Jet_eta_pr,"Hadronic_W_Jet_eta_pr/F");
-    inputTree->Branch("Hadronic_W_Jet_phi_pr",&Hadronic_W_Jet_phi_pr,"Hadronic_W_Jet_phi_pr/F");
-    inputTree->Branch("Hadronic_W_Jet_e_pr",&Hadronic_W_Jet_e_pr,"Hadronic_W_Jet_e_pr/F");
-    inputTree->Branch("Hadronic_W_Jet_prsubjet1_px",&Hadronic_W_Jet_prsubjet1_px,"Hadronic_W_Jet_prsubjet1_px/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet1_py",&Hadronic_W_Jet_prsubjet1_py,"Hadronic_W_Jet_prsubjet1_py/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet1_pz",&Hadronic_W_Jet_prsubjet1_pz,"Hadronic_W_Jet_prsubjet1_pz/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet1_e",&Hadronic_W_Jet_prsubjet1_e,"Hadronic_W_Jet_prsubjet1_e/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet2_px",&Hadronic_W_Jet_prsubjet2_px,"Hadronic_W_Jet_prsubjet2_px/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet2_py",&Hadronic_W_Jet_prsubjet2_py,"Hadronic_W_Jet_prsubjet2_py/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet2_pz",&Hadronic_W_Jet_prsubjet2_pz,"Hadronic_W_Jet_prsubjet2_pz/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet2_e",&Hadronic_W_Jet_prsubjet2_e,"Hadronic_W_Jet_prsubjet2_e/F");  
-    inputTree->Branch("Hadronic_W_Jet_mass",&Hadronic_W_Jet_mass_pr,"Hadronic_W_Jet_mass/F"); 
-    inputTree->Branch("Hadronic_W_Jet_mass_tr",&Hadronic_W_Jet_mass_pr,"Hadronic_W_Jet_mass_tr/F"); 
-    inputTree->Branch("Hadronic_W_Jet_mass_ft",&Hadronic_W_Jet_mass_pr,"Hadronic_W_Jet_mass_ft/F");     
-    inputTree->Branch("Hadronic_W_Jet_mass_pr",&Hadronic_W_Jet_mass_pr,"Hadronic_W_Jet_mass_pr/F");  
-    inputTree->Branch("Hadronic_W_Jet_massdrop",&Hadronic_W_Jet_massdrop,"Hadronic_W_Jet_massdrop/F");
-    inputTree->Branch("Hadronic_W_Jet_area",&Hadronic_W_Jet_area_pr,"Hadronic_W_Jet_area/F"); 
-    inputTree->Branch("Hadronic_W_Jet_area_tr",&Hadronic_W_Jet_area_pr,"Hadronic_W_Jet_area_tr/F"); 
-    inputTree->Branch("Hadronic_W_Jet_area_ft",&Hadronic_W_Jet_area_pr,"Hadronic_W_Jet_area_ft/F"); 
-    inputTree->Branch("Hadronic_W_Jet_area_pr",&Hadronic_W_Jet_area_pr,"Hadronic_W_Jet_area_pr/F"); 
-    inputTree->Branch("Hadronic_W_Jet_jetconsituents",&Hadronic_W_Jet_jetconsituents,"Hadronic_W_Jet_jetconsituents/F"); 
-    inputTree->Branch("Hadronic_W_Jet_jetcharge",&Hadronic_W_Jet_jetcharge,"Hadronic_W_Jet_jetcharge/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores",&Hadronic_W_Jet_rcores,"Hadronic_W_Jet_rcores/F");  
-    inputTree->Branch("Hadronic_W_Jet_ptcores",&Hadronic_W_Jet_ptcores,"Hadronic_W_Jet_ptcores/F");  
-    inputTree->Branch("Hadronic_W_Jet_planarflow",&Hadronic_W_Jet_planarflow,"Hadronic_W_Jet_planarflow/F");  
-    inputTree->Branch("Hadronic_W_Jet_qjetmass",&Hadronic_W_Jet_qjetmass,"Hadronic_W_Jet_qjetmass/F");
-    inputTree->Branch("Hadronic_W_Jet_qjetmassdrop",&Hadronic_W_Jet_qjetmassdrop,"Hadronic_W_Jet_qjetmassdrop/F");
-    inputTree->Branch("Hadronic_W_Jet_deltaR_ljet",&Hadronic_W_Jet_deltaR_ljet,"Hadronic_W_Jet_deltaR_ljet/F");
-    inputTree->Branch("Hadronic_W_Jet_deltaphi_METjet",&Hadronic_W_Jet_deltaphi_METjet,"Hadronic_W_Jet_deltaphi_METjet/F");
-    inputTree->Branch("Hadronic_W_Jet_deltaphi_Vca8jet",&Hadronic_W_Jet_deltaphi_Vca8jet,"Hadronic_W_Jet_deltaphi_Vca8jet/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores01",&Hadronic_W_Jet_rcores01,"Hadronic_W_Jet_rcores01/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores02",&Hadronic_W_Jet_rcores02,"Hadronic_W_Jet_rcores02/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores03",&Hadronic_W_Jet_rcores03,"Hadronic_W_Jet_rcores03/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores04",&Hadronic_W_Jet_rcores04,"Hadronic_W_Jet_rcores04/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores05",&Hadronic_W_Jet_rcores05,"Hadronic_W_Jet_rcores05/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores06",&Hadronic_W_Jet_rcores06,"Hadronic_W_Jet_rcores06/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores07",&Hadronic_W_Jet_rcores07,"Hadronic_W_Jet_rcores07/F"); 
-    inputTree->Branch("Hadronic_W_Jet_rcores08",&Hadronic_W_Jet_rcores08,"Hadronic_W_Jet_rcores08/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores09",&Hadronic_W_Jet_rcores09,"Hadronic_W_Jet_rcores09/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores10",&Hadronic_W_Jet_rcores10,"Hadronic_W_Jet_rcores10/F");
-    inputTree->Branch("Hadronic_W_Jet_rcores11",&Hadronic_W_Jet_rcores11,"Hadronic_W_Jet_rcores11/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores01",&Hadronic_W_Jet_ptcores01,"Hadronic_W_Jet_ptcores01/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores02",&Hadronic_W_Jet_ptcores02,"Hadronic_W_Jet_ptcores02/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores03",&Hadronic_W_Jet_ptcores03,"Hadronic_W_Jet_ptcores03/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores04",&Hadronic_W_Jet_ptcores04,"Hadronic_W_Jet_ptcores04/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores05",&Hadronic_W_Jet_ptcores05,"Hadronic_W_Jet_ptcores05/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores06",&Hadronic_W_Jet_ptcores06,"Hadronic_W_Jet_ptcores06/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores07",&Hadronic_W_Jet_ptcores07,"Hadronic_W_Jet_ptcores07/F"); 
-    inputTree->Branch("Hadronic_W_Jet_ptcores08",&Hadronic_W_Jet_ptcores08,"Hadronic_W_Jet_ptcores08/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores09",&Hadronic_W_Jet_ptcores09,"Hadronic_W_Jet_ptcores09/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores10",&Hadronic_W_Jet_ptcores10,"Hadronic_W_Jet_ptcores10/F");
-    inputTree->Branch("Hadronic_W_Jet_ptcores11",&Hadronic_W_Jet_ptcores11,"Hadronic_W_Jet_ptcores11/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow01",&Hadronic_W_Jet_planarflow01,"Hadronic_W_Jet_planarflow01/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow02",&Hadronic_W_Jet_planarflow02,"Hadronic_W_Jet_planarflow02/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow03",&Hadronic_W_Jet_planarflow03,"Hadronic_W_Jet_planarflow03/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow04",&Hadronic_W_Jet_planarflow04,"Hadronic_W_Jet_planarflow04/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow05",&Hadronic_W_Jet_planarflow05,"Hadronic_W_Jet_planarflow05/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow06",&Hadronic_W_Jet_planarflow06,"Hadronic_W_Jet_planarflow06/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow07",&Hadronic_W_Jet_planarflow07,"Hadronic_W_Jet_planarflow07/F"); 
-    inputTree->Branch("Hadronic_W_Jet_planarflow08",&Hadronic_W_Jet_planarflow08,"Hadronic_W_Jet_planarflow08/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow09",&Hadronic_W_Jet_planarflow09,"Hadronic_W_Jet_planarflow09/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow10",&Hadronic_W_Jet_planarflow10,"Hadronic_W_Jet_planarflow10/F");
-    inputTree->Branch("Hadronic_W_Jet_planarflow11",&Hadronic_W_Jet_planarflow11,"Hadronic_W_Jet_planarflow11/F");
-    inputTree->Branch("Hadronic_W_Jet_mass_sensi_tr",&Hadronic_W_Jet_mass_sensi_tr,"Hadronic_W_Jet_mass_sensi_tr/F"); 
-    inputTree->Branch("Hadronic_W_Jet_mass_sensi_ft",&Hadronic_W_Jet_mass_sensi_ft,"Hadronic_W_Jet_mass_sensi_ft/F");     
-    inputTree->Branch("Hadronic_W_Jet_mass_sensi_pr",&Hadronic_W_Jet_mass_sensi_pr,"Hadronic_W_Jet_mass_sensi_pr/F"); 
-    inputTree->Branch("Hadronic_W_Jet_qjetmassvolatility",&Hadronic_W_Jet_qjetmassvolatility,"Hadronic_W_Jet_qjetmassvolatility/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet1ptoverjetpt",&Hadronic_W_Jet_prsubjet1ptoverjetpt,"Hadronic_W_Jet_prsubjet1ptoverjetpt/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet2ptoverjetpt",&Hadronic_W_Jet_prsubjet2ptoverjetpt,"Hadronic_W_Jet_prsubjet2ptoverjetpt/F"); 
-    inputTree->Branch("Hadronic_W_Jet_prsubjet1subjet2_deltaR",&Hadronic_W_Jet_prsubjet1subjet2_deltaR,"Hadronic_W_Jet_prsubjet1subjet2_deltaR/F"); 
+   inputTree->Branch("Hadronic_W_Jet_mass_uncorr",&Hadronic_W_Jet_mass_uncorr,"Hadronic_W_Jet_mass_uncorr/F");
+   inputTree->Branch("Hadronic_W_Jet_mass_tr_uncorr",&Hadronic_W_Jet_mass_tr_uncorr,"Hadronic_W_Jet_mass_tr_uncorr/F");
+   inputTree->Branch("Hadronic_W_Jet_mass_ft_uncorr",&Hadronic_W_Jet_mass_ft_uncorr,"Hadronic_W_Jet_mass_ft_uncorr/F");
+   inputTree->Branch("Hadronic_W_Jet_mass_pr_uncorr",&Hadronic_W_Jet_mass_pr_uncorr,"Hadronic_W_Jet_mass_pr_uncorr/F");
+   inputTree->Branch("Hadronic_W_Jet_massdrop_pr_uncorr",&Hadronic_W_Jet_massdrop_pr_uncorr,"Hadronic_W_Jet_massdrop_pr_uncorr/F");
+   inputTree->Branch("Hadronic_W_Jet_tau2tau1",&Hadronic_W_Jet_tau2tau1,"Hadronic_W_Jet_tau2tau1/F");
+   inputTree->Branch("Hadronic_W_Jet_tau1",&Hadronic_W_Jet_tau1,"Hadronic_W_Jet_tau1/F");
+   inputTree->Branch("Hadronic_W_Jet_tau2",&Hadronic_W_Jet_tau2,"Hadronic_W_Jet_tau2/F");
+   inputTree->Branch("Hadronic_W_Jet_tau3",&Hadronic_W_Jet_tau3,"Hadronic_W_Jet_tau3/F");
+   inputTree->Branch("Hadronic_W_Jet_tau4",&Hadronic_W_Jet_tau4,"Hadronic_W_Jet_tau4/F");
+   inputTree->Branch("Hadronic_W_Jet_pt",&Hadronic_W_Jet_pt,"Hadronic_W_Jet_pt/F");
+   inputTree->Branch("Hadronic_W_Jet_eta",&Hadronic_W_Jet_eta,"Hadronic_W_Jet_eta/F");
+   inputTree->Branch("Hadronic_W_Jet_phi",&Hadronic_W_Jet_phi,"Hadronic_W_Jet_phi/F");
+   inputTree->Branch("Hadronic_W_Jet_e",&Hadronic_W_Jet_e,"Hadronic_W_Jet_e/F");
+   inputTree->Branch("Hadronic_W_Jet_pt_tr_uncorr",&Hadronic_W_Jet_pt_tr_uncorr,"Hadronic_W_Jet_pt_tr_uncorr/F");
+   inputTree->Branch("Hadronic_W_Jet_pt_tr",&Hadronic_W_Jet_pt_tr,"Hadronic_W_Jet_pt_tr/F");
+   inputTree->Branch("Hadronic_W_Jet_eta_tr",&Hadronic_W_Jet_eta_tr,"Hadronic_W_Jet_eta_tr/F");
+   inputTree->Branch("Hadronic_W_Jet_phi_tr",&Hadronic_W_Jet_phi_tr,"Hadronic_W_Jet_phi_tr/F");
+   inputTree->Branch("Hadronic_W_Jet_e_tr",&Hadronic_W_Jet_e_tr,"Hadronic_W_Jet_e_tr/F");
+   inputTree->Branch("Hadronic_W_Jet_pt_ft_uncorr",&Hadronic_W_Jet_pt_ft_uncorr,"Hadronic_W_Jet_pt_ft_uncorr/F");
+   inputTree->Branch("Hadronic_W_Jet_pt_ft",&Hadronic_W_Jet_pt_ft,"Hadronic_W_Jet_pt_ft/F");
+   inputTree->Branch("Hadronic_W_Jet_eta_ft",&Hadronic_W_Jet_eta_ft,"Hadronic_W_Jet_eta_ft/F");
+   inputTree->Branch("Hadronic_W_Jet_phi_ft",&Hadronic_W_Jet_phi_ft,"Hadronic_W_Jet_phi_ft/F");
+   inputTree->Branch("Hadronic_W_Jet_e_ft",&Hadronic_W_Jet_e_ft,"Hadronic_W_Jet_e_ft/F");
+   inputTree->Branch("Hadronic_W_Jet_pt_pr_uncorr",&Hadronic_W_Jet_pt_pr_uncorr,"Hadronic_W_Jet_pt_pr_uncorr/F");
+   inputTree->Branch("Hadronic_W_Jet_pt_pr",&Hadronic_W_Jet_pt_pr,"Hadronic_W_Jet_pt_pr/F");
+   inputTree->Branch("Hadronic_W_Jet_eta_pr",&Hadronic_W_Jet_eta_pr,"Hadronic_W_Jet_eta_pr/F");
+   inputTree->Branch("Hadronic_W_Jet_phi_pr",&Hadronic_W_Jet_phi_pr,"Hadronic_W_Jet_phi_pr/F");
+   inputTree->Branch("Hadronic_W_Jet_e_pr",&Hadronic_W_Jet_e_pr,"Hadronic_W_Jet_e_pr/F");
+   inputTree->Branch("Hadronic_W_Jet_prsubjet1_px",&Hadronic_W_Jet_prsubjet1_px,"Hadronic_W_Jet_prsubjet1_px/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet1_py",&Hadronic_W_Jet_prsubjet1_py,"Hadronic_W_Jet_prsubjet1_py/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet1_pz",&Hadronic_W_Jet_prsubjet1_pz,"Hadronic_W_Jet_prsubjet1_pz/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet1_e",&Hadronic_W_Jet_prsubjet1_e,"Hadronic_W_Jet_prsubjet1_e/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet2_px",&Hadronic_W_Jet_prsubjet2_px,"Hadronic_W_Jet_prsubjet2_px/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet2_py",&Hadronic_W_Jet_prsubjet2_py,"Hadronic_W_Jet_prsubjet2_py/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet2_pz",&Hadronic_W_Jet_prsubjet2_pz,"Hadronic_W_Jet_prsubjet2_pz/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet2_e",&Hadronic_W_Jet_prsubjet2_e,"Hadronic_W_Jet_prsubjet2_e/F");  
+   inputTree->Branch("Hadronic_W_Jet_mass",&Hadronic_W_Jet_mass_pr,"Hadronic_W_Jet_mass/F"); 
+   inputTree->Branch("Hadronic_W_Jet_mass_tr",&Hadronic_W_Jet_mass_pr,"Hadronic_W_Jet_mass_tr/F"); 
+   inputTree->Branch("Hadronic_W_Jet_mass_ft",&Hadronic_W_Jet_mass_pr,"Hadronic_W_Jet_mass_ft/F");     
+   inputTree->Branch("Hadronic_W_Jet_mass_pr",&Hadronic_W_Jet_mass_pr,"Hadronic_W_Jet_mass_pr/F");  
+   inputTree->Branch("Hadronic_W_Jet_massdrop",&Hadronic_W_Jet_massdrop,"Hadronic_W_Jet_massdrop/F");
+   inputTree->Branch("Hadronic_W_Jet_area",&Hadronic_W_Jet_area_pr,"Hadronic_W_Jet_area/F"); 
+   inputTree->Branch("Hadronic_W_Jet_area_tr",&Hadronic_W_Jet_area_pr,"Hadronic_W_Jet_area_tr/F"); 
+   inputTree->Branch("Hadronic_W_Jet_area_ft",&Hadronic_W_Jet_area_pr,"Hadronic_W_Jet_area_ft/F"); 
+   inputTree->Branch("Hadronic_W_Jet_area_pr",&Hadronic_W_Jet_area_pr,"Hadronic_W_Jet_area_pr/F"); 
+   inputTree->Branch("Hadronic_W_Jet_jetconsituents",&Hadronic_W_Jet_jetconsituents,"Hadronic_W_Jet_jetconsituents/F"); 
+   inputTree->Branch("Hadronic_W_Jet_jetcharge",&Hadronic_W_Jet_jetcharge,"Hadronic_W_Jet_jetcharge/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores",&Hadronic_W_Jet_rcores,"Hadronic_W_Jet_rcores/F");  
+   inputTree->Branch("Hadronic_W_Jet_ptcores",&Hadronic_W_Jet_ptcores,"Hadronic_W_Jet_ptcores/F");  
+   inputTree->Branch("Hadronic_W_Jet_planarflow",&Hadronic_W_Jet_planarflow,"Hadronic_W_Jet_planarflow/F");  
+   inputTree->Branch("Hadronic_W_Jet_qjetmass",&Hadronic_W_Jet_qjetmass,"Hadronic_W_Jet_qjetmass/F");
+   inputTree->Branch("Hadronic_W_Jet_qjetmassdrop",&Hadronic_W_Jet_qjetmassdrop,"Hadronic_W_Jet_qjetmassdrop/F");
+   inputTree->Branch("Hadronic_W_Jet_deltaR_ljet",&Hadronic_W_Jet_deltaR_ljet,"Hadronic_W_Jet_deltaR_ljet/F");
+   inputTree->Branch("Hadronic_W_Jet_deltaphi_METjet",&Hadronic_W_Jet_deltaphi_METjet,"Hadronic_W_Jet_deltaphi_METjet/F");
+   inputTree->Branch("Hadronic_W_Jet_deltaphi_Vca8jet",&Hadronic_W_Jet_deltaphi_Vca8jet,"Hadronic_W_Jet_deltaphi_Vca8jet/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores01",&Hadronic_W_Jet_rcores01,"Hadronic_W_Jet_rcores01/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores02",&Hadronic_W_Jet_rcores02,"Hadronic_W_Jet_rcores02/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores03",&Hadronic_W_Jet_rcores03,"Hadronic_W_Jet_rcores03/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores04",&Hadronic_W_Jet_rcores04,"Hadronic_W_Jet_rcores04/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores05",&Hadronic_W_Jet_rcores05,"Hadronic_W_Jet_rcores05/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores06",&Hadronic_W_Jet_rcores06,"Hadronic_W_Jet_rcores06/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores07",&Hadronic_W_Jet_rcores07,"Hadronic_W_Jet_rcores07/F"); 
+   inputTree->Branch("Hadronic_W_Jet_rcores08",&Hadronic_W_Jet_rcores08,"Hadronic_W_Jet_rcores08/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores09",&Hadronic_W_Jet_rcores09,"Hadronic_W_Jet_rcores09/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores10",&Hadronic_W_Jet_rcores10,"Hadronic_W_Jet_rcores10/F");
+   inputTree->Branch("Hadronic_W_Jet_rcores11",&Hadronic_W_Jet_rcores11,"Hadronic_W_Jet_rcores11/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores01",&Hadronic_W_Jet_ptcores01,"Hadronic_W_Jet_ptcores01/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores02",&Hadronic_W_Jet_ptcores02,"Hadronic_W_Jet_ptcores02/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores03",&Hadronic_W_Jet_ptcores03,"Hadronic_W_Jet_ptcores03/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores04",&Hadronic_W_Jet_ptcores04,"Hadronic_W_Jet_ptcores04/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores05",&Hadronic_W_Jet_ptcores05,"Hadronic_W_Jet_ptcores05/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores06",&Hadronic_W_Jet_ptcores06,"Hadronic_W_Jet_ptcores06/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores07",&Hadronic_W_Jet_ptcores07,"Hadronic_W_Jet_ptcores07/F"); 
+   inputTree->Branch("Hadronic_W_Jet_ptcores08",&Hadronic_W_Jet_ptcores08,"Hadronic_W_Jet_ptcores08/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores09",&Hadronic_W_Jet_ptcores09,"Hadronic_W_Jet_ptcores09/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores10",&Hadronic_W_Jet_ptcores10,"Hadronic_W_Jet_ptcores10/F");
+   inputTree->Branch("Hadronic_W_Jet_ptcores11",&Hadronic_W_Jet_ptcores11,"Hadronic_W_Jet_ptcores11/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow01",&Hadronic_W_Jet_planarflow01,"Hadronic_W_Jet_planarflow01/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow02",&Hadronic_W_Jet_planarflow02,"Hadronic_W_Jet_planarflow02/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow03",&Hadronic_W_Jet_planarflow03,"Hadronic_W_Jet_planarflow03/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow04",&Hadronic_W_Jet_planarflow04,"Hadronic_W_Jet_planarflow04/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow05",&Hadronic_W_Jet_planarflow05,"Hadronic_W_Jet_planarflow05/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow06",&Hadronic_W_Jet_planarflow06,"Hadronic_W_Jet_planarflow06/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow07",&Hadronic_W_Jet_planarflow07,"Hadronic_W_Jet_planarflow07/F"); 
+   inputTree->Branch("Hadronic_W_Jet_planarflow08",&Hadronic_W_Jet_planarflow08,"Hadronic_W_Jet_planarflow08/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow09",&Hadronic_W_Jet_planarflow09,"Hadronic_W_Jet_planarflow09/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow10",&Hadronic_W_Jet_planarflow10,"Hadronic_W_Jet_planarflow10/F");
+   inputTree->Branch("Hadronic_W_Jet_planarflow11",&Hadronic_W_Jet_planarflow11,"Hadronic_W_Jet_planarflow11/F");
+   inputTree->Branch("Hadronic_W_Jet_mass_sensi_tr",&Hadronic_W_Jet_mass_sensi_tr,"Hadronic_W_Jet_mass_sensi_tr/F"); 
+   inputTree->Branch("Hadronic_W_Jet_mass_sensi_ft",&Hadronic_W_Jet_mass_sensi_ft,"Hadronic_W_Jet_mass_sensi_ft/F");     
+   inputTree->Branch("Hadronic_W_Jet_mass_sensi_pr",&Hadronic_W_Jet_mass_sensi_pr,"Hadronic_W_Jet_mass_sensi_pr/F"); 
+   inputTree->Branch("Hadronic_W_Jet_qjetmassvolatility",&Hadronic_W_Jet_qjetmassvolatility,"Hadronic_W_Jet_qjetmassvolatility/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet1ptoverjetpt",&Hadronic_W_Jet_prsubjet1ptoverjetpt,"Hadronic_W_Jet_prsubjet1ptoverjetpt/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet2ptoverjetpt",&Hadronic_W_Jet_prsubjet2ptoverjetpt,"Hadronic_W_Jet_prsubjet2ptoverjetpt/F"); 
+   inputTree->Branch("Hadronic_W_Jet_prsubjet1subjet2_deltaR",&Hadronic_W_Jet_prsubjet1subjet2_deltaR,"Hadronic_W_Jet_prsubjet1subjet2_deltaR/F"); 
 
-   inputTree->Branch("fit_mu_px",&fit_mu_px,"fit_mu_px/F");
-   inputTree->Branch("fit_mu_py",&fit_mu_py,"fit_mu_py/F");
-   inputTree->Branch("fit_mu_pz",&fit_mu_pz,"fit_mu_pz/F"); 
-   inputTree->Branch("fit_mu_e",&fit_mu_e,"fit_mu_e/F");
-   inputTree->Branch("fit_nv_px",&fit_mu_px,"fit_nv_px/F");
-   inputTree->Branch("fit_nv_py",&fit_nv_py,"fit_nv_py/F");
-   inputTree->Branch("fit_nv_pz",&fit_nv_pz,"fit_nv_pz/F");
-   inputTree->Branch("fit_nv_e",&fit_nv_px,"fit_nv_e/F");
-   inputTree->Branch("fit_subjet1_px",&fit_subjet1_px,"fit_subjet1_px/F");
-   inputTree->Branch("fit_subjet1_py",&fit_subjet1_py,"fit_subjet1_py/F");
-   inputTree->Branch("fit_subjet1_pz",&fit_subjet1_pz,"fit_subjet1_pz/F");
-   inputTree->Branch("fit_subjet1_e",&fit_subjet1_e,"fit_subjet1_e/F");
-   inputTree->Branch("fit_subjet2_px",&fit_subjet2_px,"fit_subjet2_px/F");
-   inputTree->Branch("fit_subjet2_py",&fit_subjet2_py,"fit_subjet2_py/F");
-   inputTree->Branch("fit_subjet2_pz",&fit_subjet2_pz,"fit_subjet2_pz/F");
-   inputTree->Branch("fit_subjet2_e",&fit_subjet2_e,"fit_subjet2_e/F");
-   inputTree->Branch("fit_subjet1_m",&fit_subjet1_m,"fit_subjet1_m/F");
-   inputTree->Branch("fit_subjet2_m",&fit_subjet2_m,"fit_subjet2_m/F");
-   inputTree->Branch("fit_lvj_m",&fit_lvj_m,"fit_lvj_m/F");
-   inputTree->Branch("fit_lv_m",&fit_lv_m,"fit_lv_m/F");
-   inputTree->Branch("fit_j_m",&fit_j_m,"fit_j_m/F");
-   inputTree->Branch("fit_lvj_pt",&fit_lvj_pt,"fit_lvj_pt/F");
-   inputTree->Branch("fit_lvj_eta", &fit_lvj_eta,"fit_lvj_eta/F");
-   inputTree->Branch("fit_lvj_phi",&fit_lvj_phi,"fit_lvj_phi/F");
-   inputTree->Branch("fit_lvj_e",&fit_lvj_e,"fit_lvj_e/F");
-   inputTree->Branch("fit_chi2",&fit_chi2,"fit_chi2/F");
-   inputTree->Branch("fit_NDF",&fit_NDF,"fit_NDF/I");
-   inputTree->Branch("fit_status",&fit_status,"fit_status/I");
+   /// kinematic fit branches
+
+   inputTree->Branch("fit_mu_px_type0_met",&fit_mu_px_type0_met,"fit_mu_px_type0_met/F");
+   inputTree->Branch("fit_mu_py_type0_met",&fit_mu_py_type0_met,"fit_mu_py_type0_met/F");
+   inputTree->Branch("fit_mu_pz_type0_met",&fit_mu_pz_type0_met,"fit_mu_pz_type0_met/F"); 
+   inputTree->Branch("fit_mu_e_type0_met",&fit_mu_e_type0_met,"fit_mu_e_type0_met/F");
+   inputTree->Branch("fit_nv_px_type0_met",&fit_mu_px_type0_met,"fit_nv_px_type0_met/F");
+   inputTree->Branch("fit_nv_py_type0_met",&fit_nv_py_type0_met,"fit_nv_py_type0_met/F");
+   inputTree->Branch("fit_nv_pz_type0_met",&fit_nv_pz_type0_met,"fit_nv_pz_type0_met/F");
+   inputTree->Branch("fit_nv_e_type0_met",&fit_nv_px_type0_met,"fit_nv_e_type0_met/F");
+   inputTree->Branch("fit_subjet1_px_type0_met",&fit_subjet1_px_type0_met,"fit_subjet1_px_type0_met/F");
+   inputTree->Branch("fit_subjet1_py_type0_met",&fit_subjet1_py_type0_met,"fit_subjet1_py_type0_met/F");
+   inputTree->Branch("fit_subjet1_pz_type0_met",&fit_subjet1_pz_type0_met,"fit_subjet1_pz_type0_met/F");
+   inputTree->Branch("fit_subjet1_e_type0_met",&fit_subjet1_e_type0_met,"fit_subjet1_e_type0_met/F");
+   inputTree->Branch("fit_subjet2_px_type0_met",&fit_subjet2_px_type0_met,"fit_subjet2_px_type0_met/F");
+   inputTree->Branch("fit_subjet2_py_type0_met",&fit_subjet2_py_type0_met,"fit_subjet2_py_type0_met/F");
+   inputTree->Branch("fit_subjet2_pz_type0_met",&fit_subjet2_pz_type0_met,"fit_subjet2_pz_type0_met/F");
+   inputTree->Branch("fit_subjet2_e_type0_met",&fit_subjet2_e_type0_met,"fit_subjet2_e_type0_met/F");
+   inputTree->Branch("fit_subjet1_m_type0_met",&fit_subjet1_m_type0_met,"fit_subjet1_m_type0_met/F");
+   inputTree->Branch("fit_subjet2_m_type0_met",&fit_subjet2_m_type0_met,"fit_subjet2_m_type0_met/F");
+   inputTree->Branch("fit_lvj_m_type0_met",&fit_lvj_m_type0_met,"fit_lvj_m_type0_met/F");
+   inputTree->Branch("fit_lv_m_type0_met",&fit_lv_m_type0_met,"fit_lv_m_type0_met/F");
+   inputTree->Branch("fit_j_m_type0_met",&fit_j_m_type0_met,"fit_j_m_type0_met/F");
+   inputTree->Branch("fit_lvj_pt_type0_met",&fit_lvj_pt_type0_met,"fit_lvj_pt_type0_met/F");
+   inputTree->Branch("fit_lvj_eta_type0_met", &fit_lvj_eta_type0_met,"fit_lvj_eta_type0_met/F");
+   inputTree->Branch("fit_lvj_phi_type0_met",&fit_lvj_phi_type0_met,"fit_lvj_phi_type0_met/F");
+   inputTree->Branch("fit_lvj_e_type0_met",&fit_lvj_e_type0_met,"fit_lvj_e_type0_met/F");
+   inputTree->Branch("fit_chi2_type0_met",&fit_chi2_type0_met,"fit_chi2_type0_met/F");
+   inputTree->Branch("fit_NDF_type0_met",&fit_NDF_type0_met,"fit_NDF_type0_met/I");
+   inputTree->Branch("fit_status_type0_met",&fit_status_type0_met,"fit_status_type0_met/I");
+
+   inputTree->Branch("fit_mu_px_type0",&fit_mu_px_type0,"fit_mu_px_type0/F");
+   inputTree->Branch("fit_mu_py_type0",&fit_mu_py_type0,"fit_mu_py_type0/F");
+   inputTree->Branch("fit_mu_pz_type0",&fit_mu_pz_type0,"fit_mu_pz_type0/F"); 
+   inputTree->Branch("fit_mu_e_type0",&fit_mu_e_type0,"fit_mu_e_type0/F");
+   inputTree->Branch("fit_nv_px_type0",&fit_mu_px_type0,"fit_nv_px_type0/F");
+   inputTree->Branch("fit_nv_py_type0",&fit_nv_py_type0,"fit_nv_py_type0/F");
+   inputTree->Branch("fit_nv_pz_type0",&fit_nv_pz_type0,"fit_nv_pz_type0/F");
+   inputTree->Branch("fit_nv_e_type0",&fit_nv_px_type0,"fit_nv_e_type0/F");
+   inputTree->Branch("fit_subjet1_px_type0",&fit_subjet1_px_type0,"fit_subjet1_px_type0/F");
+   inputTree->Branch("fit_subjet1_py_type0",&fit_subjet1_py_type0,"fit_subjet1_py_type0/F");
+   inputTree->Branch("fit_subjet1_pz_type0",&fit_subjet1_pz_type0,"fit_subjet1_pz_type0/F");
+   inputTree->Branch("fit_subjet1_e_type0",&fit_subjet1_e_type0,"fit_subjet1_e_type0/F");
+   inputTree->Branch("fit_subjet2_px_type0",&fit_subjet2_px_type0,"fit_subjet2_px_type0/F");
+   inputTree->Branch("fit_subjet2_py_type0",&fit_subjet2_py_type0,"fit_subjet2_py_type0/F");
+   inputTree->Branch("fit_subjet2_pz_type0",&fit_subjet2_pz_type0,"fit_subjet2_pz_type0/F");
+   inputTree->Branch("fit_subjet2_e_type0",&fit_subjet2_e_type0,"fit_subjet2_e_type0/F");
+   inputTree->Branch("fit_subjet1_m_type0",&fit_subjet1_m_type0,"fit_subjet1_m_type0/F");
+   inputTree->Branch("fit_subjet2_m_type0",&fit_subjet2_m_type0,"fit_subjet2_m_type0/F");
+   inputTree->Branch("fit_lvj_m_type0",&fit_lvj_m_type0,"fit_lvj_m_type0/F");
+   inputTree->Branch("fit_lv_m_type0",&fit_lv_m_type0,"fit_lv_m_type0/F");
+   inputTree->Branch("fit_j_m_type0",&fit_j_m_type0,"fit_j_m_type0/F");
+   inputTree->Branch("fit_lvj_pt_type0",&fit_lvj_pt_type0,"fit_lvj_pt_type0/F");
+   inputTree->Branch("fit_lvj_eta_type0", &fit_lvj_eta_type0,"fit_lvj_eta_type0/F");
+   inputTree->Branch("fit_lvj_phi_type0",&fit_lvj_phi_type0,"fit_lvj_phi_type0/F");
+   inputTree->Branch("fit_lvj_e_type0",&fit_lvj_e_type0,"fit_lvj_e_type0/F");
+   inputTree->Branch("fit_chi2_type0",&fit_chi2_type0,"fit_chi2_type0/F");
+   inputTree->Branch("fit_NDF_type0",&fit_NDF_type0,"fit_NDF_type0/I");
+   inputTree->Branch("fit_status_type0",&fit_status_type0,"fit_status_type0/I");
 
 
-   inputTree->Branch("boosted_lvj_e",&boosted_lvj_e,"boosted_lvj_e/F");
-   inputTree->Branch("boosted_lvj_pt",&boosted_lvj_pt,"boosted_lvj_pt/F");
-   inputTree->Branch("boosted_lvj_eta",&boosted_lvj_eta,"boosted_lvj_eta/F");
-   inputTree->Branch("boosted_lvj_phi",&boosted_lvj_phi,"boosted_lvj_phi/F");
-   inputTree->Branch("boosted_lvj_m",&boosted_lvj_m,"boosted_lvj_m/F");
-   inputTree->Branch("boosted_j_m",&boosted_j_m,"boosted_j_m/F");
-   inputTree->Branch("boosted_subjet1_m",&boosted_subjet1_m,"boosted_subjet1_m/F");
-   inputTree->Branch("boosted_subjet2_m",&boosted_subjet2_m,"boosted_subjet2_m/F");
-   inputTree->Branch("boosted_lv_m",&boosted_lv_m,"boosted_lv_m/F");
+   inputTree->Branch("fit_mu_px_type2",&fit_mu_px_type2,"fit_mu_px_type2/F");
+   inputTree->Branch("fit_mu_py_type2",&fit_mu_py_type2,"fit_mu_py_type2/F");
+   inputTree->Branch("fit_mu_pz_type2",&fit_mu_pz_type2,"fit_mu_pz_type2/F"); 
+   inputTree->Branch("fit_mu_e_type2",&fit_mu_e_type2,"fit_mu_e_type2/F");
+   inputTree->Branch("fit_nv_px_type2",&fit_mu_px_type2,"fit_nv_px_type2/F");
+   inputTree->Branch("fit_nv_py_type2",&fit_nv_py_type2,"fit_nv_py_type2/F");
+   inputTree->Branch("fit_nv_pz_type2",&fit_nv_pz_type2,"fit_nv_pz_type2/F");
+   inputTree->Branch("fit_nv_e_type2",&fit_nv_px_type2,"fit_nv_e_type2/F");
+   inputTree->Branch("fit_subjet1_px_type2",&fit_subjet1_px_type2,"fit_subjet1_px_type2/F");
+   inputTree->Branch("fit_subjet1_py_type2",&fit_subjet1_py_type2,"fit_subjet1_py_type2/F");
+   inputTree->Branch("fit_subjet1_pz_type2",&fit_subjet1_pz_type2,"fit_subjet1_pz_type2/F");
+   inputTree->Branch("fit_subjet1_e_type2",&fit_subjet1_e_type2,"fit_subjet1_e_type2/F");
+   inputTree->Branch("fit_subjet2_px_type2",&fit_subjet2_px_type2,"fit_subjet2_px_type2/F");
+   inputTree->Branch("fit_subjet2_py_type2",&fit_subjet2_py_type2,"fit_subjet2_py_type2/F");
+   inputTree->Branch("fit_subjet2_pz_type2",&fit_subjet2_pz_type2,"fit_subjet2_pz_type2/F");
+   inputTree->Branch("fit_subjet2_e_type2",&fit_subjet2_e_type2,"fit_subjet2_e_type2/F");
+   inputTree->Branch("fit_subjet1_m_type2",&fit_subjet1_m_type2,"fit_subjet1_m_type2/F");
+   inputTree->Branch("fit_subjet2_m_type2",&fit_subjet2_m_type2,"fit_subjet2_m_type2/F");
+   inputTree->Branch("fit_lvj_m_type2",&fit_lvj_m_type2,"fit_lvj_m_type2/F");
+   inputTree->Branch("fit_lv_m_type2",&fit_lv_m_type2,"fit_lv_m_type2/F");
+   inputTree->Branch("fit_j_m_type2",&fit_j_m_type2,"fit_j_m_type2/F");
+   inputTree->Branch("fit_lvj_pt_type2",&fit_lvj_pt_type2,"fit_lvj_pt_type2/F");
+   inputTree->Branch("fit_lvj_eta_type2", &fit_lvj_eta_type2,"fit_lvj_eta_type2/F");
+   inputTree->Branch("fit_lvj_phi_type2",&fit_lvj_phi_type2,"fit_lvj_phi_type2/F");
+   inputTree->Branch("fit_lvj_e_type2",&fit_lvj_e_type2,"fit_lvj_e_type2/F");
+   inputTree->Branch("fit_chi2_type2",&fit_chi2_type2,"fit_chi2_type2/F");
+   inputTree->Branch("fit_NDF_type2",&fit_NDF_type2,"fit_NDF_type2/I");
+   inputTree->Branch("fit_status_type2",&fit_status_type2,"fit_status_type2/I");
 
-   inputTree->Branch("boostedW_lvj_e",&boostedW_lvj_e,"boostedW_lvj_e/F");
-   inputTree->Branch("boostedW_lvj_pt",&boostedW_lvj_pt,"boostedW_lvj_pt/F");
-   inputTree->Branch("boostedW_lvj_eta",&boostedW_lvj_eta,"boostedW_lvj_eta/F");
-   inputTree->Branch("boostedW_lvj_phi",&boostedW_lvj_phi,"boostedW_lvj_phi/F");
-   inputTree->Branch("boostedW_lvj_m",&boostedW_lvj_m,"boostedW_lvj_m/F");
-   inputTree->Branch("boostedW_j_m",&boostedW_j_m,"boostedW_j_m/F");
-   inputTree->Branch("boostedW_subjet1_m",&boostedW_subjet1_m,"boostedW_subjet1_m/F");
-   inputTree->Branch("boostedW_subjet2_m",&boostedW_subjet2_m,"boostedW_subjet2_m/F");
-   inputTree->Branch("boostedW_lv_m",&boostedW_lv_m,"boostedW_lv_m/F");
 
-   inputTree->Branch("boosted_wjj_ang_ha",&boosted_wjj_ang_ha,"boosted_wjj_ang_ha/F");
-   inputTree->Branch("boosted_wjj_ang_hb",&boosted_wjj_ang_ha,"boosted_wjj_ang_ha/F");
-   inputTree->Branch("boosted_wjj_ang_hs",&boosted_wjj_ang_hs,"boosted_wjj_ang_hs/F");
-   inputTree->Branch("boosted_wjj_ang_phi",&boosted_wjj_ang_phi,"boosted_wjj_ang_phi/F");
-   inputTree->Branch("boosted_wjj_ang_phia",&boosted_wjj_ang_phia,"boosted_wjj_ang_phia/F");
-   inputTree->Branch("boosted_wjj_ang_phib",&boosted_wjj_ang_phib,"boosted_wjj_ang_phib/F");
+   inputTree->Branch("fit_mu_px_type2_met",&fit_mu_px_type2_met,"fit_mu_px_type2_met/F");
+   inputTree->Branch("fit_mu_py_type2_met",&fit_mu_py_type2_met,"fit_mu_py_type2_met/F");
+   inputTree->Branch("fit_mu_pz_type2_met",&fit_mu_pz_type2_met,"fit_mu_pz_type2_met/F"); 
+   inputTree->Branch("fit_mu_e_type2_met",&fit_mu_e_type2_met,"fit_mu_e_type2_met/F");
+   inputTree->Branch("fit_nv_px_type2_met",&fit_mu_px_type2_met,"fit_nv_px_type2_met/F");
+   inputTree->Branch("fit_nv_py_type2_met",&fit_nv_py_type2_met,"fit_nv_py_type2_met/F");
+   inputTree->Branch("fit_nv_pz_type2_met",&fit_nv_pz_type2_met,"fit_nv_pz_type2_met/F");
+   inputTree->Branch("fit_nv_e_type2_met",&fit_nv_px_type2_met,"fit_nv_e_type2_met/F");
+   inputTree->Branch("fit_subjet1_px_type2_met",&fit_subjet1_px_type2_met,"fit_subjet1_px_type2_met/F");
+   inputTree->Branch("fit_subjet1_py_type2_met",&fit_subjet1_py_type2_met,"fit_subjet1_py_type2_met/F");
+   inputTree->Branch("fit_subjet1_pz_type2_met",&fit_subjet1_pz_type2_met,"fit_subjet1_pz_type2_met/F");
+   inputTree->Branch("fit_subjet1_e_type2_met",&fit_subjet1_e_type2_met,"fit_subjet1_e_type2_met/F");
+   inputTree->Branch("fit_subjet2_px_type2_met",&fit_subjet2_px_type2_met,"fit_subjet2_px_type2_met/F");
+   inputTree->Branch("fit_subjet2_py_type2_met",&fit_subjet2_py_type2_met,"fit_subjet2_py_type2_met/F");
+   inputTree->Branch("fit_subjet2_pz_type2_met",&fit_subjet2_pz_type2_met,"fit_subjet2_pz_type2_met/F");
+   inputTree->Branch("fit_subjet2_e_type2_met",&fit_subjet2_e_type2_met,"fit_subjet2_e_type2_met/F");
+   inputTree->Branch("fit_subjet1_m_type2_met",&fit_subjet1_m_type2_met,"fit_subjet1_m_type2_met/F");
+   inputTree->Branch("fit_subjet2_m_type2_met",&fit_subjet2_m_type2_met,"fit_subjet2_m_type2_met/F");
+   inputTree->Branch("fit_lvj_m_type2_met",&fit_lvj_m_type2_met,"fit_lvj_m_type2_met/F");
+   inputTree->Branch("fit_lv_m_type2_met",&fit_lv_m_type2_met,"fit_lv_m_type2_met/F");
+   inputTree->Branch("fit_j_m_type2_met",&fit_j_m_type2_met,"fit_j_m_type2_met/F");
+   inputTree->Branch("fit_lvj_pt_type2_met",&fit_lvj_pt_type2_met,"fit_lvj_pt_type2_met/F");
+   inputTree->Branch("fit_lvj_eta_type2_met", &fit_lvj_eta_type2_met,"fit_lvj_eta_type2_met/F");
+   inputTree->Branch("fit_lvj_phi_type2_met",&fit_lvj_phi_type2_met,"fit_lvj_phi_type2_met/F");
+   inputTree->Branch("fit_lvj_e_type2_met",&fit_lvj_e_type2_met,"fit_lvj_e_type2_met/F");
+   inputTree->Branch("fit_chi2_type2_met",&fit_chi2_type2_met,"fit_chi2_type2_met/F");
+   inputTree->Branch("fit_NDF_type2_met",&fit_NDF_type2_met,"fit_NDF_type2_met/I");
+   inputTree->Branch("fit_status_type2_met",&fit_status_type2_met,"fit_status_type2_met/I");
 
-   // max pt
+
+   // new branch for pz of the neutrino                                                                                                                                                     
+   inputTree->Branch("W_mass_type0_met",&W_mass_type0_met,"W_mass_type0_met/F");
+   inputTree->Branch("W_mass_type2_met",&W_mass_type2_met,"W_mass_type2_met/F");
+
+   inputTree->Branch("W_mass_type0",&W_mass_type0,"W_mass_type0/F");
+   inputTree->Branch("W_mass_type2",&W_mass_type2,"W_mass_type2/F");
+
+   inputTree->Branch("W_pz_type0_met",&W_pz_type0_met,"W_pz_type0_met/F");
+   inputTree->Branch("W_pz_type2_met",&W_pz_type2_met,"W_pz_type2_met/F");
+
+   inputTree->Branch("W_pz_type0",&W_pz_type0,"W_pz_type0/F");
+   inputTree->Branch("W_pz_type2",&W_pz_type2,"W_pz_type2/F");
+
+   inputTree->Branch("W_nu1_pz_type0_met",&W_nu1_pz_type0_met,"W_nu1_pz_type0_met/F");
+   inputTree->Branch("W_nu1_pz_type2_met",&W_nu1_pz_type2_met,"W_nu1_pz_type2_met/F");
+
+   inputTree->Branch("W_nu1_pz_type0",&W_nu1_pz_type0,"W_nu1_pz_type0/F");
+   inputTree->Branch("W_nu1_pz_type2",&W_nu1_pz_type2,"W_nu1_pz_type2/F");
+
+   inputTree->Branch("W_nu2_pz_type0_met",&W_nu2_pz_type0_met,"W_nu2_pz_type0_met/F");
+   inputTree->Branch("W_nu2_pz_type2_met",&W_nu2_pz_type2_met,"W_nu2_pz_type2_met/F");
+
+   inputTree->Branch("W_nu2_pz_type0",&W_nu2_pz_type0,"W_nu2_pz_type0/F");
+   inputTree->Branch("W_nu2_pz_type2",&W_nu2_pz_type2,"W_nu2_pz_type2/F");
+ 
+   //////////////////////////////
+ 
+   inputTree->Branch("boosted_lvj_e_type0",&boosted_lvj_e_type0,"boosted_lvj_e_type0/F");
+   inputTree->Branch("boosted_lvj_pt_type0",&boosted_lvj_pt_type0,"boosted_lvj_pt_type0/F");
+   inputTree->Branch("boosted_lvj_eta_type0",&boosted_lvj_eta_type0,"boosted_lvj_eta_type0/F");
+   inputTree->Branch("boosted_lvj_phi_type0",&boosted_lvj_phi_type0,"boosted_lvj_phi_type0/F");
+   inputTree->Branch("boosted_lvj_m_type0",&boosted_lvj_m_type0,"boosted_lvj_m_type0/F");
+   inputTree->Branch("boosted_j_m_type0",&boosted_j_m_type0,"boosted_j_m_type0/F");
+   inputTree->Branch("boosted_subjet1_m_type0",&boosted_subjet1_m_type0,"boosted_subjet1_m_type0/F");
+   inputTree->Branch("boosted_subjet2_m_type0",&boosted_subjet2_m_type0,"boosted_subjet2_m_type0/F");
+   inputTree->Branch("boosted_lv_m_type0",&boosted_lv_m_type0,"boosted_lv_m_type0/F");
+
+   inputTree->Branch("boostedW_lvj_e_type0",&boostedW_lvj_e_type0,"boostedW_lvj_e_type0/F");
+   inputTree->Branch("boostedW_lvj_pt_type0",&boostedW_lvj_pt_type0,"boostedW_lvj_pt_type0/F");
+   inputTree->Branch("boostedW_lvj_eta_type0",&boostedW_lvj_eta_type0,"boostedW_lvj_eta_type0/F");
+   inputTree->Branch("boostedW_lvj_phi_type0",&boostedW_lvj_phi_type0,"boostedW_lvj_phi_type0/F");
+   inputTree->Branch("boostedW_lvj_m_type0",&boostedW_lvj_m_type0,"boostedW_lvj_m_type0/F");
+   inputTree->Branch("boostedW_j_m_type0",&boostedW_j_m_type0,"boostedW_j_m_type0/F");
+   inputTree->Branch("boostedW_subjet1_m_type0",&boostedW_subjet1_m_type0,"boostedW_subjet1_m_type0/F");
+   inputTree->Branch("boostedW_subjet2_m_type0",&boostedW_subjet2_m_type0,"boostedW_subjet2_m_type0/F");
+   inputTree->Branch("boostedW_lv_m_type0",&boostedW_lv_m_type0,"boostedW_lv_m_type0/F");
+
+   inputTree->Branch("boosted_wjj_ang_ha_type0",&boosted_wjj_ang_ha_type0,"boosted_wjj_ang_ha_type0/F");
+   inputTree->Branch("boosted_wjj_ang_hb_type0",&boosted_wjj_ang_ha_type0,"boosted_wjj_ang_ha_type0/F");
+   inputTree->Branch("boosted_wjj_ang_hs_type0",&boosted_wjj_ang_hs_type0,"boosted_wjj_ang_hs_type0/F");
+   inputTree->Branch("boosted_wjj_ang_phi_type0",&boosted_wjj_ang_phi_type0,"boosted_wjj_ang_phi_type0/F");
+   inputTree->Branch("boosted_wjj_ang_phia_type0",&boosted_wjj_ang_phia_type0,"boosted_wjj_ang_phia_type0/F");
+   inputTree->Branch("boosted_wjj_ang_phib_type0",&boosted_wjj_ang_phib_type0,"boosted_wjj_ang_phib_type0/F");
+
+   inputTree->Branch("boosted_lvj_e_type2",&boosted_lvj_e_type2,"boosted_lvj_e_type2/F");
+   inputTree->Branch("boosted_lvj_pt_type2",&boosted_lvj_pt_type2,"boosted_lvj_pt_type2/F");
+   inputTree->Branch("boosted_lvj_eta_type2",&boosted_lvj_eta_type2,"boosted_lvj_eta_type2/F");
+   inputTree->Branch("boosted_lvj_phi_type2",&boosted_lvj_phi_type2,"boosted_lvj_phi_type2/F");
+   inputTree->Branch("boosted_lvj_m_type2",&boosted_lvj_m_type2,"boosted_lvj_m_type2/F");
+   inputTree->Branch("boosted_j_m_type2",&boosted_j_m_type2,"boosted_j_m_type2/F");
+   inputTree->Branch("boosted_subjet1_m_type2",&boosted_subjet1_m_type2,"boosted_subjet1_m_type2/F");
+   inputTree->Branch("boosted_subjet2_m_type2",&boosted_subjet2_m_type2,"boosted_subjet2_m_type2/F");
+   inputTree->Branch("boosted_lv_m_type2",&boosted_lv_m_type2,"boosted_lv_m_type2/F");
+
+   inputTree->Branch("boostedW_lvj_e_type2",&boostedW_lvj_e_type2,"boostedW_lvj_e_type2/F");
+   inputTree->Branch("boostedW_lvj_pt_type2",&boostedW_lvj_pt_type2,"boostedW_lvj_pt_type2/F");
+   inputTree->Branch("boostedW_lvj_eta_type2",&boostedW_lvj_eta_type2,"boostedW_lvj_eta_type2/F");
+   inputTree->Branch("boostedW_lvj_phi_type2",&boostedW_lvj_phi_type2,"boostedW_lvj_phi_type2/F");
+   inputTree->Branch("boostedW_lvj_m_type2",&boostedW_lvj_m_type2,"boostedW_lvj_m_type2/F");
+   inputTree->Branch("boostedW_j_m_type2",&boostedW_j_m_type2,"boostedW_j_m_type2/F");
+   inputTree->Branch("boostedW_subjet1_m_type2",&boostedW_subjet1_m_type2,"boostedW_subjet1_m_type2/F");
+   inputTree->Branch("boostedW_subjet2_m_type2",&boostedW_subjet2_m_type2,"boostedW_subjet2_m_type2/F");
+   inputTree->Branch("boostedW_lv_m_type2",&boostedW_lv_m_type2,"boostedW_lv_m_type2/F");
+
+   inputTree->Branch("boosted_wjj_ang_ha_type2",&boosted_wjj_ang_ha_type2,"boosted_wjj_ang_ha_type2/F");
+   inputTree->Branch("boosted_wjj_ang_hb_type2",&boosted_wjj_ang_ha_type2,"boosted_wjj_ang_ha_type2/F");
+   inputTree->Branch("boosted_wjj_ang_hs_type2",&boosted_wjj_ang_hs_type2,"boosted_wjj_ang_hs_type2/F");
+   inputTree->Branch("boosted_wjj_ang_phi_type2",&boosted_wjj_ang_phi_type2,"boosted_wjj_ang_phi_type2/F");
+   inputTree->Branch("boosted_wjj_ang_phia_type2",&boosted_wjj_ang_phia_type2,"boosted_wjj_ang_phia_type2/F");
+   inputTree->Branch("boosted_wjj_ang_phib_type2",&boosted_wjj_ang_phib_type2,"boosted_wjj_ang_phib_type2/F");
+
+   inputTree->Branch("boosted_lvj_e_type0_met",&boosted_lvj_e_type0_met,"boosted_lvj_e_type0_met/F");
+   inputTree->Branch("boosted_lvj_pt_type0_met",&boosted_lvj_pt_type0_met,"boosted_lvj_pt_type0_met/F");
+   inputTree->Branch("boosted_lvj_eta_type0_met",&boosted_lvj_eta_type0_met,"boosted_lvj_eta_type0_met/F");
+   inputTree->Branch("boosted_lvj_phi_type0_met",&boosted_lvj_phi_type0_met,"boosted_lvj_phi_type0_met/F");
+   inputTree->Branch("boosted_lvj_m_type0_met",&boosted_lvj_m_type0_met,"boosted_lvj_m_type0_met/F");
+   inputTree->Branch("boosted_j_m_type0_met",&boosted_j_m_type0_met,"boosted_j_m_type0_met/F");
+   inputTree->Branch("boosted_subjet1_m_type0_met",&boosted_subjet1_m_type0_met,"boosted_subjet1_m_type0_met/F");
+   inputTree->Branch("boosted_subjet2_m_type0_met",&boosted_subjet2_m_type0_met,"boosted_subjet2_m_type0_met/F");
+   inputTree->Branch("boosted_lv_m_type0_met",&boosted_lv_m_type0_met,"boosted_lv_m_type0_met/F");
+
+   inputTree->Branch("boostedW_lvj_e_type0_met",&boostedW_lvj_e_type0_met,"boostedW_lvj_e_type0_met/F");
+   inputTree->Branch("boostedW_lvj_pt_type0_met",&boostedW_lvj_pt_type0_met,"boostedW_lvj_pt_type0_met/F");
+   inputTree->Branch("boostedW_lvj_eta_type0_met",&boostedW_lvj_eta_type0_met,"boostedW_lvj_eta_type0_met/F");
+   inputTree->Branch("boostedW_lvj_phi_type0_met",&boostedW_lvj_phi_type0_met,"boostedW_lvj_phi_type0_met/F");
+   inputTree->Branch("boostedW_lvj_m_type0_met",&boostedW_lvj_m_type0_met,"boostedW_lvj_m_type0_met/F");
+   inputTree->Branch("boostedW_j_m_type0_met",&boostedW_j_m_type0_met,"boostedW_j_m_type0_met/F");
+   inputTree->Branch("boostedW_subjet1_m_type0_met",&boostedW_subjet1_m_type0_met,"boostedW_subjet1_m_type0_met/F");
+   inputTree->Branch("boostedW_subjet2_m_type0_met",&boostedW_subjet2_m_type0_met,"boostedW_subjet2_m_type0_met/F");
+   inputTree->Branch("boostedW_lv_m_type0_met",&boostedW_lv_m_type0_met,"boostedW_lv_m_type0_met/F");
+
+   inputTree->Branch("boosted_wjj_ang_ha_type0_met",&boosted_wjj_ang_ha_type0_met,"boosted_wjj_ang_ha_type0_met/F");
+   inputTree->Branch("boosted_wjj_ang_hb_type0_met",&boosted_wjj_ang_ha_type0_met,"boosted_wjj_ang_ha_type0_met/F");
+   inputTree->Branch("boosted_wjj_ang_hs_type0_met",&boosted_wjj_ang_hs_type0_met,"boosted_wjj_ang_hs_type0_met/F");
+   inputTree->Branch("boosted_wjj_ang_phi_type0_met",&boosted_wjj_ang_phi_type0_met,"boosted_wjj_ang_phi_type0_met/F");
+   inputTree->Branch("boosted_wjj_ang_phia_type0_met",&boosted_wjj_ang_phia_type0_met,"boosted_wjj_ang_phia_type0_met/F");
+   inputTree->Branch("boosted_wjj_ang_phib_type0_met",&boosted_wjj_ang_phib_type0_met,"boosted_wjj_ang_phib_type0_met/F");
+
+   
+   inputTree->Branch("boosted_lvj_e_type2_met",&boosted_lvj_e_type2_met,"boosted_lvj_e_type2_met/F");
+   inputTree->Branch("boosted_lvj_pt_type2_met",&boosted_lvj_pt_type2_met,"boosted_lvj_pt_type2_met/F");
+   inputTree->Branch("boosted_lvj_eta_type2_met",&boosted_lvj_eta_type2_met,"boosted_lvj_eta_type2_met/F");
+   inputTree->Branch("boosted_lvj_phi_type2_met",&boosted_lvj_phi_type2_met,"boosted_lvj_phi_type2_met/F");
+   inputTree->Branch("boosted_lvj_m_type2_met",&boosted_lvj_m_type2_met,"boosted_lvj_m_type2_met/F");
+   inputTree->Branch("boosted_j_m_type2_met",&boosted_j_m_type2_met,"boosted_j_m_type2_met/F");
+   inputTree->Branch("boosted_subjet1_m_type2_met",&boosted_subjet1_m_type2_met,"boosted_subjet1_m_type2_met/F");
+   inputTree->Branch("boosted_subjet2_m_type2_met",&boosted_subjet2_m_type2_met,"boosted_subjet2_m_type2_met/F");
+   inputTree->Branch("boosted_lv_m_type2_met",&boosted_lv_m_type2_met,"boosted_lv_m_type2_met/F");
+
+   inputTree->Branch("boostedW_lvj_e_type2_met",&boostedW_lvj_e_type2_met,"boostedW_lvj_e_type2_met/F");
+   inputTree->Branch("boostedW_lvj_pt_type2_met",&boostedW_lvj_pt_type2_met,"boostedW_lvj_pt_type2_met/F");
+   inputTree->Branch("boostedW_lvj_eta_type2_met",&boostedW_lvj_eta_type2_met,"boostedW_lvj_eta_type2_met/F");
+   inputTree->Branch("boostedW_lvj_phi_type2_met",&boostedW_lvj_phi_type2_met,"boostedW_lvj_phi_type2_met/F");
+   inputTree->Branch("boostedW_lvj_m_type2_met",&boostedW_lvj_m_type2_met,"boostedW_lvj_m_type2_met/F");
+   inputTree->Branch("boostedW_j_m_type2_met",&boostedW_j_m_type2_met,"boostedW_j_m_type2_met/F");
+   inputTree->Branch("boostedW_subjet1_m_type2_met",&boostedW_subjet1_m_type2_met,"boostedW_subjet1_m_type2_met/F");
+   inputTree->Branch("boostedW_subjet2_m_type2_met",&boostedW_subjet2_m_type2_met,"boostedW_subjet2_m_type2_met/F");
+   inputTree->Branch("boostedW_lv_m_type2_met",&boostedW_lv_m_type2_met,"boostedW_lv_m_type2_met/F");
+
+   inputTree->Branch("boosted_wjj_ang_ha_type2_met",&boosted_wjj_ang_ha_type2_met,"boosted_wjj_ang_ha_type2_met/F");
+   inputTree->Branch("boosted_wjj_ang_hb_type2_met",&boosted_wjj_ang_ha_type2_met,"boosted_wjj_ang_ha_type2_met/F");
+   inputTree->Branch("boosted_wjj_ang_hs_type2_met",&boosted_wjj_ang_hs_type2_met,"boosted_wjj_ang_hs_type2_met/F");
+   inputTree->Branch("boosted_wjj_ang_phi_type2_met",&boosted_wjj_ang_phi_type2_met,"boosted_wjj_ang_phi_type2_met/F");
+   inputTree->Branch("boosted_wjj_ang_phia_type2_met",&boosted_wjj_ang_phia_type2_met,"boosted_wjj_ang_phia_type2_met/F");
+   inputTree->Branch("boosted_wjj_ang_phib_type2_met",&boosted_wjj_ang_phib_type2_met,"boosted_wjj_ang_phib_type2_met/F");
+
+   ////////////////////////////////// max pt
  
    inputTree->Branch("vbf_maxpt_jj_e",&vbf_maxpt_jj_e,"vbf_maxpt_jj_e/F");
    inputTree->Branch("vbf_maxpt_jj_pt",&vbf_maxpt_jj_pt,"vbf_maxpt_jj_pt/F");
@@ -583,243 +787,233 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
 void VBFMuonClass::InitializateVariables(){
 
 
-    WHadposition=-999;  
+  WHadposition=-999;  numberJetBin=0; Hadronic_W_Jet_mass_uncorr = -999;   
+  Hadronic_W_Jet_mass_tr_uncorr = -999;  Hadronic_W_Jet_mass_ft_uncorr = -999;   Hadronic_W_Jet_mass_pr_uncorr = -999;   
+  Hadronic_W_Jet_massdrop_pr_uncorr = -999;  Hadronic_W_Jet_tau2tau1 = -999;  Hadronic_W_Jet_tau1 = -999;  
+  Hadronic_W_Jet_tau2 = -999;   Hadronic_W_Jet_tau3 = -999;   Hadronic_W_Jet_tau4 = -999;   
+  Hadronic_W_Jet_pt = -999;   Hadronic_W_Jet_eta = -999;   Hadronic_W_Jet_phi = -999;   
+  Hadronic_W_Jet_e = -999;   Hadronic_W_Jet_pt_tr_uncorr = -999;   Hadronic_W_Jet_pt_tr = -999;   
+  Hadronic_W_Jet_eta_tr = -999;   Hadronic_W_Jet_phi_tr = -999;   Hadronic_W_Jet_e_tr = -999;  
+  Hadronic_W_Jet_pt_ft_uncorr = -999;  Hadronic_W_Jet_pt_ft = -999; Hadronic_W_Jet_eta_ft = -999;   
+  Hadronic_W_Jet_phi_ft = -999; Hadronic_W_Jet_e_ft = -999;  Hadronic_W_Jet_pt_pr_uncorr = -999;   
+  Hadronic_W_Jet_pt_pr = -999;  Hadronic_W_Jet_eta_pr = -999; Hadronic_W_Jet_phi_pr = -999;   
+  Hadronic_W_Jet_e_pr = -999;   Hadronic_W_Jet_prsubjet1_px = -999;  Hadronic_W_Jet_prsubjet1_py = -999;  
+  Hadronic_W_Jet_prsubjet1_pz = -999;   Hadronic_W_Jet_prsubjet1_e = -999;   Hadronic_W_Jet_prsubjet2_px = -999;   
+  Hadronic_W_Jet_prsubjet2_py = -999;   Hadronic_W_Jet_prsubjet2_pz = -999;   Hadronic_W_Jet_prsubjet2_e = -999;   
+  Hadronic_W_Jet_mass = -999;  Hadronic_W_Jet_mass_tr = -999;   Hadronic_W_Jet_mass_ft = -999;  
+  Hadronic_W_Jet_mass_pr = -999;   Hadronic_W_Jet_massdrop = -999;   Hadronic_W_Jet_area = -999;   
+  Hadronic_W_Jet_area_tr = -999;   Hadronic_W_Jet_area_ft = -999;   Hadronic_W_Jet_area_pr = -999;   
+  Hadronic_W_Jet_jetconsituents = -999;   Hadronic_W_Jet_jetcharge = -999;   Hadronic_W_Jet_rcores = -999;   
+  Hadronic_W_Jet_ptcores = -999;   Hadronic_W_Jet_planarflow = -999;   Hadronic_W_Jet_qjetmass = -999;   
+  Hadronic_W_Jet_qjetmassdrop = -999;   Hadronic_W_Jet_deltaR_ljet = -999;   Hadronic_W_Jet_deltaphi_METjet = -999;   
+  Hadronic_W_Jet_deltaphi_Vca8jet = -999;   Hadronic_W_Jet_rcores01 = -999;  Hadronic_W_Jet_rcores02 = -999;  
+  Hadronic_W_Jet_rcores03 = -999;   Hadronic_W_Jet_rcores04 = -999;   Hadronic_W_Jet_rcores05 = -999;   
+  Hadronic_W_Jet_rcores06 = -999;   Hadronic_W_Jet_rcores07 = -999;   Hadronic_W_Jet_rcores08 = -999;   
+  Hadronic_W_Jet_rcores09 = -999;   Hadronic_W_Jet_rcores10 = -999;   Hadronic_W_Jet_rcores11 = -999;   
+  Hadronic_W_Jet_ptcores01 = -999;  Hadronic_W_Jet_ptcores02 = -999;  Hadronic_W_Jet_ptcores03 = -999;  
+  Hadronic_W_Jet_ptcores04 = -999;  Hadronic_W_Jet_ptcores05 = -999;  Hadronic_W_Jet_ptcores06 = -999;   
+  Hadronic_W_Jet_ptcores07 = -999;  Hadronic_W_Jet_ptcores08 = -999;  Hadronic_W_Jet_ptcores09 = -999;   
+  Hadronic_W_Jet_ptcores10 = -999;  Hadronic_W_Jet_ptcores11 = -999;  Hadronic_W_Jet_planarflow01 = -999;  
+  Hadronic_W_Jet_planarflow02 = -999;   Hadronic_W_Jet_planarflow03 = -999;   Hadronic_W_Jet_planarflow04 = -999;   
+  Hadronic_W_Jet_planarflow05 = -999;   Hadronic_W_Jet_planarflow06 = -999;  
+  Hadronic_W_Jet_planarflow07 = -999;   Hadronic_W_Jet_planarflow08 = -999;   Hadronic_W_Jet_planarflow09 = -999;  
+  Hadronic_W_Jet_planarflow10 = -999;   Hadronic_W_Jet_planarflow11 = -999;   Hadronic_W_Jet_mass_sensi_tr = -999;   
+  Hadronic_W_Jet_mass_sensi_ft = -999;  Hadronic_W_Jet_mass_sensi_pr = -999;  Hadronic_W_Jet_qjetmassvolatility = -999;  
+  Hadronic_W_Jet_prsubjet1ptoverjetpt = -999;   Hadronic_W_Jet_prsubjet2ptoverjetpt = -999; Hadronic_W_Jet_prsubjet1subjet2_deltaR = -999;
 
-    Hadronic_W_Jet_mass_uncorr = -999;   
-    Hadronic_W_Jet_mass_tr_uncorr = -999;  
-    Hadronic_W_Jet_mass_ft_uncorr = -999;   
-    Hadronic_W_Jet_mass_pr_uncorr = -999;   
-    Hadronic_W_Jet_massdrop_pr_uncorr = -999;   
-    Hadronic_W_Jet_tau2tau1 = -999;  
-    Hadronic_W_Jet_tau1 = -999;  
-    Hadronic_W_Jet_tau2 = -999;   
-    Hadronic_W_Jet_tau3 = -999;   
-    Hadronic_W_Jet_tau4 = -999;   
-    Hadronic_W_Jet_pt = -999;   
-    Hadronic_W_Jet_eta = -999;   
-    Hadronic_W_Jet_phi = -999;   
-    Hadronic_W_Jet_e = -999;   
-    Hadronic_W_Jet_pt_tr_uncorr = -999;   
-    Hadronic_W_Jet_pt_tr = -999;   
-    Hadronic_W_Jet_eta_tr = -999;   
-    Hadronic_W_Jet_phi_tr = -999;   
-    Hadronic_W_Jet_e_tr = -999;  
-    Hadronic_W_Jet_pt_ft_uncorr = -999;   
-    Hadronic_W_Jet_pt_ft = -999;   
-    Hadronic_W_Jet_eta_ft = -999;   
-    Hadronic_W_Jet_phi_ft = -999;   
-    Hadronic_W_Jet_e_ft = -999;   
-    Hadronic_W_Jet_pt_pr_uncorr = -999;   
-    Hadronic_W_Jet_pt_pr = -999;   
-    Hadronic_W_Jet_eta_pr = -999;   
-    Hadronic_W_Jet_phi_pr = -999;   
-    Hadronic_W_Jet_e_pr = -999;   
-    Hadronic_W_Jet_prsubjet1_px = -999;  
-    Hadronic_W_Jet_prsubjet1_py = -999;  
-    Hadronic_W_Jet_prsubjet1_pz = -999;   
-    Hadronic_W_Jet_prsubjet1_e = -999;   
-    Hadronic_W_Jet_prsubjet2_px = -999;   
-    Hadronic_W_Jet_prsubjet2_py = -999;   
-    Hadronic_W_Jet_prsubjet2_pz = -999;   
-    Hadronic_W_Jet_prsubjet2_e = -999;   
-    Hadronic_W_Jet_mass = -999;  
-    Hadronic_W_Jet_mass_tr = -999;   
-    Hadronic_W_Jet_mass_ft = -999;  
-    Hadronic_W_Jet_mass_pr = -999;   
-    Hadronic_W_Jet_massdrop = -999;   
-    Hadronic_W_Jet_area = -999;   
-    Hadronic_W_Jet_area_tr = -999;   
-    Hadronic_W_Jet_area_ft = -999;   
-    Hadronic_W_Jet_area_pr = -999;   
-    Hadronic_W_Jet_jetconsituents = -999;   
-    Hadronic_W_Jet_jetcharge = -999;   
-    Hadronic_W_Jet_rcores = -999;   
-    Hadronic_W_Jet_ptcores = -999;   
-    Hadronic_W_Jet_planarflow = -999;   
-    Hadronic_W_Jet_qjetmass = -999;   
-    Hadronic_W_Jet_qjetmassdrop = -999;   
-    Hadronic_W_Jet_deltaR_ljet = -999;   
-    Hadronic_W_Jet_deltaphi_METjet = -999;   
-    Hadronic_W_Jet_deltaphi_Vca8jet = -999;   
-    Hadronic_W_Jet_rcores01 = -999;  
-    Hadronic_W_Jet_rcores02 = -999;  
-    Hadronic_W_Jet_rcores03 = -999;   
-    Hadronic_W_Jet_rcores04 = -999;   
-    Hadronic_W_Jet_rcores05 = -999;   
-    Hadronic_W_Jet_rcores06 = -999;   
-    Hadronic_W_Jet_rcores07 = -999;  
-    Hadronic_W_Jet_rcores08 = -999;   
-    Hadronic_W_Jet_rcores09 = -999;   
-    Hadronic_W_Jet_rcores10 = -999;  
-    Hadronic_W_Jet_rcores11 = -999;   
-    Hadronic_W_Jet_ptcores01 = -999;  
-    Hadronic_W_Jet_ptcores02 = -999;   
-    Hadronic_W_Jet_ptcores03 = -999;  
-    Hadronic_W_Jet_ptcores04 = -999;   
-    Hadronic_W_Jet_ptcores05 = -999;   
-    Hadronic_W_Jet_ptcores06 = -999;   
-    Hadronic_W_Jet_ptcores07 = -999;   
-    Hadronic_W_Jet_ptcores08 = -999;   
-    Hadronic_W_Jet_ptcores09 = -999;   
-    Hadronic_W_Jet_ptcores10 = -999;   
-    Hadronic_W_Jet_ptcores11 = -999;  
-    Hadronic_W_Jet_planarflow01 = -999;  
-    Hadronic_W_Jet_planarflow02 = -999;   
-    Hadronic_W_Jet_planarflow03 = -999;   
-    Hadronic_W_Jet_planarflow04 = -999;   
-    Hadronic_W_Jet_planarflow05 = -999;  
-    Hadronic_W_Jet_planarflow06 = -999;  
-    Hadronic_W_Jet_planarflow07 = -999;   
-    Hadronic_W_Jet_planarflow08 = -999;   
-    Hadronic_W_Jet_planarflow09 = -999;  
-    Hadronic_W_Jet_planarflow10 = -999;   
-    Hadronic_W_Jet_planarflow11 = -999;   
-    Hadronic_W_Jet_mass_sensi_tr = -999;   
-    Hadronic_W_Jet_mass_sensi_ft = -999;  
-    Hadronic_W_Jet_mass_sensi_pr = -999;   
-    Hadronic_W_Jet_qjetmassvolatility = -999;  
-    Hadronic_W_Jet_prsubjet1ptoverjetpt = -999;   
-    Hadronic_W_Jet_prsubjet2ptoverjetpt = -999; 
-    Hadronic_W_Jet_prsubjet1subjet2_deltaR = -999;
+  // new branch for pz of the neutrino                                                                                                                                                     
+  W_mass_type0_met = 0. , W_pz_type0_met = -9999.,  W_nu1_pz_type0_met = -9999., W_nu2_pz_type0_met = -9999.;
+  W_mass_type2_met = 0. , W_pz_type2_met = -9999.,  W_nu1_pz_type2_met = -9999., W_nu2_pz_type2_met = -9999.;
+
+  W_mass_type0 = 0. , W_pz_type0 = -9999.,  W_nu1_pz_type0 = -9999., W_nu2_pz_type0 = -9999.;
+  W_mass_type2 = 0. , W_pz_type2 = -9999.,  W_nu1_pz_type2 = -9999., W_nu2_pz_type2 = -9999.;
+
+  fit_mu_px_type0=-999 ,  fit_mu_py_type0=-999 ,  fit_mu_pz_type0=-999 ,  fit_mu_e_type0=-999 ;
+  fit_nv_px_type0=-999 ,  fit_nv_py_type0=-999 ,  fit_nv_pz_type0=-999 ,  fit_nv_e_type0=-999 ;
+  fit_subjet1_px_type0=-999 ,  fit_subjet1_py_type0=-999 ,  fit_subjet1_pz_type0=-999 ,  fit_subjet1_e_type0 =-999 ;
+  fit_subjet2_px_type0=-999 ,  fit_subjet2_py_type0=-999 ,  fit_subjet2_pz_type0=-999 ,  fit_subjet2_e_type0 =-999 ;
+  fit_lvj_m_type0= -999  , fit_lv_m_type0 =-999 , fit_j_m_type0=-999, fit_chi2_type0=-999 , fit_lvj_pt_type0 = -999, fit_lvj_eta_type0 = -999, fit_lvj_phi_type0 = -999 ;
+  fit_lvj_phi_type0=-999 ; fit_subjet1_m_type0 =-999; fit_subjet2_m_type0=-999; 
+  fit_NDF_type0=-999, fit_status_type0=-999 ;
+
+  fit_mu_px_type2=-999 ,  fit_mu_py_type2=-999 ,  fit_mu_pz_type2=-999 ,  fit_mu_e_type2=-999 ;
+  fit_nv_px_type2=-999 ,  fit_nv_py_type2=-999 ,  fit_nv_pz_type2=-999 ,  fit_nv_e_type2=-999 ;
+  fit_subjet1_px_type2=-999 ,  fit_subjet1_py_type2=-999 ,  fit_subjet1_pz_type2=-999 ,  fit_subjet1_e_type2 =-999 ;
+  fit_subjet2_px_type2=-999 ,  fit_subjet2_py_type2=-999 ,  fit_subjet2_pz_type2=-999 ,  fit_subjet2_e_type2 =-999 ;
+  fit_lvj_m_type2= -999  , fit_lv_m_type2 =-999 , fit_j_m_type2=-999, fit_chi2_type2=-999 , fit_lvj_pt_type2 = -999, fit_lvj_eta_type2 = -999, fit_lvj_phi_type2 = -999 ;
+  fit_lvj_phi_type2=-999 ; fit_subjet1_m_type2 =-999; fit_subjet2_m_type2=-999; 
+  fit_NDF_type2=-999, fit_status_type2=-999 ;
+
+  fit_mu_px_type0_met=-999 ,  fit_mu_py_type0_met=-999 ,  fit_mu_pz_type0_met=-999 ,  fit_mu_e_type0_met=-999 ;
+  fit_nv_px_type0_met=-999 ,  fit_nv_py_type0_met=-999 ,  fit_nv_pz_type0_met=-999 ,  fit_nv_e_type0_met=-999 ;
+  fit_subjet1_px_type0_met=-999 ,  fit_subjet1_py_type0_met=-999 ,  fit_subjet1_pz_type0_met=-999 ,  fit_subjet1_e_type0_met =-999 ;
+  fit_subjet2_px_type0_met=-999 ,  fit_subjet2_py_type0_met=-999 ,  fit_subjet2_pz_type0_met=-999 ,  fit_subjet2_e_type0_met =-999 ;
+  fit_lvj_m_type0_met= -999  , fit_lv_m_type0_met =-999 , fit_j_m_type0_met=-999, fit_chi2_type0_met=-999 , fit_lvj_pt_type0_met = -999, fit_lvj_eta_type0_met = -999, fit_lvj_phi_type0_met = -999 ;
+  fit_lvj_phi_type0_met=-999 ; fit_subjet1_m_type0_met =-999; fit_subjet2_m_type0_met=-999; 
+  fit_NDF_type0_met=-999, fit_status_type0_met=-999 ;
+
+  fit_mu_px_type2_met=-999 ,  fit_mu_py_type2_met=-999 ,  fit_mu_pz_type2_met=-999 ,  fit_mu_e_type2_met=-999 ;
+  fit_nv_px_type2_met=-999 ,  fit_nv_py_type2_met=-999 ,  fit_nv_pz_type2_met=-999 ,  fit_nv_e_type2_met=-999 ;
+  fit_subjet1_px_type2_met=-999 ,  fit_subjet1_py_type2_met=-999 ,  fit_subjet1_pz_type2_met=-999 ,  fit_subjet1_e_type2_met =-999 ;
+  fit_subjet2_px_type2_met=-999 ,  fit_subjet2_py_type2_met=-999 ,  fit_subjet2_pz_type2_met=-999 ,  fit_subjet2_e_type2_met =-999 ;
+  fit_lvj_m_type2_met= -999  , fit_lv_m_type2_met =-999 , fit_j_m_type2_met=-999, fit_chi2_type2_met=-999 , fit_lvj_pt_type2_met = -999, fit_lvj_eta_type2_met = -999, fit_lvj_phi_type2_met = -999 ;
+  fit_lvj_phi_type2_met=-999 ; fit_subjet1_m_type2_met =-999; fit_subjet2_m_type2_met=-999; 
+  fit_NDF_type2_met=-999, fit_status_type2_met=-999 ;
 
 
- fit_mu_px=0 ,  fit_mu_py=0 ,  fit_mu_pz=0 ,  fit_mu_e=0 ;
- fit_nv_px=0 ,  fit_nv_py=0 ,  fit_nv_pz=0 ,  fit_nv_e=0 ;
- fit_subjet1_px=0 ,  fit_subjet1_py=0 ,  fit_subjet1_pz=0 ,  fit_subjet1_e =0 ;
- fit_subjet2_px=0 ,  fit_subjet2_py=0 ,  fit_subjet2_pz=0 ,  fit_subjet2_e =0 ;
+  /////////////////////
 
- fit_lvj_m=0  , fit_lv_m =-999 , fit_j_m=-999, fit_chi2=-999 , fit_lvj_pt = -999, fit_lvj_eta = -999, fit_lvj_phi = -999 ;
- fit_lvj_phi=-999 ; fit_subjet1_m =-999; fit_subjet2_m=-999; 
- fit_NDF=-999, fit_status=-999 ;
+  boosted_lvj_m_type0 =-999 , boosted_j_m_type0=-999, boosted_subjet1_m_type0=-999, boosted_subjet2_m_type0=-999, boosted_lv_m_type0=-999 , boosted_lvj_pt_type0=-999;
+  boosted_lvj_phi_type0=-999, boosted_lvj_eta_type0=-999, boosted_lvj_e_type0=-999 ;
+
+  boostedW_lvj_m_type0 =-999 , boostedW_j_m_type0=-999, boostedW_subjet1_m_type0=-999, boostedW_subjet2_m_type0=-999, boostedW_lv_m_type0=-999 , boostedW_lvj_pt_type0=-999;
+  boostedW_lvj_phi_type0=-999, boostedW_lvj_eta_type0=-999, boostedW_lvj_e_type0=-999 ;
+
+  boosted_wjj_ang_ha_type0=-999, boosted_wjj_ang_hb_type0=-999, boosted_wjj_ang_hs_type0=-999, boosted_wjj_ang_phi_type0=-999, boosted_wjj_ang_phia_type0=-999, boosted_wjj_ang_phib_type0=-999;
+
+  boosted_lvj_m_type0_met =-999 , boosted_j_m_type0_met=-999, boosted_subjet1_m_type0_met=-999, boosted_subjet2_m_type0_met=-999, boosted_lv_m_type0_met=-999 , boosted_lvj_pt_type0_met=-999;
+  boosted_lvj_phi_type0_met=-999, boosted_lvj_eta_type0_met=-999, boosted_lvj_e_type0_met=-999 ;
+
+  boostedW_lvj_m_type0_met =-999 , boostedW_j_m_type0_met=-999, boostedW_subjet1_m_type0_met=-999, boostedW_subjet2_m_type0_met=-999, boostedW_lv_m_type0_met=-999 , boostedW_lvj_pt_type0_met=-999;
+  boostedW_lvj_phi_type0_met=-999, boostedW_lvj_eta_type0_met=-999, boostedW_lvj_e_type0_met=-999 ;
+
+  boosted_wjj_ang_ha_type0_met=-999, boosted_wjj_ang_hb_type0_met=-999, boosted_wjj_ang_hs_type0_met=-999, boosted_wjj_ang_phi_type0_met=-999, boosted_wjj_ang_phia_type0_met=-999, boosted_wjj_ang_phib_type0_met=-999;
+
+  boosted_lvj_m_type2 =-999 , boosted_j_m_type2=-999, boosted_subjet1_m_type2=-999, boosted_subjet2_m_type2=-999, boosted_lv_m_type2=-999 , boosted_lvj_pt_type2=-999;
+  boosted_lvj_phi_type2=-999, boosted_lvj_eta_type2=-999, boosted_lvj_e_type2=-999 ;
+
+  boostedW_lvj_m_type2 =-999 , boostedW_j_m_type2=-999, boostedW_subjet1_m_type2=-999, boostedW_subjet2_m_type2=-999, boostedW_lv_m_type2=-999 , boostedW_lvj_pt_type2=-999;
+  boostedW_lvj_phi_type2=-999, boostedW_lvj_eta_type2=-999, boostedW_lvj_e_type2=-999 ;
+
+  boosted_wjj_ang_ha_type2=-999, boosted_wjj_ang_hb_type2=-999, boosted_wjj_ang_hs_type2=-999, boosted_wjj_ang_phi_type2=-999, boosted_wjj_ang_phia_type2=-999, boosted_wjj_ang_phib_type2=-999;
+
+  boosted_lvj_m_type2_met =-999 , boosted_j_m_type2_met=-999, boosted_subjet1_m_type2_met=-999, boosted_subjet2_m_type2_met=-999, boosted_lv_m_type2_met=-999 , boosted_lvj_pt_type2_met=-999;
+  boosted_lvj_phi_type2_met=-999, boosted_lvj_eta_type2_met=-999, boosted_lvj_e_type2_met=-999 ;
+
+  boostedW_lvj_m_type2_met =-999 , boostedW_j_m_type2_met=-999, boostedW_subjet1_m_type2_met=-999, boostedW_subjet2_m_type2_met=-999, boostedW_lv_m_type2_met=-999 , boostedW_lvj_pt_type2_met=-999;
+  boostedW_lvj_phi_type2_met=-999, boostedW_lvj_eta_type2_met=-999, boostedW_lvj_e_type2_met=-999 ;
+
+  boosted_wjj_ang_ha_type2_met=-999, boosted_wjj_ang_hb_type2_met=-999, boosted_wjj_ang_hs_type2_met=-999, boosted_wjj_ang_phi_type2_met=-999, boosted_wjj_ang_phia_type2_met=-999, boosted_wjj_ang_phib_type2_met=-999;
+
+  vbf_maxpt_jj_e=-999,   vbf_maxpt_jj_pt=-999 ,   vbf_maxpt_jj_eta=-999 ,  vbf_maxpt_jj_phi=-999 , vbf_maxpt_jj_m=-999 ;
+  vbf_maxpt_j1_e=-999 ,   vbf_maxpt_j1_pt=-999 ,   vbf_maxpt_j1_eta=-999 ,  vbf_maxpt_j1_phi=-999 , vbf_maxpt_j1_m=-999 ;
+
+  vbf_maxpt_jj_e=-999 ,   vbf_maxpt_jj_pt=-999 ,   vbf_maxpt_jj_eta=-999 ,  vbf_maxpt_jj_phi=-999 , vbf_maxpt_jj_m=-999 ;
+  vbf_maxpt_j1_e=-999 ,   vbf_maxpt_j1_pt=-999 ,   vbf_maxpt_j1_eta=-999 ,  vbf_maxpt_j1_phi=-999 , vbf_maxpt_j1_m=-999 ;
+  vbf_maxpt_j2_e=-999 ,   vbf_maxpt_j2_pt=-999 ,   vbf_maxpt_j2_eta=-999 ,  vbf_maxpt_j2_phi=-999 , vbf_maxpt_j2_m=-999 ;
+  vbf_maxpt_jj_deta=-999 ,vbf_maxpt_jj_dphi=-999;
+
+  vbf_maxpt_j1_QGLikelihood=-999,  vbf_maxpt_j2_QGLikelihood=-999;
+
+  vbf_maxpt_j1_isPileUpLoose=false  , vbf_maxpt_j2_isPileUpLoose=false  ;
+  vbf_maxpt_j1_isPileUpMedium=false , vbf_maxpt_j2_isPileUpMedium=false ;
+  vbf_maxpt_j1_isPileUpTight=false  , vbf_maxpt_j2_isPileUpTight=false  ;
+
+  vbf_maxpt_jj_type=-999,   vbf_maxpt_n_excj=-999,   vbf_maxpt_n_exfj=-999;
+
+  vbf_maxpt_j1_bDiscriminatorSSVHE=-999, vbf_maxpt_j1_bDiscriminatorTCHE=-999, vbf_maxpt_j1_bDiscriminatorCSV=-999;
+  vbf_maxpt_j1_bDiscriminatorSSVHP=-999, vbf_maxpt_j1_bDiscriminatorTCHP=-999;
+  vbf_maxpt_j2_bDiscriminatorSSVHE=-999, vbf_maxpt_j2_bDiscriminatorTCHE=-999, vbf_maxpt_j2_bDiscriminatorCSV=-999;
+  vbf_maxpt_j2_bDiscriminatorSSVHP=-999, vbf_maxpt_j2_bDiscriminatorTCHP=-999;
+
+  vbf_maxpt_j1_ChargedHadronEnergy=-999,  vbf_maxpt_j1_ChargedHadronEnergyFrac=-999, vbf_maxpt_j1_NeutralHadronEnergy=-999;
+  vbf_maxpt_j1_NeutralHadronEnergyFrac=-999, vbf_maxpt_j1_ChargedEmEnergy=-999, vbf_maxpt_j1_ChargedEmEnergyFrac=-999, vbf_maxpt_j1_ChargedMuEnergy=-999;
+  vbf_maxpt_j1_ChargedMuEnergyFrac=-999, vbf_maxpt_j1_NeutralEmEnergy=-999,vbf_maxpt_j1_NeutralEmEnergyFrac=-999, vbf_maxpt_j1_ChargedMultiplicity=-999;
+  vbf_maxpt_j1_NeutralMultiplicity=-999, vbf_maxpt_j1_MuonMultiplicity=-999,vbf_maxpt_j1_PhotonEnergy=-999, vbf_maxpt_j1_PhotonEnergyFraction=-999;
+  vbf_maxpt_j1_ElectronEnergy=-999, vbf_maxpt_j1_ElectronEnergyFraction=-999,vbf_maxpt_j1_MuonEnergy=-999, vbf_maxpt_j1_MuonEnergyFraction=-999;
+  vbf_maxpt_j1_HFHadronEnergy=-999, vbf_maxpt_j1_HFHadronEnergyFraction=-999,vbf_maxpt_j1_HFEMEnergy=-999, vbf_maxpt_j1_HFEMEnergyFraction=-999;
+  vbf_maxpt_j1_ChargedHadronMultiplicity=-999, vbf_maxpt_j1_NeutralHadronMultiplicity=-999, vbf_maxpt_j1_PhotonMultiplicity=-999;
+  vbf_maxpt_j1_ElectronMultiplicity=-999,vbf_maxpt_j1_HFHadronMultiplicity=-999;
+
+  vbf_maxpt_j2_ChargedHadronEnergy=-999,  vbf_maxpt_j2_ChargedHadronEnergyFrac=-999, vbf_maxpt_j2_NeutralHadronEnergy=-999;
+  vbf_maxpt_j2_NeutralHadronEnergyFrac=-999, vbf_maxpt_j2_ChargedEmEnergy=-999, vbf_maxpt_j2_ChargedEmEnergyFrac=-999, vbf_maxpt_j2_ChargedMuEnergy=-999;
+  vbf_maxpt_j2_ChargedMuEnergyFrac=-999, vbf_maxpt_j2_NeutralEmEnergy=-999,vbf_maxpt_j2_NeutralEmEnergyFrac=-999, vbf_maxpt_j2_ChargedMultiplicity=-999;
+  vbf_maxpt_j2_NeutralMultiplicity=-999, vbf_maxpt_j2_MuonMultiplicity=-999,vbf_maxpt_j2_PhotonEnergy=-999, vbf_maxpt_j2_PhotonEnergyFraction=-999;
+  vbf_maxpt_j2_ElectronEnergy=-999, vbf_maxpt_j2_ElectronEnergyFraction=-999,vbf_maxpt_j2_MuonEnergy=-999, vbf_maxpt_j2_MuonEnergyFraction=-999;
+  vbf_maxpt_j2_HFHadronEnergy=-999, vbf_maxpt_j2_HFHadronEnergyFraction=-999,vbf_maxpt_j2_HFEMEnergy=-999, vbf_maxpt_j2_HFEMEnergyFraction=-999;
+  vbf_maxpt_j2_ChargedHadronMultiplicity=-999, vbf_maxpt_j2_NeutralHadronMultiplicity=-999, vbf_maxpt_j2_PhotonMultiplicity=-999;
+  vbf_maxpt_j2_ElectronMultiplicity=-999,vbf_maxpt_j2_HFHadronMultiplicity=-999;
+ 
+
+  vbf_maxDeta_jj_e=-999,   vbf_maxDeta_jj_pt=-999 ,   vbf_maxDeta_jj_eta=-999 ,  vbf_maxDeta_jj_phi=-999 , vbf_maxDeta_jj_m=-999 ;
+  vbf_maxDeta_j1_e=-999 ,   vbf_maxDeta_j1_pt=-999 ,   vbf_maxDeta_j1_eta=-999 ,  vbf_maxDeta_j1_phi=-999 , vbf_maxDeta_j1_m=-999 ;
+
+  vbf_maxDeta_jj_e=-999 ,   vbf_maxDeta_jj_pt=-999 ,   vbf_maxDeta_jj_eta=-999 ,  vbf_maxDeta_jj_phi=-999 , vbf_maxDeta_jj_m=-999 ;
+  vbf_maxDeta_j1_e=-999 ,   vbf_maxDeta_j1_pt=-999 ,   vbf_maxDeta_j1_eta=-999 ,  vbf_maxDeta_j1_phi=-999 , vbf_maxDeta_j1_m=-999 ;
+  vbf_maxDeta_j2_e=-999 ,   vbf_maxDeta_j2_pt=-999 ,   vbf_maxDeta_j2_eta=-999 ,  vbf_maxDeta_j2_phi=-999 , vbf_maxDeta_j2_m=-999 ;
+  vbf_maxDeta_jj_deta=-999 ,vbf_maxDeta_jj_dphi=-999;
+
+  vbf_maxDeta_j1_QGLikelihood=-999,  vbf_maxDeta_j2_QGLikelihood=-999;
+
+  vbf_maxDeta_j1_isPileUpLoose=false  , vbf_maxDeta_j2_isPileUpLoose=false  ;
+  vbf_maxDeta_j1_isPileUpMedium=false , vbf_maxDeta_j2_isPileUpMedium=false ;
+  vbf_maxDeta_j1_isPileUpTight=false  , vbf_maxDeta_j2_isPileUpTight=false  ;
+
+  vbf_maxDeta_jj_type=-999,   vbf_maxDeta_n_excj=-999,   vbf_maxDeta_n_exfj=-999;
+
+  vbf_maxDeta_j1_bDiscriminatorSSVHE=-999, vbf_maxDeta_j1_bDiscriminatorTCHE=-999, vbf_maxDeta_j1_bDiscriminatorCSV=-999;
+  vbf_maxDeta_j1_bDiscriminatorSSVHP=-999, vbf_maxDeta_j1_bDiscriminatorTCHP=-999;
+  vbf_maxDeta_j2_bDiscriminatorSSVHE=-999, vbf_maxDeta_j2_bDiscriminatorTCHE=-999, vbf_maxDeta_j2_bDiscriminatorCSV=-999;
+  vbf_maxDeta_j2_bDiscriminatorSSVHP=-999, vbf_maxDeta_j2_bDiscriminatorTCHP=-999;
+
+  vbf_maxDeta_j1_ChargedHadronEnergy=-999,  vbf_maxDeta_j1_ChargedHadronEnergyFrac=-999, vbf_maxDeta_j1_NeutralHadronEnergy=-999;
+  vbf_maxDeta_j1_NeutralHadronEnergyFrac=-999, vbf_maxDeta_j1_ChargedEmEnergy=-999, vbf_maxDeta_j1_ChargedEmEnergyFrac=-999, vbf_maxDeta_j1_ChargedMuEnergy=-999;
+  vbf_maxDeta_j1_ChargedMuEnergyFrac=-999, vbf_maxDeta_j1_NeutralEmEnergy=-999,vbf_maxDeta_j1_NeutralEmEnergyFrac=-999, vbf_maxDeta_j1_ChargedMultiplicity=-999;
+  vbf_maxDeta_j1_NeutralMultiplicity=-999, vbf_maxDeta_j1_MuonMultiplicity=-999,vbf_maxDeta_j1_PhotonEnergy=-999, vbf_maxDeta_j1_PhotonEnergyFraction=-999;
+  vbf_maxDeta_j1_ElectronEnergy=-999, vbf_maxDeta_j1_ElectronEnergyFraction=-999,vbf_maxDeta_j1_MuonEnergy=-999, vbf_maxDeta_j1_MuonEnergyFraction=-999;
+  vbf_maxDeta_j1_HFHadronEnergy=-999, vbf_maxDeta_j1_HFHadronEnergyFraction=-999,vbf_maxDeta_j1_HFEMEnergy=-999, vbf_maxDeta_j1_HFEMEnergyFraction=-999;
+  vbf_maxDeta_j1_ChargedHadronMultiplicity=-999, vbf_maxDeta_j1_NeutralHadronMultiplicity=-999, vbf_maxDeta_j1_PhotonMultiplicity=-999;
+  vbf_maxDeta_j1_ElectronMultiplicity=-999,vbf_maxDeta_j1_HFHadronMultiplicity=-999;
+
+  vbf_maxDeta_j2_ChargedHadronEnergy=-999,  vbf_maxDeta_j2_ChargedHadronEnergyFrac=-999, vbf_maxDeta_j2_NeutralHadronEnergy=-999;
+  vbf_maxDeta_j2_NeutralHadronEnergyFrac=-999, vbf_maxDeta_j2_ChargedEmEnergy=-999, vbf_maxDeta_j2_ChargedEmEnergyFrac=-999, vbf_maxDeta_j2_ChargedMuEnergy=-999;
+  vbf_maxDeta_j2_ChargedMuEnergyFrac=-999, vbf_maxDeta_j2_NeutralEmEnergy=-999,vbf_maxDeta_j2_NeutralEmEnergyFrac=-999, vbf_maxDeta_j2_ChargedMultiplicity=-999;
+  vbf_maxDeta_j2_NeutralMultiplicity=-999, vbf_maxDeta_j2_MuonMultiplicity=-999,vbf_maxDeta_j2_PhotonEnergy=-999, vbf_maxDeta_j2_PhotonEnergyFraction=-999;
+  vbf_maxDeta_j2_ElectronEnergy=-999, vbf_maxDeta_j2_ElectronEnergyFraction=-999,vbf_maxDeta_j2_MuonEnergy=-999, vbf_maxDeta_j2_MuonEnergyFraction=-999;
+  vbf_maxDeta_j2_HFHadronEnergy=-999, vbf_maxDeta_j2_HFHadronEnergyFraction=-999,vbf_maxDeta_j2_HFEMEnergy=-999, vbf_maxDeta_j2_HFEMEnergyFraction=-999;
+  vbf_maxDeta_j2_ChargedHadronMultiplicity=-999, vbf_maxDeta_j2_NeutralHadronMultiplicity=-999, vbf_maxDeta_j2_PhotonMultiplicity=-999;
+  vbf_maxDeta_j2_ElectronMultiplicity=-999,vbf_maxDeta_j2_HFHadronMultiplicity=-999;
 
 
- boosted_lvj_m =-999 , boosted_j_m=-999, boosted_subjet1_m=-999, boosted_subjet2_m=-999, boosted_lv_m=-999 , boosted_lvj_pt=-999;
- boosted_lvj_phi=-999, boosted_lvj_eta=-999, boosted_lvj_e=-999 ;
+  vbf_maxMjj_jj_e=-999,   vbf_maxMjj_jj_pt=-999 ,   vbf_maxMjj_jj_eta=-999 ,  vbf_maxMjj_jj_phi=-999 , vbf_maxMjj_jj_m=-999 ;
+  vbf_maxMjj_j1_e=-999 ,   vbf_maxMjj_j1_pt=-999 ,   vbf_maxMjj_j1_eta=-999 ,  vbf_maxMjj_j1_phi=-999 , vbf_maxMjj_j1_m=-999 ;
 
- boostedW_lvj_m =-999 , boostedW_j_m=-999, boostedW_subjet1_m=-999, boostedW_subjet2_m=-999, boostedW_lv_m=-999 , boostedW_lvj_pt=-999;
- boostedW_lvj_phi=-999, boostedW_lvj_eta=-999, boostedW_lvj_e=-999 ;
+  vbf_maxMjj_jj_e=-999 ,   vbf_maxMjj_jj_pt=-999 ,   vbf_maxMjj_jj_eta=-999 ,  vbf_maxMjj_jj_phi=-999 , vbf_maxMjj_jj_m=-999 ;
+  vbf_maxMjj_j1_e=-999 ,   vbf_maxMjj_j1_pt=-999 ,   vbf_maxMjj_j1_eta=-999 ,  vbf_maxMjj_j1_phi=-999 , vbf_maxMjj_j1_m=-999 ;
+  vbf_maxMjj_j2_e=-999 ,   vbf_maxMjj_j2_pt=-999 ,   vbf_maxMjj_j2_eta=-999 ,  vbf_maxMjj_j2_phi=-999 , vbf_maxMjj_j2_m=-999 ;
+  vbf_maxMjj_jj_deta=-999 ,vbf_maxMjj_jj_dphi=-999;
 
- boosted_wjj_ang_ha=-999, boosted_wjj_ang_hb=-999, boosted_wjj_ang_hs=-999, boosted_wjj_ang_phi=-999, boosted_wjj_ang_phia=-999, boosted_wjj_ang_phib=-999;
+  vbf_maxMjj_j1_QGLikelihood=-999,  vbf_maxMjj_j2_QGLikelihood=-999;
 
- vbf_maxpt_jj_e=-999,   vbf_maxpt_jj_pt=-999 ,   vbf_maxpt_jj_eta=-999 ,  vbf_maxpt_jj_phi=-999 , vbf_maxpt_jj_m=-999 ;
- vbf_maxpt_j1_e=-999 ,   vbf_maxpt_j1_pt=-999 ,   vbf_maxpt_j1_eta=-999 ,  vbf_maxpt_j1_phi=-999 , vbf_maxpt_j1_m=-999 ;
+  vbf_maxMjj_j1_isPileUpLoose =false , vbf_maxMjj_j2_isPileUpLoose =false  ;
+  vbf_maxMjj_j1_isPileUpMedium=false , vbf_maxMjj_j2_isPileUpMedium=false ;
+  vbf_maxMjj_j1_isPileUpTight =false  , vbf_maxMjj_j2_isPileUpTight=false  ;
 
- vbf_maxpt_jj_e=-999 ,   vbf_maxpt_jj_pt=-999 ,   vbf_maxpt_jj_eta=-999 ,  vbf_maxpt_jj_phi=-999 , vbf_maxpt_jj_m=-999 ;
- vbf_maxpt_j1_e=-999 ,   vbf_maxpt_j1_pt=-999 ,   vbf_maxpt_j1_eta=-999 ,  vbf_maxpt_j1_phi=-999 , vbf_maxpt_j1_m=-999 ;
- vbf_maxpt_j2_e=-999 ,   vbf_maxpt_j2_pt=-999 ,   vbf_maxpt_j2_eta=-999 ,  vbf_maxpt_j2_phi=-999 , vbf_maxpt_j2_m=-999 ;
- vbf_maxpt_jj_deta=-999 ,vbf_maxpt_jj_dphi=-999;
-
- vbf_maxpt_j1_QGLikelihood=-999,  vbf_maxpt_j2_QGLikelihood=-999;
-
- vbf_maxpt_j1_isPileUpLoose=false  , vbf_maxpt_j2_isPileUpLoose=false  ;
- vbf_maxpt_j1_isPileUpMedium=false , vbf_maxpt_j2_isPileUpMedium=false ;
- vbf_maxpt_j1_isPileUpTight=false  , vbf_maxpt_j2_isPileUpTight=false  ;
-
- vbf_maxpt_jj_type=-999,   vbf_maxpt_n_excj=-999,   vbf_maxpt_n_exfj=-999;
-
- vbf_maxpt_j1_bDiscriminatorSSVHE=-999, vbf_maxpt_j1_bDiscriminatorTCHE=-999, vbf_maxpt_j1_bDiscriminatorCSV=-999;
- vbf_maxpt_j1_bDiscriminatorSSVHP=-999, vbf_maxpt_j1_bDiscriminatorTCHP=-999;
- vbf_maxpt_j2_bDiscriminatorSSVHE=-999, vbf_maxpt_j2_bDiscriminatorTCHE=-999, vbf_maxpt_j2_bDiscriminatorCSV=-999;
- vbf_maxpt_j2_bDiscriminatorSSVHP=-999, vbf_maxpt_j2_bDiscriminatorTCHP=-999;
-
- vbf_maxpt_j1_ChargedHadronEnergy=-999,  vbf_maxpt_j1_ChargedHadronEnergyFrac=-999, vbf_maxpt_j1_NeutralHadronEnergy=-999;
- vbf_maxpt_j1_NeutralHadronEnergyFrac=-999, vbf_maxpt_j1_ChargedEmEnergy=-999, vbf_maxpt_j1_ChargedEmEnergyFrac=-999, vbf_maxpt_j1_ChargedMuEnergy=-999;
- vbf_maxpt_j1_ChargedMuEnergyFrac=-999, vbf_maxpt_j1_NeutralEmEnergy=-999,vbf_maxpt_j1_NeutralEmEnergyFrac=-999, vbf_maxpt_j1_ChargedMultiplicity=-999;
- vbf_maxpt_j1_NeutralMultiplicity=-999, vbf_maxpt_j1_MuonMultiplicity=-999,vbf_maxpt_j1_PhotonEnergy=-999, vbf_maxpt_j1_PhotonEnergyFraction=-999;
- vbf_maxpt_j1_ElectronEnergy=-999, vbf_maxpt_j1_ElectronEnergyFraction=-999,vbf_maxpt_j1_MuonEnergy=-999, vbf_maxpt_j1_MuonEnergyFraction=-999;
- vbf_maxpt_j1_HFHadronEnergy=-999, vbf_maxpt_j1_HFHadronEnergyFraction=-999,vbf_maxpt_j1_HFEMEnergy=-999, vbf_maxpt_j1_HFEMEnergyFraction=-999;
- vbf_maxpt_j1_ChargedHadronMultiplicity=-999, vbf_maxpt_j1_NeutralHadronMultiplicity=-999, vbf_maxpt_j1_PhotonMultiplicity=-999;
- vbf_maxpt_j1_ElectronMultiplicity=-999,vbf_maxpt_j1_HFHadronMultiplicity=-999;
-
- vbf_maxpt_j2_ChargedHadronEnergy=-999,  vbf_maxpt_j2_ChargedHadronEnergyFrac=-999, vbf_maxpt_j2_NeutralHadronEnergy=-999;
- vbf_maxpt_j2_NeutralHadronEnergyFrac=-999, vbf_maxpt_j2_ChargedEmEnergy=-999, vbf_maxpt_j2_ChargedEmEnergyFrac=-999, vbf_maxpt_j2_ChargedMuEnergy=-999;
- vbf_maxpt_j2_ChargedMuEnergyFrac=-999, vbf_maxpt_j2_NeutralEmEnergy=-999,vbf_maxpt_j2_NeutralEmEnergyFrac=-999, vbf_maxpt_j2_ChargedMultiplicity=-999;
- vbf_maxpt_j2_NeutralMultiplicity=-999, vbf_maxpt_j2_MuonMultiplicity=-999,vbf_maxpt_j2_PhotonEnergy=-999, vbf_maxpt_j2_PhotonEnergyFraction=-999;
- vbf_maxpt_j2_ElectronEnergy=-999, vbf_maxpt_j2_ElectronEnergyFraction=-999,vbf_maxpt_j2_MuonEnergy=-999, vbf_maxpt_j2_MuonEnergyFraction=-999;
- vbf_maxpt_j2_HFHadronEnergy=-999, vbf_maxpt_j2_HFHadronEnergyFraction=-999,vbf_maxpt_j2_HFEMEnergy=-999, vbf_maxpt_j2_HFEMEnergyFraction=-999;
- vbf_maxpt_j2_ChargedHadronMultiplicity=-999, vbf_maxpt_j2_NeutralHadronMultiplicity=-999, vbf_maxpt_j2_PhotonMultiplicity=-999;
- vbf_maxpt_j2_ElectronMultiplicity=-999,vbf_maxpt_j2_HFHadronMultiplicity=-999;
+  vbf_maxMjj_jj_type=-999,   vbf_maxMjj_n_excj=-999,   vbf_maxMjj_n_exfj=-999;
 
 
- vbf_maxDeta_jj_e=-999,   vbf_maxDeta_jj_pt=-999 ,   vbf_maxDeta_jj_eta=-999 ,  vbf_maxDeta_jj_phi=-999 , vbf_maxDeta_jj_m=-999 ;
- vbf_maxDeta_j1_e=-999 ,   vbf_maxDeta_j1_pt=-999 ,   vbf_maxDeta_j1_eta=-999 ,  vbf_maxDeta_j1_phi=-999 , vbf_maxDeta_j1_m=-999 ;
+  vbf_maxMjj_j1_bDiscriminatorSSVHE=-999, vbf_maxMjj_j1_bDiscriminatorTCHE=-999, vbf_maxMjj_j1_bDiscriminatorCSV=-999;
+  vbf_maxMjj_j1_bDiscriminatorSSVHP=-999, vbf_maxMjj_j1_bDiscriminatorTCHP=-999;
+  vbf_maxMjj_j2_bDiscriminatorSSVHE=-999, vbf_maxMjj_j2_bDiscriminatorTCHE=-999, vbf_maxMjj_j2_bDiscriminatorCSV=-999;
+  vbf_maxMjj_j2_bDiscriminatorSSVHP=-999, vbf_maxMjj_j2_bDiscriminatorTCHP=-999; 
 
- vbf_maxDeta_jj_e=-999 ,   vbf_maxDeta_jj_pt=-999 ,   vbf_maxDeta_jj_eta=-999 ,  vbf_maxDeta_jj_phi=-999 , vbf_maxDeta_jj_m=-999 ;
- vbf_maxDeta_j1_e=-999 ,   vbf_maxDeta_j1_pt=-999 ,   vbf_maxDeta_j1_eta=-999 ,  vbf_maxDeta_j1_phi=-999 , vbf_maxDeta_j1_m=-999 ;
- vbf_maxDeta_j2_e=-999 ,   vbf_maxDeta_j2_pt=-999 ,   vbf_maxDeta_j2_eta=-999 ,  vbf_maxDeta_j2_phi=-999 , vbf_maxDeta_j2_m=-999 ;
- vbf_maxDeta_jj_deta=-999 ,vbf_maxDeta_jj_dphi=-999;
+  vbf_maxMjj_j1_ChargedHadronEnergy=-999,  vbf_maxMjj_j1_ChargedHadronEnergyFrac=-999, vbf_maxMjj_j1_NeutralHadronEnergy=-999;
+  vbf_maxMjj_j1_NeutralHadronEnergyFrac=-999, vbf_maxMjj_j1_ChargedEmEnergy=-999, vbf_maxMjj_j1_ChargedEmEnergyFrac=-999, vbf_maxMjj_j1_ChargedMuEnergy=-999;
+  vbf_maxMjj_j1_ChargedMuEnergyFrac=-999, vbf_maxMjj_j1_NeutralEmEnergy=-999,vbf_maxMjj_j1_NeutralEmEnergyFrac=-999, vbf_maxMjj_j1_ChargedMultiplicity=-999;
+  vbf_maxMjj_j1_NeutralMultiplicity=-999, vbf_maxMjj_j1_MuonMultiplicity=-999,vbf_maxMjj_j1_PhotonEnergy=-999, vbf_maxMjj_j1_PhotonEnergyFraction=-999;
+  vbf_maxMjj_j1_ElectronEnergy=-999, vbf_maxMjj_j1_ElectronEnergyFraction=-999,vbf_maxMjj_j1_MuonEnergy=-999, vbf_maxMjj_j1_MuonEnergyFraction=-999;
+  vbf_maxMjj_j1_HFHadronEnergy=-999, vbf_maxMjj_j1_HFHadronEnergyFraction=-999,vbf_maxMjj_j1_HFEMEnergy=-999, vbf_maxMjj_j1_HFEMEnergyFraction=-999;
+  vbf_maxMjj_j1_ChargedHadronMultiplicity=-999, vbf_maxMjj_j1_NeutralHadronMultiplicity=-999, vbf_maxMjj_j1_PhotonMultiplicity=-999;
+  vbf_maxMjj_j1_ElectronMultiplicity=-999,vbf_maxMjj_j1_HFHadronMultiplicity=-999;
 
- vbf_maxDeta_j1_QGLikelihood=-999,  vbf_maxDeta_j2_QGLikelihood=-999;
-
- vbf_maxDeta_j1_isPileUpLoose=false  , vbf_maxDeta_j2_isPileUpLoose=false  ;
- vbf_maxDeta_j1_isPileUpMedium=false , vbf_maxDeta_j2_isPileUpMedium=false ;
- vbf_maxDeta_j1_isPileUpTight=false  , vbf_maxDeta_j2_isPileUpTight=false  ;
-
- vbf_maxDeta_jj_type=-999,   vbf_maxDeta_n_excj=-999,   vbf_maxDeta_n_exfj=-999;
-
- vbf_maxDeta_j1_bDiscriminatorSSVHE=-999, vbf_maxDeta_j1_bDiscriminatorTCHE=-999, vbf_maxDeta_j1_bDiscriminatorCSV=-999;
- vbf_maxDeta_j1_bDiscriminatorSSVHP=-999, vbf_maxDeta_j1_bDiscriminatorTCHP=-999;
- vbf_maxDeta_j2_bDiscriminatorSSVHE=-999, vbf_maxDeta_j2_bDiscriminatorTCHE=-999, vbf_maxDeta_j2_bDiscriminatorCSV=-999;
- vbf_maxDeta_j2_bDiscriminatorSSVHP=-999, vbf_maxDeta_j2_bDiscriminatorTCHP=-999;
-
- vbf_maxDeta_j1_ChargedHadronEnergy=-999,  vbf_maxDeta_j1_ChargedHadronEnergyFrac=-999, vbf_maxDeta_j1_NeutralHadronEnergy=-999;
- vbf_maxDeta_j1_NeutralHadronEnergyFrac=-999, vbf_maxDeta_j1_ChargedEmEnergy=-999, vbf_maxDeta_j1_ChargedEmEnergyFrac=-999, vbf_maxDeta_j1_ChargedMuEnergy=-999;
- vbf_maxDeta_j1_ChargedMuEnergyFrac=-999, vbf_maxDeta_j1_NeutralEmEnergy=-999,vbf_maxDeta_j1_NeutralEmEnergyFrac=-999, vbf_maxDeta_j1_ChargedMultiplicity=-999;
- vbf_maxDeta_j1_NeutralMultiplicity=-999, vbf_maxDeta_j1_MuonMultiplicity=-999,vbf_maxDeta_j1_PhotonEnergy=-999, vbf_maxDeta_j1_PhotonEnergyFraction=-999;
- vbf_maxDeta_j1_ElectronEnergy=-999, vbf_maxDeta_j1_ElectronEnergyFraction=-999,vbf_maxDeta_j1_MuonEnergy=-999, vbf_maxDeta_j1_MuonEnergyFraction=-999;
- vbf_maxDeta_j1_HFHadronEnergy=-999, vbf_maxDeta_j1_HFHadronEnergyFraction=-999,vbf_maxDeta_j1_HFEMEnergy=-999, vbf_maxDeta_j1_HFEMEnergyFraction=-999;
- vbf_maxDeta_j1_ChargedHadronMultiplicity=-999, vbf_maxDeta_j1_NeutralHadronMultiplicity=-999, vbf_maxDeta_j1_PhotonMultiplicity=-999;
- vbf_maxDeta_j1_ElectronMultiplicity=-999,vbf_maxDeta_j1_HFHadronMultiplicity=-999;
-
- vbf_maxDeta_j2_ChargedHadronEnergy=-999,  vbf_maxDeta_j2_ChargedHadronEnergyFrac=-999, vbf_maxDeta_j2_NeutralHadronEnergy=-999;
- vbf_maxDeta_j2_NeutralHadronEnergyFrac=-999, vbf_maxDeta_j2_ChargedEmEnergy=-999, vbf_maxDeta_j2_ChargedEmEnergyFrac=-999, vbf_maxDeta_j2_ChargedMuEnergy=-999;
- vbf_maxDeta_j2_ChargedMuEnergyFrac=-999, vbf_maxDeta_j2_NeutralEmEnergy=-999,vbf_maxDeta_j2_NeutralEmEnergyFrac=-999, vbf_maxDeta_j2_ChargedMultiplicity=-999;
- vbf_maxDeta_j2_NeutralMultiplicity=-999, vbf_maxDeta_j2_MuonMultiplicity=-999,vbf_maxDeta_j2_PhotonEnergy=-999, vbf_maxDeta_j2_PhotonEnergyFraction=-999;
- vbf_maxDeta_j2_ElectronEnergy=-999, vbf_maxDeta_j2_ElectronEnergyFraction=-999,vbf_maxDeta_j2_MuonEnergy=-999, vbf_maxDeta_j2_MuonEnergyFraction=-999;
- vbf_maxDeta_j2_HFHadronEnergy=-999, vbf_maxDeta_j2_HFHadronEnergyFraction=-999,vbf_maxDeta_j2_HFEMEnergy=-999, vbf_maxDeta_j2_HFEMEnergyFraction=-999;
- vbf_maxDeta_j2_ChargedHadronMultiplicity=-999, vbf_maxDeta_j2_NeutralHadronMultiplicity=-999, vbf_maxDeta_j2_PhotonMultiplicity=-999;
- vbf_maxDeta_j2_ElectronMultiplicity=-999,vbf_maxDeta_j2_HFHadronMultiplicity=-999;
-
-
- vbf_maxMjj_jj_e=-999,   vbf_maxMjj_jj_pt=-999 ,   vbf_maxMjj_jj_eta=-999 ,  vbf_maxMjj_jj_phi=-999 , vbf_maxMjj_jj_m=-999 ;
- vbf_maxMjj_j1_e=-999 ,   vbf_maxMjj_j1_pt=-999 ,   vbf_maxMjj_j1_eta=-999 ,  vbf_maxMjj_j1_phi=-999 , vbf_maxMjj_j1_m=-999 ;
-
- vbf_maxMjj_jj_e=-999 ,   vbf_maxMjj_jj_pt=-999 ,   vbf_maxMjj_jj_eta=-999 ,  vbf_maxMjj_jj_phi=-999 , vbf_maxMjj_jj_m=-999 ;
- vbf_maxMjj_j1_e=-999 ,   vbf_maxMjj_j1_pt=-999 ,   vbf_maxMjj_j1_eta=-999 ,  vbf_maxMjj_j1_phi=-999 , vbf_maxMjj_j1_m=-999 ;
- vbf_maxMjj_j2_e=-999 ,   vbf_maxMjj_j2_pt=-999 ,   vbf_maxMjj_j2_eta=-999 ,  vbf_maxMjj_j2_phi=-999 , vbf_maxMjj_j2_m=-999 ;
- vbf_maxMjj_jj_deta=-999 ,vbf_maxMjj_jj_dphi=-999;
-
- vbf_maxMjj_j1_QGLikelihood=-999,  vbf_maxMjj_j2_QGLikelihood=-999;
-
- vbf_maxMjj_j1_isPileUpLoose =false , vbf_maxMjj_j2_isPileUpLoose =false  ;
- vbf_maxMjj_j1_isPileUpMedium=false , vbf_maxMjj_j2_isPileUpMedium=false ;
- vbf_maxMjj_j1_isPileUpTight =false  , vbf_maxMjj_j2_isPileUpTight=false  ;
-
- vbf_maxMjj_jj_type=-999,   vbf_maxMjj_n_excj=-999,   vbf_maxMjj_n_exfj=-999;
-
-
- vbf_maxMjj_j1_bDiscriminatorSSVHE=-999, vbf_maxMjj_j1_bDiscriminatorTCHE=-999, vbf_maxMjj_j1_bDiscriminatorCSV=-999;
- vbf_maxMjj_j1_bDiscriminatorSSVHP=-999, vbf_maxMjj_j1_bDiscriminatorTCHP=-999;
- vbf_maxMjj_j2_bDiscriminatorSSVHE=-999, vbf_maxMjj_j2_bDiscriminatorTCHE=-999, vbf_maxMjj_j2_bDiscriminatorCSV=-999;
- vbf_maxMjj_j2_bDiscriminatorSSVHP=-999, vbf_maxMjj_j2_bDiscriminatorTCHP=-999;
-
- vbf_maxMjj_j1_ChargedHadronEnergy=-999,  vbf_maxMjj_j1_ChargedHadronEnergyFrac=-999, vbf_maxMjj_j1_NeutralHadronEnergy=-999;
- vbf_maxMjj_j1_NeutralHadronEnergyFrac=-999, vbf_maxMjj_j1_ChargedEmEnergy=-999, vbf_maxMjj_j1_ChargedEmEnergyFrac=-999, vbf_maxMjj_j1_ChargedMuEnergy=-999;
- vbf_maxMjj_j1_ChargedMuEnergyFrac=-999, vbf_maxMjj_j1_NeutralEmEnergy=-999,vbf_maxMjj_j1_NeutralEmEnergyFrac=-999, vbf_maxMjj_j1_ChargedMultiplicity=-999;
- vbf_maxMjj_j1_NeutralMultiplicity=-999, vbf_maxMjj_j1_MuonMultiplicity=-999,vbf_maxMjj_j1_PhotonEnergy=-999, vbf_maxMjj_j1_PhotonEnergyFraction=-999;
- vbf_maxMjj_j1_ElectronEnergy=-999, vbf_maxMjj_j1_ElectronEnergyFraction=-999,vbf_maxMjj_j1_MuonEnergy=-999, vbf_maxMjj_j1_MuonEnergyFraction=-999;
- vbf_maxMjj_j1_HFHadronEnergy=-999, vbf_maxMjj_j1_HFHadronEnergyFraction=-999,vbf_maxMjj_j1_HFEMEnergy=-999, vbf_maxMjj_j1_HFEMEnergyFraction=-999;
- vbf_maxMjj_j1_ChargedHadronMultiplicity=-999, vbf_maxMjj_j1_NeutralHadronMultiplicity=-999, vbf_maxMjj_j1_PhotonMultiplicity=-999;
- vbf_maxMjj_j1_ElectronMultiplicity=-999,vbf_maxMjj_j1_HFHadronMultiplicity=-999;
-
- vbf_maxMjj_j2_ChargedHadronEnergy=-999,  vbf_maxMjj_j2_ChargedHadronEnergyFrac=-999, vbf_maxMjj_j2_NeutralHadronEnergy=-999;
- vbf_maxMjj_j2_NeutralHadronEnergyFrac=-999, vbf_maxMjj_j2_ChargedEmEnergy=-999, vbf_maxMjj_j2_ChargedEmEnergyFrac=-999, vbf_maxMjj_j2_ChargedMuEnergy=-999;
- vbf_maxMjj_j2_ChargedMuEnergyFrac=-999, vbf_maxMjj_j2_NeutralEmEnergy=-999,vbf_maxMjj_j2_NeutralEmEnergyFrac=-999, vbf_maxMjj_j2_ChargedMultiplicity=-999;
- vbf_maxMjj_j2_NeutralMultiplicity=-999, vbf_maxMjj_j2_MuonMultiplicity=-999,vbf_maxMjj_j2_PhotonEnergy=-999, vbf_maxMjj_j2_PhotonEnergyFraction=-999;
- vbf_maxMjj_j2_ElectronEnergy=-999, vbf_maxMjj_j2_ElectronEnergyFraction=-999,vbf_maxMjj_j2_MuonEnergy=-999, vbf_maxMjj_j2_MuonEnergyFraction=-999;
- vbf_maxMjj_j2_HFHadronEnergy=-999, vbf_maxMjj_j2_HFHadronEnergyFraction=-999,vbf_maxMjj_j2_HFEMEnergy=-999, vbf_maxMjj_j2_HFEMEnergyFraction=-999;
- vbf_maxMjj_j2_ChargedHadronMultiplicity=-999, vbf_maxMjj_j2_NeutralHadronMultiplicity=-999, vbf_maxMjj_j2_PhotonMultiplicity=-999;
- vbf_maxMjj_j2_ElectronMultiplicity=-999,vbf_maxMjj_j2_HFHadronMultiplicity=-999;
+  vbf_maxMjj_j2_ChargedHadronEnergy=-999,  vbf_maxMjj_j2_ChargedHadronEnergyFrac=-999, vbf_maxMjj_j2_NeutralHadronEnergy=-999;
+  vbf_maxMjj_j2_NeutralHadronEnergyFrac=-999, vbf_maxMjj_j2_ChargedEmEnergy=-999, vbf_maxMjj_j2_ChargedEmEnergyFrac=-999, vbf_maxMjj_j2_ChargedMuEnergy=-999;
+  vbf_maxMjj_j2_ChargedMuEnergyFrac=-999, vbf_maxMjj_j2_NeutralEmEnergy=-999,vbf_maxMjj_j2_NeutralEmEnergyFrac=-999, vbf_maxMjj_j2_ChargedMultiplicity=-999;
+  vbf_maxMjj_j2_NeutralMultiplicity=-999, vbf_maxMjj_j2_MuonMultiplicity=-999,vbf_maxMjj_j2_PhotonEnergy=-999, vbf_maxMjj_j2_PhotonEnergyFraction=-999;
+  vbf_maxMjj_j2_ElectronEnergy=-999, vbf_maxMjj_j2_ElectronEnergyFraction=-999,vbf_maxMjj_j2_MuonEnergy=-999, vbf_maxMjj_j2_MuonEnergyFraction=-999;
+  vbf_maxMjj_j2_HFHadronEnergy=-999, vbf_maxMjj_j2_HFHadronEnergyFraction=-999,vbf_maxMjj_j2_HFEMEnergy=-999, vbf_maxMjj_j2_HFEMEnergyFraction=-999;
+  vbf_maxMjj_j2_ChargedHadronMultiplicity=-999, vbf_maxMjj_j2_NeutralHadronMultiplicity=-999, vbf_maxMjj_j2_PhotonMultiplicity=-999;
+  vbf_maxMjj_j2_ElectronMultiplicity=-999,vbf_maxMjj_j2_HFHadronMultiplicity=-999;
 
 
 
