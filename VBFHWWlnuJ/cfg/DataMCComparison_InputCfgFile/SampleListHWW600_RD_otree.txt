@@ -20,7 +20,7 @@ ofile_tWch_bar                                                  STop            
 #ofile_TTbar_matchDn                                            tt_bar           210         214.60      5476728
 #ofile_TTbar_scaleUp                                            tt_bar           210         225.19      5009488
 #ofile_TTbar_scaleUp                                            tt_bar           210         228.0       5387181
-ofile_TTbar_Powheg                                              tt_bar           210         245.8      2167597
+ofile_TTbar_Powheg                                              tt_bar           210         245.8       21675970
 #ofile_TTbar_mcatnlo                                            tt_bar_mcatnlo    53          225.197    24185991
 #ofile_TTbar_mcatnlo                                            tt_bar            53          245.8      24185991
 ofile_ggH600                                                    ggHx600              1           0.1276       197170
