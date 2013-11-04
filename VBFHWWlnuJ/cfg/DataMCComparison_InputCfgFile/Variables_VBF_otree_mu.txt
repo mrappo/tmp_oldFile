@@ -58,7 +58,7 @@ vbf_maxpt_j2_bDiscriminatorCSV  50      0       1
 vbf_maxpt_j2_eta                50      -5      5
 vbf_maxpt_j2_pt                 50      0       300
 vbf_maxpt_j2_QGLikelihood       50      0       1
-abs(vbf_maxpt_j1_eta-vbf_maxpt_j2_eta) 50    0       9
+abs(vbf_j1_maxpt_eta-vbf_j2_maxpt_eta) 50    0       9
 vbf_maxpt_jj_m                  70      0       800
 vbf_maxpt_jj_phi                50      -3.14   3.14
 vbf_maxpt_jj_eta                30      -4.7       4.7
