@@ -43,7 +43,7 @@ class VBFElectronClass {
     //variables for the hadronic W
   
     int WHadposition;  
-    int numberJetBin;
+    std::vector<int> numberJetBin;
 
     float Hadronic_W_Jet_mass_uncorr;   
     float Hadronic_W_Jet_mass_tr_uncorr;  
