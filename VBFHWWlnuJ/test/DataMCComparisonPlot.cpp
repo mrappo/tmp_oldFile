@@ -67,12 +67,12 @@ int main (int argc, char **argv){
 
   if(argc<2){ std::cout<<" Not correct number of input parameter --> Need Just one cfg file exit "<<std::endl; return -1; }
 
-  // Load TTree Lybrary                                                                                                                                                                      
+  // Load TTree Lybrary                                                                                                                                                     
 
   gSystem->Load("libTree.so");
 
-  // Set Root style from global enviroment path                                                                                                                                               
- 
+  // Set Root style from global enviroment path                                                                                                                                  
+
   std::string ROOTStyle =  getenv ("ROOTStyle");
 
   gROOT->ProcessLine((".x "+ROOTStyle+"/rootLogon.C").c_str());
@@ -384,6 +384,11 @@ int main (int argc, char **argv){
        if( iVar == 0 && iCut == 0) TreeVect.push_back( (TTree*) FileVect.at(iSample)->Get(TreeName.c_str()));
         
        hname.Form ("%s_%s_%d",NameSample.at(iSample).c_str(),Variables.at(iVar).c_str(),int(iCut));
+       hname.ReplaceAll("[","_");
+       hname.ReplaceAll("]","_");
+       hname.ReplaceAll("(","_");
+       hname.ReplaceAll(")","_");
+ 
        histos[iCut][iVar][iSample] = new TH1F (hname.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar));
        histos[iCut][iVar][iSample]->Sumw2();
        
@@ -1289,11 +1294,13 @@ int main (int argc, char **argv){
 	  std::string canvasname = CanvasName.Data() ;
 	  std::replace(canvasname.begin(),canvasname.end(),'[','_');
 	  std::replace(canvasname.begin(),canvasname.end(),']','_');
+	  std::replace(canvasname.begin(),canvasname.end(),'(','_');
+	  std::replace(canvasname.begin(),canvasname.end(),')','_');
 
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
-	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".root").c_str(),"root");
-	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".cxx").c_str(),"cxx");
+	  //	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".root").c_str(),"root");
+	  //	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".cxx").c_str(),"cxx");
 	  
 	  c[iCut][iVar]->Close();
 	  
@@ -1306,11 +1313,13 @@ int main (int argc, char **argv){
 	    std::string canvasnameNoRatio = CanvasNameNoRatio.Data() ;
 	    std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),'[','_');
 	    std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),']','_');
+	    std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),'(','_');
+ 	    std::replace(canvasnameNoRatio.begin(),canvasnameNoRatio.end(),')','_');
 	            
 	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".pdf").c_str(),"pdf");
 	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".png").c_str(),"png");
-	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".root").c_str(),"root");
-	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".cxx").c_str(),"cxx");
+	    //	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".root").c_str(),"root");
+	    //	    cNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameNoRatio+".cxx").c_str(),"cxx");
 	    
 	    cNoRatio[iCut][iVar]->Close();
 	  }
@@ -1462,11 +1471,13 @@ int main (int argc, char **argv){
           std::string canvasnameLog = CanvasNameLog.Data() ;
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),'[','_');
 	  std::replace(canvasnameLog.begin(),canvasnameLog.end(),']','_');
+          std::replace(canvasnameLog.begin(),canvasnameLog.end(),'(','_');
+          std::replace(canvasnameLog.begin(),canvasnameLog.end(),')','_');
 	           
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
-	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".root").c_str(),"root");
-	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".cxx").c_str(),"cxx");
+	  //	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".root").c_str(),"root");
+	  //	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".cxx").c_str(),"cxx");
 	  
           cLog[iCut][iVar]->Close();
 	  if(!WithoutData) {
@@ -1477,11 +1488,13 @@ int main (int argc, char **argv){
             std::string canvasnameLogNoRatio = CanvasNameLogNoRatio.Data() ;
    	    std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),'[','_');
 	    std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),']','_');
+	    std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),'(','_');
+ 	    std::replace(canvasnameLogNoRatio.begin(),canvasnameLogNoRatio.end(),')','_');
           
 	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".pdf").c_str(),"pdf");
 	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".png").c_str(),"png");
-	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".root").c_str(),"root");
-	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".cxx").c_str(),"cxx");
+	    //	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".root").c_str(),"root");
+	    //	    cLogNoRatio[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLogNoRatio+".cxx").c_str(),"cxx");
 	    
             cLogNoRatio[iCut][iVar]->Close();
 	  }
