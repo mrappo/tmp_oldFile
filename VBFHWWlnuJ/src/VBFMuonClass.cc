@@ -105,7 +105,7 @@ void VBFMuonClass::SetBranchAddressAndStatus ( TTree* inputTree){
 void VBFMuonClass::SetNewBranches ( TTree* inputTree){
 
    inputTree->Branch("WHadposition",&WHadposition,"WHadposition/I"); 
-   inputTree->Branch("numberJetBin",&numberJetBin,"numberJetBin/I"); 
+   inputTree->Branch("numberJetBin","std::vector<int>",&numberJetBin); 
 
    inputTree->Branch("Hadronic_W_Jet_mass_uncorr",&Hadronic_W_Jet_mass_uncorr,"Hadronic_W_Jet_mass_uncorr/F");
    inputTree->Branch("Hadronic_W_Jet_mass_tr_uncorr",&Hadronic_W_Jet_mass_tr_uncorr,"Hadronic_W_Jet_mass_tr_uncorr/F");
@@ -787,7 +787,7 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
 void VBFMuonClass::InitializateVariables(){
 
 
-  WHadposition=-999;  numberJetBin=0; Hadronic_W_Jet_mass_uncorr = -999;   
+  WHadposition=-999;  numberJetBin.clear(); Hadronic_W_Jet_mass_uncorr = -999;   
   Hadronic_W_Jet_mass_tr_uncorr = -999;  Hadronic_W_Jet_mass_ft_uncorr = -999;   Hadronic_W_Jet_mass_pr_uncorr = -999;   
   Hadronic_W_Jet_massdrop_pr_uncorr = -999;  Hadronic_W_Jet_tau2tau1 = -999;  Hadronic_W_Jet_tau1 = -999;  
   Hadronic_W_Jet_tau2 = -999;   Hadronic_W_Jet_tau3 = -999;   Hadronic_W_Jet_tau4 = -999;   
