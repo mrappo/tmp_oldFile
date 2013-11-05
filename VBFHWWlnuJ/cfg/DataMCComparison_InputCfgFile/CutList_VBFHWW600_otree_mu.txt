@@ -14,7 +14,7 @@
 
 #issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && (jet_mass_pr > 40 && jet_mass_pr < 130) && numberJetBin >= 2 && abs(vbf_maxpt_j1_eta-vbf_maxpt_j2_eta)>2.5 && vbf_maxpt_jj_m > 250
 
-issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && (jet_mass_pr > 40 && jet_mass_pr < 130) && jet_tau2tau1 < 0.5 && numberJetBin >= 2 && abs(vbf_maxpt_j1_eta-vbf_maxpt_j2_eta)>2.5 && vbf_maxpt_jj_m > 250
+#issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && (jet_mass_pr > 40 && jet_mass_pr < 130) && jet_tau2tau1 < 0.5 && numberJetBin >= 2 && abs(vbf_maxpt_j1_eta-vbf_maxpt_j2_eta)>2.5 && vbf_maxpt_jj_m > 250
 
 ## SB 
 
