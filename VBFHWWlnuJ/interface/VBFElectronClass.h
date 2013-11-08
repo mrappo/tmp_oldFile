@@ -44,6 +44,7 @@ class VBFElectronClass {
   
     int WHadposition;  
     std::vector<int> numberJetBin;
+    std::vector<int> numberJetBinGen;
 
     float Hadronic_W_Jet_mass_uncorr;   
     float Hadronic_W_Jet_mass_tr_uncorr;  
@@ -209,6 +210,11 @@ class VBFElectronClass {
   float vbf_maxpt_j2_e ,   vbf_maxpt_j2_pt ,   vbf_maxpt_j2_eta ,  vbf_maxpt_j2_phi , vbf_maxpt_j2_m ;
   float vbf_maxpt_jj_deta ,vbf_maxpt_jj_dphi; 
 
+  float vbf_maxpt_jj_e_gen ,   vbf_maxpt_jj_pt_gen ,   vbf_maxpt_jj_eta_gen ,  vbf_maxpt_jj_phi_gen , vbf_maxpt_jj_m_gen ;
+  float vbf_maxpt_j1_e_gen ,   vbf_maxpt_j1_pt_gen ,   vbf_maxpt_j1_eta_gen ,  vbf_maxpt_j1_phi_gen , vbf_maxpt_j1_m_gen ;
+  float vbf_maxpt_j2_e_gen ,   vbf_maxpt_j2_pt_gen ,   vbf_maxpt_j2_eta_gen ,  vbf_maxpt_j2_phi_gen , vbf_maxpt_j2_m_gen ;
+  float vbf_maxpt_jj_deta_gen ,vbf_maxpt_jj_dphi_gen; 
+
   float vbf_maxpt_j1_QGLikelihood,  vbf_maxpt_j2_QGLikelihood;
 
   bool vbf_maxpt_j1_isPileUpLoose  , vbf_maxpt_j2_isPileUpLoose  ;
@@ -221,6 +227,11 @@ class VBFElectronClass {
   float vbf_maxpt_j1_bDiscriminatorSSVHP, vbf_maxpt_j1_bDiscriminatorTCHP ;
   float vbf_maxpt_j2_bDiscriminatorSSVHE, vbf_maxpt_j2_bDiscriminatorTCHE, vbf_maxpt_j2_bDiscriminatorCSV;
   float vbf_maxpt_j2_bDiscriminatorSSVHP, vbf_maxpt_j2_bDiscriminatorTCHP ;
+
+  float vbf_maxpt_j1_bDiscriminatorSSVHE_gen, vbf_maxpt_j1_bDiscriminatorTCHE_gen, vbf_maxpt_j1_bDiscriminatorCSV_gen;
+  float vbf_maxpt_j1_bDiscriminatorSSVHP_gen, vbf_maxpt_j1_bDiscriminatorTCHP_gen ;
+  float vbf_maxpt_j2_bDiscriminatorSSVHE_gen, vbf_maxpt_j2_bDiscriminatorTCHE_gen, vbf_maxpt_j2_bDiscriminatorCSV_gen;
+  float vbf_maxpt_j2_bDiscriminatorSSVHP_gen, vbf_maxpt_j2_bDiscriminatorTCHP_gen ;
 
   float vbf_maxpt_j1_ChargedHadronEnergy,  vbf_maxpt_j1_ChargedHadronEnergyFrac, vbf_maxpt_j1_NeutralHadronEnergy;
   float vbf_maxpt_j1_NeutralHadronEnergyFrac, vbf_maxpt_j1_ChargedEmEnergy, vbf_maxpt_j1_ChargedEmEnergyFrac, vbf_maxpt_j1_ChargedMuEnergy,;
@@ -247,6 +258,11 @@ class VBFElectronClass {
   float vbf_maxDeta_j2_e ,   vbf_maxDeta_j2_pt ,   vbf_maxDeta_j2_eta ,  vbf_maxDeta_j2_phi , vbf_maxDeta_j2_m ;
   float vbf_maxDeta_jj_deta ,vbf_maxDeta_jj_dphi; 
 
+  float vbf_maxDeta_jj_e_gen ,   vbf_maxDeta_jj_pt_gen ,   vbf_maxDeta_jj_eta_gen ,  vbf_maxDeta_jj_phi_gen , vbf_maxDeta_jj_m_gen ;
+  float vbf_maxDeta_j1_e_gen ,   vbf_maxDeta_j1_pt_gen ,   vbf_maxDeta_j1_eta_gen ,  vbf_maxDeta_j1_phi_gen , vbf_maxDeta_j1_m_gen ;
+  float vbf_maxDeta_j2_e_gen ,   vbf_maxDeta_j2_pt_gen ,   vbf_maxDeta_j2_eta_gen ,  vbf_maxDeta_j2_phi_gen , vbf_maxDeta_j2_m_gen ;
+  float vbf_maxDeta_jj_deta_gen ,vbf_maxDeta_jj_dphi_gen; 
+
   float vbf_maxDeta_j1_QGLikelihood, vbf_maxDeta_j2_QGLikelihood;
 
   bool vbf_maxDeta_j1_isPileUpLoose  , vbf_maxDeta_j2_isPileUpLoose  ;
@@ -259,6 +275,11 @@ class VBFElectronClass {
   float vbf_maxDeta_j1_bDiscriminatorSSVHP, vbf_maxDeta_j1_bDiscriminatorTCHP ;
   float vbf_maxDeta_j2_bDiscriminatorSSVHE, vbf_maxDeta_j2_bDiscriminatorTCHE, vbf_maxDeta_j2_bDiscriminatorCSV;
   float vbf_maxDeta_j2_bDiscriminatorSSVHP, vbf_maxDeta_j2_bDiscriminatorTCHP ;
+
+  float vbf_maxDeta_j1_bDiscriminatorSSVHE_gen, vbf_maxDeta_j1_bDiscriminatorTCHE_gen, vbf_maxDeta_j1_bDiscriminatorCSV_gen;
+  float vbf_maxDeta_j1_bDiscriminatorSSVHP_gen, vbf_maxDeta_j1_bDiscriminatorTCHP_gen ;
+  float vbf_maxDeta_j2_bDiscriminatorSSVHE_gen, vbf_maxDeta_j2_bDiscriminatorTCHE_gen, vbf_maxDeta_j2_bDiscriminatorCSV_gen;
+  float vbf_maxDeta_j2_bDiscriminatorSSVHP_gen, vbf_maxDeta_j2_bDiscriminatorTCHP_gen ;
 
   float vbf_maxDeta_j1_ChargedHadronEnergy,  vbf_maxDeta_j1_ChargedHadronEnergyFrac, vbf_maxDeta_j1_NeutralHadronEnergy;
   float vbf_maxDeta_j1_NeutralHadronEnergyFrac, vbf_maxDeta_j1_ChargedEmEnergy, vbf_maxDeta_j1_ChargedEmEnergyFrac, vbf_maxDeta_j1_ChargedMuEnergy;
@@ -286,6 +307,11 @@ class VBFElectronClass {
   float vbf_maxMjj_j2_e ,   vbf_maxMjj_j2_pt ,   vbf_maxMjj_j2_eta ,  vbf_maxMjj_j2_phi , vbf_maxMjj_j2_m ;
   float vbf_maxMjj_jj_deta ,vbf_maxMjj_jj_dphi; 
 
+  float vbf_maxMjj_jj_e_gen ,   vbf_maxMjj_jj_pt_gen ,   vbf_maxMjj_jj_eta_gen ,  vbf_maxMjj_jj_phi_gen , vbf_maxMjj_jj_m_gen ;
+  float vbf_maxMjj_j1_e_gen ,   vbf_maxMjj_j1_pt_gen ,   vbf_maxMjj_j1_eta_gen ,  vbf_maxMjj_j1_phi_gen , vbf_maxMjj_j1_m_gen ;
+  float vbf_maxMjj_j2_e_gen ,   vbf_maxMjj_j2_pt_gen ,   vbf_maxMjj_j2_eta_gen ,  vbf_maxMjj_j2_phi_gen , vbf_maxMjj_j2_m_gen ;
+  float vbf_maxMjj_jj_deta_gen ,vbf_maxMjj_jj_dphi_gen; 
+
   int vbf_maxMjj_jj_type,   vbf_maxMjj_n_excj,   vbf_maxMjj_n_exfj;
 
   float vbf_maxMjj_j1_QGLikelihood, vbf_maxMjj_j2_QGLikelihood;
@@ -298,6 +324,11 @@ class VBFElectronClass {
   float vbf_maxMjj_j1_bDiscriminatorSSVHP, vbf_maxMjj_j1_bDiscriminatorTCHP ;
   float vbf_maxMjj_j2_bDiscriminatorSSVHE, vbf_maxMjj_j2_bDiscriminatorTCHE, vbf_maxMjj_j2_bDiscriminatorCSV;
   float vbf_maxMjj_j2_bDiscriminatorSSVHP, vbf_maxMjj_j2_bDiscriminatorTCHP ;
+
+  float vbf_maxMjj_j1_bDiscriminatorSSVHE_gen, vbf_maxMjj_j1_bDiscriminatorTCHE_gen, vbf_maxMjj_j1_bDiscriminatorCSV_gen;
+  float vbf_maxMjj_j1_bDiscriminatorSSVHP_gen, vbf_maxMjj_j1_bDiscriminatorTCHP_gen ;
+  float vbf_maxMjj_j2_bDiscriminatorSSVHE_gen, vbf_maxMjj_j2_bDiscriminatorTCHE_gen, vbf_maxMjj_j2_bDiscriminatorCSV_gen;
+  float vbf_maxMjj_j2_bDiscriminatorSSVHP_gen, vbf_maxMjj_j2_bDiscriminatorTCHP_gen ;
 
   float vbf_maxMjj_j1_ChargedHadronEnergy,  vbf_maxMjj_j1_ChargedHadronEnergyFrac, vbf_maxMjj_j1_NeutralHadronEnergy;
   float vbf_maxMjj_j1_NeutralHadronEnergyFrac, vbf_maxMjj_j1_ChargedEmEnergy, vbf_maxMjj_j1_ChargedEmEnergyFrac, vbf_maxMjj_j1_ChargedMuEnergy;
