@@ -86,7 +86,6 @@ void VBFMuonClass::SetBranchAddressAndStatus ( TTree* inputTree){
   fTree->SetBranchStatus("mva2j*",0);
   fTree->SetBranchStatus("mva3j*",0);
   fTree->SetBranchStatus("mvavbf*",0);
-  fTree->SetBranchStatus("GroomedJet_number*",0);
   fTree->SetBranchStatus("GroomedJet_AK7*",0);
   fTree->SetBranchStatus("GenGroomedJet_AK7*",0);
   fTree->SetBranchStatus("GroomedJet_AK5*",0);
@@ -106,6 +105,7 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
 
    inputTree->Branch("WHadposition",&WHadposition,"WHadposition/I"); 
    inputTree->Branch("numberJetBin","std::vector<int>",&numberJetBin); 
+   inputTree->Branch("numberJetBinGen","std::vector<int>",&numberJetBinGen); 
 
    inputTree->Branch("Hadronic_W_Jet_mass_uncorr",&Hadronic_W_Jet_mass_uncorr,"Hadronic_W_Jet_mass_uncorr/F");
    inputTree->Branch("Hadronic_W_Jet_mass_tr_uncorr",&Hadronic_W_Jet_mass_tr_uncorr,"Hadronic_W_Jet_mass_tr_uncorr/F");
@@ -468,12 +468,24 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxpt_jj_eta",&vbf_maxpt_jj_eta,"vbf_maxpt_jj_eta/F");
    inputTree->Branch("vbf_maxpt_jj_phi",&vbf_maxpt_jj_phi,"vbf_maxpt_jj_phi/F");
    inputTree->Branch("vbf_maxpt_jj_m",&vbf_maxpt_jj_m,"vbf_maxpt_jj_m/F");
+
+   inputTree->Branch("vbf_maxpt_jj_e_gen",&vbf_maxpt_jj_e_gen,"vbf_maxpt_jj_e_gen/F");
+   inputTree->Branch("vbf_maxpt_jj_pt_gen",&vbf_maxpt_jj_pt_gen,"vbf_maxpt_jj_pt_gen/F");
+   inputTree->Branch("vbf_maxpt_jj_eta_gen",&vbf_maxpt_jj_eta_gen,"vbf_maxpt_jj_eta_gen/F");
+   inputTree->Branch("vbf_maxpt_jj_phi_gen",&vbf_maxpt_jj_phi_gen,"vbf_maxpt_jj_phi_gen/F");
+   inputTree->Branch("vbf_maxpt_jj_m_gen",&vbf_maxpt_jj_m_gen,"vbf_maxpt_jj_m_gen/F");
   
    inputTree->Branch("vbf_maxpt_j1_e",&vbf_maxpt_j1_e,"vbf_maxpt_j1_e/F");
    inputTree->Branch("vbf_maxpt_j1_pt",&vbf_maxpt_j1_pt,"vbf_maxpt_j1_pt/F");
    inputTree->Branch("vbf_maxpt_j1_eta",&vbf_maxpt_j1_eta,"vbf_maxpt_j1_eta/F");
    inputTree->Branch("vbf_maxpt_j1_phi",&vbf_maxpt_j1_phi,"vbf_maxpt_j1_phi/F");
    inputTree->Branch("vbf_maxpt_j1_m",&vbf_maxpt_j1_m,"vbf_maxpt_j1_m/F");
+
+   inputTree->Branch("vbf_maxpt_j1_e_gen",&vbf_maxpt_j1_e_gen,"vbf_maxpt_j1_e_gen/F");
+   inputTree->Branch("vbf_maxpt_j1_pt_gen",&vbf_maxpt_j1_pt_gen,"vbf_maxpt_j1_pt_gen/F");
+   inputTree->Branch("vbf_maxpt_j1_eta_gen",&vbf_maxpt_j1_eta_gen,"vbf_maxpt_j1_eta_gen/F");
+   inputTree->Branch("vbf_maxpt_j1_phi_gen",&vbf_maxpt_j1_phi_gen,"vbf_maxpt_j1_phi_gen/F");
+   inputTree->Branch("vbf_maxpt_j1_m_gen",&vbf_maxpt_j1_m_gen,"vbf_maxpt_j1_m_gen/F");
   
    inputTree->Branch("vbf_maxpt_j2_e",&vbf_maxpt_j2_e,"vbf_maxpt_j2_e/F");
    inputTree->Branch("vbf_maxpt_j2_pt",&vbf_maxpt_j2_pt,"vbf_maxpt_j2_pt/F");
@@ -481,12 +493,20 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxpt_j2_phi",&vbf_maxpt_j2_phi,"vbf_maxpt_j2_phi/F");
    inputTree->Branch("vbf_maxpt_j2_m",&vbf_maxpt_j2_m,"vbf_maxpt_j2_m/F");
   
+   inputTree->Branch("vbf_maxpt_j2_e_gen",&vbf_maxpt_j2_e_gen,"vbf_maxpt_j2_e_gen/F");
+   inputTree->Branch("vbf_maxpt_j2_pt_gen",&vbf_maxpt_j2_pt_gen,"vbf_maxpt_j2_pt_gen/F");
+   inputTree->Branch("vbf_maxpt_j2_eta_gen",&vbf_maxpt_j2_eta_gen,"vbf_maxpt_j2_eta_gen/F");
+   inputTree->Branch("vbf_maxpt_j2_phi_gen",&vbf_maxpt_j2_phi_gen,"vbf_maxpt_j2_phi_gen/F");
+   inputTree->Branch("vbf_maxpt_j2_m_gen",&vbf_maxpt_j2_m_gen,"vbf_maxpt_j2_m_gen/F");
+  
    inputTree->Branch("vbf_maxpt_jj_deta",&vbf_maxpt_jj_deta,"vbf_maxpt_jj_deta/F");
    inputTree->Branch("vbf_maxpt_jj_dphi",&vbf_maxpt_jj_dphi,"vbf_maxpt_jj_dphi/F");
+
+   inputTree->Branch("vbf_maxpt_jj_deta_gen",&vbf_maxpt_jj_deta_gen,"vbf_maxpt_jj_deta_gen/F");
+   inputTree->Branch("vbf_maxpt_jj_dphi_gen",&vbf_maxpt_jj_dphi_gen,"vbf_maxpt_jj_dphi_gen/F");
    
    inputTree->Branch("vbf_maxpt_j1_QGLikelihood",&vbf_maxpt_j1_QGLikelihood,"vbf_maxpt_j1_QGLikelihood/F");
    inputTree->Branch("vbf_maxpt_j2_QGLikelihood",&vbf_maxpt_j2_QGLikelihood,"vbf_maxpt_j2_QGLikelihood/F");
-
    
    inputTree->Branch("vbf_maxpt_j1_isPileUpLoose",&vbf_maxpt_j1_isPileUpLoose,"vbf_maxpt_j1_isPileUpLoose/O");
    inputTree->Branch("vbf_maxpt_j1_isPileUpMedium",&vbf_maxpt_j1_isPileUpMedium,"vbf_maxpt_j1_isPileUpMedium/O");
@@ -506,11 +526,23 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxpt_j1_bDiscriminatorSSVHP",&vbf_maxpt_j1_bDiscriminatorSSVHP,"vbf_maxpt_j1_bDiscriminatorSSVHP/F");
    inputTree->Branch("vbf_maxpt_j1_bDiscriminatorTCHP",&vbf_maxpt_j1_bDiscriminatorTCHP,"vbf_maxpt_j1_bDiscriminatorTCHP/F");
 
+   inputTree->Branch("vbf_maxpt_j1_bDiscriminatorSSVHE_gen",&vbf_maxpt_j1_bDiscriminatorSSVHE_gen,"vbf_maxpt_j1_bDiscriminatorSSVHE_gen/F");
+   inputTree->Branch("vbf_maxpt_j1_bDiscriminatorTCHE_gen",&vbf_maxpt_j1_bDiscriminatorTCHE_gen,"vbf_maxpt_j1_bDiscriminatorTCHE_gen/F");  
+   inputTree->Branch("vbf_maxpt_j1_bDiscriminatorCSV_gen",&vbf_maxpt_j1_bDiscriminatorCSV_gen,"vbf_maxpt_j1_bDiscriminatorCSV_gen/F");
+   inputTree->Branch("vbf_maxpt_j1_bDiscriminatorSSVHP_gen",&vbf_maxpt_j1_bDiscriminatorSSVHP_gen,"vbf_maxpt_j1_bDiscriminatorSSVHP_gen/F");
+   inputTree->Branch("vbf_maxpt_j1_bDiscriminatorTCHP_gen",&vbf_maxpt_j1_bDiscriminatorTCHP_gen,"vbf_maxpt_j1_bDiscriminatorTCHP_gen/F");
+
    inputTree->Branch("vbf_maxpt_j2_bDiscriminatorSSVHE",&vbf_maxpt_j2_bDiscriminatorSSVHE,"vbf_maxpt_j2_bDiscriminatorSSVHE/F");
    inputTree->Branch("vbf_maxpt_j2_bDiscriminatorTCHE",&vbf_maxpt_j2_bDiscriminatorTCHE,"vbf_maxpt_j2_bDiscriminatorTCHE/F");  
    inputTree->Branch("vbf_maxpt_j2_bDiscriminatorCSV",&vbf_maxpt_j2_bDiscriminatorCSV,"vbf_maxpt_j2_bDiscriminatorCSV/F");
    inputTree->Branch("vbf_maxpt_j2_bDiscriminatorSSVHP",&vbf_maxpt_j2_bDiscriminatorSSVHP,"vbf_maxpt_j2_bDiscriminatorSSVHP/F");
    inputTree->Branch("vbf_maxpt_j2_bDiscriminatorTCHP",&vbf_maxpt_j2_bDiscriminatorTCHP,"vbf_maxpt_j2_bDiscriminatorTCHP/F");
+
+   inputTree->Branch("vbf_maxpt_j2_bDiscriminatorSSVHE_gen",&vbf_maxpt_j2_bDiscriminatorSSVHE_gen,"vbf_maxpt_j2_bDiscriminatorSSVHE_gen/F");
+   inputTree->Branch("vbf_maxpt_j2_bDiscriminatorTCHE_gen",&vbf_maxpt_j2_bDiscriminatorTCHE_gen,"vbf_maxpt_j2_bDiscriminatorTCHE_gen/F");  
+   inputTree->Branch("vbf_maxpt_j2_bDiscriminatorCSV_gen",&vbf_maxpt_j2_bDiscriminatorCSV_gen,"vbf_maxpt_j2_bDiscriminatorCSV_gen/F");
+   inputTree->Branch("vbf_maxpt_j2_bDiscriminatorSSVHP_gen",&vbf_maxpt_j2_bDiscriminatorSSVHP_gen,"vbf_maxpt_j2_bDiscriminatorSSVHP_gen/F");
+   inputTree->Branch("vbf_maxpt_j2_bDiscriminatorTCHP_gen",&vbf_maxpt_j2_bDiscriminatorTCHP_gen,"vbf_maxpt_j2_bDiscriminatorTCHP_gen/F");
 
    inputTree->Branch("vbf_maxpt_j1_ChargedHadronEnergy",&vbf_maxpt_j1_ChargedHadronEnergy,"vbf_maxpt_j1_ChargedHadronEnergy/F");
    inputTree->Branch("vbf_maxpt_j1_ChargedHadronEnergyFrac",&vbf_maxpt_j1_ChargedHadronEnergyFrac,"vbf_maxpt_j1_ChargedHadronEnergyFrac/F");
@@ -576,24 +608,44 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxDeta_jj_phi",&vbf_maxDeta_jj_phi,"vbf_maxDeta_jj_phi/F");
    inputTree->Branch("vbf_maxDeta_jj_m",&vbf_maxDeta_jj_m,"vbf_maxDeta_jj_m/F");
   
+   inputTree->Branch("vbf_maxDeta_jj_e_gen",&vbf_maxDeta_jj_e_gen,"vbf_maxDeta_jj_e_gen/F");
+   inputTree->Branch("vbf_maxDeta_jj_pt_gen",&vbf_maxDeta_jj_pt_gen,"vbf_maxDeta_jj_pt_gen/F");
+   inputTree->Branch("vbf_maxDeta_jj_eta_gen",&vbf_maxDeta_jj_eta_gen,"vbf_maxDeta_jj_eta_gen/F");
+   inputTree->Branch("vbf_maxDeta_jj_phi_gen",&vbf_maxDeta_jj_phi_gen,"vbf_maxDeta_jj_phi_gen/F");
+   inputTree->Branch("vbf_maxDeta_jj_m_gen",&vbf_maxDeta_jj_m_gen,"vbf_maxDeta_jj_m_gen/F");
+  
    inputTree->Branch("vbf_maxDeta_j1_e",&vbf_maxDeta_j1_e,"vbf_maxDeta_j1_e/F");
    inputTree->Branch("vbf_maxDeta_j1_pt",&vbf_maxDeta_j1_pt,"vbf_maxDeta_j1_pt/F");
    inputTree->Branch("vbf_maxDeta_j1_eta",&vbf_maxDeta_j1_eta,"vbf_maxDeta_j1_eta/F");
    inputTree->Branch("vbf_maxDeta_j1_phi",&vbf_maxDeta_j1_phi,"vbf_maxDeta_j1_phi/F");
    inputTree->Branch("vbf_maxDeta_j1_m",&vbf_maxDeta_j1_m,"vbf_maxDeta_j1_m/F");
+
+   inputTree->Branch("vbf_maxDeta_j1_e_gen",&vbf_maxDeta_j1_e_gen,"vbf_maxDeta_j1_e_gen/F");
+   inputTree->Branch("vbf_maxDeta_j1_pt_gen",&vbf_maxDeta_j1_pt_gen,"vbf_maxDeta_j1_pt_gen/F");
+   inputTree->Branch("vbf_maxDeta_j1_eta_gen",&vbf_maxDeta_j1_eta_gen,"vbf_maxDeta_j1_eta_gen/F");
+   inputTree->Branch("vbf_maxDeta_j1_phi_gen",&vbf_maxDeta_j1_phi_gen,"vbf_maxDeta_j1_phi_gen/F");
+   inputTree->Branch("vbf_maxDeta_j1_m_gen",&vbf_maxDeta_j1_m_gen,"vbf_maxDeta_j1_m_gen/F");
   
    inputTree->Branch("vbf_maxDeta_j2_e",&vbf_maxDeta_j2_e,"vbf_maxDeta_j2_e/F");
    inputTree->Branch("vbf_maxDeta_j2_pt",&vbf_maxDeta_j2_pt,"vbf_maxDeta_j2_pt/F");
    inputTree->Branch("vbf_maxDeta_j2_eta",&vbf_maxDeta_j2_eta,"vbf_maxDeta_j2_eta/F");
    inputTree->Branch("vbf_maxDeta_j2_phi",&vbf_maxDeta_j2_phi,"vbf_maxDeta_j2_phi/F");
    inputTree->Branch("vbf_maxDeta_j2_m",&vbf_maxDeta_j2_m,"vbf_maxDeta_j2_m/F");
+
+   inputTree->Branch("vbf_maxDeta_j2_e_gen",&vbf_maxDeta_j2_e_gen,"vbf_maxDeta_j2_e_gen/F");
+   inputTree->Branch("vbf_maxDeta_j2_pt_gen",&vbf_maxDeta_j2_pt_gen,"vbf_maxDeta_j2_pt_gen/F");
+   inputTree->Branch("vbf_maxDeta_j2_eta_gen",&vbf_maxDeta_j2_eta_gen,"vbf_maxDeta_j2_eta_gen/F");
+   inputTree->Branch("vbf_maxDeta_j2_phi_gen",&vbf_maxDeta_j2_phi_gen,"vbf_maxDeta_j2_phi_gen/F");
+   inputTree->Branch("vbf_maxDeta_j2_m_gen",&vbf_maxDeta_j2_m_gen,"vbf_maxDeta_j2_m_gen/F");
   
    inputTree->Branch("vbf_maxDeta_jj_deta",&vbf_maxDeta_jj_deta,"vbf_maxDeta_jj_deta/F");
    inputTree->Branch("vbf_maxDeta_jj_dphi",&vbf_maxDeta_jj_dphi,"vbf_maxDeta_jj_dphi/F");
+
+   inputTree->Branch("vbf_maxDeta_jj_deta_gen",&vbf_maxDeta_jj_deta_gen,"vbf_maxDeta_jj_deta_gen/F");
+   inputTree->Branch("vbf_maxDeta_jj_dphi_gen",&vbf_maxDeta_jj_dphi_gen,"vbf_maxDeta_jj_dphi_gen/F");
    
    inputTree->Branch("vbf_maxDeta_j1_QGLikelihood",&vbf_maxDeta_j1_QGLikelihood,"vbf_maxDeta_j1_QGLikelihood/F");
    inputTree->Branch("vbf_maxDeta_j2_QGLikelihood",&vbf_maxDeta_j2_QGLikelihood,"vbf_maxDeta_j2_QGLikelihood/F");
-
    
    inputTree->Branch("vbf_maxDeta_j1_isPileUpLoose",&vbf_maxDeta_j1_isPileUpLoose,"vbf_maxDeta_j1_isPileUpLoose/O");
    inputTree->Branch("vbf_maxDeta_j1_isPileUpMedium",&vbf_maxDeta_j1_isPileUpMedium,"vbf_maxDeta_j1_isPileUpMedium/O");
@@ -613,11 +665,23 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorSSVHP",&vbf_maxDeta_j1_bDiscriminatorSSVHP,"vbf_maxDeta_j1_bDiscriminatorSSVHP/F");
    inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorTCHP",&vbf_maxDeta_j1_bDiscriminatorTCHP,"vbf_maxDeta_j1_bDiscriminatorTCHP/F");
 
+   inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorSSVHE_gen",&vbf_maxDeta_j1_bDiscriminatorSSVHE_gen,"vbf_maxDeta_j1_bDiscriminatorSSVHE_gen/F");
+   inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorTCHE_gen",&vbf_maxDeta_j1_bDiscriminatorTCHE_gen,"vbf_maxDeta_j1_bDiscriminatorTCHE_gen/F");  
+   inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorCSV_gen",&vbf_maxDeta_j1_bDiscriminatorCSV_gen,"vbf_maxDeta_j1_bDiscriminatorCSV_gen/F");
+   inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorSSVHP_gen",&vbf_maxDeta_j1_bDiscriminatorSSVHP_gen,"vbf_maxDeta_j1_bDiscriminatorSSVHP_gen/F");
+   inputTree->Branch("vbf_maxDeta_j1_bDiscriminatorTCHP_gen",&vbf_maxDeta_j1_bDiscriminatorTCHP_gen,"vbf_maxDeta_j1_bDiscriminatorTCHP_gen/F");
+
    inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorSSVHE",&vbf_maxDeta_j2_bDiscriminatorSSVHE,"vbf_maxDeta_j2_bDiscriminatorSSVHE/F");
    inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorTCHE",&vbf_maxDeta_j2_bDiscriminatorTCHE,"vbf_maxDeta_j2_bDiscriminatorTCHE/F");  
    inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorCSV",&vbf_maxDeta_j2_bDiscriminatorCSV,"vbf_maxDeta_j2_bDiscriminatorCSV/F");
    inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorSSVHP",&vbf_maxDeta_j2_bDiscriminatorSSVHP,"vbf_maxDeta_j2_bDiscriminatorSSVHP/F");
    inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorTCHP",&vbf_maxDeta_j2_bDiscriminatorTCHP,"vbf_maxDeta_j2_bDiscriminatorTCHP/F");
+
+   inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorSSVHE_gen",&vbf_maxDeta_j2_bDiscriminatorSSVHE_gen,"vbf_maxDeta_j2_bDiscriminatorSSVHE_gen/F");
+   inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorTCHE_gen",&vbf_maxDeta_j2_bDiscriminatorTCHE_gen,"vbf_maxDeta_j2_bDiscriminatorTCHE_gen/F");  
+   inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorCSV_gen",&vbf_maxDeta_j2_bDiscriminatorCSV_gen,"vbf_maxDeta_j2_bDiscriminatorCSV_gen/F");
+   inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorSSVHP_gen",&vbf_maxDeta_j2_bDiscriminatorSSVHP_gen,"vbf_maxDeta_j2_bDiscriminatorSSVHP_gen/F");
+   inputTree->Branch("vbf_maxDeta_j2_bDiscriminatorTCHP_gen",&vbf_maxDeta_j2_bDiscriminatorTCHP_gen,"vbf_maxDeta_j2_bDiscriminatorTCHP_gen/F");
 
    inputTree->Branch("vbf_maxDeta_j1_ChargedHadronEnergy",&vbf_maxDeta_j1_ChargedHadronEnergy,"vbf_maxDeta_j1_ChargedHadronEnergy/F");
    inputTree->Branch("vbf_maxDeta_j1_ChargedHadronEnergyFrac",&vbf_maxDeta_j1_ChargedHadronEnergyFrac,"vbf_maxDeta_j1_ChargedHadronEnergyFrac/F");
@@ -683,12 +747,30 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxMjj_jj_phi",&vbf_maxMjj_jj_phi,"vbf_maxMjj_jj_phi/F");
    inputTree->Branch("vbf_maxMjj_jj_m",&vbf_maxMjj_jj_m,"vbf_maxMjj_jj_m/F");
   
+   inputTree->Branch("vbf_maxMjj_jj_e_gen",&vbf_maxMjj_jj_e_gen,"vbf_maxMjj_jj_e_gen/F");
+   inputTree->Branch("vbf_maxMjj_jj_pt_gen",&vbf_maxMjj_jj_pt_gen,"vbf_maxMjj_jj_pt_gen/F");
+   inputTree->Branch("vbf_maxMjj_jj_eta_gen",&vbf_maxMjj_jj_eta_gen,"vbf_maxMjj_jj_eta_gen/F");
+   inputTree->Branch("vbf_maxMjj_jj_phi_gen",&vbf_maxMjj_jj_phi_gen,"vbf_maxMjj_jj_phi_gen/F");
+   inputTree->Branch("vbf_maxMjj_jj_m_gen",&vbf_maxMjj_jj_m_gen,"vbf_maxMjj_jj_m_gen/F");
+  
    inputTree->Branch("vbf_maxMjj_j1_e",&vbf_maxMjj_j1_e,"vbf_maxMjj_j1_e/F");
    inputTree->Branch("vbf_maxMjj_j1_pt",&vbf_maxMjj_j1_pt,"vbf_maxMjj_j1_pt/F");
    inputTree->Branch("vbf_maxMjj_j1_eta",&vbf_maxMjj_j1_eta,"vbf_maxMjj_j1_eta/F");
    inputTree->Branch("vbf_maxMjj_j1_phi",&vbf_maxMjj_j1_phi,"vbf_maxMjj_j1_phi/F");
    inputTree->Branch("vbf_maxMjj_j1_m",&vbf_maxMjj_j1_m,"vbf_maxMjj_j1_m/F");
+
+   inputTree->Branch("vbf_maxMjj_j1_e_gen",&vbf_maxMjj_j1_e_gen,"vbf_maxMjj_j1_e_gen/F");
+   inputTree->Branch("vbf_maxMjj_j1_pt_gen",&vbf_maxMjj_j1_pt_gen,"vbf_maxMjj_j1_pt_gen/F");
+   inputTree->Branch("vbf_maxMjj_j1_eta_gen",&vbf_maxMjj_j1_eta_gen,"vbf_maxMjj_j1_eta_gen/F");
+   inputTree->Branch("vbf_maxMjj_j1_phi_gen",&vbf_maxMjj_j1_phi_gen,"vbf_maxMjj_j1_phi_gen/F");
+   inputTree->Branch("vbf_maxMjj_j1_m_gen",&vbf_maxMjj_j1_m_gen,"vbf_maxMjj_j1_m_gen/F");
   
+   inputTree->Branch("vbf_maxMjj_j2_e_gen",&vbf_maxMjj_j2_e_gen,"vbf_maxMjj_j2_e_gen/F");
+   inputTree->Branch("vbf_maxMjj_j2_pt_gen",&vbf_maxMjj_j2_pt_gen,"vbf_maxMjj_j2_pt_gen/F");
+   inputTree->Branch("vbf_maxMjj_j2_eta_gen",&vbf_maxMjj_j2_eta_gen,"vbf_maxMjj_j2_eta_gen/F");
+   inputTree->Branch("vbf_maxMjj_j2_phi_gen",&vbf_maxMjj_j2_phi_gen,"vbf_maxMjj_j2_phi_gen/F");
+   inputTree->Branch("vbf_maxMjj_j2_m_gen",&vbf_maxMjj_j2_m_gen,"vbf_maxMjj_j2_m_gen/F");
+
    inputTree->Branch("vbf_maxMjj_j2_e",&vbf_maxMjj_j2_e,"vbf_maxMjj_j2_e/F");
    inputTree->Branch("vbf_maxMjj_j2_pt",&vbf_maxMjj_j2_pt,"vbf_maxMjj_j2_pt/F");
    inputTree->Branch("vbf_maxMjj_j2_eta",&vbf_maxMjj_j2_eta,"vbf_maxMjj_j2_eta/F");
@@ -697,10 +779,12 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
   
    inputTree->Branch("vbf_maxMjj_jj_deta",&vbf_maxMjj_jj_deta,"vbf_maxMjj_jj_deta/F");
    inputTree->Branch("vbf_maxMjj_jj_dphi",&vbf_maxMjj_jj_dphi,"vbf_maxMjj_jj_dphi/F");
+
+   inputTree->Branch("vbf_maxMjj_jj_deta_gen",&vbf_maxMjj_jj_deta_gen,"vbf_maxMjj_jj_deta_gen/F");
+   inputTree->Branch("vbf_maxMjj_jj_dphi_gen",&vbf_maxMjj_jj_dphi_gen,"vbf_maxMjj_jj_dphi_gen/F");
    
    inputTree->Branch("vbf_maxMjj_j1_QGLikelihood",&vbf_maxMjj_j1_QGLikelihood,"vbf_maxMjj_j1_QGLikelihood/F");
    inputTree->Branch("vbf_maxMjj_j2_QGLikelihood",&vbf_maxMjj_j2_QGLikelihood,"vbf_maxMjj_j2_QGLikelihood/F");
-
    
    inputTree->Branch("vbf_maxMjj_j1_isPileUpLoose",&vbf_maxMjj_j1_isPileUpLoose,"vbf_maxMjj_j1_isPileUpLoose/O");
    inputTree->Branch("vbf_maxMjj_j1_isPileUpMedium",&vbf_maxMjj_j1_isPileUpMedium,"vbf_maxMjj_j1_isPileUpMedium/O");
@@ -720,11 +804,23 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
    inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorSSVHP",&vbf_maxMjj_j1_bDiscriminatorSSVHP,"vbf_maxMjj_j1_bDiscriminatorSSVHP/F");
    inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorTCHP",&vbf_maxMjj_j1_bDiscriminatorTCHP,"vbf_maxMjj_j1_bDiscriminatorTCHP/F");
 
+   inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorSSVHE_gen",&vbf_maxMjj_j1_bDiscriminatorSSVHE_gen,"vbf_maxMjj_j1_bDiscriminatorSSVHE_gen/F");
+   inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorTCHE_gen",&vbf_maxMjj_j1_bDiscriminatorTCHE_gen,"vbf_maxMjj_j1_bDiscriminatorTCHE_gen/F");  
+   inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorCSV_gen",&vbf_maxMjj_j1_bDiscriminatorCSV_gen,"vbf_maxMjj_j1_bDiscriminatorCSV_gen/F");
+   inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorSSVHP_gen",&vbf_maxMjj_j1_bDiscriminatorSSVHP_gen,"vbf_maxMjj_j1_bDiscriminatorSSVHP_gen/F");
+   inputTree->Branch("vbf_maxMjj_j1_bDiscriminatorTCHP_gen",&vbf_maxMjj_j1_bDiscriminatorTCHP_gen,"vbf_maxMjj_j1_bDiscriminatorTCHP_gen/F");
+
    inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorSSVHE",&vbf_maxMjj_j2_bDiscriminatorSSVHE,"vbf_maxMjj_j2_bDiscriminatorSSVHE/F");
    inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorTCHE",&vbf_maxMjj_j2_bDiscriminatorTCHE,"vbf_maxMjj_j2_bDiscriminatorTCHE/F");  
    inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorCSV",&vbf_maxMjj_j2_bDiscriminatorCSV,"vbf_maxMjj_j2_bDiscriminatorCSV/F");
    inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorSSVHP",&vbf_maxMjj_j2_bDiscriminatorSSVHP,"vbf_maxMjj_j2_bDiscriminatorSSVHP/F");
    inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorTCHP",&vbf_maxMjj_j2_bDiscriminatorTCHP,"vbf_maxMjj_j2_bDiscriminatorTCHP/F");
+
+   inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorSSVHE_gen",&vbf_maxMjj_j2_bDiscriminatorSSVHE_gen,"vbf_maxMjj_j2_bDiscriminatorSSVHE_gen/F");
+   inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorTCHE_gen",&vbf_maxMjj_j2_bDiscriminatorTCHE_gen,"vbf_maxMjj_j2_bDiscriminatorTCHE_gen/F");  
+   inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorCSV_gen",&vbf_maxMjj_j2_bDiscriminatorCSV_gen,"vbf_maxMjj_j2_bDiscriminatorCSV_gen/F");
+   inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorSSVHP_gen",&vbf_maxMjj_j2_bDiscriminatorSSVHP_gen,"vbf_maxMjj_j2_bDiscriminatorSSVHP_gen/F");
+   inputTree->Branch("vbf_maxMjj_j2_bDiscriminatorTCHP_gen",&vbf_maxMjj_j2_bDiscriminatorTCHP_gen,"vbf_maxMjj_j2_bDiscriminatorTCHP_gen/F");
 
    inputTree->Branch("vbf_maxMjj_j1_ChargedHadronEnergy",&vbf_maxMjj_j1_ChargedHadronEnergy,"vbf_maxMjj_j1_ChargedHadronEnergy/F");
    inputTree->Branch("vbf_maxMjj_j1_ChargedHadronEnergyFrac",&vbf_maxMjj_j1_ChargedHadronEnergyFrac,"vbf_maxMjj_j1_ChargedHadronEnergyFrac/F");
@@ -787,7 +883,7 @@ void VBFMuonClass::SetNewBranches ( TTree* inputTree){
 void VBFMuonClass::InitializateVariables(){
 
 
-  WHadposition=-999;  numberJetBin.clear(); Hadronic_W_Jet_mass_uncorr = -999;   
+  WHadposition=-999;  numberJetBin.clear(); numberJetBinGen.clear(); Hadronic_W_Jet_mass_uncorr = -999;   
   Hadronic_W_Jet_mass_tr_uncorr = -999;  Hadronic_W_Jet_mass_ft_uncorr = -999;   Hadronic_W_Jet_mass_pr_uncorr = -999;   
   Hadronic_W_Jet_massdrop_pr_uncorr = -999;  Hadronic_W_Jet_tau2tau1 = -999;  Hadronic_W_Jet_tau1 = -999;  
   Hadronic_W_Jet_tau2 = -999;   Hadronic_W_Jet_tau3 = -999;   Hadronic_W_Jet_tau4 = -999;   
@@ -895,13 +991,16 @@ void VBFMuonClass::InitializateVariables(){
 
   boosted_wjj_ang_ha_type2_met=-999, boosted_wjj_ang_hb_type2_met=-999, boosted_wjj_ang_hs_type2_met=-999, boosted_wjj_ang_phi_type2_met=-999, boosted_wjj_ang_phia_type2_met=-999, boosted_wjj_ang_phib_type2_met=-999;
 
-  vbf_maxpt_jj_e=-999,   vbf_maxpt_jj_pt=-999 ,   vbf_maxpt_jj_eta=-999 ,  vbf_maxpt_jj_phi=-999 , vbf_maxpt_jj_m=-999 ;
-  vbf_maxpt_j1_e=-999 ,   vbf_maxpt_j1_pt=-999 ,   vbf_maxpt_j1_eta=-999 ,  vbf_maxpt_j1_phi=-999 , vbf_maxpt_j1_m=-999 ;
 
   vbf_maxpt_jj_e=-999 ,   vbf_maxpt_jj_pt=-999 ,   vbf_maxpt_jj_eta=-999 ,  vbf_maxpt_jj_phi=-999 , vbf_maxpt_jj_m=-999 ;
   vbf_maxpt_j1_e=-999 ,   vbf_maxpt_j1_pt=-999 ,   vbf_maxpt_j1_eta=-999 ,  vbf_maxpt_j1_phi=-999 , vbf_maxpt_j1_m=-999 ;
   vbf_maxpt_j2_e=-999 ,   vbf_maxpt_j2_pt=-999 ,   vbf_maxpt_j2_eta=-999 ,  vbf_maxpt_j2_phi=-999 , vbf_maxpt_j2_m=-999 ;
   vbf_maxpt_jj_deta=-999 ,vbf_maxpt_jj_dphi=-999;
+
+  vbf_maxpt_jj_e_gen=-999 ,   vbf_maxpt_jj_pt_gen=-999 ,   vbf_maxpt_jj_eta_gen=-999 ,  vbf_maxpt_jj_phi_gen=-999 , vbf_maxpt_jj_m_gen=-999 ;
+  vbf_maxpt_j1_e_gen=-999 ,   vbf_maxpt_j1_pt_gen=-999 ,   vbf_maxpt_j1_eta_gen=-999 ,  vbf_maxpt_j1_phi_gen=-999 , vbf_maxpt_j1_m_gen=-999 ;
+  vbf_maxpt_j2_e_gen=-999 ,   vbf_maxpt_j2_pt_gen=-999 ,   vbf_maxpt_j2_eta_gen=-999 ,  vbf_maxpt_j2_phi_gen=-999 , vbf_maxpt_j2_m_gen=-999 ;
+  vbf_maxpt_jj_deta_gen=-999 ,vbf_maxpt_jj_dphi_gen=-999;
 
   vbf_maxpt_j1_QGLikelihood=-999,  vbf_maxpt_j2_QGLikelihood=-999;
 
@@ -915,6 +1014,11 @@ void VBFMuonClass::InitializateVariables(){
   vbf_maxpt_j1_bDiscriminatorSSVHP=-999, vbf_maxpt_j1_bDiscriminatorTCHP=-999;
   vbf_maxpt_j2_bDiscriminatorSSVHE=-999, vbf_maxpt_j2_bDiscriminatorTCHE=-999, vbf_maxpt_j2_bDiscriminatorCSV=-999;
   vbf_maxpt_j2_bDiscriminatorSSVHP=-999, vbf_maxpt_j2_bDiscriminatorTCHP=-999;
+
+  vbf_maxpt_j1_bDiscriminatorSSVHE_gen=-999, vbf_maxpt_j1_bDiscriminatorTCHE_gen=-999, vbf_maxpt_j1_bDiscriminatorCSV_gen=-999;
+  vbf_maxpt_j1_bDiscriminatorSSVHP_gen=-999, vbf_maxpt_j1_bDiscriminatorTCHP_gen=-999;
+  vbf_maxpt_j2_bDiscriminatorSSVHE_gen=-999, vbf_maxpt_j2_bDiscriminatorTCHE_gen=-999, vbf_maxpt_j2_bDiscriminatorCSV_gen=-999;
+  vbf_maxpt_j2_bDiscriminatorSSVHP_gen=-999, vbf_maxpt_j2_bDiscriminatorTCHP_gen=-999;
 
   vbf_maxpt_j1_ChargedHadronEnergy=-999,  vbf_maxpt_j1_ChargedHadronEnergyFrac=-999, vbf_maxpt_j1_NeutralHadronEnergy=-999;
   vbf_maxpt_j1_NeutralHadronEnergyFrac=-999, vbf_maxpt_j1_ChargedEmEnergy=-999, vbf_maxpt_j1_ChargedEmEnergyFrac=-999, vbf_maxpt_j1_ChargedMuEnergy=-999;
@@ -934,14 +1038,15 @@ void VBFMuonClass::InitializateVariables(){
   vbf_maxpt_j2_ChargedHadronMultiplicity=-999, vbf_maxpt_j2_NeutralHadronMultiplicity=-999, vbf_maxpt_j2_PhotonMultiplicity=-999;
   vbf_maxpt_j2_ElectronMultiplicity=-999,vbf_maxpt_j2_HFHadronMultiplicity=-999;
  
-
-  vbf_maxDeta_jj_e=-999,   vbf_maxDeta_jj_pt=-999 ,   vbf_maxDeta_jj_eta=-999 ,  vbf_maxDeta_jj_phi=-999 , vbf_maxDeta_jj_m=-999 ;
-  vbf_maxDeta_j1_e=-999 ,   vbf_maxDeta_j1_pt=-999 ,   vbf_maxDeta_j1_eta=-999 ,  vbf_maxDeta_j1_phi=-999 , vbf_maxDeta_j1_m=-999 ;
-
   vbf_maxDeta_jj_e=-999 ,   vbf_maxDeta_jj_pt=-999 ,   vbf_maxDeta_jj_eta=-999 ,  vbf_maxDeta_jj_phi=-999 , vbf_maxDeta_jj_m=-999 ;
   vbf_maxDeta_j1_e=-999 ,   vbf_maxDeta_j1_pt=-999 ,   vbf_maxDeta_j1_eta=-999 ,  vbf_maxDeta_j1_phi=-999 , vbf_maxDeta_j1_m=-999 ;
   vbf_maxDeta_j2_e=-999 ,   vbf_maxDeta_j2_pt=-999 ,   vbf_maxDeta_j2_eta=-999 ,  vbf_maxDeta_j2_phi=-999 , vbf_maxDeta_j2_m=-999 ;
   vbf_maxDeta_jj_deta=-999 ,vbf_maxDeta_jj_dphi=-999;
+
+  vbf_maxDeta_jj_e_gen=-999 ,   vbf_maxDeta_jj_pt_gen=-999 ,   vbf_maxDeta_jj_eta_gen=-999 ,  vbf_maxDeta_jj_phi_gen=-999 , vbf_maxDeta_jj_m_gen=-999 ;
+  vbf_maxDeta_j1_e_gen=-999 ,   vbf_maxDeta_j1_pt_gen=-999 ,   vbf_maxDeta_j1_eta_gen=-999 ,  vbf_maxDeta_j1_phi_gen=-999 , vbf_maxDeta_j1_m_gen=-999 ;
+  vbf_maxDeta_j2_e_gen=-999 ,   vbf_maxDeta_j2_pt_gen=-999 ,   vbf_maxDeta_j2_eta_gen=-999 ,  vbf_maxDeta_j2_phi_gen=-999 , vbf_maxDeta_j2_m_gen=-999 ;
+  vbf_maxDeta_jj_deta_gen=-999 ,vbf_maxDeta_jj_dphi_gen=-999;
 
   vbf_maxDeta_j1_QGLikelihood=-999,  vbf_maxDeta_j2_QGLikelihood=-999;
 
@@ -955,6 +1060,11 @@ void VBFMuonClass::InitializateVariables(){
   vbf_maxDeta_j1_bDiscriminatorSSVHP=-999, vbf_maxDeta_j1_bDiscriminatorTCHP=-999;
   vbf_maxDeta_j2_bDiscriminatorSSVHE=-999, vbf_maxDeta_j2_bDiscriminatorTCHE=-999, vbf_maxDeta_j2_bDiscriminatorCSV=-999;
   vbf_maxDeta_j2_bDiscriminatorSSVHP=-999, vbf_maxDeta_j2_bDiscriminatorTCHP=-999;
+
+  vbf_maxDeta_j1_bDiscriminatorSSVHE_gen=-999, vbf_maxDeta_j1_bDiscriminatorTCHE_gen=-999, vbf_maxDeta_j1_bDiscriminatorCSV_gen=-999;
+  vbf_maxDeta_j1_bDiscriminatorSSVHP_gen=-999, vbf_maxDeta_j1_bDiscriminatorTCHP_gen=-999;
+  vbf_maxDeta_j2_bDiscriminatorSSVHE_gen=-999, vbf_maxDeta_j2_bDiscriminatorTCHE_gen=-999, vbf_maxDeta_j2_bDiscriminatorCSV_gen=-999;
+  vbf_maxDeta_j2_bDiscriminatorSSVHP_gen=-999, vbf_maxDeta_j2_bDiscriminatorTCHP_gen=-999;
 
   vbf_maxDeta_j1_ChargedHadronEnergy=-999,  vbf_maxDeta_j1_ChargedHadronEnergyFrac=-999, vbf_maxDeta_j1_NeutralHadronEnergy=-999;
   vbf_maxDeta_j1_NeutralHadronEnergyFrac=-999, vbf_maxDeta_j1_ChargedEmEnergy=-999, vbf_maxDeta_j1_ChargedEmEnergyFrac=-999, vbf_maxDeta_j1_ChargedMuEnergy=-999;
@@ -975,13 +1085,15 @@ void VBFMuonClass::InitializateVariables(){
   vbf_maxDeta_j2_ElectronMultiplicity=-999,vbf_maxDeta_j2_HFHadronMultiplicity=-999;
 
 
-  vbf_maxMjj_jj_e=-999,   vbf_maxMjj_jj_pt=-999 ,   vbf_maxMjj_jj_eta=-999 ,  vbf_maxMjj_jj_phi=-999 , vbf_maxMjj_jj_m=-999 ;
-  vbf_maxMjj_j1_e=-999 ,   vbf_maxMjj_j1_pt=-999 ,   vbf_maxMjj_j1_eta=-999 ,  vbf_maxMjj_j1_phi=-999 , vbf_maxMjj_j1_m=-999 ;
-
   vbf_maxMjj_jj_e=-999 ,   vbf_maxMjj_jj_pt=-999 ,   vbf_maxMjj_jj_eta=-999 ,  vbf_maxMjj_jj_phi=-999 , vbf_maxMjj_jj_m=-999 ;
   vbf_maxMjj_j1_e=-999 ,   vbf_maxMjj_j1_pt=-999 ,   vbf_maxMjj_j1_eta=-999 ,  vbf_maxMjj_j1_phi=-999 , vbf_maxMjj_j1_m=-999 ;
   vbf_maxMjj_j2_e=-999 ,   vbf_maxMjj_j2_pt=-999 ,   vbf_maxMjj_j2_eta=-999 ,  vbf_maxMjj_j2_phi=-999 , vbf_maxMjj_j2_m=-999 ;
   vbf_maxMjj_jj_deta=-999 ,vbf_maxMjj_jj_dphi=-999;
+
+  vbf_maxMjj_jj_e_gen=-999 ,   vbf_maxMjj_jj_pt_gen=-999 ,   vbf_maxMjj_jj_eta_gen=-999 ,  vbf_maxMjj_jj_phi_gen=-999 , vbf_maxMjj_jj_m_gen=-999 ;
+  vbf_maxMjj_j1_e_gen=-999 ,   vbf_maxMjj_j1_pt_gen=-999 ,   vbf_maxMjj_j1_eta_gen=-999 ,  vbf_maxMjj_j1_phi_gen=-999 , vbf_maxMjj_j1_m_gen=-999 ;
+  vbf_maxMjj_j2_e_gen=-999 ,   vbf_maxMjj_j2_pt_gen=-999 ,   vbf_maxMjj_j2_eta_gen=-999 ,  vbf_maxMjj_j2_phi_gen=-999 , vbf_maxMjj_j2_m_gen=-999 ;
+  vbf_maxMjj_jj_deta_gen=-999 ,vbf_maxMjj_jj_dphi_gen=-999;
 
   vbf_maxMjj_j1_QGLikelihood=-999,  vbf_maxMjj_j2_QGLikelihood=-999;
 
@@ -996,6 +1108,11 @@ void VBFMuonClass::InitializateVariables(){
   vbf_maxMjj_j1_bDiscriminatorSSVHP=-999, vbf_maxMjj_j1_bDiscriminatorTCHP=-999;
   vbf_maxMjj_j2_bDiscriminatorSSVHE=-999, vbf_maxMjj_j2_bDiscriminatorTCHE=-999, vbf_maxMjj_j2_bDiscriminatorCSV=-999;
   vbf_maxMjj_j2_bDiscriminatorSSVHP=-999, vbf_maxMjj_j2_bDiscriminatorTCHP=-999; 
+
+  vbf_maxMjj_j1_bDiscriminatorSSVHE_gen=-999, vbf_maxMjj_j1_bDiscriminatorTCHE_gen=-999, vbf_maxMjj_j1_bDiscriminatorCSV_gen=-999;
+  vbf_maxMjj_j1_bDiscriminatorSSVHP_gen=-999, vbf_maxMjj_j1_bDiscriminatorTCHP_gen=-999;
+  vbf_maxMjj_j2_bDiscriminatorSSVHE_gen=-999, vbf_maxMjj_j2_bDiscriminatorTCHE_gen=-999, vbf_maxMjj_j2_bDiscriminatorCSV_gen=-999;
+  vbf_maxMjj_j2_bDiscriminatorSSVHP_gen=-999, vbf_maxMjj_j2_bDiscriminatorTCHP_gen=-999; 
 
   vbf_maxMjj_j1_ChargedHadronEnergy=-999,  vbf_maxMjj_j1_ChargedHadronEnergyFrac=-999, vbf_maxMjj_j1_NeutralHadronEnergy=-999;
   vbf_maxMjj_j1_NeutralHadronEnergyFrac=-999, vbf_maxMjj_j1_ChargedEmEnergy=-999, vbf_maxMjj_j1_ChargedEmEnergyFrac=-999, vbf_maxMjj_j1_ChargedMuEnergy=-999;
@@ -1014,7 +1131,5 @@ void VBFMuonClass::InitializateVariables(){
   vbf_maxMjj_j2_HFHadronEnergy=-999, vbf_maxMjj_j2_HFHadronEnergyFraction=-999,vbf_maxMjj_j2_HFEMEnergy=-999, vbf_maxMjj_j2_HFEMEnergyFraction=-999;
   vbf_maxMjj_j2_ChargedHadronMultiplicity=-999, vbf_maxMjj_j2_NeutralHadronMultiplicity=-999, vbf_maxMjj_j2_PhotonMultiplicity=-999;
   vbf_maxMjj_j2_ElectronMultiplicity=-999,vbf_maxMjj_j2_HFHadronMultiplicity=-999;
-
-
 
 }
