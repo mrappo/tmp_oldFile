@@ -1,7 +1,8 @@
 #####################################################################################################################
 #  Sample Name 					            Reduced Name      Color     XSec (pb)    NumEntriesBefore
 ######################################################################################################################
-ofile_ofile_WJets_Pythia100                                           W+Jets           2           272.6       8955318
+ofile_data                                                      DATA             1               1             1
+ofile_WJets_Pythia100                                           W+Jets           2           272.6       8955318
 #ofile_WJets_Herwig                                             W+Jets           2           272.6      13256090
 #ofile_WJets_Pythia180                                          W+Jets            2        28.9755       9739464
 ofile_WW                                                        WW               4          54.838      10000431
