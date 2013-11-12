@@ -73,12 +73,14 @@ int main (int argc, char **argv){
 
   // Set Root style from global enviroment path                                                                                                                                  
 
-  std::string ROOTStyle =  getenv ("ROOTStyle");
-
-  gROOT->ProcessLine((".x "+ROOTStyle+"/rootLogon.C").c_str());
-  gROOT->ProcessLine((".x "+ROOTStyle+"/rootPalette.C").c_str());
-  gROOT->ProcessLine((".x "+ROOTStyle+"/rootColors.C").c_str());
-  gROOT->ProcessLine((".x "+ROOTStyle+"/setTDRStyle.C").c_str());
+  std::string ROOTStyle;
+  if(getenv ("ROOTStyle")!=NULL){
+   ROOTStyle = getenv ("ROOTStyle");
+   gROOT->ProcessLine((".x "+ROOTStyle+"/rootLogon.C").c_str());
+   gROOT->ProcessLine((".x "+ROOTStyle+"/rootPalette.C").c_str());
+   gROOT->ProcessLine((".x "+ROOTStyle+"/rootColors.C").c_str());
+   gROOT->ProcessLine((".x "+ROOTStyle+"/setTDRStyle.C").c_str());
+  }
 
   gStyle->SetPadLeftMargin(0.25);
   gStyle->SetPalette(1);
