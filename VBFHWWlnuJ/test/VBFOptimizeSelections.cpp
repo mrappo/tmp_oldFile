@@ -69,28 +69,47 @@ int main (int argc, char** argv){
   std::cout<<" Input Label          = "<<Label<<std::endl;
   std::cout<<" Input LeptonType     = "<<LeptonType<<std::endl;
   std::cout<<std::endl;
-  
-  std::string SignalName ;
-  try{ SignalName = gConfigParser -> readStringOption("Option::SignalName"); }
+
+  bool isPrintResultwithTMVA = false ;
+  try{  isPrintResultwithTMVA = gConfigParser -> readBoolOption("Input::isPrintResultwithTMVA"); }
   catch(char const* exceptionString){
-    SignalName = "qqH";
+    isPrintResultwithTMVA = false;
+    std::cerr<<" isPrintResultwithTMVA --> set to false "<<std::endl;
+  }
+
+
+  std::string SignalggHName ;
+  try{ SignalggHName = gConfigParser -> readStringOption("Option::SignalggHName"); }
+  catch(char const* exceptionString){
+    SignalggHName = "ggH";
+    std::cerr<<" Signal Name set to --> ggH default "<<std::endl;
+  }
+
+  std::cout<<" Option Signal ggH Name = "<<SignalggHName<<std::endl;
+  std::cout<<std::endl;
+
+  std::string SignalqqHName ;
+  try{ SignalqqHName = gConfigParser -> readStringOption("Option::SignalqqHName"); }
+  catch(char const* exceptionString){
+    SignalqqHName = "qqH";
     std::cerr<<" Signal Name set to --> qqH default "<<std::endl;
   }
 
-  std::cout<<" Option Signal Name = "<<SignalName<<std::endl;
+  std::cout<<" Option Signal qqH Name = "<<SignalqqHName<<std::endl;
   std::cout<<std::endl;
 
   std::string EventWeight ;
 
   try{ EventWeight = gConfigParser -> readStringOption("Option::EventWeight"); }
   catch(char const* exceptionString){
-    EventWeight = "puwt*effwt";
+    EventWeight = "eff_and_pu_Weight*btag_weight*interference_Weight_H1000";
     std::cerr<<" Event Weight set to --> puwt*effwt default "<<std::endl;
   }
 
   std::cout<<" Option Event Weight = "<<EventWeight<<std::endl;
   std::cout<<std::endl;
-  
+
+
   std::string PreselectionCutType ;
   try{ PreselectionCutType  = gConfigParser -> readStringOption("Option::PreselectionCutType"); }
   catch(char const* exceptionString){
@@ -191,7 +210,7 @@ int main (int argc, char** argv){
 	TString NameFile = Form("%s/%s.root",InputDirectory.c_str(),NameSample.at(iSample).c_str());
 	std::cout<<" Input File : "<< NameFile.Data()<<std::endl;
                 
-	if(NameReducedSample.at(iSample) == SignalName ){
+	if(NameReducedSample.at(iSample) == SignalqqHName ){
           signalFileList.push_back ( new TFile (NameFile.Data(),"READ") );
 	  if(signalFileList.back()!=0) signalTreeList.push_back( (TTree*) signalFileList.back()->Get(TreeName.c_str()));
         }
@@ -236,7 +255,7 @@ int main (int argc, char** argv){
   
    for(size_t iSample =0; iSample<NameSample.size() ; iSample++){
 
-    if( NameReducedSample.at(iSample) == SignalName ) {
+    if( NameReducedSample.at(iSample) == SignalqqHName ) {
        
        signalGlobalWeight.at(isSignal) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
        isSignal ++; 
@@ -254,7 +273,7 @@ int main (int argc, char** argv){
    std::cout<<" Prepare MVA  "<<std::endl;
    std::cout<<std::endl;
 
-  
+     
    WWTrainingVector.back()->AddPrepareTraining ( LeptonType,PreselectionCutType, EventWeight, &JetPtBinOfTraining, pTBin) ;
   
    // Book and Run TMVA Training and testing for the selected methods
@@ -307,7 +326,8 @@ int main (int argc, char** argv){
    std::cout<<" Save Output Image after training and testing ..  "<<std::endl;
    std::cout<<std::endl;
 
-   WWTrainingVector.back()->PrintTrainingResults ();
+   if (isPrintResultwithTMVA) WWTrainingVector.back()->PrintTrainingResults ();
+   
 
   }
 
