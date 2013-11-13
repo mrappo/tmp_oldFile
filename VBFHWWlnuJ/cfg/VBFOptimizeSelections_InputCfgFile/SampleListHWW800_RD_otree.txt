@@ -21,5 +21,5 @@ ofile_tWch_bar                                                  STop            
 #ofile_TTbar_scaleUp                                             tt_bar           210         225.197      5009488
 #ofile_TTbar_scaleUp                                             tt_bar           210         228.0        5387181
 ofile_TTbar_Powheg                                              tt_bar           210         225.197      21675970
-ofile_ggH800                                                    ggH              4          0.02782       198750
-ofile_vbfH800                                                   qqH              1          0.01109       1927
+ofile_ggH800                                                    ggHx800              4          0.02782       198750
+ofile_vbfH800                                                   qqHx800              1          0.01109       1927
