@@ -283,8 +283,8 @@ int main (int argc, char** argv){
 
 
    for(size_t iMethod =0; iMethod<UseMethodName.size(); iMethod++){
-    
-    // Rectangular Cuts
+
+     // Rectangular Cuts
      if(UseMethodName.at(iMethod) == "CutsMC" )      WWTrainingVector.back()->BookandTrainRectangularCuts("MC");
      else if(UseMethodName.at(iMethod) == "CutsGA" ) WWTrainingVector.back()->BookandTrainRectangularCuts("GA");
      else if(UseMethodName.at(iMethod) == "CutsSA" ) WWTrainingVector.back()->BookandTrainRectangularCuts("SA");
