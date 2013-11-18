@@ -121,6 +121,8 @@ void TrainingMVAClass::AddPrepareTraining ( const std::string & LeptonType, cons
 
   preselectionCut_ = new TCut (GetPreselectionCut(LeptonType,preselectionCutType).Data()) ;
 
+  std::cout<<" Get Preselection Cut "<<GetPreselectionCut(LeptonType,preselectionCutType).Data()<<std::endl;
+
   TString Option = Form("nTrain_Signal=%d:nTrain_Background=%d:nTest_Signal=%d:nTest_Background=%d:SplitMode=%s:NormMode=%s:!V",
                          nTraining,nTesting,nTraining,nTesting,splitMode.c_str(),NormMode.c_str());
 
@@ -134,7 +136,7 @@ void TrainingMVAClass::AddPrepareTraining ( const std::string & LeptonType, cons
 void TrainingMVAClass::BookandTrainRectangularCuts (const std::string & FitMethod ){
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
+  int result = system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure
   outputFileWeightName_["Cuts"+FitMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_Cuts"+FitMethod+"_"+Label_;
@@ -172,7 +174,7 @@ void TrainingMVAClass::BookandTrainLikelihood ( const std::string & LikelihoodTy
 
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
+  int result = system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure
   outputFileWeightName_[LikelihoodType+"_"+Label_] = outputFilePath_+"/TMVAWeight_"+LikelihoodType+"_"+Label_;
@@ -221,7 +223,7 @@ void TrainingMVAClass::BookandTrainFisherDiscriminant(){
 
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
+  int result = system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                              
 
@@ -251,8 +253,8 @@ void TrainingMVAClass::BookandTrainLinearDiscriminant(){
 
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
-
+  int result = system(command.c_str());
+  if(!result) return ;
   // Set Name of the Weight file for TMVA evaluating procedure
 
   outputFileWeightName_["LD"+Label_] = outputFilePath_+"/TMVAWeight_LD_"+Label_;
@@ -284,10 +286,9 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
 
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
+  int result = system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
-
   outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["MLP_"+NeuronType+"_"+TrainingMethod+"_"+Label_];
 
@@ -315,8 +316,7 @@ void TrainingMVAClass::BookandTrainMLP(const int & nCycles, const std::string & 
 void TrainingMVAClass::BookandTrainCFMlpANN ( const int & nCycles, const std::string & HiddenLayers){
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
-
+  int result = system(command.c_str());
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
 
   outputFileWeightName_["CFMlpANN_"+Label_] = outputFilePath_+"/TMVAWeight_CFMlpANN_"+Label_;
@@ -327,7 +327,6 @@ void TrainingMVAClass::BookandTrainCFMlpANN ( const int & nCycles, const std::st
   factory_->BookMethod( TMVA::Types::kCFMlpANN, "CFMlpANN",Option.Data());
 
   factory_->OptimizeAllMethods();                                                                                                                                                          
-  
   factory_->TrainAllMethods();
 
   factory_->TestAllMethods();
@@ -344,10 +343,9 @@ void TrainingMVAClass::BookandTrainCFMlpANN ( const int & nCycles, const std::st
 void TrainingMVAClass::BookandTrainTMlpANN  ( const int & nCycles, const std::string & HiddenLayers,  const std::string & TrainingMethod, const float & ValidationFraction){
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
+  int result = system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
-
   outputFileWeightName_["TMlpANN_"+TrainingMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_TMlpANN_"+TrainingMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["TMlpANN_"+TrainingMethod+"_"+Label_];
 
@@ -356,8 +354,7 @@ void TrainingMVAClass::BookandTrainTMlpANN  ( const int & nCycles, const std::st
 
   factory_->BookMethod( TMVA::Types::kTMlpANN, "TMlpANN_"+TrainingMethod,Option.Data());
 
-  factory_->OptimizeAllMethods();                                                                                                                                                          
-  
+  factory_->OptimizeAllMethods();                                                                                                                                                            
   factory_->TrainAllMethods();
 
   factory_->TestAllMethods();
@@ -378,10 +375,9 @@ void TrainingMVAClass::BookandTrainBDT ( const int & NTrees, const std::string &
 
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
+  int result = system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                 
-
   outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDT_"+BoostType+"_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDT_"+BoostType+"_"+PruneMethod+"_"+Label_];
 
@@ -411,10 +407,9 @@ void TrainingMVAClass::BookandTrainBDTG ( const int & NTrees, const float & Grad
 
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
+  int result = system(command.c_str());
 
   // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
-
   outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTG_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTG_"+PruneMethod+"_"+Label_];
 
@@ -443,9 +438,9 @@ void TrainingMVAClass::BookandTrainBDTF ( const int & NTrees, const std::string 
 
 
   std::string command = " if [ ! -e "+outputFilePath_+" ] ; then mkdir "+outputFilePath_+" ; fi";
-  system(command.c_str());
+  int result = system(command.c_str());
 
-  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                 
+  // Set Name of the Weight file for TMVA evaluating procedure                                                                                                                                
   outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_] = outputFilePath_+"/TMVAWeight_BDTF_"+PruneMethod+"_"+Label_;
   (TMVA::gConfig().GetIONames()).fWeightFileDir = outputFileWeightName_["BDTF_"+PruneMethod+"_"+Label_];
 
@@ -567,54 +562,144 @@ void TrainingMVAClass::SetEventWeight (const std::string & weightString){
 TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType){
 
 
-  if(preselectionCutType == "basicPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+  if(preselectionCutType == "basicPreselectionCutEXO" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
     return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
                 pTJetMin_,pTJetMax_);
 	     
-  else if(preselectionCutType == "basicPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
+  else if(preselectionCutType == "basicPreselectionCutEXO" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
                 pTJetMin_,pTJetMax_);
 
-  else if(preselectionCutType == "basicSBPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 60 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )"
-		" && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+  else if(preselectionCutType == "basicPreselectionCutEXO" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
+                pTJetMin_,pTJetMax_);
 
-  else if(preselectionCutType == "basicSBPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 60 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) )"
+
+  else if(preselectionCutType == "basicSBPreselectionCutEXO" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=105 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if(preselectionCutType == "basicSBPreselectionCutEXO" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=105 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if(preselectionCutType == "basicSBPreselectionCutEXO" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=105 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+
+  else if(preselectionCutType == "basicSRPreselectionCutEXO" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form(" issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 )"
                 " && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
-  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return Form(" issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=60 && jet_mass_pr <= 100 )"
-                " && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
-
-  else if(preselectionCutType == "basicSRPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=60 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
+  else if(preselectionCutType == "basicSRPreselectionCutEXO" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
                 "( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
-  else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+  else if(preselectionCutType == "basicSRPreselectionCutEXO" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
+                "( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+
+  else if(preselectionCutType == "basicSRSBPreselectionCutEXO" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
     return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0"
                 " && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
-  else if(preselectionCutType == "basicSRSBPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0"
+  else if(preselectionCutType == "basicSRSBPreselectionCutEXO" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0"
+                " && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if(preselectionCutType == "basicSRSBPreselectionCutEXO" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0"
                 " && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
     
-  else if( preselectionCutType == "basicVBFPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return Form("ggdboostedWevt==1 && GroomedJet_CA8_pt[0]>200 && W_pt>200 && event_met_pfmet>50 &&  W_muon_pt > 30");
+
+  ///////////////////// Higgs Like Selection
+
+  if(preselectionCutType == "basicPreselectionCutHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && numberJetBin < 2 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+	      
+ else if(preselectionCutType == "basicPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
+                pTJetMin_,pTJetMax_);
+
+ else if(preselectionCutType == "basicPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
+                pTJetMin_,pTJetMax_);
+
+
+  else if(preselectionCutType == "basicSBPreselectionCutHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && nbjets_csvm_veto == 0 && ( (jet_mass_pr > 40 && jet_mass_pr < 65) || (jet_mass_pr > 105 && jet_mass_pr < 130) ) && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if(preselectionCutType == "basicSBPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 60 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if(preselectionCutType == "basicSBPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=105 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+
+  else if(preselectionCutType == "basicSRPreselectionCutHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && nbjets_csvm_veto == 0 && (jet_mass_pr > 65 && jet_mass_pr < 105) && numberJetBin < 2 ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f)",pTJetMin_,pTJetMax_);
+
+  else if(preselectionCutType == "basicSRPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
+                "( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if(preselectionCutType == "basicSRPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
+                "( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+
+  else if(preselectionCutType == "basicSRSBPreselectionCutHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && nbjets_csvm_veto == 0 && (jet_mass_pr > 40 && jet_mass_pr < 130) && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if(preselectionCutType == "basicSRSBPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0"
+                " && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    
+  else if(preselectionCutType == "basicSRSBPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0"
+                " && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  /// VBF Cuts    
+
+  else if( preselectionCutType == "basicVBFPreselectionCutHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if( preselectionCutType == "basicVBFPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if( preselectionCutType == "basicVBFPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+
+  else if( preselectionCutType == "basicVBFSBHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ((jet_mass_pr > 40 && jet_mass_pr <65) || (jet_mass_pr > 105 && jet_mass_pr < 130)) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if( preselectionCutType == "basicVBFSBHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ((jet_mass_pr > 40 && jet_mass_pr <65) || (jet_mass_pr > 105 && jet_mass_pr < 130)) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if( preselectionCutType == "basicVBFSBHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ((jet_mass_pr > 40 && jet_mass_pr <65) || (jet_mass_pr > 105 && jet_mass_pr < 130)) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+
+  else if( preselectionCutType == "basicVBFSRHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105)  && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if( preselectionCutType == "basicVBFSRHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105)  && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+  else if( preselectionCutType == "basicVBFSRHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
       
-  else if( preselectionCutType == "basicVBFPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("ggdboostedWevt==1 && GroomedJet_CA8_pt[0]>200 && W_pt>200 && event_met_pfmet>70 && W_electron_pt > 35");
 
+  else if( preselectionCutType == "basicVBFSBSRHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 40 && jet_mass_pr <130)  && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
-  else if(preselectionCutType == "basicVBFPreselectionCut" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return Form("ggdboostedWevt && GroomedJet_CA8_pt[0]>200 && W_pt>200 && event_met_pfmet>50 && GroomedJet_CA8_deltaphi_METca8jet > 2.0 && GroomedJet_CA8_deltaR_lca8jet > 1.57 &&"
-                " W_muon_pt > 30");
+  else if( preselectionCutType == "basicVBFSBSRHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 40 && jet_mass_pr <130)  && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
-  else if(preselectionCutType == "basicVBFPreselectionCut" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("ggdboostedWevt && GroomedJet_CA8_pt[0]>200 && W_pt>200 && event_met_pfmet>70 && GroomedJet_CA8_deltaphi_METca8jet > 2.0 && GroomedJet_CA8_deltaR_lca8jet > 1.57 &&"  
-                " W_electron_pt > 35");
-
-    else return Form("v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+  else if( preselectionCutType == "basicVBFSBSRHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 40 && jet_mass_pr <130) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+      
+  else return Form("v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
 }
 
@@ -625,8 +710,8 @@ TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,con
 void  TrainingMVAClass::PrintTrainingResults (){
 
   std::string command = " if [ ! -e plots ] ; then mkdir plots ; fi";
-  system(command.c_str());
-
+  int result = system(command.c_str());
+  if(!result) return ;
   std::cout << "******************************************************* "<<std::endl;  
   std::cout << "==> Print Output Plots For: " << outputFile_->GetName() << std::endl;
   std::cout << "******************************************************* "<<std::endl;  
@@ -650,7 +735,8 @@ void  TrainingMVAClass::PrintTrainingResults (){
   std::cout<<std::endl;
  
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/variables.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
 
 
   std::cout<<std::endl;
@@ -661,7 +747,8 @@ void  TrainingMVAClass::PrintTrainingResults (){
   std::cout<<std::endl;
  
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/correlationscatters.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
 
   std::cout<<std::endl;
   std::cout<<std::endl;
@@ -671,7 +758,8 @@ void  TrainingMVAClass::PrintTrainingResults (){
   std::cout<<std::endl;
  
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/correlations.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
 
   std::cout<<std::endl;
   std::cout<<std::endl;
@@ -681,7 +769,8 @@ void  TrainingMVAClass::PrintTrainingResults (){
   std::cout<<std::endl;
  
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/mvas.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
 
   std::cout<<std::endl;
   std::cout<<std::endl;
@@ -691,7 +780,8 @@ void  TrainingMVAClass::PrintTrainingResults (){
   std::cout<<std::endl;
  
   command = "root -l -q -b "+PWD+"/macros/TMVAMacro/efficiencies.C\\(\\\""+PWD+"/"+outputFileNameComplete_+"\\\"\\)";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
 
   // Output directory for plots
 
@@ -703,25 +793,29 @@ void  TrainingMVAClass::PrintTrainingResults (){
   std::cout<<std::endl;
  
   command = " if [ ! -e "+outputFilePath_+"/trainingPlots ] ; then mkdir "+outputFilePath_+"/trainingPlots ; fi";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
   std::cout<<" command : "<<command<<std::endl;
   std::cout<<std::endl;
 
   command = " if [ ! -e "+outputFilePath_+"/trainingPlots/"+outputFileName_+"_"+Label_+" ] ; then mkdir "+outputFilePath_+"/trainingPlots/"+
                          outputFileName_+"_"+Label_+" ; fi";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
   std::cout<<" command : "<<command<<std::endl;
   std::cout<<std::endl;
   
   command = "mv ./plots/* "+outputFilePath_+"/trainingPlots/"+outputFileName_+"_"+Label_+"/" ;
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
   std::cout<<" command : "<<command<<std::endl;
   std::cout<<std::endl;
 
   // Output Directory for weights -> one directory for all the methods
 
   command = " if [ ! -e "+outputFilePath_+"/weights ] ; then mkdir "+outputFilePath_+"/weights ; fi";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
   std::cout<<" command : "<<command<<std::endl;
   std::cout<<std::endl;
 
@@ -730,19 +824,22 @@ void  TrainingMVAClass::PrintTrainingResults (){
   for( ; itMap!= outputFileWeightName_.end(); ++itMap){
 
   command = "scp "+itMap->second+"/* "+outputFilePath_+"/weights/";
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
   std::cout<<" command : "<<command<<std::endl;
   std::cout<<std::endl;
 
   command = "rm -rf "+itMap->second ;
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
   std::cout<<" command : "<<command<<std::endl;
   std::cout<<std::endl;
 
   }
 
   command = "rm -rf ./plots" ;
-  system(command.c_str());
+  result = system(command.c_str());
+  if(!result) return ;
   std::cout<<" command : "<<command<<std::endl;
   std::cout<<std::endl;
 
