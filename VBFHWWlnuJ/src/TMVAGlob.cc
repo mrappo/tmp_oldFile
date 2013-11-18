@@ -1204,9 +1204,29 @@ void TMVAGlob::ReadHistograms (TFile* inputFile){
 }
 
 TString TMVAGlob::GetFormula(){
+
   TString f = fFormula_;
+
+  f.ReplaceAll("epsilonS","x");
   f.ReplaceAll("S","x");
-  f.ReplaceAll("B","y");
+  f.ReplaceAll("epsilonB","y");
+  f.ReplaceAll("B","y"); 
+
+  return f;
+}
+
+TString TMVAGlob::GetLatexFormula(){
+  TString f = fFormula_;
+
+  if (signalType_ == true) 
+   f.ReplaceAll("S","#epsilon_{S}");
+  if (backgroundType_ == true) 
+   f.ReplaceAll("B","#epsilon_{B}");   
+
+  f.ReplaceAll("(","{");
+  f.ReplaceAll(")","}");
+  f.ReplaceAll("sqrt","#sqrt");
+
   return f;
 }
 
@@ -1348,7 +1368,7 @@ void TMVAGlob::plotSignificance (TFile* inputFile, SignificanceType stype, const
    legend2->SetFillStyle( 1 );
    legend2->SetFillColor( 0 );
 
-   legend2->AddEntry(infoBox->significance_,GetLatexFormula().Data(),"L");
+   legend2->AddEntry(infoBox->significance_,(*this).GetLatexFormula().Data(),"L");
    legend2->Draw("same");
    legend2->SetBorderSize(1);
    legend2->SetMargin( 0.3 );
@@ -1378,7 +1398,10 @@ void TMVAGlob::plotSignificance (TFile* inputFile, SignificanceType stype, const
 
    cSignificance_->Update();
 
-   (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/mva_significance_%s",outputPlotDirectory.c_str(),infoBox->methodTitle_.Data())));
+   if(UseSignalEfficiency && UseBackgroundEfficiency)
+    (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/mva_significance_eff_%s",outputPlotDirectory.c_str(),infoBox->methodTitle_.Data())));
+   else if( !UseSignalEfficiency && !UseBackgroundEfficiency)
+    (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/mva_significance_%s",outputPlotDirectory.c_str(),infoBox->methodTitle_.Data())));
 
    if(rightAxis!=0) delete rightAxis ;
    if((*this).cSignificance_!=0) delete (*this).cSignificance_ ;
