@@ -118,17 +118,62 @@ void ApplyMVAWeightClass::FillMVAWeight (const std::string & LeptonType, const s
 
       bool isGoodEvent = false ;
 
-      if (preselectionCutType_ == "basicPreselectionCut" && (LeptonType_ == "Mu" || LeptonType_ == "mu" || LeptonType_ == "Muon" || LeptonType_ == "muon") ) {         
+      if (preselectionCutType_ == "basicPreselectionCutEXO" && (LeptonType_ == "Mu" || LeptonType_ == "mu" || LeptonType_ == "Muon" || LeptonType_ == "muon") ) {         
 
 	isGoodEvent = treeReader_.at(iTree)->getInt("issignal")[0] && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 40 && 
 	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 50 && ( treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && 
                       treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
       }
-      else if (preselectionCutType_ == "basicPreselectionCut" && (LeptonType_ == "El" || LeptonType_ == "el" || LeptonType_ == "Electron" || LeptonType_ == "electron") ) 
+      else if (preselectionCutType_ == "basicPreselectionCutEXO" && (LeptonType_ == "El" || LeptonType_ == "el" || LeptonType_ == "Electron" || LeptonType_ == "electron") ){ 
       
 	isGoodEvent = treeReader_.at(iTree)->getFloat("issignal")[0]  && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 80 && 
 	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 90 && (treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && 
                       treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
+      }
+      else if (preselectionCutType_ == "basicPreselectionCutEXO" && (LeptonType_ == "MuEl" || LeptonType_ == "muel" || LeptonType_ == "MuonEle" || LeptonType_ == "muonele") ){ 
+      
+	isGoodEvent = treeReader_.at(iTree)->getFloat("issignal")[0]  && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 80 && 
+	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 90 && (treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && 
+                      treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
+      }
+      
+      else if (preselectionCutType_ == "basicPreselectionCutHiggs" && (LeptonType_ == "Mu" || LeptonType_ == "mu" || LeptonType_ == "Muon" || LeptonType_ == "muon") ) {         
+
+	isGoodEvent = treeReader_.at(iTree)->getInt("issignal")[0] && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 50 && 
+ 	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 30 && treeReader_.at(iTree)->getFloat("numberJetBin")[0]<2 && 
+                      ( treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
+      }
+      else if (preselectionCutType_ == "basicPreselectionCutHiggs" && (LeptonType_ == "El" || LeptonType_ == "el" || LeptonType_ == "Electron" || LeptonType_ == "electron") ){ 
+      
+	isGoodEvent = treeReader_.at(iTree)->getFloat("issignal")[0]  && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 70 && 
+	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 35 && treeReader_.at(iTree)->getFloat("numberJetBin")[0]<2 &&
+                      (treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
+      }
+      else if (preselectionCutType_ == "basicPreselectionCutHiggs" && (LeptonType_ == "MuEl" || LeptonType_ == "muel" || LeptonType_ == "MuonEle" || LeptonType_ == "muonele") ){ 
+      
+	isGoodEvent = treeReader_.at(iTree)->getFloat("issignal")[0]  && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 70 && 
+	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 35 && treeReader_.at(iTree)->getFloat("numberJetBin")[0]<2 &&
+                      (treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
+      }
+
+      else if (preselectionCutType_ == "basicVBFPreselectionCutHiggs" && (LeptonType_ == "Mu" || LeptonType_ == "mu" || LeptonType_ == "Muon" || LeptonType_ == "muon") ) {         
+
+	isGoodEvent = treeReader_.at(iTree)->getInt("issignal")[0] && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 50 && 
+	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 30 && treeReader_.at(iTree)->getFloat("numberJetBin")[0]>=2 && 
+                      ( treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
+      }
+      else if (preselectionCutType_ == "basicVBFPreselectionCutHiggs" && (LeptonType_ == "El" || LeptonType_ == "el" || LeptonType_ == "Electron" || LeptonType_ == "electron") ){ 
+      
+	isGoodEvent = treeReader_.at(iTree)->getFloat("issignal")[0]  && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 70 && 
+	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 35 && treeReader_.at(iTree)->getFloat("numberJetBin")[0]>=2 &&
+                      (treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
+      }
+      else if (preselectionCutType_ == "basicVBFPreselectionCutHiggs" && (LeptonType_ == "MuEl" || LeptonType_ == "muel" || LeptonType_ == "MuonEle" || LeptonType_ == "muonele") ){ 
+      
+	isGoodEvent = treeReader_.at(iTree)->getFloat("issignal")[0]  && treeReader_.at(iTree)->getFloat("v_pt")[0] > 200 && treeReader_.at(iTree)->getFloat("pfMET")[0] > 70 && 
+	              treeReader_.at(iTree)->getFloat("l_pt")[0] > 35 && treeReader_.at(iTree)->getFloat("numberJetBin")[0]>=2 && 
+                      (treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] > pTJetMin_ && treeReader_.at(iTree)->getFloat("ungroomed_jet_pt")[0] < pTJetMax_ )  ;
+      }
       
       if(isGoodEvent) { weight_ = reader_->EvaluateMVA(methodName_.c_str()); newBranch_->Fill() ;}
       else { weight_ = -100. ; newBranch_->Fill() ; } 
