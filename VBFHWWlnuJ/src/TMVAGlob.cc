@@ -1,19 +1,46 @@
+#include <iomanip>
 #include "TMVAGlob.h"
 
 TMVAGlob::TMVAGlob(){
 
   cROC_        = NULL;
   frameROC_    = NULL;
-  leg_         = NULL;
+  legROC_      = NULL;
 
   color_index  = 0;
   method_index = 0;
+  mvas_index   = 0;
+  cMVAs_       = NULL ;
+
+  fInfoList_       = NULL ;
+  histoSignal_     = NULL ;
+  histoBackground_ = NULL ;
+  effSignal_       = NULL ;
+  effBackground_   = NULL ;
+  significance_    = NULL ;
+
+  signalType_     = false ;
+  backgroundType_ = false ;
+
 }
 
-TMVAGlob::~TMVAGlob(){}
+TMVAGlob::~TMVAGlob(){
+
+  if(cROC_!=NULL)       delete cROC_;
+  if(frameROC_!=NULL)   delete frameROC_;
+  if(legROC_!=NULL)     delete legROC_;
+  if(fInfoList_!=NULL)  delete fInfoList_;
+  if(histoSignal_!=NULL) delete histoSignal_ ;
+  if(histoBackground_!=NULL) delete histoBackground_;
+  if(effSignal_!=NULL) delete effSignal_ ;
+  if(effBackground_!=NULL) delete effBackground_;
+  if(significance_!=NULL) delete significance_;
+  inputFiles_.clear() ;
+  inputMethodName_.clear() ;
+  
+}
 
 void TMVAGlob::DestroyCanvases(){
-
   TList* loc = (TList*)gROOT->GetListOfCanvases();
   TListIter itc(loc);
   TObject *o(0);
@@ -22,7 +49,6 @@ void TMVAGlob::DestroyCanvases(){
 
 // set style and remove existing canvas'
 void TMVAGlob::Initialize( Bool_t useTMVAStyle){
-
  (*this).DestroyCanvases();
  // set style
  if (!useTMVAStyle) {
@@ -34,9 +60,7 @@ void TMVAGlob::Initialize( Bool_t useTMVAStyle){
 
 // checks if file with name "fin" is already open, and if not opens one
 void TMVAGlob::openFileInput( const TString& fin ){
-
  TFile* file = gDirectory->GetFile();
-
  if (file==0 || fin != file->GetName()) {
    if (file != 0) {gROOT->cd();
                    file->Close();
@@ -53,7 +77,6 @@ void TMVAGlob::openFileInput( const TString& fin ){
 }
 
 void TMVAGlob::openFileInput( const std::vector<std::string> & fin ){
-
  for(size_t iFile = 0 ; iFile < fin.size(); iFile++){
   std::cout << "--- Opening root file " << fin.at(iFile) << " in read mode" << std::endl;
   inputFiles_.push_back(new TFile( fin.at(iFile).c_str(), "READ"));
@@ -62,20 +85,17 @@ void TMVAGlob::openFileInput( const std::vector<std::string> & fin ){
 }
 
 
-TFile* TMVAGlob::GetInputFile (const TString& fin ){
-
+TFile* TMVAGlob::GetInputFile(const TString& fin){
   for(size_t iFile = 0 ; iFile < inputFiles_.size(); iFile++){
-    if(inputFiles_.at(iFile)->GetName() == fin) return inputFiles_.at(iFile) ;
+    if(inputFiles_.at(iFile)->GetName() == fin) 
+      return inputFiles_.at(iFile) ;
   }
 
   return 0 ;
-
 }
 
-std::vector<TFile*> TMVAGlob::GetInputFile (){
-
+std::vector<TFile*> TMVAGlob::GetInputFile(){
   return inputFiles_ ;
-
 }
 
 
@@ -104,14 +124,14 @@ return rkey;
 
 
 // used to create output file for canvas
-void TMVAGlob::PrintImage(TDirectory* dir, const std::string & outputPlotDirectory){
+void TMVAGlob::PrintImageROC(TDirectory* dir, const std::string & outputPlotDirectory){
 
-  TString fname = outputPlotDirectory + "rejBvsS";
+  TString fname = outputPlotDirectory + "ROCcurve";
 
   if (TString(dir->GetName()).Contains("multicut")){
     TString fprepend(dir->GetName());
     fprepend.ReplaceAll("multicutMVA_","");
-    fname = outputPlotDirectory + fprepend + "_" + "rejBvsS";
+    fname = outputPlotDirectory + fprepend + "_" + "ROCcurve";
   }
 
   if (NULL == (*this).cROC_) std::cout << "*** Error in TMVAGlob::imgconv: canvas is NULL" << std::endl;
@@ -128,14 +148,12 @@ void TMVAGlob::PrintImage(TDirectory* dir, const std::string & outputPlotDirecto
 
        (*this).cROC_->Print(pdfName);
        (*this).cROC_->Print(pngName);
-       (*this).cROC_->Print(cxxName);
-        
+       (*this).cROC_->Print(cxxName);        
  }
 }
 
 // function to normalize a histo also if it has weights
-void TMVAGlob::NormalizeHist( TH1* h ) {
- 
+void TMVAGlob::NormalizeHist( TH1* h ) { 
  if (h==0) return;
  if (h->GetSumw2N() == 0) h->Sumw2();
  if(h->GetSumOfWeights()!=0) {
@@ -145,7 +163,6 @@ void TMVAGlob::NormalizeHist( TH1* h ) {
 }
 
 void TMVAGlob::NormalizeHists( TH1* sig, TH1* bkg) {
- 
  if (sig->GetSumw2N() == 0) sig->Sumw2();
  if (bkg && bkg->GetSumw2N() == 0) bkg->Sumw2();
       
@@ -161,7 +178,6 @@ void TMVAGlob::NormalizeHists( TH1* sig, TH1* bkg) {
 
 // the following are tools to help handling different methods and titles
 void TMVAGlob::GetMethodName( TString & name, TKey * mkey ) {
-      
    if (mkey==0) return;
    name = mkey->GetName();
    name.ReplaceAll("Method_","");
@@ -209,7 +225,6 @@ int TMVAGlob::GetListOfKeys( TList& keys, TString inherits, TDirectory *dir){
 }
 
 int TMVAGlob::GetNumberOfTargets( TDirectory *dir ){
-
   if (!dir) {
              std::cout << "tmvaglob::GetNumberOfTargets is called with *dir==NULL :( " << std::endl;
              return 0;
@@ -232,7 +247,7 @@ int TMVAGlob::GetNumberOfInputVariables( TDirectory *dir ){
  TIter next(dir->GetListOfKeys());
  TKey* key    = 0;
  Int_t noVars = 0;
-         
+   
  while ((key = (TKey*)next())) {
    if (key->GetCycle() != 1) continue;
    // count number of variables (signal is sufficient), exclude target(s)
@@ -542,14 +557,14 @@ void TMVAGlob::banner4Plot (const bool & isLabel, const float & ptMin, const flo
   pt->SetLineStyle(1);
   pt->SetLineWidth(0);
   pt->SetMargin(0);
-  pt->SetTextFont(43);
+  pt->SetTextFont(42);
   pt->SetShadowColor(0);
   pt->Draw();
 
 }
 
 
-void TMVAGlob::CreateCanvasandFrame(TFile *inputFile, const double & minPTbin, const double & maxPTbin, const std::string & outputPlotDirectory){
+void TMVAGlob::CreateCanvasandFrameROC(TFile *inputFile, const double & minPTbin, const double & maxPTbin, const std::string & outputPlotDirectory){
                                
 
   cROC_ = new TCanvas( (std::string("cROC")+std::string(inputFile->GetName())).c_str(), "cROC",180,52,550,550);
@@ -559,15 +574,11 @@ void TMVAGlob::CreateCanvasandFrame(TFile *inputFile, const double & minPTbin, c
   cROC_->SetBorderMode(0);
   cROC_->SetBorderSize(2);
   cROC_->Range(-0.128266,-0.1538462,1.059382,1.128205);
-  cROC_->SetFillColor(0);
-  cROC_->SetBorderMode(0);
-  cROC_->SetBorderSize(2);
   
   cROC_->SetTickx(1);
   cROC_->SetTicky(1);
   cROC_->SetRightMargin(0.05);
   cROC_->SetBottomMargin(0.12);
-  cROC_->SetFrameBorderMode(0);
   cROC_->SetFrameBorderMode(0);
 
 
@@ -598,23 +609,22 @@ void TMVAGlob::CreateCanvasandFrame(TFile *inputFile, const double & minPTbin, c
   latex.DrawLatex(0.6,0.92,Form("CMS Preliminary Simulation,#sqrt{s} = 8 TeV, W+jets"));
 
 
-  leg_ = new TLegend(0.20,0.171,0.6,0.511,NULL,"brNDC");
-  leg_->SetBorderSize(0);
-  leg_->SetTextSize(0.033);
-  leg_->SetTextFont(43);
-  leg_->SetLineColor(1);
-  leg_->SetLineStyle(1);
-  leg_->SetLineWidth(2);
-  leg_->SetFillColor(19);
-  leg_->SetFillStyle(0);
-
+  legROC_ = new TLegend(0.20,0.171,0.6,0.511,NULL,"brNDC");
+  legROC_->SetBorderSize(0);
+  legROC_->SetTextSize(0.033);
+  legROC_->SetTextFont(42);
+  legROC_->SetLineColor(1);
+  legROC_->SetLineStyle(1);
+  legROC_->SetLineWidth(2);
+  legROC_->SetFillColor(19);
+  legROC_->SetFillStyle(0);
 }
 
 void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double & minPTbin, const double & maxPTbin, const std::string & outputPlotDirectory){
 
   // Plot the ROC curve with a proper style from root file originated by TMVA                                                                                                         
 
-  if((*this).cROC_==NULL) (*this).CreateCanvasandFrame(inputFile,minPTbin,maxPTbin,outputPlotDirectory); 
+  if((*this).cROC_==NULL) (*this).CreateCanvasandFrameROC(inputFile,minPTbin,maxPTbin,outputPlotDirectory); 
       
   TList TrainingMethods;
   TList hists;
@@ -622,6 +632,7 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
   TIter next(&TrainingMethods);
   TKey *key = 0, *hkey = 0;
   inputFile->cd();
+  (*this).cROC_->cd();
 
   // loop over all methods                                                                                                                                                                
   while ((key = (TKey*)next())) {
@@ -680,32 +691,31 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
     }    
  
    if(TString(histWithLargestInt->GetTitle()).Contains("Cuts")){
-     (*this).leg_->AddEntry(histWithLargestInt,inputMethodName_.at((*this).method_index).c_str(),"l");
+     (*this).legROC_->AddEntry(histWithLargestInt,inputMethodName_.at((*this).method_index).c_str(),"l");
      (*this).method_index ++ ;
    }
    else if (TString(histWithLargestInt->GetTitle()).Contains("Likelihood"))
-    (*this).leg_->AddEntry(histWithLargestInt,"Likelihood","l");
+    (*this).legROC_->AddEntry(histWithLargestInt,"Likelihood","l");
    else if (TString(histWithLargestInt->GetTitle()).Contains("LD"))
-    (*this).leg_->AddEntry(histWithLargestInt,"Linear Discriminant","l");
-   else if (TString(histWithLargestInt->GetTitle()).Contains("BDT"))
-    (*this).leg_->AddEntry(histWithLargestInt,"Boosted Decision Tree (BDT)","l");
+    (*this).legROC_->AddEntry(histWithLargestInt,"Linear Discriminant","l");
+   else if (TString(histWithLargestInt->GetTitle()).Contains("BDT") && ! TString(histWithLargestInt->GetTitle()).Contains("BDTG") && !TString(histWithLargestInt->GetTitle()).Contains("BDTF"))
+    (*this).legROC_->AddEntry(histWithLargestInt,"Boosted Decision Tree (BDT)","l");
    else if (TString(histWithLargestInt->GetTitle()).Contains("BDTG"))
-    (*this).leg_->AddEntry(histWithLargestInt,"Gradient Boosted Decition Tree (BDTG)","l");
+    (*this).legROC_->AddEntry(histWithLargestInt,"Gradient BDT (BDTG)","l");
    else if (TString(histWithLargestInt->GetTitle()).Contains("MLP"))
-    (*this).leg_->AddEntry(histWithLargestInt,"Multi-Layer Perceptron (MLP)","l");
+    (*this).legROC_->AddEntry(histWithLargestInt,"Multi-Layer Perceptron (MLP)","l");
    else if (TString(histWithLargestInt->GetTitle()).Contains("PDEFoam"))
-    (*this).leg_->AddEntry(histWithLargestInt,"PDEFoam","l");
+    (*this).legROC_->AddEntry(histWithLargestInt,"PDEFoam","l");
    else if (TString(histWithLargestInt->GetTitle()).Contains("SVN"))
-    (*this).leg_->AddEntry(histWithLargestInt,"Supported Vector Machine (SVN)","l");
+    (*this).legROC_->AddEntry(histWithLargestInt,"Supported Vector Machine (SVM)","l");
    else if (TString(histWithLargestInt->GetTitle()).Contains("Fisher"))
-    (*this).leg_->AddEntry(histWithLargestInt,"Fisher Discriminant","l");
+    (*this).legROC_->AddEntry(histWithLargestInt,"Fisher Discriminant","l");
    else if (TString(histWithLargestInt->GetTitle()).Contains("Fisher"))
-     (*this).leg_->AddEntry(histWithLargestInt,TString(histWithLargestInt->GetTitle()).ReplaceAll("MVA_",""),"l");
-   
-    hists.Remove(histWithLargestInt);
+     (*this).legROC_->AddEntry(histWithLargestInt,TString(histWithLargestInt->GetTitle()).ReplaceAll("MVA_",""),"l");   
+   hists.Remove(histWithLargestInt);
   }
   
-  (*this).leg_->Draw("same");
+  (*this).legROC_->Draw("same");
   (*this).cROC_->Update();
   
   return;
@@ -722,7 +732,660 @@ void TMVAGlob::SetMethodName(const std::vector<std::string> & SetMethodName){
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll(":__:","_{"));
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll(":___:","}"));
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll("//"," "));
+  }       
+}
+
+
+void TMVAGlob::plotCorrelationMatrix(TFile* inputFile, const int & iFile, const std::string & outputPlotDirectory){
+  
+  std::string nameCorrelationSignal     = "CorrelationMatrixS";
+  std::string nameCorrelationBackground = "CorrelationMatrixB";
+
+  TH2F* hSignal     = (TH2F*) inputFile->Get(nameCorrelationSignal.c_str());
+  TH2F* hBackground = (TH2F*) inputFile->Get(nameCorrelationBackground.c_str());
+  hSignal->SetName(std::string(Form("%s_%d",nameCorrelationSignal.c_str(),iFile)).c_str());
+  hBackground->SetName(std::string(Form("%s_%d",nameCorrelationBackground.c_str(),iFile)).c_str());
+  
+  if(hSignal == 0 || hBackground == 0){ std::cerr<<" Null Pointer for correlation Matrix --> exit without plot "<<std::endl;  return ; }
+
+  (*this).cCorrelationSignal_ = new TCanvas(std::string(Form("c%s_%d",nameCorrelationSignal.c_str(),iFile)).c_str(),Form("Correlation Matrix Signal"),180,52,550,550);
+  float newMargin1 = 0.13;
+  float newMargin2 = 0.15;
+  float newMargin3 = 0.20;
+
+  (*this).cCorrelationSignal_->SetGrid();
+  (*this).cCorrelationSignal_->SetTicks();
+  (*this).cCorrelationSignal_->SetLeftMargin(newMargin3);
+  (*this).cCorrelationSignal_->SetBottomMargin(newMargin2);
+  (*this).cCorrelationSignal_->SetRightMargin(newMargin1);
+  (*this).cCorrelationSignal_->SetTopMargin(newMargin1);
+  
+  gStyle->SetPaintTextFormat("3g");
+
+  hSignal->SetMarkerSize(1.5);
+  hSignal->SetMarkerColor(0);
+  hSignal->GetXaxis()->SetLabelSize(0.035);
+  hSignal->GetYaxis()->SetLabelSize(0.035);
+  hSignal->LabelsOption("d");
+  hSignal->SetLabelOffset(0.011);// label offset on x axis                                                                                                                                
+  
+  hBackground->SetMarkerSize(1.5);
+  hBackground->SetMarkerColor(0);
+  hBackground->GetXaxis()->SetLabelSize(0.035);
+  hBackground->GetYaxis()->SetLabelSize(0.035);
+  hBackground->LabelsOption("d");
+  hBackground->SetLabelOffset( 0.011 );// label offset on x axis                                                                                                                          
+ 
+  // Plot correlation between signal      
+  (*this).cCorrelationSignal_->cd();
+  hSignal->Draw("colz"); // color pads                                                                                                                                                    
+  hSignal->Draw("textsame");  // add text                                                                                                                                  
+  // add comment                                                                                                                                                                       
+  TText* text = new TText( 0.53, 0.88, "Linear correlation coefficients in %" );
+  text->SetNDC();
+  text->SetTextSize( 0.026 );
+  text->AppendPad();
+  (*this).cCorrelationSignal_->Update();
+
+  nameCorrelationSignal = std::string(Form("%s_%d",nameCorrelationSignal.c_str(),iFile));
+  nameCorrelationBackground = std::string(Form("%s_%d",nameCorrelationBackground.c_str(),iFile));
+
+  (*this).PrintImage((*this).cCorrelationSignal_,outputPlotDirectory+"/"+nameCorrelationSignal);
+    
+  // Background correlation
+  (*this).cCorrelationBackground_ = new TCanvas(std::string(Form("c%s_%d",nameCorrelationBackground.c_str(),iFile)).c_str(),Form("Correlation Matrix Signal"),180,52,550,550);
+  (*this).cCorrelationBackground_->SetGrid();
+  (*this).cCorrelationBackground_->SetTicks();
+  (*this).cCorrelationBackground_->SetLeftMargin(newMargin3);
+  (*this).cCorrelationBackground_->SetBottomMargin(newMargin2);
+  (*this).cCorrelationBackground_->SetRightMargin(newMargin1);
+  (*this).cCorrelationBackground_->SetTopMargin(newMargin1);
+
+  (*this).cCorrelationBackground_->cd();
+  hBackground->Draw("colz"); // color pads                                                                                                                             
+  hBackground->Draw("textsame");  // add text                                                                                                                             
+  // add comment                                                                                                                                                                       
+  text->AppendPad();
+  (*this).cCorrelationBackground_->Update();
+  (*this).PrintImage((*this).cCorrelationBackground_,outputPlotDirectory+"/"+nameCorrelationBackground);
+
+  if(hSignal!=0) delete hSignal;
+  if(hBackground!=0) delete hBackground;
+  if(text!=0) delete text;
+
+}
+
+void TMVAGlob::PrintImage(TCanvas* c, const std::string & fname){
+
+  TString pngName = fname+".png";
+  TString pdfName = fname+".pdf";
+  TString cxxName = fname+".cxx";
+
+  c->Print(pdfName);
+  c->Print(pngName);
+  c->Print(cxxName);
+
+}
+
+void TMVAGlob::plotMVAs(TFile* inputFile, HistType htype, const std::string & outputPlotDirectory){
+
+
+  // search for the right histograms in full list of keys                                                                                                                                 
+  TIter next(inputFile->GetListOfKeys());
+  TKey *key(0);
+
+
+  while ((key = (TKey*)next())) {
+
+    if (!TString(key->GetName()).BeginsWith("Method_")) continue;
+    if (!gROOT->GetClass(key->GetClassName())->InheritsFrom("TDirectory")) continue;
+
+    TString methodName;
+    (*this).GetMethodName(methodName,key);
+
+    TDirectory* mDir = (TDirectory*)key->ReadObj();
+
+    TIter keyIt(mDir->GetListOfKeys());
+    TKey *titkey;
+
+    while ((titkey = (TKey*)keyIt())) {
+
+      if (!gROOT->GetClass(titkey->GetClassName())->InheritsFrom("TDirectory")) continue;
+
+      TDirectory *titDir = (TDirectory *)titkey->ReadObj();
+      TString methodTitle;
+      (*this).GetMethodTitle(methodTitle,titDir);
+      std::cout << "--- Found directory for method: " << methodName << "::" << methodTitle << std::flush;
+
+      TString hname = "MVA_" + methodTitle;
+
+      if      (htype == ProbaType  ) hname += "_Proba";
+      else if (htype == RarityType ) hname += "_Rarity";
+
+      (*this).histoSignal_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_S" ));
+      (*this).histoBackground_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_B" ));
+    
+      if ((*this).histoSignal_==0 || (*this).histoBackground_==0) {
+	if (htype == MVAType)
+	  std::cout << ":\t mva distribution not available (this is normal for Cut classifier)" << std::endl;
+	else if(htype == ProbaType)
+	  std::cout << ":\t probability distribution not available" << std::endl;
+	else if(htype == RarityType)
+	  std::cout << ":\t rarity distribution not available" << std::endl;
+	else if(htype == CompareType)
+	  std::cout << ":\t overtraining check not available" << std::endl;
+	else std::cout << std::endl;
+	continue;
+      }
+
+      std::cout << " containing " << hname << "_S/_B" << std::endl;
+
+      if((methodTitle).Contains("Likelihood"))
+         methodTitle = Form("Likelhood");
+      else if ((methodTitle).Contains("LD"))
+         methodTitle = Form("Linear Discriminant");
+      else if ((methodTitle).Contains("BDT") && !(methodTitle).Contains("BDTG") && !(methodTitle).Contains("BDTF"))
+         methodTitle = Form("Boosted Decision Tree (BDT)");
+      else if ((methodTitle).Contains("BDTG")) 
+         methodTitle = Form("Gradient BDT (BDTG)");
+      else if ((methodTitle).Contains("MLP"))
+         methodTitle = Form("Multi-Layer Perceptron (MLP)");
+      else if ((methodTitle).Contains("PDEFoam")) 
+         methodTitle = Form("PDEFoam");
+      else if ((methodTitle).Contains("SVN")) 
+         methodTitle = Form("Supported Vector Machine (SVM)");
+      else if ((methodTitle).Contains("Fisher")) 
+         methodTitle = Form("Fisher Discriminant");
+        
+      (*this).histoSignal_->SetTitle( Form("Response for classifier: %s", methodTitle.Data()) );
+      if(htype == ProbaType)
+	(*this).histoSignal_->SetTitle( Form("Probability for classifier: %s", methodTitle.Data()) );
+      else if (htype == RarityType)
+	(*this).histoSignal_->SetTitle( Form("Rarity for classifier: %s", methodTitle.Data()) );
+      else if (htype == CompareType)
+	(*this).histoSignal_->SetTitle( Form("Overtraining check for classifier: %s", methodTitle.Data()) );                                                                                
+
+
+      TString cCanvasTitle = ((htype == MVAType)     ? Form("Response %s",methodTitle.Data()) :
+			      (htype == ProbaType)   ? Form("Probability %s",methodTitle.Data()) :
+			      (htype == CompareType) ? Form("Comparison %s",methodTitle.Data()) :
+			      Form("Rarity %s",methodTitle.Data()));
+
+
+      (*this).cMVAs_ = new TCanvas( Form("cMVAs_%d",(*this).mvas_index), cCanvasTitle,180,100,550,550);
+      (*this).cMVAs_->cd();
+      (*this).cMVAs_->SetTicks();
+      (*this).cMVAs_->SetFillColor(0);
+      (*this).cMVAs_->SetBorderMode(0);
+      (*this).cMVAs_->SetBorderSize(2);
+  
+      (*this).cMVAs_->SetTickx(1);
+      (*this).cMVAs_->SetTicky(1);
+      (*this).cMVAs_->SetRightMargin(0.05);
+      (*this).cMVAs_->SetBottomMargin(0.12);
+      (*this).cMVAs_->SetFrameBorderMode(0);
+
+      // set the histogram style                                                                                                                                                        
+      (*this).histoSignal_->SetFillColor(4);
+      (*this).histoSignal_->SetLineColor(4);
+      (*this).histoSignal_->SetLineWidth(2);
+      (*this).histoSignal_->SetFillStyle(1001);
+
+      if(htype == CompareType) (*this).histoSignal_->SetFillStyle(3001);
+         
+      (*this).histoBackground_->SetFillColor(2);
+      (*this).histoBackground_->SetLineColor(2);
+      (*this).histoBackground_->SetLineWidth(2);
+      (*this).histoBackground_->SetFillStyle(3005);
+    
+      // normalise both signal and background                                                                                                                                           
+      (*this).NormalizeHists( (*this).histoSignal_, (*this).histoBackground_);
+
+      // frame limits (choose judicuous x range)                                                                                                                                        
+      Float_t nrms = 10;
+      std::cout << "--- Mean and RMS (S): " << (*this).histoSignal_->GetMean() << ", " << (*this).histoSignal_->GetRMS() << std::endl;
+      std::cout << "--- Mean and RMS (B): " << (*this).histoBackground_->GetMean() << ", " << (*this).histoBackground_->GetRMS() << std::endl;
+
+      Float_t xmin = TMath::Max( TMath::Min((*this).histoSignal_->GetMean() - nrms*(*this).histoSignal_->GetRMS(),(*this).histoBackground_->GetMean() - nrms*(*this).histoBackground_->GetRMS() ),(*this).histoSignal_->GetXaxis()->GetXmin() );
+      Float_t xmax = TMath::Min( TMath::Max((*this).histoSignal_->GetMean() + nrms*(*this).histoSignal_->GetRMS(),(*this).histoBackground_->GetMean() + nrms*(*this).histoBackground_->GetRMS() ),(*this).histoSignal_->GetXaxis()->GetXmax() );
+      Float_t ymin = 0;
+      Float_t maxMult = (htype == CompareType) ? 1.3 : 1.2;
+      Float_t ymax = TMath::Max( (*this).histoSignal_->GetMaximum(), (*this).histoBackground_->GetMaximum() )*maxMult;
+
+      // build a frame                                                                                                                                                                  
+      Int_t nb = 500;
+      TString hFrameName(TString("frame") + methodTitle);
+      TObject *o = gROOT->FindObject(hFrameName);
+      if(o) delete o;
+      TH2F* frame = new TH2F( hFrameName, (*this).histoSignal_->GetTitle(),nb, xmin, xmax, nb, ymin, ymax );
+      frame->GetXaxis()->SetTitle( methodTitle + ((htype == MVAType || htype == CompareType) ? " response" : "") );
+      if      (htype == ProbaType  ) frame->GetXaxis()->SetTitle( "Signal probability" );
+      else if (htype == RarityType ) frame->GetXaxis()->SetTitle( "Signal rarity" );
+      frame->GetYaxis()->SetTitle("(1/N) dN/dx");
+
+
+      frame->SetLineWidth(2);
+      frame->SetMarkerStyle(21);
+      frame->SetMarkerSize(0.3);
+      frame->GetXaxis()->SetNdivisions(405);
+      frame->GetYaxis()->SetNdivisions(405);
+      frame->GetXaxis()->SetLabelOffset(0.012);
+      frame->GetXaxis()->SetLabelSize(0.03);
+      frame->GetXaxis()->SetTitleSize(0.035);
+      frame->GetXaxis()->SetTitleOffset(1.05);
+      frame->GetYaxis()->SetLabelOffset(0.012);
+      frame->GetYaxis()->SetLabelSize(0.03);
+      frame->GetYaxis()->SetTitleSize(0.035);
+      frame->GetYaxis()->SetTitleOffset(1.10);
+      frame->Draw("");
+   
+      // Draw legend                                                                                                                                                                    
+      TLegend *legend= new TLegend( (*this).cMVAs_->GetLeftMargin()+0.03, 1-(*this).cMVAs_->GetTopMargin()-0.15,
+				    (*this).cMVAs_->GetLeftMargin()+(htype == CompareType ? 0.40 : 0.3)+0.15, 1-(*this).cMVAs_->GetTopMargin()-0.03);
+      legend->SetFillStyle(0);
+      legend->SetFillColor(0);
+      legend->SetTextSize (0.042);
+      if(htype == CompareType) legend->SetTextSize (0.032); 
+      legend->SetBorderSize(0);
+      legend->SetTextFont(42);
+      legend->SetLineColor(1);
+      legend->SetLineStyle(1);
+      legend->SetLineWidth(2);
+
+      legend->AddEntry((*this).histoSignal_,TString("Signal")     + ((htype == CompareType) ? " (testing)" : ""), "F");
+      legend->AddEntry((*this).histoBackground_,TString("Background") + ((htype == CompareType) ? " (testing)" : ""), "F");
+
+      legend->SetMargin( (htype == CompareType ? 0.2 : 0.3) );
+      legend->Draw("same");
+
+      (*this).histoSignal_->Draw("samehist");
+      (*this).histoBackground_->Draw("samehist");
+
+      TLegend *legend2= new TLegend( 1-(*this).cMVAs_->GetRightMargin()-0.4, 1-(*this).cMVAs_->GetTopMargin()-0.15,
+	        		     1-(*this).cMVAs_->GetRightMargin()-0.02,1-(*this).cMVAs_->GetTopMargin()-0.03);
+
+      if (htype == CompareType) {
+	// if overtraining check, load additional histograms                                                                                                                           
+	TH1* sigOv = 0;
+	TH1* bgdOv = 0;
+
+	TString ovname = hname += "_Train";
+	sigOv = dynamic_cast<TH1*>(titDir->Get( ovname + "_S" ));
+	bgdOv = dynamic_cast<TH1*>(titDir->Get( ovname + "_B" ));
+
+	// normalise both signal and background                                                                                                                                        
+
+	if (sigOv == 0 || bgdOv == 0) {
+	  std::cout << "+++ Problem in \"mvas.C\": overtraining check histograms do not exist" << std::endl; return;
+	}
+	
+	(*this).NormalizeHists( sigOv, bgdOv );
+
+	Int_t col = (*this).histoSignal_->GetLineColor();
+	sigOv->SetMarkerColor(col);
+	sigOv->SetMarkerSize(0.7);
+	sigOv->SetMarkerStyle(20);
+	sigOv->SetLineWidth(1);
+	sigOv->SetLineColor(col);
+	sigOv->Draw("e1same");
+
+	col = (*this).histoBackground_->GetLineColor();
+	bgdOv->SetMarkerColor(col);
+	bgdOv->SetMarkerSize(0.7);
+	bgdOv->SetMarkerStyle(20);
+	bgdOv->SetLineWidth(1);
+	bgdOv->SetLineColor(col);
+	bgdOv->Draw("e1same");
+
+	ymax = TMath::Max( ymax, float(TMath::Max(sigOv->GetMaximum(),bgdOv->GetMaximum())*maxMult));
+	frame->GetYaxis()->SetLimits(0,ymax);
+
+        std::cout << "--- Found comparison histograms for overtraining check" << std::endl;  
+
+        legend2->SetFillStyle(0);
+        legend2->SetFillColor(0);
+        legend2->SetTextSize (0.03);
+        legend2->SetBorderSize(0);
+        legend2->SetTextFont(42);
+        legend2->SetLineColor(1);
+        legend2->SetLineStyle(1);
+        legend2->SetLineWidth(2);
+ 	legend2->AddEntry(sigOv,"Signal (training)","P");
+ 	legend2->AddEntry(bgdOv,"Background (training)","P");
+ 	legend2->SetMargin( 0.1 );
+ 	legend2->Draw("same");
+
+	// perform K-S test                                                                                                                                                            
+	std::cout << "--- Perform Kolmogorov-Smirnov tests" << std::endl;
+	Double_t kolS = (*this).histoSignal_->KolmogorovTest(sigOv);
+	Double_t kolB = (*this).histoBackground_->KolmogorovTest(bgdOv);
+	std::cout << "--- Goodness of signal (background) consistency: " << kolS << " (" << kolB << ")" << std::endl;
+
+	TString probatext = Form("Kolmogorov-Smirnov test:");
+        TString probatext2 = Form("signal (background) probability = %5.3g (%5.3g)", kolS, kolB );
+	TLatex* tt  = new TLatex(0.25,0.72,probatext);
+	TLatex* tt2 = new TLatex(0.25,0.69,probatext2);
+	tt->SetNDC(); 
+        tt->SetTextSize(0.025); 
+        tt->AppendPad();
+	tt2->SetNDC(); 
+        tt2->SetTextSize(0.025); 
+        tt2->AppendPad();
+
+	// chi2 test                                                                                                                                            
+	std::cout << "--- Perform Chi2 tests" << std::endl;
+	Double_t chi2S = (*this).histoSignal_->Chi2Test(sigOv,"WW CHI2/NDF" );
+	Double_t chi2B = (*this).histoBackground_->Chi2Test(bgdOv,"WW CHI2/NDF" );
+	std::cout << "--- Goodness of signal (background) consistency: " << chi2S << " (" << chi2B << ")" << std::endl;
+
+	TString probatext3 = Form("#Chi^{2} test:");
+        TString probatext4 = Form("signal (background) #Chi^{2}/ndf = %5.3g (%5.3g)", chi2S, chi2B );
+	TLatex* tt3  = new TLatex(0.25,0.65,probatext3);
+	TLatex* tt4  = new TLatex(0.25,0.62,probatext4);
+	tt3->SetNDC(); 
+        tt3->SetTextSize(0.025); 
+        tt3->AppendPad();
+	tt4->SetNDC(); 
+        tt4->SetTextSize(0.025); 
+        tt4->AppendPad();
+
+      }
+
+      // redraw axes                                                                                                                                                                    
+      frame->Draw("sameaxis");
+
+      // text for overflows                                                                                                                                                             
+      Int_t    nbin = (*this).histoSignal_->GetNbinsX();
+      Double_t dxu  = (*this).histoSignal_->GetBinWidth(0);
+      Double_t dxo  = (*this).histoSignal_->GetBinWidth(nbin+1);
+      TString uoflow = Form( "U/O-flow (S,B): (%.1f, %.1f)%% / (%.1f, %.1f)%%",
+			     (*this).histoSignal_->GetBinContent(0)*dxu*100, (*this).histoBackground_->GetBinContent(0)*dxu*100,
+			     (*this).histoSignal_->GetBinContent(nbin+1)*dxo*100, (*this).histoBackground_->GetBinContent(nbin+1)*dxo*100 );
+
+      TText* t = new TText( 0.975, 0.115, uoflow );
+      t->SetNDC();
+      t->SetTextSize( 0.030 );
+      t->SetTextAngle( 90 );
+      t->AppendPad();
+
+      // update canvas                                                                                                                                                                  
+      TLatex latex;
+      latex.SetNDC();
+      latex.SetTextAlign(21); // align right                                                                                                                                 
+      latex.SetTextSize(0.033);
+      latex.DrawLatex(0.6,0.92,Form("CMS Preliminary Simulation,#sqrt{s} = 8 TeV, W+jets"));
+      (*this).cMVAs_->Update();
+
+      methodTitle.ReplaceAll(" ","_");
+      methodTitle.ReplaceAll("(","_");
+      methodTitle.ReplaceAll(")","_");
+      methodTitle.ReplaceAll("[","_");
+      methodTitle.ReplaceAll("]","_");
+      methodTitle.ReplaceAll("{","_");
+      methodTitle.ReplaceAll("}","_");
+
+      if      (htype == MVAType)     (*this).PrintImage((*this).cMVAs_, std::string(Form("%s/mva_output_%s",outputPlotDirectory.c_str(),methodTitle.Data())));
+      else if (htype == ProbaType)   (*this).PrintImage((*this).cMVAs_, std::string(Form("%s/probability_%s",outputPlotDirectory.c_str(),methodTitle.Data())));
+      else if (htype == CompareType) (*this).PrintImage((*this).cMVAs_, std::string(Form("%s/overtraining_%s",outputPlotDirectory.c_str(),methodTitle.Data())));
+      else                           (*this).PrintImage((*this).cMVAs_, std::string(Form("%s/rarity_%s",outputPlotDirectory.c_str(),methodTitle.Data())));
+    
+      (*this).mvas_index = (*this).mvas_index  +1 ;
+
+      if(frame!=0)   delete frame;
+      if(legend!=0)  delete legend;
+      if(t!=0)       delete t;
+      if(legend2!=0) delete legend2 ;
+	       
+    }
+
+  }	       
+
+}
+
+void TMVAGlob::ReadHistograms (TFile* inputFile){
+
+  if ((*this).fInfoList_) {
+    TIter next(fInfoList_);
+    significanceBox *info(0);
+    while ( (info = (significanceBox*)next()) ) {
+      delete info;
+    }
+    delete fInfoList_;
+    fInfoList_=0;
   }
 
-       
+  (*this).fInfoList_ = new TList;
+  // search for the right histograms in full list of keys                                                                                                                                 
+
+  TIter next(inputFile->GetListOfKeys());
+  TKey *key(0);
+  while( (key = (TKey*)next()) ) {
+
+    if(!TString(key->GetName()).BeginsWith("Method_")) continue;
+    if(!gROOT->GetClass(key->GetClassName())->InheritsFrom("TDirectory") ) continue;
+
+    std::cout << "--- Found directory: " << ((TDirectory*)key->ReadObj())->GetName() << std::endl;
+    TDirectory* mDir = (TDirectory*)key->ReadObj();
+
+    TIter keyIt(mDir->GetListOfKeys());
+    TKey *titkey;
+    int maxLenTitle = 0 ;
+    while((titkey = (TKey*)keyIt())) {
+      (*this).significance_ = new significanceBox;
+      if(!gROOT->GetClass(titkey->GetClassName())->InheritsFrom("TDirectory") ) continue;
+      TDirectory* titDir = (TDirectory *)titkey->ReadObj();
+      (*this).GetMethodName((*this).significance_->methodName_,key);
+      (*this).GetMethodTitle((*this).significance_->methodTitle_,titDir);
+      if ((*this).significance_->methodTitle_.Length() > maxLenTitle) maxLenTitle = (*this).significance_->methodTitle_.Length();
+      TString hname = "MVA_" + (*this).significance_->methodTitle_;
+
+      std::cout << "--- Classifier: " << (*this).significance_->methodTitle_ << std::endl;
+
+      if((*this).histoBackground_ == NULL ) (*this).significance_->Background_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_B" ));
+      else (*this).significance_->Background_ = (*this).histoBackground_ ;
+
+      if((*this).histoSignal_ ==NULL)  (*this).significance_->Signal_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_S" ));
+      else (*this).significance_->Signal_ = (*this).histoSignal_ ;
+
+      if((*this).effBackground_ == NULL ) (*this).significance_->efficiencyBackground_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_B" ));
+      else (*this).significance_->efficiencyBackground_ = (*this).effBackground_ ;
+
+      if((*this).effSignal_ ==NULL)    (*this).significance_->efficiencySignal_      = dynamic_cast<TH1F*>(titDir->Get( hname + "_S" ));
+      else (*this).significance_->efficiencySignal_ =(*this).effSignal_ ;
+
+     
+      if ((*this).significance_->efficiencyBackground_ == NULL || (*this).significance_->efficiencySignal_ == NULL){ delete (*this).significance_; continue; }
+
+      (*this).fInfoList_->Add(significance_);
+    }
+  }
+
+ return;
+}
+
+TString TMVAGlob::GetFormula(){
+  TString f = fFormula_;
+  f.ReplaceAll("S","x");
+  f.ReplaceAll("B","y");
+  return f;
+}
+
+
+void TMVAGlob::plotSignificance (TFile* inputFile, SignificanceType stype, const double & numberSignalEvents, const double & numberBackgroundEvents,
+  		                 const bool & UseSignalEfficiency, const bool & UseBackgroundEfficiency, const std::string & outputPlotDirectory){
+
+
+  if(inputFile == 0) {std::cerr<<" empty file --> exit "<<std::endl; return ; }
+
+  (*this).ReadHistograms(inputFile); 
+
+  if(stype == "SoverB")           (*this).SetFormula("S/B"); 
+  else if(stype == "SoverSqrtB")  (*this).SetFormula("S/sqrt(B)");  
+  else if(stype == "SoverSqrtSB") (*this).SetFormula("S/sqrt(S+B)");  
+  else if(stype == "Pvalue")      (*this).SetFormula("2*(sqrt(S+B)-sqrt(B))");  
+  else { std::cerr<<" Not known formula --> exit "<<std::endl; return; }
+
+  (*this).SetSignalType(UseSignalEfficiency);
+  (*this).SetBackgroundType(UseBackgroundEfficiency);
+
+  TFormula significanceFormula("significanceFormula",(*this).GetFormula());
+  TIter next((*this).fInfoList_);
+
+  TString cname = "Classifier";
+  int maxLenTitle = 0 ;
+  if (cname.Length() >  maxLenTitle)  maxLenTitle = cname.Length();
+  TString str = Form( "%*s   (  #signal, #backgr.)  Optimal-cut  %s      NSig      NBkg   EffSig   EffBkg",
+		      maxLenTitle, cname.Data(), GetFormulaString().Data() );
+  std::cout << "--- " << std::setfill('=') << std::setw(str.Length()) << "" << std::setfill(' ') << std::endl;
+  std::cout << "--- " << str << std::endl;
+  std::cout << "--- " << std::setfill('-') << std::setw(str.Length()) << "" << std::setfill(' ') << std::endl;
+  Double_t maxSig    = -1;
+  Double_t maxSigErr = -1;
+  significanceBox *infoBox = new significanceBox();
+  while ((infoBox = (significanceBox*)next())) {
+    // Cycle on the signal efficiency bin
+    for (Int_t iBin=1; iBin<=infoBox->efficiencySignal_->GetNbinsX(); iBin++) {
+
+      // as a function of the type choose to 
+      Float_t S = 0;
+      if(signalType_) S = infoBox->efficiencySignal_->GetBinContent(iBin) * numberSignalEvents;
+      else S = infoBox->efficiencySignal_->GetBinContent(iBin) ;
+
+      Float_t B = 0;
+      if(backgroundType_) B = infoBox->efficiencyBackground_->GetBinContent(iBin) * numberBackgroundEvents;
+      else B = infoBox->efficiencyBackground_->GetBinContent(iBin) ;
+      
+      Double_t significance = significanceFormula.Eval(S,B);
+      
+      if (significance > maxSig) {
+	maxSig    = significance;
+	if ((*this).GetFormulaString() == "S/B") maxSigErr = sqrt(S/(B*B)+S*S/(B*B*B));	
+ 	else if ((*this).GetFormulaString() == "S/sqrt(B)") maxSigErr = significance * sqrt( 1./S + 1./(2.*B));	
+ 	else if ((*this).GetFormulaString() == "S/sqrt(S+B)") maxSigErr = sqrt(S*(TMath::Power(1-0.5/sqrt(S+B),2))*1/(S+B)+B*S*S/(4*(S+B)));	
+ 	else if ((*this).GetFormulaString() == "2*(sqrt(S+B)-sqrt(B))") maxSigErr = sqrt(S*TMath::Power(1/sqrt(S+B),2)+B*TMath::Power(1/sqrt(S+B)-1/sqrt(B),2));	
+      }
+
+      infoBox->significance_->SetBinContent(iBin,significance);
+      infoBox->significance_->SetBinError(iBin,maxSigErr);
+
+    }
+
+    infoBox->significance_->Scale(1/infoBox->significance_->GetMaximum());
+    
+    Int_t maxbin = infoBox->significance_->GetMaximumBin();
+    (*this).significance_->line1_->SetText( 0.15, 0.23, Form("For %1.0f signal and %1.0f background",numberSignalEvents, numberBackgroundEvents));
+    (*this).significance_->line2_->SetText( 0.15, 0.15, Form("%3.2g +- %3.2g when cutting at %3.2g", maxSig,maxSigErr,infoBox->significance_->GetXaxis()->GetBinCenter(maxbin)));
+
+    TString opt = Form( "%%%is:  (%%9.8g,%%9.8g)    %%9.4f   %%10.6g  %%8.7g  %%8.7g %%8.4g %%8.4g",maxLenTitle);
+    std::cout << "--- "<< Form( opt.Data(), infoBox->methodTitle_.Data(), numberSignalEvents, numberBackgroundEvents, infoBox->significance_->GetXaxis()->GetBinCenter(maxbin),maxSig,
+				infoBox->efficiencySignal_->GetBinContent(maxbin)*numberSignalEvents, infoBox->efficiencyBackground_->GetBinContent( maxbin )*numberBackgroundEvents,
+                                infoBox->efficiencySignal_->GetBinContent( maxbin ), infoBox->efficiencyBackground_->GetBinContent( maxbin ) ) <<std::endl;
+
+
+  }
+
+  /// Plot the results
+  TIter next2((*this).fInfoList_);
+  while ( (infoBox = (significanceBox*)next2()) ) {
+
+   // create new canvas                                                                                                                                                                 
+   TCanvas *cSignificance_ = new TCanvas( Form("cSignificance%s",infoBox->methodTitle_.Data() ),Form("Efficiencies Classifier : %s",infoBox->methodTitle_.Data()),180,52,550,550);
+
+   (*this).cSignificance_->cd();
+   (*this).cSignificance_->SetTicks();
+   (*this).cSignificance_->SetFillColor(0);
+   (*this).cSignificance_->SetBorderMode(0);
+   (*this).cSignificance_->SetBorderSize(2);
+  
+   (*this).cSignificance_->SetTickx(1);
+   (*this).cSignificance_->SetTicky(1);
+   (*this).cSignificance_->SetRightMargin(0.05);
+   (*this).cSignificance_->SetBottomMargin(0.12);
+   (*this).cSignificance_->SetFrameBorderMode(0);
+
+   // and the signal purity and quality                                                                                                                                                 
+   infoBox->efficiencySignal_->SetTitle("Efficiencies and Optimal Cut");
+   if (infoBox->methodTitle_.Contains("Cuts")) 
+      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "Signal Efficiency (#epsilon_{sig})" );    
+   else if (infoBox->methodTitle_.Contains("Likelihood"))
+      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "Likelihood output" );    
+   else if (infoBox->methodTitle_.Contains("LD"))
+      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "Linear Discriminant output" );    
+   else if (infoBox->methodTitle_.Contains("BDT") && !infoBox->methodTitle_.Contains("BDTG"))
+      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "BDT output" );    
+   else if (infoBox->methodTitle_.Contains("MLP"))
+      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "MLP output" );    
+   else if (infoBox->methodTitle_.Contains("PDEFoam"))
+      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "PDEFoam output" );    
+   else if (infoBox->methodTitle_.Contains("SVM"))
+      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "SVM output" );    
+   else if (infoBox->methodTitle_.Contains("Fisher"))
+      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "Fisher output" );    
+   else
+       infoBox->efficiencySignal_->GetXaxis()->SetTitle( infoBox->methodTitle_ + " output" );
+
+   infoBox->efficiencySignal_->GetYaxis()->SetTitle("Efficiency (Significance)");
+
+
+   infoBox->efficiencySignal_->Draw("histl");
+   infoBox->efficiencyBackground_->Draw("samehistl");
+   infoBox->significance_->SetLineColor(210);
+   infoBox->significance_->Draw("sameEL");
+   infoBox->efficiencySignal_->Draw( "sameaxis" );
+
+   // Draw legend                                                                                                                                                                       
+   TLegend *legend1= new TLegend( cSignificance_->GetLeftMargin(), 1-cSignificance_->GetTopMargin(), cSignificance_->GetLeftMargin()+0.4, 1-cSignificance_->GetTopMargin() + 0.12 );
+   legend1->SetFillStyle(1);
+   legend1->SetFillColor(0);
+
+   legend1->AddEntry(infoBox->efficiencySignal_,"Signal efficiency","L");
+   legend1->AddEntry(infoBox->efficiencyBackground_,"Background efficiency","L");
+   legend1->Draw("same");
+   legend1->SetBorderSize(1);
+   legend1->SetMargin(0.3);
+
+   TLegend *legend2= new TLegend( cSignificance_->GetLeftMargin()+0.4, 1-cSignificance_->GetTopMargin(),1-cSignificance_->GetRightMargin(), 1-cSignificance_->GetTopMargin()+0.12 );
+   legend2->SetFillStyle( 1 );
+   legend2->SetFillColor( 0 );
+
+   legend2->AddEntry(infoBox->significance_,GetLatexFormula().Data(),"L");
+   legend2->Draw("same");
+   legend2->SetBorderSize(1);
+   legend2->SetMargin( 0.3 );
+
+   // line to indicate maximum efficiency                                                                                                                                               
+   TLine* effline = new TLine( infoBox->significance_->GetXaxis()->GetXmin(), 1, infoBox->significance_->GetXaxis()->GetXmax(), 1 );
+   effline->SetLineWidth( 2 );
+   effline->SetLineColor( 1 );
+   effline->Draw();
+
+   // print comments                                                                                                                                                                    
+   infoBox->line1_->AppendPad();
+   infoBox->line2_->AppendPad();
+
+   (*this).cSignificance_->Update();
+
+   TGaxis* rightAxis = new TGaxis(cSignificance_->GetUxmax(), cSignificance_->GetUymin(),cSignificance_->GetUxmax(), cSignificance_->GetUymax(),0,1.1*infoBox->significance_->GetMaximum(),510,"+L");
+   rightAxis->SetLineColor ( kBlack );
+   rightAxis->SetLabelColor( kBlack );
+   rightAxis->SetTitleColor( kBlack );
+
+   rightAxis->SetLabelSize( 0.035 );
+   rightAxis->SetTitleSize( 0.035 );
+   rightAxis->SetTitleOffset( 1.25 );
+   rightAxis->SetTitle( "Significance" );
+   rightAxis->Draw();
+
+   cSignificance_->Update();
+
+   (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/mva_significance_%s",outputPlotDirectory.c_str(),infoBox->methodTitle_.Data())));
+
+   if(rightAxis!=0) delete rightAxis ;
+   if((*this).cSignificance_!=0) delete (*this).cSignificance_ ;
+   if(legend1!=0) delete legend1 ;
+   if(legend2!=0) delete legend2 ;
+   if(effline!=0) delete effline ;
+  
+  }
+
 }
