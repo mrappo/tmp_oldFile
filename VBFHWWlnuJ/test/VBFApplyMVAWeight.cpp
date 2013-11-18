@@ -26,8 +26,7 @@
 
 #include "ApplyMVAWeightClass.h"
 
-/// Main Programme                                                                                                                                                                              
-                                                                                                                                                                                                
+/// Main Programme                                                                                                                                                                            
 int main (int argc, char** argv){
 
   if (argc != 2){
