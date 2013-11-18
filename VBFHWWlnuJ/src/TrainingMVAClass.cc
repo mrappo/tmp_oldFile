@@ -617,46 +617,40 @@ TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,con
     return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && numberJetBin < 2 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 	      
  else if(preselectionCutType == "basicPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
-                pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
  else if(preselectionCutType == "basicPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
-    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
-                pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && numberJetBin < 2 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
 
   else if(preselectionCutType == "basicSBPreselectionCutHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
     return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && nbjets_csvm_veto == 0 && ( (jet_mass_pr > 40 && jet_mass_pr < 65) || (jet_mass_pr > 105 && jet_mass_pr < 130) ) && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSBPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 60 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 60 ) || ( jet_mass_pr >=100 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSBPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
-    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=105 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( ( jet_mass_pr >=40 && jet_mass_pr <= 65 ) || ( jet_mass_pr >=105 && jet_mass_pr <= 130 ) ) && nbjets_csvm_veto == 0 && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
 
   else if(preselectionCutType == "basicSRPreselectionCutHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && nbjets_csvm_veto == 0 && (jet_mass_pr > 65 && jet_mass_pr < 105) && numberJetBin < 2 ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f)",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && nbjets_csvm_veto == 0 && (jet_mass_pr > 65 && jet_mass_pr < 105) && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f)",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSRPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
-                "( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSRPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
-    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && "
-                "( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=65 && jet_mass_pr <= 105 ) && nbjets_csvm_veto == 0 && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
 
   else if(preselectionCutType == "basicSRSBPreselectionCutHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
     return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && nbjets_csvm_veto == 0 && (jet_mass_pr > 40 && jet_mass_pr < 130) && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicSRSBPreselectionCutHiggs" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0"
-                " && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0 && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
     
   else if(preselectionCutType == "basicSRSBPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
-    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0"
-                " && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt > 200 && pfMET > 70 && l_pt > 35 && ungroomed_jet_pt > 200 && ( jet_mass_pr >=40 && jet_mass_pr <= 130 ) && nbjets_csvm_veto == 0 && numberJetBin < 2 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   /// VBF Cuts    
 
