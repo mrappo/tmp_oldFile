@@ -106,7 +106,7 @@ int main (int argc, char **argv){
 
   TMVATraining->SetMethodName(InputVariableOrMethodName);  
 
-  // Loop on the inputFile
+  // Loop on the inputFile and do the ROC plot
   for(size_t iFile = 0;  iFile < inputFile.size() ; iFile ++){ 
 
    TIter nextKey(inputFile.at(iFile)->GetListOfKeys()); // iterator to the list of keys in the memory map of the file  
@@ -119,16 +119,39 @@ int main (int argc, char **argv){
      TDirectory *dir = (TDirectory*)key->ReadObj(); 
      TString path(dir->GetPath());
      if (path.Contains("multicutMVA")){ TMVATraining->plotEfficiency(inputFile.at(iFile),dir,jetPTBinofTraining.at(0),jetPTBinofTraining.at(1)); // call the plot efficiency function     
-                                        TMVATraining->PrintImage(dir,outputPlotDirectory);}
+                                        TMVATraining->PrintImageROC(dir,outputPlotDirectory);
+     }
 
    }
 
    TMVATraining->plotEfficiency(inputFile.at(iFile),gDirectory,jetPTBinofTraining.at(0),jetPTBinofTraining.at(1)); // call the plot efficiency function 
-
   }
 
-  TMVATraining->PrintImage(gDirectory,outputPlotDirectory);
+  TMVATraining->PrintImageROC(gDirectory,outputPlotDirectory);
 
+  // Plot correlation variables
+  for(size_t iFile = 0;  iFile < inputFile.size() ; iFile ++){ 
+
+   TIter nextKey(inputFile.at(iFile)->GetListOfKeys()); // iterator to the list of keys in the memory map of the file  
+   TKey *key = 0 ; // loop over the keys
+
+   while ( (key = (TKey*) nextKey())) {
+
+     TClass* classType = gROOT->GetClass(key->GetClassName()); // take the class type of each key inside the root file to check what is inside
+     if (!classType->InheritsFrom("TDirectory")) continue;     // if it don't herit from TDirectory it is neglet
+     TDirectory *dir = (TDirectory*)key->ReadObj(); 
+     TString path(dir->GetPath());
+     if (path.Contains("multicutMVA")){ TMVATraining->plotCorrelationMatrix(inputFile.at(iFile),iFile,outputPlotDirectory); // call the plot efficiency function                 
+                                        TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->MVAType,outputPlotDirectory);
+                                        TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
+                                        TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);}
+   }
+
+    TMVATraining->plotCorrelationMatrix(inputFile.at(iFile),iFile,outputPlotDirectory); // call the plot efficiency function 
+    TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->MVAType,outputPlotDirectory);
+    TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
+    TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);
+  }
 
   return 0 ;
 }
