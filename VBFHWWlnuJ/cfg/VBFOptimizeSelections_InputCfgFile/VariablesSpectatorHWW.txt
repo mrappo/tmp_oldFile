@@ -1,7 +1,9 @@
 #################################
 ## Spectator Variable List ######
 #################################
-#GroomedJet_CA8_pt_pr[0]
-#GroomedJet_CA8_mass_pr[0]
-event_nPV
-#GromedJet_CA8_massdrop_pr[0]
+ungroomed_jet_pt
+nPV
+jet_mass_pr
+vbf_maxpt_j1_pt
+vbf_maxpt_j2_pt
+
