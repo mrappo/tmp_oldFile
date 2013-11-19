@@ -45,7 +45,7 @@ static std::vector<double> vec_color(color, color + sizeof(color)/sizeof(double)
 static std::vector<double> vec_linewidth(linewidth, linewidth + sizeof(linewidth)/sizeof(double));
 static std::vector<double> vec_linestyle(linestyle, linestyle + sizeof(linestyle)/sizeof(double));
 
-class significanceBox : public TObject {
+class significanceBox {
  
  public:
 
@@ -55,8 +55,9 @@ class significanceBox : public TObject {
     efficiencySignal_ = NULL ;
     efficiencyBackground_ = NULL ;  
     significance_ = NULL;
-    line1_ = NULL;
-    line2_ = NULL ; 
+    maxSig_    = 0; 
+    maxSigErr_ = 0; 
+    maxbin_    = 0;
   }
   ~significanceBox(){
     if(Signal_!=NULL) delete Signal_;
@@ -64,8 +65,6 @@ class significanceBox : public TObject {
     if(Background_!=NULL) delete Background_;
     if(efficiencyBackground_!=NULL) delete efficiencyBackground_;
     if(significance_!=NULL) delete significance_ ;
-    if(line1_!=NULL) delete line1_ ;
-    if(line2_!=NULL) delete line2_ ;
   } 
 
   TH1F* Signal_;
@@ -76,8 +75,9 @@ class significanceBox : public TObject {
   TString methodName_;
   TString methodTitle_;
 
-  TLatex* line1_ ;
-  TLatex* line2_ ;
+  double maxSig_ ;
+  double maxSigErr_ ;
+  int    maxbin_ ;
 
 };
 
@@ -170,7 +170,7 @@ class TMVAGlob {
   // plot output distribution
   void plotMVAs( TFile*inputFile = 0, HistType htype = MVAType, const std::string & outputPlotDirectory = "");
   // plot signficance for different formula using or not the expected number of signal and background events
-  void plotSignificance (TFile* inputFile = 0, SignificanceType stype = SoverB, const double & numberSignalEvents = 0, const double & numberBackgroundEvents = 0,
+  void plotSignificance (TFile* inputFile = 0, const int & iFile = 0, SignificanceType stype = SoverB, const double & numberSignalEvents = 0., const double & numberBackgroundEvents = 0.,
                          const bool & UseSignalEfficiency = false, const bool & UseBakgroundEfficiency = false, const std::string & outputPlotDirectory = "");
 
  private:
@@ -178,9 +178,11 @@ class TMVAGlob {
   int color_index ;
   int method_index;
   int mvas_index;
+  int thisMethod_;
 
   std::vector<TFile*> inputFiles_ ;
   std::vector<std::string> inputMethodName_ ;
+  std::vector<std::string> originalMethodName_ ;
 
   TCanvas* cROC_ ;
   TCanvas* cCorrelationSignal_;
@@ -194,9 +196,7 @@ class TMVAGlob {
   bool    signalType_ ;
   bool    backgroundType_ ;
 
-  TList*  fInfoList_;
-
-  significanceBox* significance_ ;
+  std::vector<significanceBox*>*  fInfoList_;
 
   TH1F* histoSignal_;
   TH1F* histoBackground_;
@@ -204,8 +204,6 @@ class TMVAGlob {
   TH1F* effSignal_;
 
 };
-
-
 
 #endif
  
