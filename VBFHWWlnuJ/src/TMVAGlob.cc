@@ -10,14 +10,15 @@ TMVAGlob::TMVAGlob(){
   color_index  = 0;
   method_index = 0;
   mvas_index   = 0;
+  thisMethod_   = 0 ;
   cMVAs_       = NULL ;
 
-  fInfoList_       = NULL ;
+  fInfoList_ = NULL ;
+
   histoSignal_     = NULL ;
   histoBackground_ = NULL ;
   effSignal_       = NULL ;
   effBackground_   = NULL ;
-  significance_    = NULL ;
 
   signalType_     = false ;
   backgroundType_ = false ;
@@ -29,12 +30,11 @@ TMVAGlob::~TMVAGlob(){
   if(cROC_!=NULL)       delete cROC_;
   if(frameROC_!=NULL)   delete frameROC_;
   if(legROC_!=NULL)     delete legROC_;
-  if(fInfoList_!=NULL)  delete fInfoList_;
+  if(fInfoList_!=NULL){ fInfoList_->clear();  delete fInfoList_; }
   if(histoSignal_!=NULL) delete histoSignal_ ;
   if(histoBackground_!=NULL) delete histoBackground_;
   if(effSignal_!=NULL) delete effSignal_ ;
   if(effBackground_!=NULL) delete effBackground_;
-  if(significance_!=NULL) delete significance_;
   inputFiles_.clear() ;
   inputMethodName_.clear() ;
   
@@ -143,12 +143,10 @@ void TMVAGlob::PrintImageROC(TDirectory* dir, const std::string & outputPlotDire
 
        TString pngName = fname + ".png";
        TString pdfName = fname + ".pdf";
-       TString cxxName = fname + ".cxx";
        (*this).cROC_->cd();
 
        (*this).cROC_->Print(pdfName);
        (*this).cROC_->Print(pngName);
-       (*this).cROC_->Print(cxxName);        
  }
 }
 
@@ -232,7 +230,7 @@ int TMVAGlob::GetNumberOfTargets( TDirectory *dir ){
   
   TIter next(dir->GetListOfKeys());
   TKey* key    = 0;
-  Int_t noTrgts = 0;
+ Int_t noTrgts = 0;
       
    while ((key = (TKey*)next())) {
      if (key->GetCycle() != 1) continue;        
@@ -726,12 +724,21 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
 void TMVAGlob::SetMethodName(const std::vector<std::string> & SetMethodName){
 
   (*this).inputMethodName_ = SetMethodName;
+  (*this).originalMethodName_ = SetMethodName;
 
   for(size_t iMethod = 0 ; iMethod < (*this).inputMethodName_.size() ; iMethod++){
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll(":_:","#"));
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll(":__:","_{"));
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll(":___:","}"));
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll("//"," "));
+  }       
+
+  for(size_t iMethod = 0 ; iMethod < (*this).originalMethodName_.size() ; iMethod++){
+    originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll(":_:","_"));
+    originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll(":__:","_"));
+    originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll(":___:","_"));
+    originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll("//","_"));
+    originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll("/","_"));
   }       
 }
 
@@ -819,11 +826,9 @@ void TMVAGlob::PrintImage(TCanvas* c, const std::string & fname){
 
   TString pngName = fname+".png";
   TString pdfName = fname+".pdf";
-  TString cxxName = fname+".cxx";
 
   c->Print(pdfName);
   c->Print(pngName);
-  c->Print(cxxName);
 
 }
 
@@ -1143,20 +1148,14 @@ void TMVAGlob::plotMVAs(TFile* inputFile, HistType htype, const std::string & ou
 }
 
 void TMVAGlob::ReadHistograms (TFile* inputFile){
-
-  if ((*this).fInfoList_) {
-    TIter next(fInfoList_);
-    significanceBox *info(0);
-    while ( (info = (significanceBox*)next()) ) {
-      delete info;
-    }
-    delete fInfoList_;
-    fInfoList_=0;
+  
+  if ((*this).fInfoList_!=NULL) {
+    delete (*this).fInfoList_;
+    (*this).fInfoList_ = NULL ;
   }
-
-  (*this).fInfoList_ = new TList;
+  
   // search for the right histograms in full list of keys                                                                                                                                 
-
+  (*this).fInfoList_ = new std::vector<significanceBox*> ;
   TIter next(inputFile->GetListOfKeys());
   TKey *key(0);
   while( (key = (TKey*)next()) ) {
@@ -1166,40 +1165,39 @@ void TMVAGlob::ReadHistograms (TFile* inputFile){
 
     std::cout << "--- Found directory: " << ((TDirectory*)key->ReadObj())->GetName() << std::endl;
     TDirectory* mDir = (TDirectory*)key->ReadObj();
-
+    
     TIter keyIt(mDir->GetListOfKeys());
     TKey *titkey;
     int maxLenTitle = 0 ;
     while((titkey = (TKey*)keyIt())) {
-      (*this).significance_ = new significanceBox;
+      significanceBox* significance_ = new significanceBox;
       if(!gROOT->GetClass(titkey->GetClassName())->InheritsFrom("TDirectory") ) continue;
-      TDirectory* titDir = (TDirectory *)titkey->ReadObj();
-      (*this).GetMethodName((*this).significance_->methodName_,key);
-      (*this).GetMethodTitle((*this).significance_->methodTitle_,titDir);
-      if ((*this).significance_->methodTitle_.Length() > maxLenTitle) maxLenTitle = (*this).significance_->methodTitle_.Length();
-      TString hname = "MVA_" + (*this).significance_->methodTitle_;
+      TDirectory* titDir = (TDirectory *)titkey->ReadObj();      
+      (*this).GetMethodName(significance_->methodName_,key);
+      (*this).GetMethodTitle(significance_->methodTitle_,titDir);
+      if (significance_->methodTitle_.Length() > maxLenTitle) maxLenTitle = significance_->methodTitle_.Length();
+      TString hname = "MVA_" + significance_->methodTitle_;
 
-      std::cout << "--- Classifier: " << (*this).significance_->methodTitle_ << std::endl;
+      std::cout << "--- Classifier: " << significance_->methodTitle_ << std::endl;
+      
+      if((*this).histoBackground_ == NULL ) significance_->Background_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_B" ));
+      else significance_->Background_ = (*this).histoBackground_ ;
 
-      if((*this).histoBackground_ == NULL ) (*this).significance_->Background_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_B" ));
-      else (*this).significance_->Background_ = (*this).histoBackground_ ;
+      if((*this).histoSignal_ ==NULL)  significance_->Signal_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_S" ));
+      else significance_->Signal_ = (*this).histoSignal_ ;
 
-      if((*this).histoSignal_ ==NULL)  (*this).significance_->Signal_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_S" ));
-      else (*this).significance_->Signal_ = (*this).histoSignal_ ;
+      if((*this).effBackground_ == NULL ) significance_->efficiencyBackground_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_effB" ));
+      else significance_->efficiencyBackground_ = (*this).effBackground_ ;
 
-      if((*this).effBackground_ == NULL ) (*this).significance_->efficiencyBackground_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_B" ));
-      else (*this).significance_->efficiencyBackground_ = (*this).effBackground_ ;
-
-      if((*this).effSignal_ ==NULL)    (*this).significance_->efficiencySignal_      = dynamic_cast<TH1F*>(titDir->Get( hname + "_S" ));
-      else (*this).significance_->efficiencySignal_ =(*this).effSignal_ ;
+      if((*this).effSignal_ ==NULL)  significance_->efficiencySignal_      = dynamic_cast<TH1F*>(titDir->Get( hname + "_effS" ));
+      else significance_->efficiencySignal_ =(*this).effSignal_ ;
 
      
-      if ((*this).significance_->efficiencyBackground_ == NULL || (*this).significance_->efficiencySignal_ == NULL){ delete (*this).significance_; continue; }
-
-      (*this).fInfoList_->Add(significance_);
+      if (significance_->efficiencyBackground_ == NULL || significance_->efficiencySignal_ == NULL){ delete significance_; continue; }
+      (*this).fInfoList_->push_back(significance_);
     }
   }
-
+  
  return;
 }
 
@@ -1231,85 +1229,107 @@ TString TMVAGlob::GetLatexFormula(){
 }
 
 
-void TMVAGlob::plotSignificance (TFile* inputFile, SignificanceType stype, const double & numberSignalEvents, const double & numberBackgroundEvents,
+void TMVAGlob::plotSignificance (TFile* inputFile, const int & iFile, SignificanceType stype, const double & numberSignalEvents, const double & numberBackgroundEvents,
   		                 const bool & UseSignalEfficiency, const bool & UseBackgroundEfficiency, const std::string & outputPlotDirectory){
 
 
   if(inputFile == 0) {std::cerr<<" empty file --> exit "<<std::endl; return ; }
 
   (*this).ReadHistograms(inputFile); 
-
-  if(stype == "SoverB")           (*this).SetFormula("S/B"); 
-  else if(stype == "SoverSqrtB")  (*this).SetFormula("S/sqrt(B)");  
-  else if(stype == "SoverSqrtSB") (*this).SetFormula("S/sqrt(S+B)");  
-  else if(stype == "Pvalue")      (*this).SetFormula("2*(sqrt(S+B)-sqrt(B))");  
+  
+  if(stype == 0)       (*this).SetFormula("S/B"); 
+  else if(stype == 1)  (*this).SetFormula("S/sqrt(B)");  
+  else if(stype == 2)  (*this).SetFormula("S/sqrt(S+B)");  
+  else if(stype == 3)  (*this).SetFormula("2*(sqrt(S+B)-sqrt(B))");  
   else { std::cerr<<" Not known formula --> exit "<<std::endl; return; }
 
   (*this).SetSignalType(UseSignalEfficiency);
   (*this).SetBackgroundType(UseBackgroundEfficiency);
 
   TFormula significanceFormula("significanceFormula",(*this).GetFormula());
-  TIter next((*this).fInfoList_);
+  
+  std::vector<significanceBox*>::iterator itList =  (*this).fInfoList_->begin();
 
   TString cname = "Classifier";
   int maxLenTitle = 0 ;
   if (cname.Length() >  maxLenTitle)  maxLenTitle = cname.Length();
-  TString str = Form( "%*s   (  #signal, #backgr.)  Optimal-cut  %s      NSig      NBkg   EffSig   EffBkg",
+  TString str = Form( "%*s   (  signal, backgr.)  Optimal-cut  %s      NSig      NBkg   EffSig   EffBkg",
 		      maxLenTitle, cname.Data(), GetFormulaString().Data() );
   std::cout << "--- " << std::setfill('=') << std::setw(str.Length()) << "" << std::setfill(' ') << std::endl;
   std::cout << "--- " << str << std::endl;
   std::cout << "--- " << std::setfill('-') << std::setw(str.Length()) << "" << std::setfill(' ') << std::endl;
   Double_t maxSig    = -1;
   Double_t maxSigErr = -1;
-  significanceBox *infoBox = new significanceBox();
-  while ((infoBox = (significanceBox*)next())) {
-    // Cycle on the signal efficiency bin
-    for (Int_t iBin=1; iBin<=infoBox->efficiencySignal_->GetNbinsX(); iBin++) {
+  
+  for ( ;itList!=(*this).fInfoList_->end(); ++itList) {
+    // Cycle on the signal efficiency bin    
+    if(signalType_)
+      (*itList)->significance_ = new TH1F(Form("significance_%s_file%d_stype%d",(*itList)->methodTitle_.Data(),iFile,stype),"",(*itList)->efficiencySignal_->GetNbinsX(),(*itList)->efficiencySignal_->GetBinLowEdge(1),(*itList)->efficiencySignal_->GetBinLowEdge((*itList)->efficiencySignal_->GetNbinsX()+1));
+    else
+      (*itList)->significance_ = new TH1F(Form("significance_eff_%s_%d_stype%d",(*itList)->methodTitle_.Data(),iFile,stype),"",(*itList)->efficiencySignal_->GetNbinsX(),(*itList)->efficiencySignal_->GetBinLowEdge(1),(*itList)->efficiencySignal_->GetBinLowEdge((*itList)->efficiencySignal_->GetNbinsX()+1));
+
+    for (Int_t iBin=1; iBin<=(*itList)->efficiencySignal_->GetNbinsX(); iBin++) {
 
       // as a function of the type choose to 
       Float_t S = 0;
-      if(signalType_) S = infoBox->efficiencySignal_->GetBinContent(iBin) * numberSignalEvents;
-      else S = infoBox->efficiencySignal_->GetBinContent(iBin) ;
+      if(signalType_) S = (*itList)->efficiencySignal_->GetBinContent(iBin) * numberSignalEvents;
+      else S = (*itList)->efficiencySignal_->GetBinContent(iBin) ;      
 
       Float_t B = 0;
-      if(backgroundType_) B = infoBox->efficiencyBackground_->GetBinContent(iBin) * numberBackgroundEvents;
-      else B = infoBox->efficiencyBackground_->GetBinContent(iBin) ;
-      
-      Double_t significance = significanceFormula.Eval(S,B);
-      
-      if (significance > maxSig) {
+      if(backgroundType_) B = (*itList)->efficiencyBackground_->GetBinContent(iBin) * numberBackgroundEvents;
+      else B = (*itList)->efficiencyBackground_->GetBinContent(iBin) ;
+
+      Double_t significance = 0. ;
+      Double_t threshold = 0. ;
+
+      if(signalType_) threshold = 0.005;
+      else threshold = 0.01 ;
+
+      if(S > threshold && B > threshold){
+ 
+       if(stype == 0 && B != 0 )        significance = significanceFormula.Eval(S,B);
+       else if(stype == 1 && B != 0 )   significance = significanceFormula.Eval(S,B);
+       else if(stype == 2 && S+B != 0 ) significance = significanceFormula.Eval(S,B);
+       else significance = significanceFormula.Eval(S,B);
+
+                  
+       if (significance > maxSig) {
 	maxSig    = significance;
 	if ((*this).GetFormulaString() == "S/B") maxSigErr = sqrt(S/(B*B)+S*S/(B*B*B));	
  	else if ((*this).GetFormulaString() == "S/sqrt(B)") maxSigErr = significance * sqrt( 1./S + 1./(2.*B));	
  	else if ((*this).GetFormulaString() == "S/sqrt(S+B)") maxSigErr = sqrt(S*(TMath::Power(1-0.5/sqrt(S+B),2))*1/(S+B)+B*S*S/(4*(S+B)));	
  	else if ((*this).GetFormulaString() == "2*(sqrt(S+B)-sqrt(B))") maxSigErr = sqrt(S*TMath::Power(1/sqrt(S+B),2)+B*TMath::Power(1/sqrt(S+B)-1/sqrt(B),2));	
+       }
       }
-
-      infoBox->significance_->SetBinContent(iBin,significance);
-      infoBox->significance_->SetBinError(iBin,maxSigErr);
-
+      (*itList)->significance_->SetBinContent(iBin,significance);
+      (*itList)->significance_->SetBinError(iBin,maxSigErr);
     }
 
-    infoBox->significance_->Scale(1/infoBox->significance_->GetMaximum());
+    Int_t maxbin = (*itList)->significance_->GetMaximumBin();
     
-    Int_t maxbin = infoBox->significance_->GetMaximumBin();
-    (*this).significance_->line1_->SetText( 0.15, 0.23, Form("For %1.0f signal and %1.0f background",numberSignalEvents, numberBackgroundEvents));
-    (*this).significance_->line2_->SetText( 0.15, 0.15, Form("%3.2g +- %3.2g when cutting at %3.2g", maxSig,maxSigErr,infoBox->significance_->GetXaxis()->GetBinCenter(maxbin)));
+    (*itList)->significance_->Scale(1/(*itList)->significance_->GetMaximum());
+    (*itList)->maxSig_    = maxSig ;
+    (*itList)->maxSigErr_ = maxSigErr ;      
+    (*itList)->maxbin_    = maxbin ;
+    
+    TString opt = Form( "%%%is:  (%%8.4g,%%8.4g)    %%9.4g   %%10.6g  %%8.7g  %%8.7g %%8.4g %%8.4g",maxLenTitle);     
+    std::cout << "--- "<< Form( opt.Data(), (*itList)->methodTitle_.Data(), numberSignalEvents, numberBackgroundEvents, (*itList)->significance_->GetXaxis()->GetBinCenter(maxbin),maxSig,
+    			       (*itList)->efficiencySignal_->GetBinContent(maxbin)*numberSignalEvents, (*itList)->efficiencyBackground_->GetBinContent( maxbin )*numberBackgroundEvents,
+                               (*itList)->efficiencySignal_->GetBinContent(maxbin), (*itList)->efficiencyBackground_->GetBinContent(maxbin) ) <<std::endl;
 
-    TString opt = Form( "%%%is:  (%%9.8g,%%9.8g)    %%9.4f   %%10.6g  %%8.7g  %%8.7g %%8.4g %%8.4g",maxLenTitle);
-    std::cout << "--- "<< Form( opt.Data(), infoBox->methodTitle_.Data(), numberSignalEvents, numberBackgroundEvents, infoBox->significance_->GetXaxis()->GetBinCenter(maxbin),maxSig,
-				infoBox->efficiencySignal_->GetBinContent(maxbin)*numberSignalEvents, infoBox->efficiencyBackground_->GetBinContent( maxbin )*numberBackgroundEvents,
-                                infoBox->efficiencySignal_->GetBinContent( maxbin ), infoBox->efficiencyBackground_->GetBinContent( maxbin ) ) <<std::endl;
-
-
+    
   }
 
-  /// Plot the results
-  TIter next2((*this).fInfoList_);
-  while ( (infoBox = (significanceBox*)next2()) ) {
-
-   // create new canvas                                                                                                                                                                 
-   TCanvas *cSignificance_ = new TCanvas( Form("cSignificance%s",infoBox->methodTitle_.Data() ),Form("Efficiencies Classifier : %s",infoBox->methodTitle_.Data()),180,52,550,550);
+  
+  /// Plot the results  
+  std::vector<significanceBox*>::iterator itInfoList = (*this).fInfoList_->begin();
+  for ( ; itInfoList!=(*this).fInfoList_->end(); ++itInfoList ){
+ 
+  // create new canvas                                                                                                                                                                 
+   if(signalType_)
+     (*this).cSignificance_ = new TCanvas( Form("cSignificance_%s_file_%d_type_%d",(*itInfoList)->methodTitle_.Data(),iFile,stype),Form("Efficiencies Classifier : %s",(*itInfoList)->methodTitle_.Data()),180,52,550,550);
+   else
+     (*this).cSignificance_ = new TCanvas( Form("cSignificance_eff_%s_%d_type_%d",(*itInfoList)->methodTitle_.Data(),iFile,stype),Form("Efficiencies Classifier : %s",(*itInfoList)->methodTitle_.Data()),180,52,550,550);
 
    (*this).cSignificance_->cd();
    (*this).cSignificance_->SetTicks();
@@ -1319,96 +1339,178 @@ void TMVAGlob::plotSignificance (TFile* inputFile, SignificanceType stype, const
   
    (*this).cSignificance_->SetTickx(1);
    (*this).cSignificance_->SetTicky(1);
-   (*this).cSignificance_->SetRightMargin(0.05);
+   (*this).cSignificance_->SetLeftMargin(0.1);
+   (*this).cSignificance_->SetRightMargin(0.12);
    (*this).cSignificance_->SetBottomMargin(0.12);
    (*this).cSignificance_->SetFrameBorderMode(0);
 
    // and the signal purity and quality                                                                                                                                                 
-   infoBox->efficiencySignal_->SetTitle("Efficiencies and Optimal Cut");
-   if (infoBox->methodTitle_.Contains("Cuts")) 
-      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "Signal Efficiency (#epsilon_{sig})" );    
-   else if (infoBox->methodTitle_.Contains("Likelihood"))
-      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "Likelihood output" );    
-   else if (infoBox->methodTitle_.Contains("LD"))
-      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "Linear Discriminant output" );    
-   else if (infoBox->methodTitle_.Contains("BDT") && !infoBox->methodTitle_.Contains("BDTG"))
-      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "BDT output" );    
-   else if (infoBox->methodTitle_.Contains("MLP"))
-      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "MLP output" );    
-   else if (infoBox->methodTitle_.Contains("PDEFoam"))
-      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "PDEFoam output" );    
-   else if (infoBox->methodTitle_.Contains("SVM"))
-      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "SVM output" );    
-   else if (infoBox->methodTitle_.Contains("Fisher"))
-      infoBox->efficiencySignal_->GetXaxis()->SetTitle( "Fisher output" );    
+   (*itInfoList)->efficiencySignal_->SetTitle("Efficiencies and Optimal Cut");
+   if ((*itInfoList)->methodTitle_.Contains("Cuts")) 
+      (*itInfoList)->significance_->GetXaxis()->SetTitle( "Signal Efficiency (#epsilon_{sig})" );    
+   else if ((*itInfoList)->methodTitle_.Contains("Likelihood"))
+      (*itInfoList)->significance_->GetXaxis()->SetTitle( "Likelihood output" );    
+   else if ((*itInfoList)->methodTitle_.Contains("LD"))
+      (*itInfoList)->significance_->GetXaxis()->SetTitle( "Linear Discriminant output" );    
+   else if ((*itInfoList)->methodTitle_.Contains("BDT") && !(*itInfoList)->methodTitle_.Contains("BDTG"))
+      (*itInfoList)->significance_->GetXaxis()->SetTitle( "BDT output" );    
+   else if ((*itInfoList)->methodTitle_.Contains("MLP"))
+      (*itInfoList)->significance_->GetXaxis()->SetTitle( "MLP output" );    
+   else if ((*itInfoList)->methodTitle_.Contains("PDEFoam"))
+      (*itInfoList)->significance_->GetXaxis()->SetTitle( "PDEFoam output" );    
+   else if ((*itInfoList)->methodTitle_.Contains("SVM"))
+      (*itInfoList)->significance_->GetXaxis()->SetTitle( "SVM output" );    
+   else if ((*itInfoList)->methodTitle_.Contains("Fisher"))
+      (*itInfoList)->significance_->GetXaxis()->SetTitle( "Fisher output" );    
    else
-       infoBox->efficiencySignal_->GetXaxis()->SetTitle( infoBox->methodTitle_ + " output" );
+       (*itInfoList)->significance_->GetXaxis()->SetTitle( (*itInfoList)->methodTitle_ + " output" );
 
-   infoBox->efficiencySignal_->GetYaxis()->SetTitle("Efficiency (Significance)");
+   (*itInfoList)->significance_->GetYaxis()->SetTitle("Efficiency");
 
+   (*itInfoList)->significance_->GetXaxis()->SetTitleSize(0.035);
+   (*itInfoList)->significance_->GetXaxis()->SetLabelSize(0.035);
+   (*itInfoList)->significance_->GetXaxis()->SetTitleOffset(1.05);
+   (*itInfoList)->significance_->GetYaxis()->SetTitleSize(0.035);
+   (*itInfoList)->significance_->GetYaxis()->SetLabelSize(0.035);
+   (*itInfoList)->significance_->GetYaxis()->SetTitleOffset(1.05);
 
-   infoBox->efficiencySignal_->Draw("histl");
-   infoBox->efficiencyBackground_->Draw("samehistl");
-   infoBox->significance_->SetLineColor(210);
-   infoBox->significance_->Draw("sameEL");
-   infoBox->efficiencySignal_->Draw( "sameaxis" );
+   (*itInfoList)->significance_->GetYaxis()->SetRangeUser(0.,(*itInfoList)->significance_->GetMaximum()*1.3);
 
+   (*itInfoList)->efficiencySignal_->SetLineColor(kBlue);
+   (*itInfoList)->efficiencySignal_->SetLineWidth(2);
+
+   (*itInfoList)->efficiencyBackground_->SetLineColor(kRed);
+   (*itInfoList)->efficiencyBackground_->SetLineWidth(2);
+
+   (*itInfoList)->significance_->SetLineColor(kBlack);
+   (*itInfoList)->significance_->SetLineWidth(2);
+
+   (*itInfoList)->significance_->Draw("histl");
+   (*itInfoList)->efficiencySignal_->Draw("samehistl");   
+   (*itInfoList)->efficiencyBackground_->Draw("samehistl");
+   (*itInfoList)->significance_->Draw("sameaxis");
+
+   
    // Draw legend                                                                                                                                                                       
-   TLegend *legend1= new TLegend( cSignificance_->GetLeftMargin(), 1-cSignificance_->GetTopMargin(), cSignificance_->GetLeftMargin()+0.4, 1-cSignificance_->GetTopMargin() + 0.12 );
-   legend1->SetFillStyle(1);
+   TLegend *legend1= new TLegend( cSignificance_->GetLeftMargin()+0.05, 1-cSignificance_->GetTopMargin()-0.17, cSignificance_->GetLeftMargin()+0.25, 1-cSignificance_->GetTopMargin()-0.02);
+   legend1->SetFillStyle(0);
    legend1->SetFillColor(0);
-
-   legend1->AddEntry(infoBox->efficiencySignal_,"Signal efficiency","L");
-   legend1->AddEntry(infoBox->efficiencyBackground_,"Background efficiency","L");
-   legend1->Draw("same");
-   legend1->SetBorderSize(1);
+   legend1->SetTextFont(42);
+   legend1->SetTextSize(0.032);
+   legend1->SetBorderSize(0.);
    legend1->SetMargin(0.3);
 
-   TLegend *legend2= new TLegend( cSignificance_->GetLeftMargin()+0.4, 1-cSignificance_->GetTopMargin(),1-cSignificance_->GetRightMargin(), 1-cSignificance_->GetTopMargin()+0.12 );
-   legend2->SetFillStyle( 1 );
-   legend2->SetFillColor( 0 );
+   legend1->AddEntry((*itInfoList)->efficiencySignal_,"Signal efficiency","L");
+   legend1->AddEntry((*itInfoList)->efficiencyBackground_,"Background efficiency","L");
+   legend1->Draw("same");
+   
+   TLegend *legend2= new TLegend(cSignificance_->GetLeftMargin()+0.4,1-cSignificance_->GetTopMargin()-0.09,1-cSignificance_->GetRightMargin()-0.2,1-cSignificance_->GetTopMargin()-0.02);
+   legend2->SetFillStyle(0);
+   legend2->SetFillColor(0);
+   legend2->SetBorderSize(0.);
+   legend2->SetTextFont(42);
+   legend2->SetTextSize(0.032);
+   legend2->SetMargin(0.3);
 
-   legend2->AddEntry(infoBox->significance_,(*this).GetLatexFormula().Data(),"L");
+   legend2->AddEntry((*itInfoList)->significance_,Form("Significance %s",(*this).GetLatexFormula().Data()),"L");
    legend2->Draw("same");
-   legend2->SetBorderSize(1);
-   legend2->SetMargin( 0.3 );
 
    // line to indicate maximum efficiency                                                                                                                                               
-   TLine* effline = new TLine( infoBox->significance_->GetXaxis()->GetXmin(), 1, infoBox->significance_->GetXaxis()->GetXmax(), 1 );
-   effline->SetLineWidth( 2 );
-   effline->SetLineColor( 1 );
-   effline->Draw();
+   TLine* effline = new TLine( (*itInfoList)->significance_->GetXaxis()->GetXmin(), 1, (*itInfoList)->significance_->GetXaxis()->GetXmax(), 1 );
+   effline->SetLineWidth(3);
+   effline->SetLineStyle(7);
+   effline->SetLineColor(210);
+   effline->Draw("same");
 
-   // print comments                                                                                                                                                                    
-   infoBox->line1_->AppendPad();
-   infoBox->line2_->AppendPad();
+   (*itInfoList)->significance_->Draw("samehistl");
 
    (*this).cSignificance_->Update();
 
-   TGaxis* rightAxis = new TGaxis(cSignificance_->GetUxmax(), cSignificance_->GetUymin(),cSignificance_->GetUxmax(), cSignificance_->GetUymax(),0,1.1*infoBox->significance_->GetMaximum(),510,"+L");
-   rightAxis->SetLineColor ( kBlack );
-   rightAxis->SetLabelColor( kBlack );
-   rightAxis->SetTitleColor( kBlack );
+   TGaxis* rightAxis = new TGaxis(cSignificance_->GetUxmax(),cSignificance_->GetUymin(),cSignificance_->GetUxmax(),cSignificance_->GetUymax(),0,1.1*(*itInfoList)->significance_->GetMaximum(),510,"+L");
 
-   rightAxis->SetLabelSize( 0.035 );
-   rightAxis->SetTitleSize( 0.035 );
-   rightAxis->SetTitleOffset( 1.25 );
-   rightAxis->SetTitle( "Significance" );
+   rightAxis->SetLineColor (kBlack);
+   rightAxis->SetLabelColor(kBlack);
+   rightAxis->SetTitleColor(kBlack);
+
+   rightAxis->SetLabelSize(0.035);
+   rightAxis->SetTitleSize(0.035);
+   rightAxis->SetTitleOffset(1.22);
+   rightAxis->SetTextFont(42);
+   rightAxis->SetLabelFont(42);
+   rightAxis->SetTitle("Significance");
    rightAxis->Draw();
+   
+   (*this).cSignificance_->Update();
 
-   cSignificance_->Update();
+   TLatex latex;
+   latex.SetNDC();
+   latex.SetTextAlign(21); // align right                                                                                                                                                 
+   latex.SetTextSize(0.033);
+   latex.DrawLatex(0.56,0.92,Form("CMS Preliminary Simulation,#sqrt{s} = 8 TeV, W+jets"));
+   latex.Delete();
 
-   if(UseSignalEfficiency && UseBackgroundEfficiency)
-    (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/mva_significance_eff_%s",outputPlotDirectory.c_str(),infoBox->methodTitle_.Data())));
-   else if( !UseSignalEfficiency && !UseBackgroundEfficiency)
-    (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/mva_significance_%s",outputPlotDirectory.c_str(),infoBox->methodTitle_.Data())));
-
-   if(rightAxis!=0) delete rightAxis ;
-   if((*this).cSignificance_!=0) delete (*this).cSignificance_ ;
-   if(legend1!=0) delete legend1 ;
-   if(legend2!=0) delete legend2 ;
-   if(effline!=0) delete effline ;
+   // print comments                                                                                                                                                                    
+   TString name = Form("For %.4g signal and %.4g background",numberSignalEvents,numberBackgroundEvents);
+   TPaveText* line1 = new TPaveText(0.22,0.21,0.5,0.26,"NDC");
+   line1->SetBorderSize(0);
+   line1->SetFillColor(0);
+   line1->SetFillStyle(0);
+   line1->AddText(name.Data());
+   line1->SetTextSize(0.027);
+   line1->SetTextFont(42);
+   line1->Draw("same");
   
-  }
+   TPaveText* line2 = new TPaveText(0.22,0.15,0.5,0.2,"NDC");
+   name = Form("max significance at %0.4g, cut at %0.4g",(*itInfoList)->maxSig_,(*itInfoList)->significance_->GetXaxis()->GetBinCenter((*itInfoList)->maxbin_));
+   line2->AddText(name);
+   line2->SetBorderSize(0);
+   line2->SetFillColor(0);
+   line2->SetFillStyle(0);
+   line2->SetTextSize(0.027);
+   line2->SetTextFont(42);
+   line2->Draw("same");
 
+   TString baseName ;
+   if(UseSignalEfficiency && UseBackgroundEfficiency){
+     if((*this).thisMethod_ >= (*this).method_index) continue ;
+     if ((*itInfoList)->methodTitle_.Contains("Cuts"))      
+       baseName  = Form("mva_significance_eff_%s_file%d",(*itInfoList)->methodTitle_.Data(),iFile);
+     else
+       baseName  = Form("mva_significance_eff_%s",(*itInfoList)->methodTitle_.Data(),iFile);
+
+     if(stype == 0)      (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_S_over_B_file",outputPlotDirectory.c_str(),baseName.Data())));
+     else if(stype == 1) (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_S_over_sqrtB",outputPlotDirectory.c_str(),baseName.Data())));
+     else if(stype == 2) (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_S_over_sqrtSB",outputPlotDirectory.c_str(),baseName.Data())));
+     else if(stype == 3) (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_pval",outputPlotDirectory.c_str(),baseName.Data())));
+
+     if ((*itInfoList)->methodTitle_.Contains("Cuts")) (*this).thisMethod_++;
+
+   }
+   else if( !UseSignalEfficiency && !UseBackgroundEfficiency){
+     if((*this).thisMethod_ > (*this).method_index) continue ;
+     if ((*itInfoList)->methodTitle_.Contains("Cuts"))      
+       baseName  = Form("mva_significance_%s_file%d",(*itInfoList)->methodTitle_.Data(),iFile);
+     else
+       baseName  = Form("mva_significance_%s",(*itInfoList)->methodTitle_.Data());
+
+     if(stype == 0) (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_S_over_B",outputPlotDirectory.c_str(),baseName.Data())));
+     else if(stype == 1) (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_S_over_sqrtB",outputPlotDirectory.c_str(),baseName.Data())));
+     else if(stype == 2) (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_S_over_sqrtSB",outputPlotDirectory.c_str(),baseName.Data())));
+     else if(stype == 3) (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_pval",outputPlotDirectory.c_str(),baseName.Data())));
+
+     if ((*itInfoList)->methodTitle_.Contains("Cuts")) (*this).thisMethod_++;
+
+   }
+
+   if((*this).thisMethod_ == (*this).method_index) (*this).thisMethod_ = 0;
+   
+   //   delete rightAxis ;
+   delete cSignificance_;
+   legend1->Delete() ;   
+   legend2->Delete() ;
+   line1->Delete() ;
+   line2->Delete() ;
+   effline->Delete() ;
+
+  }
 }
