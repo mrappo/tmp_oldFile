@@ -60,50 +60,123 @@ int main (int argc, char **argv){
   
   parseConfigFile(argv[1]);
 
-  std::vector<std::string> InputFileName   = gConfigParser -> readStringListOption("Input::InputFileName"); // get the input file list for the TMVA root file output after training
-  std::vector<std::string> InputVariableOrMethodName     = gConfigParser -> readStringListOption("Input::InputVariableOrMethodName"); // get the input file list for the TMVA root file output after training
-  std::string InputDirectory   = gConfigParser -> readStringOption("Input::InputDirectory");
-  std::string InputSampleList  = gConfigParser -> readStringOption("Input::InputSampleList");
-  std::string SignalName       = gConfigParser -> readStringOption("Input::SignalName");
-  std::string EventWeight      = gConfigParser -> readStringOption("Input::EventWeight");
-  std::string TreeName         = gConfigParser -> readStringOption("Input::TreeName");
+  std::vector<std::string> InputFileName ;
+  try{ InputFileName   = gConfigParser -> readStringListOption("Input::InputFileName"); } // get the input file list for the TMVA root file output after training 
+  catch(char* exceptionString){
+    std::cerr<<" No input File Name list provided --> exit from the code"<<std::endl;
+    return -1 ;
+  }
 
-  std::cout<<"      "<<std::endl;
-  std::cout<<" InputDirectory "<<InputDirectory<<std::endl;
-
-  std::cout<<"      "<<std::endl;
-  std::cout<<" InputSampleList "<<InputSampleList<<std::endl;
-  
   std::cout<<"      "<<std::endl;
   for(size_t iFile = 0; iFile < InputFileName.size(); iFile++)   
     std::cout<<" InputFileName: iFile "<<iFile<<" Name : "<<InputFileName.at(iFile)<<std::endl;
-  std::cout<<"      "<<std::endl;
+
+
+  std::vector<std::string> InputVariableOrMethodName ;
+  try{ InputVariableOrMethodName = gConfigParser -> readStringListOption("Input::InputVariableOrMethodName"); } // get the input file list for the TMVA root file output after training
+  catch(char* exceptionString){ std::cout<<"No variable name provided --> assume no rectuagular cut are done"<<std::endl; }
+
+  
 
   std::cout<<"      "<<std::endl;
   for(size_t iName = 0; iName < InputVariableOrMethodName.size(); iName++)   
     std::cout<<" InputMethodName: iName "<<iName<<" Name : "<<InputVariableOrMethodName.at(iName)<<std::endl;
+
+  std::string InputDirectory;
+  try{ InputDirectory  = gConfigParser -> readStringOption("Input::InputDirectory");}
+  catch(char* exceptionString) {
+    std::cerr<<" No input Directory specified for trees --> exit from the code "<<std::endl;
+    return -1 ;
+  }
+
   std::cout<<"      "<<std::endl;
+  std::cout<<" InputDirectory "<<InputDirectory<<std::endl;
 
+  std::string InputSampleList ;
+  try{ InputSampleList  = gConfigParser -> readStringOption("Input::InputSampleList"); }
+  catch(char* exceptionString){
+    std::cerr<<" No input SampleList specified for trees --> exit from the code "<<std::endl;
+    return -1 ;
+  }
 
-  std::vector<double> jetPTBinofTraining = gConfigParser -> readDoubleListOption("Input::jetPTBinofTraining");
+  std::cout<<"      "<<std::endl;
+  std::cout<<" InputSampleList "<<InputSampleList<<std::endl;
+
+  std::string SignalName ;
+  try{ SignalName = gConfigParser -> readStringOption("Option::SignalName"); }
+  catch(char* exceptionString){
+    std::cerr<<" No input SignalName specified for trees --> exit from the code "<<std::endl;
+    return -1 ;
+  }
+
+  std::cout<<"      "<<std::endl;
+  std::cout<<" SignalName "<<SignalName<<std::endl;
+  
+  std::string EventWeight ;
+  try{  EventWeight = gConfigParser -> readStringOption("Option::EventWeight"); }
+  catch(char* exceptionString){
+    std::cerr<<" No input EventWeight specified for trees --> exit from the code "<<std::endl;
+    return -1 ;
+  }
+
+  std::cout<<"      "<<std::endl;
+  std::cout<<" EventWeight "<<EventWeight<<std::endl;
+
+  
+  std::string TreeName ;
+  try{  TreeName = gConfigParser -> readStringOption("Input::TreeName"); }
+  catch(char* exceptionString){
+    std::cerr<<" No input TreeName specified for trees --> set to otree "<<std::endl;
+    TreeName = "otree";
+  }
+
+  
+  std::cout<<"      "<<std::endl;
+  std::cout<<" TreeName "<<TreeName<<std::endl;
+
+  std::vector<double> jetPTBinofTraining ;
+  try{ jetPTBinofTraining = gConfigParser -> readDoubleListOption("Option::jetPTBinofTraining");}
+  catch(char* exceptionString){
+    std::cerr<<" jetPTBinofTraining set to 200, 2000 by default "<<std::endl;
+    jetPTBinofTraining.push_back(200);
+    jetPTBinofTraining.push_back(2000);
+  }
+
+  std::cout<<"      "<<std::endl;
   for(size_t iPTbin = 0; iPTbin < jetPTBinofTraining.size(); iPTbin++)   
     std::cout<<" jetPTBinofTraining: iPTbin "<<iPTbin<<" Value : "<<jetPTBinofTraining.at(iPTbin)<<std::endl;
-  std::cout<<"      "<<std::endl;
 
   if(jetPTBinofTraining.size()!=2){std::cerr<<" Plot one PTbin training for each time ---> exit "<<std::endl; return -1 ; }
 
-  std::string LeptonType = gConfigParser -> readStringOption("Output::LeptonType"); 
+  std::string LeptonType ; 
+  try{ LeptonType = gConfigParser -> readStringOption("Option::LeptonType"); }
+  catch(char* exceptionString){
+    std::cerr<<" LeptonType not specified --> set to MuonEle by default"<<std::endl;
+    LeptonType = "MuonEle" ;
+  }
 
-  std::cout<<" LeptonType     "<<LeptonType<<std::endl;
   std::cout<<"                "<<std::endl;
+  std::cout<<" LeptonType     "<<LeptonType<<std::endl;
 
-  std::string PreselectionCutType  = gConfigParser -> readStringOption("Output::PreselectionCutType"); 
+  std::string PreselectionCutType ;
+  try{ PreselectionCutType  = gConfigParser -> readStringOption("Output::PreselectionCutType"); }
+  catch(char* exceptionString){
+    std::cerr<<" Preselection Cut type applied to the definition of the training region don't specified --> exit from the program"<<std::endl;
+    return -1 ;
+  }
 
-  std::cout<<" PreselectionCutType     "<<PreselectionCutType<<std::endl;
   std::cout<<"                         "<<std::endl;
+  std::cout<<" PreselectionCutType     "<<PreselectionCutType<<std::endl;
 
-  std::string outputPlotDirectory = gConfigParser -> readStringOption("Output::outputPlotDirectory"); 
+  
+  std::string outputPlotDirectory ;
+  try{ outputPlotDirectory = gConfigParser -> readStringOption("Output::outputPlotDirectory"); }
+  catch(char* exceptionString){
+    std::cerr<<" Output plot directory don't specified --> set by default to output/TMVATrainingPlots"<<std::endl;
+    outputPlotDirectory = "output/TMVATrainingPlots";
+  }
 
+  std::cout<<"                      "<<std::endl;
   std::cout<<" Outout Directory     "<<outputPlotDirectory<<std::endl;
   std::cout<<"                      "<<std::endl;
 
