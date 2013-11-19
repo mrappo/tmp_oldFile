@@ -77,7 +77,6 @@ int main (int argc, char **argv){
   catch(char* exceptionString){ std::cout<<"No variable name provided --> assume no rectuagular cut are done"<<std::endl; }
 
   
-
   std::cout<<"      "<<std::endl;
   for(size_t iName = 0; iName < InputVariableOrMethodName.size(); iName++)   
     std::cout<<" InputMethodName: iName "<<iName<<" Name : "<<InputVariableOrMethodName.at(iName)<<std::endl;
@@ -102,6 +101,18 @@ int main (int argc, char **argv){
   std::cout<<"      "<<std::endl;
   std::cout<<" InputSampleList "<<InputSampleList<<std::endl;
 
+  std::string TreeName ;
+  try{  TreeName = gConfigParser -> readStringOption("Input::TreeName"); }
+  catch(char* exceptionString){
+    std::cerr<<" No input TreeName specified for trees --> set to otree "<<std::endl;
+    TreeName = "otree";
+  }
+
+  
+  std::cout<<"      "<<std::endl;
+  std::cout<<" TreeName "<<TreeName<<std::endl;
+
+
   std::string SignalName ;
   try{ SignalName = gConfigParser -> readStringOption("Option::SignalName"); }
   catch(char* exceptionString){
@@ -122,17 +133,10 @@ int main (int argc, char **argv){
   std::cout<<"      "<<std::endl;
   std::cout<<" EventWeight "<<EventWeight<<std::endl;
 
-  
-  std::string TreeName ;
-  try{  TreeName = gConfigParser -> readStringOption("Input::TreeName"); }
-  catch(char* exceptionString){
-    std::cerr<<" No input TreeName specified for trees --> set to otree "<<std::endl;
-    TreeName = "otree";
-  }
+  double Lumi         = gConfigParser -> readDoubleOption("Option::Lumi");
 
-  
   std::cout<<"      "<<std::endl;
-  std::cout<<" TreeName "<<TreeName<<std::endl;
+  std::cout<<" Lumi: "<<Lumi<<std::endl;
 
   std::vector<double> jetPTBinofTraining ;
   try{ jetPTBinofTraining = gConfigParser -> readDoubleListOption("Option::jetPTBinofTraining");}
@@ -159,7 +163,7 @@ int main (int argc, char **argv){
   std::cout<<" LeptonType     "<<LeptonType<<std::endl;
 
   std::string PreselectionCutType ;
-  try{ PreselectionCutType  = gConfigParser -> readStringOption("Output::PreselectionCutType"); }
+  try{ PreselectionCutType  = gConfigParser -> readStringOption("Option::PreselectionCutType"); }
   catch(char* exceptionString){
     std::cerr<<" Preselection Cut type applied to the definition of the training region don't specified --> exit from the program"<<std::endl;
     return -1 ;
@@ -261,30 +265,48 @@ int main (int argc, char **argv){
     hname.ReplaceAll("(","_");
     hname.ReplaceAll(")","_");
 
-    histos[iSample] = new TH1F (hname.Data(),"",1000,0,5000);
+    histos[iSample] = new TH1F (hname.Data(),"",2000,0,5000);
     histos[iSample]->Sumw2();
 
     if( NameReducedSample.at(iSample) == "DATA" ){
       TreeVect.at(iSample)-> Draw(("l_pt >> "+std::string(hname)).c_str(), std::string(CutString).c_str() ,"goff");
-      std::cout<<" Data Entries "<<histos[iSample]->GetEntries()<< " weigthed events "<<histos[iSample]->Integral(0,1000)<<std::endl;      
+      std::cout<<" Data Entries "<<histos[iSample]->GetEntries()<< " weigthed events "<<histos[iSample]->Integral(0,5000)<<std::endl;      
     }
 
     else if(NameReducedSample.at(iSample) == SignalName && SignalName!="NULL"){
       TreeVect.at(iSample)->Draw(("l_pt >> "+std::string(hname)).c_str(),("("+EventWeight+")*( "+std::string(CutString)+")").c_str() ,"goff");
-      std::cout<<" Signal ggH Entries "<<histos[iSample]->GetEntries()<< " weigthed events "<<histos[iSample]->Integral(0,1000)<<std::endl;
-      numberSignalEvents = numberSignalEvents + histos[iSample]->Integral(0,1000) ;     
+      std::cout<<" Signal ggH Entries "<<histos[iSample]->GetEntries()<< " weigthed events "<<histos[iSample]->Integral(0,5000)<<std::endl;
     }
 
     else {
 
       TreeVect.at(iSample)->Draw(("l_pt >> "+std::string(hname)).c_str(),("("+EventWeight+") * ("+std::string(CutString)+")").c_str() ,"goff");
       std::cout<<" Bkg "<<NameSample.at(iSample)<<" Entries "<<histos[iSample]->GetEntries()<<" weighted events "<<
-      histos[iSample]->Integral(0,1000)<<std::endl;
-      numberBackgroundEvents = numberBackgroundEvents + histos[iSample]->Integral(0,1000) ;
+      histos[iSample]->Integral(0,5000)<<std::endl;
     }
 
   }
 
+  // Normalization to the lumi of MC samples                                                                                                       
+  double norm = 1.;
+
+  for (size_t iSample=0; iSample<NameSample.size(); iSample++){
+
+    if(NameReducedSample.at(iSample) == "DATA") continue;
+
+    norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
+
+    if ( NameReducedSample.at(iSample)==SignalName && SignalName!="NULL"){
+         histos[iSample]->Scale(1.*norm);
+         numberSignalEvents = numberSignalEvents + histos[iSample]->Integral(0,5000) ;     
+    }
+    else {  histos[iSample]->Scale(1.*norm);
+            numberBackgroundEvents = numberBackgroundEvents + histos[iSample]->Integral(0,5000) ;
+    }
+    std::cout<< " Sample Name "<<NameReducedSample.at(iSample)<<" Rescaled events to Lumi "<<histos[iSample]->Integral(0,5000)<<std::endl;
+  }
+
+  std::cout<<" Number of Signal Events "<<numberSignalEvents<<"  Number of Background Events  "<<numberBackgroundEvents<<std::endl;
 
   // Plot correlation variables
   for(size_t iFile = 0;  iFile < inputFile.size() ; iFile ++){ 
@@ -303,34 +325,31 @@ int main (int argc, char **argv){
                                         TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
                                         TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);
 
-                                TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-                                TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-                                TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-                                TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
+			    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverB,numberSignalEvents,numberBackgroundEvents,true,true,outputPlotDirectory);
+                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB,numberSignalEvents,numberBackgroundEvents,true,true,outputPlotDirectory);
+                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB,numberSignalEvents,numberBackgroundEvents,true,true,outputPlotDirectory);
+                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue,numberSignalEvents,numberBackgroundEvents,true,true,outputPlotDirectory);
 
-                                TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
-                                TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
-                                TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
-                                TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
+                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverB,numberSignalEvents,numberBackgroundEvents,false,false,outputPlotDirectory);
+                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB,numberSignalEvents,numberBackgroundEvents,false,false,outputPlotDirectory);
+                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB,numberSignalEvents,numberBackgroundEvents,false,false,outputPlotDirectory);
+                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
      }
 
    }
-
+      
     TMVATraining->plotCorrelationMatrix(inputFile.at(iFile),iFile,outputPlotDirectory); // call the plot efficiency function 
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->MVAType,outputPlotDirectory);
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);
-
-    TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-    TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-    TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-    TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-
-    TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
-    TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
-    TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
-    TMVATraining->plotSignificance(inputFile.at(iFile),TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
-
+    
+    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
+    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
+    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
+    
+    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
+    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
+    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
    }
 
   return 0 ;
