@@ -342,7 +342,7 @@ int main (int argc, char **argv){
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->MVAType,outputPlotDirectory);
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);
-    
+        
     TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
     TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
     TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
