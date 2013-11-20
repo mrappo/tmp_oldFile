@@ -151,7 +151,7 @@ void TMVAGlob::PrintImageROC(TDirectory* dir, const std::string & outputPlotDire
 }
 
 // function to normalize a histo also if it has weights
-void TMVAGlob::NormalizeHist( TH1* h ) { 
+void TMVAGlob::NormalizeHist( TH1F* h ) { 
  if (h==0) return;
  if (h->GetSumw2N() == 0) h->Sumw2();
  if(h->GetSumOfWeights()!=0) {
@@ -160,7 +160,7 @@ void TMVAGlob::NormalizeHist( TH1* h ) {
   }
 }
 
-void TMVAGlob::NormalizeHists( TH1* sig, TH1* bkg) {
+void TMVAGlob::NormalizeHists( TH1F* sig, TH1F* bkg) {
  if (sig->GetSumw2N() == 0) sig->Sumw2();
  if (bkg && bkg->GetSumw2N() == 0) bkg->Sumw2();
       
@@ -646,7 +646,7 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
       (*this).GetMethodTitle(methodTitle,titDir);
       TIter nextKey( titDir->GetListOfKeys() );
       while ((hkey = (*this).NextKey(nextKey,"TH1"))) {
-        TH1 *h = (TH1*)hkey->ReadObj();
+        TH1F *h = (TH1F*)hkey->ReadObj();
         TString hname = h->GetName();
         if (hname.Contains("rejBvsS") && hname.BeginsWith("MVA_")) {
           if(size_t((*this).color_index) <= vec_color.size()){
@@ -673,10 +673,10 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
   /// Loop on the different histos                                                                                                                                                        
   while (hists.GetSize()) {
     TListIter hIt(&hists); // define an iterator                                                                                                                                          
-    TH1* hist(0);
+    TH1F* hist(0);
     Double_t largestInt=-1;
-    TH1* histWithLargestInt(0);
-    while ((hist = (TH1*)hIt())!=0) {
+    TH1F* histWithLargestInt(0);
+    while ((hist = (TH1F*)hIt())!=0) {
       Double_t integral = hist->Integral(1,hist->GetNbinsX());
       if (integral>largestInt) {
         largestInt = integral;
@@ -839,7 +839,6 @@ void TMVAGlob::plotMVAs(TFile* inputFile, HistType htype, const std::string & ou
   TIter next(inputFile->GetListOfKeys());
   TKey *key(0);
 
-
   while ((key = (TKey*)next())) {
 
     if (!TString(key->GetName()).BeginsWith("Method_")) continue;
@@ -863,13 +862,12 @@ void TMVAGlob::plotMVAs(TFile* inputFile, HistType htype, const std::string & ou
       std::cout << "--- Found directory for method: " << methodName << "::" << methodTitle << std::flush;
 
       TString hname = "MVA_" + methodTitle;
-
       if      (htype == ProbaType  ) hname += "_Proba";
       else if (htype == RarityType ) hname += "_Rarity";
 
-      (*this).histoSignal_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_S" ));
-      (*this).histoBackground_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_B" ));
-    
+      (*this).histoSignal_ = dynamic_cast<TH1*>(titDir->Get(hname+"_S" ));
+      (*this).histoBackground_ = dynamic_cast<TH1*>(titDir->Get(hname+"_B"));
+
       if ((*this).histoSignal_==0 || (*this).histoBackground_==0) {
 	if (htype == MVAType)
 	  std::cout << ":\t mva distribution not available (this is normal for Cut classifier)" << std::endl;
@@ -944,7 +942,7 @@ void TMVAGlob::plotMVAs(TFile* inputFile, HistType htype, const std::string & ou
       (*this).histoBackground_->SetFillStyle(3005);
     
       // normalise both signal and background                                                                                                                                           
-      (*this).NormalizeHists( (*this).histoSignal_, (*this).histoBackground_);
+      (*this).NormalizeHists( (TH1F*)(*this).histoSignal_, (TH1F*)(*this).histoBackground_);
 
       // frame limits (choose judicuous x range)                                                                                                                                        
       Float_t nrms = 10;
@@ -1024,7 +1022,7 @@ void TMVAGlob::plotMVAs(TFile* inputFile, HistType htype, const std::string & ou
 	  std::cout << "+++ Problem in \"mvas.C\": overtraining check histograms do not exist" << std::endl; return;
 	}
 	
-	(*this).NormalizeHists( sigOv, bgdOv );
+	(*this).NormalizeHists((TH1F*)sigOv,(TH1F*)bgdOv );
 
 	Int_t col = (*this).histoSignal_->GetLineColor();
 	sigOv->SetMarkerColor(col);
@@ -1180,16 +1178,16 @@ void TMVAGlob::ReadHistograms (TFile* inputFile){
 
       std::cout << "--- Classifier: " << significance_->methodTitle_ << std::endl;
       
-      if((*this).histoBackground_ == NULL ) significance_->Background_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_B" ));
+      if((*this).histoBackground_ == NULL ) significance_->Background_ = dynamic_cast<TH1*>(titDir->Get( hname + "_B" ));
       else significance_->Background_ = (*this).histoBackground_ ;
 
-      if((*this).histoSignal_ ==NULL)  significance_->Signal_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_S" ));
+      if((*this).histoSignal_ ==NULL)  significance_->Signal_ = dynamic_cast<TH1*>(titDir->Get( hname + "_S" ));
       else significance_->Signal_ = (*this).histoSignal_ ;
 
-      if((*this).effBackground_ == NULL ) significance_->efficiencyBackground_ = dynamic_cast<TH1F*>(titDir->Get( hname + "_effB" ));
+      if((*this).effBackground_ == NULL ) significance_->efficiencyBackground_ = dynamic_cast<TH1*>(titDir->Get( hname + "_effB" ));
       else significance_->efficiencyBackground_ = (*this).effBackground_ ;
 
-      if((*this).effSignal_ ==NULL)  significance_->efficiencySignal_      = dynamic_cast<TH1F*>(titDir->Get( hname + "_effS" ));
+      if((*this).effSignal_ ==NULL)  significance_->efficiencySignal_      = dynamic_cast<TH1*>(titDir->Get( hname + "_effS" ));
       else significance_->efficiencySignal_ =(*this).effSignal_ ;
 
      
