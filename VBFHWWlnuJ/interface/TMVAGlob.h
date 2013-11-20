@@ -17,7 +17,7 @@
 #include "TSystem.h"
 #include "TImage.h"
 #include "TKey.h"
-#include "TH1.h"
+#include "TH1F.h"
 #include "TROOT.h"
 #include "TStyle.h"
 #include "TFile.h"
@@ -67,10 +67,10 @@ class significanceBox {
     if(significance_!=NULL) delete significance_ ;
   } 
 
-  TH1F* Signal_;
-  TH1F* Background_;
-  TH1F* efficiencySignal_;
-  TH1F* efficiencyBackground_;
+  TH1* Signal_;
+  TH1* Background_;
+  TH1* efficiencySignal_;
+  TH1* efficiencyBackground_;
   TH1F* significance_;  
   TString methodName_;
   TString methodTitle_;
@@ -117,8 +117,8 @@ class TMVAGlob {
   void PrintImage   ( TCanvas* c = 0, const std::string & outputPlotDirectory = "");    
 
 
-  void NormalizeHist( TH1* h );
-  void NormalizeHists( TH1* sig, TH1* bkg = 0 );
+  void NormalizeHist( TH1F* h );
+  void NormalizeHists( TH1F* sig, TH1F* bkg = 0 );
 
   void GetMethodName( TString & name, TKey * mkey );
   void GetMethodTitle( TString & name, TKey * ikey );
@@ -198,10 +198,10 @@ class TMVAGlob {
 
   std::vector<significanceBox*>*  fInfoList_;
 
-  TH1F* histoSignal_;
-  TH1F* histoBackground_;
-  TH1F* effBackground_;
-  TH1F* effSignal_;
+  TH1* histoSignal_;
+  TH1* histoBackground_;
+  TH1* effBackground_;
+  TH1* effSignal_;
 
 };
 
