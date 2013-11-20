@@ -367,10 +367,10 @@ int main (int argc, char** argv){
 
     // don't touch the neutrino pT
     TLorentzVector W_neutrino_type0_met; W_neutrino_type0_met.SetPxPyPzE(W_Met.Px(),W_Met.Py(),pz1_type0,sqrt(W_Met.Pt()*W_Met.Pt()+pz1_type0*pz1_type0));
-    MuonTree->W_mass_type0_met   = (W_neutrino_type0_met+W_mu).M();  
-    MuonTree->W_pz_type0_met     = (W_neutrino_type0_met+W_mu).Pz();   
-    MuonTree->W_nu1_pz_type0_met = pz1_type0; 
-    MuonTree->W_nu2_pz_type0_met = pz2_type0;
+    NewMuonTree->W_mass_type0_met   = (W_neutrino_type0_met+W_mu).M();  
+    NewMuonTree->W_pz_type0_met     = (W_neutrino_type0_met+W_mu).Pz();   
+    NewMuonTree->W_nu1_pz_type0_met = pz1_type0; 
+    NewMuonTree->W_nu2_pz_type0_met = pz2_type0;
 
     // chenge the neutrino pT in case of complex solution in order to make it real
     TLorentzVector W_neutrino_type0;  W_neutrino_type0.SetPxPyPzE(W_Met.Px(),W_Met.Py(),pz1_type0,sqrt(W_Met.Pt()*W_Met.Pt()+pz1_type0*pz1_type0));
@@ -391,10 +391,10 @@ int main (int argc, char** argv){
 
     }
 
-    MuonTree->W_mass_type0 = (W_mu+W_neutrino_type0).M();  
-    MuonTree->W_pz_type0   = (W_mu+W_neutrino_type0).Pz();  
-    MuonTree->W_nu1_pz_type0 = pz1_type0;  
-    MuonTree->W_nu2_pz_type0 = pz2_type0;
+    NewMuonTree->W_mass_type0 = (W_mu+W_neutrino_type0).M();  
+    NewMuonTree->W_pz_type0   = (W_mu+W_neutrino_type0).Pz();  
+    NewMuonTree->W_nu1_pz_type0 = pz1_type0;  
+    NewMuonTree->W_nu2_pz_type0 = pz2_type0;
 
   
 
@@ -408,10 +408,10 @@ int main (int argc, char** argv){
 
     // don't touch the neutrino pT
     TLorentzVector W_neutrino_type2_met; W_neutrino_type2_met.SetPxPyPzE(W_Met.Px(),W_Met.Py(),pz1_type2,sqrt(W_Met.Pt()*W_Met.Pt()+pz1_type2*pz1_type2));
-    MuonTree->W_mass_type2_met   = (W_neutrino_type2_met+W_mu).M();  
-    MuonTree->W_pz_type2_met     = (W_neutrino_type2_met+W_mu).Pz();   
-    MuonTree->W_nu1_pz_type2_met = pz1_type2; 
-    MuonTree->W_nu2_pz_type2_met = pz2_type2;
+    NewMuonTree->W_mass_type2_met   = (W_neutrino_type2_met+W_mu).M();  
+    NewMuonTree->W_pz_type2_met     = (W_neutrino_type2_met+W_mu).Pz();   
+    NewMuonTree->W_nu1_pz_type2_met = pz1_type2; 
+    NewMuonTree->W_nu2_pz_type2_met = pz2_type2;
 
     // chenge the neutrino pT in case of complex solution in order to make it real
     TLorentzVector W_neutrino_type2;  W_neutrino_type2.SetPxPyPzE(W_Met.Px(),W_Met.Py(),pz1_type2,sqrt(W_Met.Pt()*W_Met.Pt()+pz1_type2*pz1_type2));
@@ -432,10 +432,10 @@ int main (int argc, char** argv){
 
     }
 
-    MuonTree->W_mass_type2 = (W_mu+W_neutrino_type2).M();  
-    MuonTree->W_pz_type2   = (W_mu+W_neutrino_type2).Pz();  
-    MuonTree->W_nu1_pz_type2 = pz1_type2;  
-    MuonTree->W_nu2_pz_type2 = pz2_type2;
+    NewMuonTree->W_mass_type2 = (W_mu+W_neutrino_type2).M();  
+    NewMuonTree->W_pz_type2   = (W_mu+W_neutrino_type2).Pz();  
+    NewMuonTree->W_nu1_pz_type2 = pz1_type2;  
+    NewMuonTree->W_nu2_pz_type2 = pz2_type2;
 
 
     //////////////////////////////
@@ -455,11 +455,11 @@ int main (int argc, char** argv){
     nStep = 5;
 
 
-    TLorentzVector W_GroomedJet_CA8_pr; 
-    W_GroomedJet_CA8_pr.SetPtEtaPhiE(MuonTree->fReader->getFloat("GroomedJet_CA8_pt_pr")[0], MuonTree->fReader->getFloat("GroomedJet_CA8_eta_pr")[0],
-                                     MuonTree->fReader->getFloat("GroomedJet_CA8_phi_pr")[0], MuonTree->fReader->getFloat("GroomedJet_CA8_e_pr")[0]);
+    TLorentzVector W_GroomedJet_CA8; 
+    W_GroomedJet_CA8.SetPtEtaPhiE(MuonTree->fReader->getFloat("GroomedJet_CA8_pt")[0], MuonTree->fReader->getFloat("GroomedJet_CA8_eta")[0],
+                                     MuonTree->fReader->getFloat("GroomedJet_CA8_phi")[0], MuonTree->fReader->getFloat("GroomedJet_CA8_e")[0]);
 
-    if(W_GroomedJet_CA8_pr.Pt() <=0){ std::cerr<<" Problem with pruned CA8 "<<std::endl; continue ;}
+    if(W_GroomedJet_CA8.Pt() <=0){ std::cerr<<" Problem with pruned CA8 "<<std::endl; continue ;}
 
     if(std::string(SelectionEvents->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEvents->GetXaxis()->SetBinLabel(nStep,"Pruned CA8 4V");
     if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Pruned CA8 4V");
@@ -591,65 +591,65 @@ int main (int argc, char** argv){
     NewMuonTree->boosted_lvj_m_type0   = (W_mu+W_neutrino_type0+W_subjet1+W_subjet2).M();
     NewMuonTree->boosted_lv_m_type0    = (W_mu+W_neutrino_type0).M();
     NewMuonTree->boosted_j_m_type0     = (W_subjet1+W_subjet2).M();
-    NewMuonTree->boosted_lvj_pt_type0  = (W_mu+W_neutrino_type0+W_subjet1+W_subjet2).M ();
+    NewMuonTree->boosted_lvj_pt_type0  = (W_mu+W_neutrino_type0+W_subjet1+W_subjet2).Pt();
     NewMuonTree->boosted_lvj_eta_type0 = (W_mu+W_neutrino_type0+W_subjet1+W_subjet2).Eta();
     NewMuonTree->boosted_lvj_phi_type0 = (W_mu+W_neutrino_type0+W_subjet1+W_subjet2).Phi();
     NewMuonTree->boosted_lvj_e_type0   = (W_mu+W_neutrino_type0+W_subjet1+W_subjet2).E();
  
-    NewMuonTree->boostedW_lvj_m_type0   = (W_mu+W_neutrino_type0+W_GroomedJet_CA8_pr).M();
+    NewMuonTree->boostedW_lvj_m_type0   = (W_mu+W_neutrino_type0+W_GroomedJet_CA8).M();
     NewMuonTree->boostedW_lv_m_type0    = (W_mu+W_neutrino_type0).M();
-    NewMuonTree->boostedW_j_m_type0     = (W_GroomedJet_CA8_pr).M();
-    NewMuonTree->boostedW_lvj_pt_type0  = (W_mu+W_neutrino_type0+W_GroomedJet_CA8_pr).M ();
-    NewMuonTree->boostedW_lvj_eta_type0 = (W_mu+W_neutrino_type0+W_GroomedJet_CA8_pr).Eta();
-    NewMuonTree->boostedW_lvj_phi_type0 = (W_mu+W_neutrino_type0+W_GroomedJet_CA8_pr).Phi();
-    NewMuonTree->boostedW_lvj_e_type0   = (W_mu+W_neutrino_type0+W_GroomedJet_CA8_pr).E();
+    NewMuonTree->boostedW_j_m_type0     = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
+    NewMuonTree->boostedW_lvj_pt_type0  = (W_mu+W_neutrino_type0+W_GroomedJet_CA8).Pt();
+    NewMuonTree->boostedW_lvj_eta_type0 = (W_mu+W_neutrino_type0+W_GroomedJet_CA8).Eta();
+    NewMuonTree->boostedW_lvj_phi_type0 = (W_mu+W_neutrino_type0+W_GroomedJet_CA8).Phi();
+    NewMuonTree->boostedW_lvj_e_type0   = (W_mu+W_neutrino_type0+W_GroomedJet_CA8).E();
 
     NewMuonTree->boosted_lvj_m_type2   = (W_mu+W_neutrino_type2+W_subjet1+W_subjet2).M();
     NewMuonTree->boosted_lv_m_type2    = (W_mu+W_neutrino_type2).M();
     NewMuonTree->boosted_j_m_type2     = (W_subjet1+W_subjet2).M();
-    NewMuonTree->boosted_lvj_pt_type2  = (W_mu+W_neutrino_type2+W_subjet1+W_subjet2).M ();
+    NewMuonTree->boosted_lvj_pt_type2  = (W_mu+W_neutrino_type2+W_subjet1+W_subjet2).Pt();
     NewMuonTree->boosted_lvj_eta_type2 = (W_mu+W_neutrino_type2+W_subjet1+W_subjet2).Eta();
     NewMuonTree->boosted_lvj_phi_type2 = (W_mu+W_neutrino_type2+W_subjet1+W_subjet2).Phi();
     NewMuonTree->boosted_lvj_e_type2   = (W_mu+W_neutrino_type2+W_subjet1+W_subjet2).E();
  
-    NewMuonTree->boostedW_lvj_m_type2   = (W_mu+W_neutrino_type2+W_GroomedJet_CA8_pr).M();
+    NewMuonTree->boostedW_lvj_m_type2   = (W_mu+W_neutrino_type2+W_GroomedJet_CA8).M();
     NewMuonTree->boostedW_lv_m_type2    = (W_mu+W_neutrino_type2).M();
-    NewMuonTree->boostedW_j_m_type2     = (W_GroomedJet_CA8_pr).M();
-    NewMuonTree->boostedW_lvj_pt_type2  = (W_mu+W_neutrino_type2+W_GroomedJet_CA8_pr).M ();
-    NewMuonTree->boostedW_lvj_eta_type2 = (W_mu+W_neutrino_type2+W_GroomedJet_CA8_pr).Eta();
-    NewMuonTree->boostedW_lvj_phi_type2 = (W_mu+W_neutrino_type2+W_GroomedJet_CA8_pr).Phi();
-    NewMuonTree->boostedW_lvj_e_type2   = (W_mu+W_neutrino_type2+W_GroomedJet_CA8_pr).E();
+    NewMuonTree->boostedW_j_m_type2     = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
+    NewMuonTree->boostedW_lvj_pt_type2  = (W_mu+W_neutrino_type2+W_GroomedJet_CA8).Pt();
+    NewMuonTree->boostedW_lvj_eta_type2 = (W_mu+W_neutrino_type2+W_GroomedJet_CA8).Eta();
+    NewMuonTree->boostedW_lvj_phi_type2 = (W_mu+W_neutrino_type2+W_GroomedJet_CA8).Phi();
+    NewMuonTree->boostedW_lvj_e_type2   = (W_mu+W_neutrino_type2+W_GroomedJet_CA8).E();
 
     NewMuonTree->boosted_lvj_m_type0_met   = (W_mu+W_neutrino_type0_met+W_subjet1+W_subjet2).M();
     NewMuonTree->boosted_lv_m_type0_met    = (W_mu+W_neutrino_type0_met).M();
     NewMuonTree->boosted_j_m_type0_met     = (W_subjet1+W_subjet2).M();
-    NewMuonTree->boosted_lvj_pt_type0_met  = (W_mu+W_neutrino_type0_met+W_subjet1+W_subjet2).M ();
+    NewMuonTree->boosted_lvj_pt_type0_met  = (W_mu+W_neutrino_type0_met+W_subjet1+W_subjet2).Pt();
     NewMuonTree->boosted_lvj_eta_type0_met = (W_mu+W_neutrino_type0_met+W_subjet1+W_subjet2).Eta();
     NewMuonTree->boosted_lvj_phi_type0_met = (W_mu+W_neutrino_type0_met+W_subjet1+W_subjet2).Phi();
     NewMuonTree->boosted_lvj_e_type0_met   = (W_mu+W_neutrino_type0_met+W_subjet1+W_subjet2).E();
  
-    NewMuonTree->boostedW_lvj_m_type0_met   = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8_pr).M();
+    NewMuonTree->boostedW_lvj_m_type0_met   = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8).M();
     NewMuonTree->boostedW_lv_m_type0_met    = (W_mu+W_neutrino_type0_met).M();
-    NewMuonTree->boostedW_j_m_type0_met     = (W_GroomedJet_CA8_pr).M();
-    NewMuonTree->boostedW_lvj_pt_type0_met  = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8_pr).M ();
-    NewMuonTree->boostedW_lvj_eta_type0_met = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8_pr).Eta();
-    NewMuonTree->boostedW_lvj_phi_type0_met = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8_pr).Phi();
-    NewMuonTree->boostedW_lvj_e_type0_met   = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8_pr).E();
+    NewMuonTree->boostedW_j_m_type0_met     = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
+    NewMuonTree->boostedW_lvj_pt_type0_met  = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8).Pt();
+    NewMuonTree->boostedW_lvj_eta_type0_met = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8).Eta();
+    NewMuonTree->boostedW_lvj_phi_type0_met = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8).Phi();
+    NewMuonTree->boostedW_lvj_e_type0_met   = (W_mu+W_neutrino_type0_met+W_GroomedJet_CA8).E();
 
     NewMuonTree->boosted_lvj_m_type2_met   = (W_mu+W_neutrino_type2_met+W_subjet1+W_subjet2).M();
     NewMuonTree->boosted_lv_m_type2_met    = (W_mu+W_neutrino_type2_met).M();
     NewMuonTree->boosted_j_m_type2_met     = (W_subjet1+W_subjet2).M();
-    NewMuonTree->boosted_lvj_pt_type2_met  = (W_mu+W_neutrino_type2_met+W_subjet1+W_subjet2).M ();
+    NewMuonTree->boosted_lvj_pt_type2_met  = (W_mu+W_neutrino_type2_met+W_subjet1+W_subjet2).Pt();
     NewMuonTree->boosted_lvj_eta_type2_met = (W_mu+W_neutrino_type2_met+W_subjet1+W_subjet2).Eta();
     NewMuonTree->boosted_lvj_phi_type2_met = (W_mu+W_neutrino_type2_met+W_subjet1+W_subjet2).Phi();
     NewMuonTree->boosted_lvj_e_type2_met   = (W_mu+W_neutrino_type2_met+W_subjet1+W_subjet2).E();
  
-    NewMuonTree->boostedW_lvj_m_type2_met   = (W_mu+W_neutrino_type2_met+W_GroomedJet_CA8_pr).M();
+    NewMuonTree->boostedW_lvj_m_type2_met   = (W_mu+W_neutrino_type2_met+W_GroomedJet_CA8).M();
     NewMuonTree->boostedW_lv_m_type2_met    = (W_mu+W_neutrino_type2_met).M();
-    NewMuonTree->boostedW_j_m_type2_met     = (W_GroomedJet_CA8_pr).M();
-    NewMuonTree->boostedW_lvj_pt_type2_met  = (W_mu+W_neutrino_type2_met+W_GroomedJet_CA8_pr).M ();
-    NewMuonTree->boostedW_lvj_eta_type2_met = (W_mu+W_neutrino_type2_met+W_GroomedJet_CA8_pr).Eta();
-    NewMuonTree->boostedW_lvj_phi_type2_met = (W_mu+W_neutrino_type2_met+W_GroomedJet_CA8_pr).Phi();
+    NewMuonTree->boostedW_j_m_type2_met     = MuonTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
+    NewMuonTree->boostedW_lvj_pt_type2_met  = (W_mu+W_neutrino_type2_met+W_GroomedJet_CA8).Pt();
+    NewMuonTree->boostedW_lvj_eta_type2_met = (W_mu+W_neutrino_type2_met+W_GroomedJet_CA8).Eta();
+    NewMuonTree->boostedW_lvj_phi_type2_met = (W_mu+W_neutrino_type2_met+W_GroomedJet_CA8).Phi();
     
     
     // Angles for the central Higgs Kinematics
@@ -2134,7 +2134,7 @@ int main (int argc, char** argv){
 
     TLorentzVector W_electron, W_Met;
    
-    W_electron.SetPxPyPzE(ElectronTree->fReader->getFloat("W_elctron_px")[0],ElectronTree->fReader->getFloat("W_electron_py")[0],
+    W_electron.SetPxPyPzE(ElectronTree->fReader->getFloat("W_electron_px")[0],ElectronTree->fReader->getFloat("W_electron_py")[0],
                     ElectronTree->fReader->getFloat("W_electron_pz")[0],ElectronTree->fReader->getFloat("W_electron_e")[0]);
     W_Met.SetPxPyPzE(ElectronTree->fReader->getFloat("event_met_pfmet")[0] * TMath::Cos(ElectronTree->fReader->getFloat("event_met_pfmetPhi")[0]),
                      ElectronTree->fReader->getFloat("event_met_pfmet")[0] * TMath::Sin(ElectronTree->fReader->getFloat("event_met_pfmetPhi")[0]),0.,
@@ -2157,10 +2157,10 @@ int main (int argc, char** argv){
 
     // don't touch the neutrino pT
     TLorentzVector W_neutrino_type0_met; W_neutrino_type0_met.SetPxPyPzE(W_Met.Px(),W_Met.Py(),pz1_type0,sqrt(W_Met.Pt()*W_Met.Pt()+pz1_type0*pz1_type0));
-    ElectronTree->W_mass_type0_met   = (W_neutrino_type0_met+W_electron).M();  
-    ElectronTree->W_pz_type0_met     = (W_neutrino_type0_met+W_electron).Pz();   
-    ElectronTree->W_nu1_pz_type0_met = pz1_type0; 
-    ElectronTree->W_nu2_pz_type0_met = pz2_type0;
+    NewElectronTree->W_mass_type0_met   = (W_neutrino_type0_met+W_electron).M();  
+    NewElectronTree->W_pz_type0_met     = (W_neutrino_type0_met+W_electron).Pz();   
+    NewElectronTree->W_nu1_pz_type0_met = pz1_type0; 
+    NewElectronTree->W_nu2_pz_type0_met = pz2_type0;
 
     // chenge the neutrino pT in case of complex solution in order to make it real
     TLorentzVector W_neutrino_type0;  W_neutrino_type0.SetPxPyPzE(W_Met.Px(),W_Met.Py(),pz1_type0,sqrt(W_Met.Pt()*W_Met.Pt()+pz1_type0*pz1_type0));
@@ -2181,10 +2181,10 @@ int main (int argc, char** argv){
 
     }
 
-    ElectronTree->W_mass_type0 = (W_electron+W_neutrino_type0).M();  
-    ElectronTree->W_pz_type0   = (W_electron+W_neutrino_type0).Pz();  
-    ElectronTree->W_nu1_pz_type0 = pz1_type0;  
-    ElectronTree->W_nu2_pz_type0 = pz2_type0;
+    NewElectronTree->W_mass_type0 = (W_electron+W_neutrino_type0).M();  
+    NewElectronTree->W_pz_type0   = (W_electron+W_neutrino_type0).Pz();  
+    NewElectronTree->W_nu1_pz_type0 = pz1_type0;  
+    NewElectronTree->W_nu2_pz_type0 = pz2_type0;
 
   
     // type2 calculation of neutrino pZ
@@ -2197,10 +2197,10 @@ int main (int argc, char** argv){
 
     // don't touch the neutrino pT
     TLorentzVector W_neutrino_type2_met; W_neutrino_type2_met.SetPxPyPzE(W_Met.Px(),W_Met.Py(),pz1_type2,sqrt(W_Met.Pt()*W_Met.Pt()+pz1_type2*pz1_type2));
-    ElectronTree->W_mass_type2_met   = (W_neutrino_type2_met+W_electron).M();  
-    ElectronTree->W_pz_type2_met     = (W_neutrino_type2_met+W_electron).Pz();   
-    ElectronTree->W_nu1_pz_type2_met = pz1_type2; 
-    ElectronTree->W_nu2_pz_type2_met = pz2_type2;
+    NewElectronTree->W_mass_type2_met   = (W_neutrino_type2_met+W_electron).M();  
+    NewElectronTree->W_pz_type2_met     = (W_neutrino_type2_met+W_electron).Pz();   
+    NewElectronTree->W_nu1_pz_type2_met = pz1_type2; 
+    NewElectronTree->W_nu2_pz_type2_met = pz2_type2;
 
     // chenge the neutrino pT in case of complex solution in order to make it real
     TLorentzVector W_neutrino_type2;  W_neutrino_type2.SetPxPyPzE(W_Met.Px(),W_Met.Py(),pz1_type2,sqrt(W_Met.Pt()*W_Met.Pt()+pz1_type2*pz1_type2));
@@ -2221,10 +2221,10 @@ int main (int argc, char** argv){
 
     }
 
-    ElectronTree->W_mass_type2 = (W_electron+W_neutrino_type2).M();  
-    ElectronTree->W_pz_type2   = (W_electron+W_neutrino_type2).Pz();  
-    ElectronTree->W_nu1_pz_type2 = pz1_type2;  
-    ElectronTree->W_nu2_pz_type2 = pz2_type2;
+    NewElectronTree->W_mass_type2 = (W_electron+W_neutrino_type2).M();  
+    NewElectronTree->W_pz_type2   = (W_electron+W_neutrino_type2).Pz();  
+    NewElectronTree->W_nu1_pz_type2 = pz1_type2;  
+    NewElectronTree->W_nu2_pz_type2 = pz2_type2;
 
 
     //////////////////////////////
@@ -2243,11 +2243,11 @@ int main (int argc, char** argv){
     nstepEvents[nStep-1]++;
     nStep = 5;
 
-    TLorentzVector W_GroomedJet_CA8_pr; 
-    W_GroomedJet_CA8_pr.SetPtEtaPhiE(ElectronTree->fReader->getFloat("GroomedJet_CA8_pt_pr")[0], ElectronTree->fReader->getFloat("GroomedJet_CA8_eta_pr")[0],
-                                     ElectronTree->fReader->getFloat("GroomedJet_CA8_phi_pr")[0], ElectronTree->fReader->getFloat("GroomedJet_CA8_e_pr")[0]);
+    TLorentzVector W_GroomedJet_CA8; 
+    W_GroomedJet_CA8.SetPtEtaPhiE(ElectronTree->fReader->getFloat("GroomedJet_CA8_pt")[0], ElectronTree->fReader->getFloat("GroomedJet_CA8_eta")[0],
+                                  ElectronTree->fReader->getFloat("GroomedJet_CA8_phi")[0], ElectronTree->fReader->getFloat("GroomedJet_CA8_e")[0]);
 
-    if(W_GroomedJet_CA8_pr.Pt() <=0){ std::cerr<<" Problem with pruned CA8 "<<std::endl; continue ;}
+    if(W_GroomedJet_CA8.Pt() <=0){ std::cerr<<" Problem with pruned CA8 "<<std::endl; continue ;}
 
     if(std::string(SelectionEvents->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEvents->GetXaxis()->SetBinLabel(nStep,"Pruned CA8 4V");
     if(std::string(SelectionEfficiency->GetXaxis()->GetBinLabel(nStep)) =="") SelectionEfficiency->GetXaxis()->SetBinLabel(nStep,"Pruned CA8 4V");
@@ -2377,65 +2377,65 @@ int main (int argc, char** argv){
     NewElectronTree->boosted_lvj_m_type0   = (W_electron+W_neutrino_type0+W_subjet1+W_subjet2).M();
     NewElectronTree->boosted_lv_m_type0    = (W_electron+W_neutrino_type0).M();
     NewElectronTree->boosted_j_m_type0     = (W_subjet1+W_subjet2).M();
-    NewElectronTree->boosted_lvj_pt_type0  = (W_electron+W_neutrino_type0+W_subjet1+W_subjet2).M ();
+    NewElectronTree->boosted_lvj_pt_type0  = (W_electron+W_neutrino_type0+W_subjet1+W_subjet2).Pt();
     NewElectronTree->boosted_lvj_eta_type0 = (W_electron+W_neutrino_type0+W_subjet1+W_subjet2).Eta();
     NewElectronTree->boosted_lvj_phi_type0 = (W_electron+W_neutrino_type0+W_subjet1+W_subjet2).Phi();
     NewElectronTree->boosted_lvj_e_type0   = (W_electron+W_neutrino_type0+W_subjet1+W_subjet2).E();
  
-    NewElectronTree->boostedW_lvj_m_type0   = (W_electron+W_neutrino_type0+W_GroomedJet_CA8_pr).M();
+    NewElectronTree->boostedW_lvj_m_type0   = (W_electron+W_neutrino_type0+W_GroomedJet_CA8).M();
     NewElectronTree->boostedW_lv_m_type0    = (W_electron+W_neutrino_type0).M();
-    NewElectronTree->boostedW_j_m_type0     = (W_GroomedJet_CA8_pr).M();
-    NewElectronTree->boostedW_lvj_pt_type0  = (W_electron+W_neutrino_type0+W_GroomedJet_CA8_pr).M ();
-    NewElectronTree->boostedW_lvj_eta_type0 = (W_electron+W_neutrino_type0+W_GroomedJet_CA8_pr).Eta();
-    NewElectronTree->boostedW_lvj_phi_type0 = (W_electron+W_neutrino_type0+W_GroomedJet_CA8_pr).Phi();
-    NewElectronTree->boostedW_lvj_e_type0   = (W_electron+W_neutrino_type0+W_GroomedJet_CA8_pr).E();
+    NewElectronTree->boostedW_j_m_type0     = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
+    NewElectronTree->boostedW_lvj_pt_type0  = (W_electron+W_neutrino_type0+W_GroomedJet_CA8).Pt();
+    NewElectronTree->boostedW_lvj_eta_type0 = (W_electron+W_neutrino_type0+W_GroomedJet_CA8).Eta();
+    NewElectronTree->boostedW_lvj_phi_type0 = (W_electron+W_neutrino_type0+W_GroomedJet_CA8).Phi();
+    NewElectronTree->boostedW_lvj_e_type0   = (W_electron+W_neutrino_type0+W_GroomedJet_CA8).E();
 
     NewElectronTree->boosted_lvj_m_type2   = (W_electron+W_neutrino_type2+W_subjet1+W_subjet2).M();
     NewElectronTree->boosted_lv_m_type2    = (W_electron+W_neutrino_type2).M();
     NewElectronTree->boosted_j_m_type2     = (W_subjet1+W_subjet2).M();
-    NewElectronTree->boosted_lvj_pt_type2  = (W_electron+W_neutrino_type2+W_subjet1+W_subjet2).M ();
+    NewElectronTree->boosted_lvj_pt_type2  = (W_electron+W_neutrino_type2+W_subjet1+W_subjet2).Pt();
     NewElectronTree->boosted_lvj_eta_type2 = (W_electron+W_neutrino_type2+W_subjet1+W_subjet2).Eta();
     NewElectronTree->boosted_lvj_phi_type2 = (W_electron+W_neutrino_type2+W_subjet1+W_subjet2).Phi();
     NewElectronTree->boosted_lvj_e_type2   = (W_electron+W_neutrino_type2+W_subjet1+W_subjet2).E();
  
-    NewElectronTree->boostedW_lvj_m_type2   = (W_electron+W_neutrino_type2+W_GroomedJet_CA8_pr).M();
+    NewElectronTree->boostedW_lvj_m_type2   = (W_electron+W_neutrino_type2+W_GroomedJet_CA8).M();
     NewElectronTree->boostedW_lv_m_type2    = (W_electron+W_neutrino_type2).M();
-    NewElectronTree->boostedW_j_m_type2     = (W_GroomedJet_CA8_pr).M();
-    NewElectronTree->boostedW_lvj_pt_type2  = (W_electron+W_neutrino_type2+W_GroomedJet_CA8_pr).M ();
-    NewElectronTree->boostedW_lvj_eta_type2 = (W_electron+W_neutrino_type2+W_GroomedJet_CA8_pr).Eta();
-    NewElectronTree->boostedW_lvj_phi_type2 = (W_electron+W_neutrino_type2+W_GroomedJet_CA8_pr).Phi();
-    NewElectronTree->boostedW_lvj_e_type2   = (W_electron+W_neutrino_type2+W_GroomedJet_CA8_pr).E();
+    NewElectronTree->boostedW_j_m_type2     = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
+    NewElectronTree->boostedW_lvj_pt_type2  = (W_electron+W_neutrino_type2+W_GroomedJet_CA8).Pt();
+    NewElectronTree->boostedW_lvj_eta_type2 = (W_electron+W_neutrino_type2+W_GroomedJet_CA8).Eta();
+    NewElectronTree->boostedW_lvj_phi_type2 = (W_electron+W_neutrino_type2+W_GroomedJet_CA8).Phi();
+    NewElectronTree->boostedW_lvj_e_type2   = (W_electron+W_neutrino_type2+W_GroomedJet_CA8).E();
 
     NewElectronTree->boosted_lvj_m_type0_met   = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).M();
     NewElectronTree->boosted_lv_m_type0_met    = (W_electron+W_neutrino_type0_met).M();
     NewElectronTree->boosted_j_m_type0_met     = (W_subjet1+W_subjet2).M();
-    NewElectronTree->boosted_lvj_pt_type0_met  = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).M ();
+    NewElectronTree->boosted_lvj_pt_type0_met  = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).Pt();
     NewElectronTree->boosted_lvj_eta_type0_met = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).Eta();
     NewElectronTree->boosted_lvj_phi_type0_met = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).Phi();
     NewElectronTree->boosted_lvj_e_type0_met   = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).E();
- 
-    NewElectronTree->boostedW_lvj_m_type0_met   = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8_pr).M();
+
+    NewElectronTree->boostedW_lvj_m_type0_met   = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8).M();
     NewElectronTree->boostedW_lv_m_type0_met    = (W_electron+W_neutrino_type0_met).M();
-    NewElectronTree->boostedW_j_m_type0_met     = (W_GroomedJet_CA8_pr).M();
-    NewElectronTree->boostedW_lvj_pt_type0_met  = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8_pr).M ();
-    NewElectronTree->boostedW_lvj_eta_type0_met = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8_pr).Eta();
-    NewElectronTree->boostedW_lvj_phi_type0_met = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8_pr).Phi();
-    NewElectronTree->boostedW_lvj_e_type0_met   = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8_pr).E();
+    NewElectronTree->boostedW_j_m_type0_met     = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
+    NewElectronTree->boostedW_lvj_pt_type0_met  = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8).Pt();
+    NewElectronTree->boostedW_lvj_eta_type0_met = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8).Eta();
+    NewElectronTree->boostedW_lvj_phi_type0_met = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8).Phi();
+    NewElectronTree->boostedW_lvj_e_type0_met   = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8).E();
 
     NewElectronTree->boosted_lvj_m_type2_met   = (W_electron+W_neutrino_type2_met+W_subjet1+W_subjet2).M();
     NewElectronTree->boosted_lv_m_type2_met    = (W_electron+W_neutrino_type2_met).M();
     NewElectronTree->boosted_j_m_type2_met     = (W_subjet1+W_subjet2).M();
-    NewElectronTree->boosted_lvj_pt_type2_met  = (W_electron+W_neutrino_type2_met+W_subjet1+W_subjet2).M ();
+    NewElectronTree->boosted_lvj_pt_type2_met  = (W_electron+W_neutrino_type2_met+W_subjet1+W_subjet2).Pt();
     NewElectronTree->boosted_lvj_eta_type2_met = (W_electron+W_neutrino_type2_met+W_subjet1+W_subjet2).Eta();
     NewElectronTree->boosted_lvj_phi_type2_met = (W_electron+W_neutrino_type2_met+W_subjet1+W_subjet2).Phi();
     NewElectronTree->boosted_lvj_e_type2_met   = (W_electron+W_neutrino_type2_met+W_subjet1+W_subjet2).E();
  
-    NewElectronTree->boostedW_lvj_m_type2_met   = (W_electron+W_neutrino_type2_met+W_GroomedJet_CA8_pr).M();
+    NewElectronTree->boostedW_lvj_m_type2_met   = (W_electron+W_neutrino_type2_met+W_GroomedJet_CA8).M();
     NewElectronTree->boostedW_lv_m_type2_met    = (W_electron+W_neutrino_type2_met).M();
-    NewElectronTree->boostedW_j_m_type2_met     = (W_GroomedJet_CA8_pr).M();
-    NewElectronTree->boostedW_lvj_pt_type2_met  = (W_electron+W_neutrino_type2_met+W_GroomedJet_CA8_pr).M ();
-    NewElectronTree->boostedW_lvj_eta_type2_met = (W_electron+W_neutrino_type2_met+W_GroomedJet_CA8_pr).Eta();
-    NewElectronTree->boostedW_lvj_phi_type2_met = (W_electron+W_neutrino_type2_met+W_GroomedJet_CA8_pr).Phi();
+    NewElectronTree->boostedW_j_m_type2_met     = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
+    NewElectronTree->boostedW_lvj_pt_type2_met  = (W_electron+W_neutrino_type2_met+W_GroomedJet_CA8).Pt();
+    NewElectronTree->boostedW_lvj_eta_type2_met = (W_electron+W_neutrino_type2_met+W_GroomedJet_CA8).Eta();
+    NewElectronTree->boostedW_lvj_phi_type2_met = (W_electron+W_neutrino_type2_met+W_GroomedJet_CA8).Phi();
     
     
     // Angles for the central Higgs Kinematics
