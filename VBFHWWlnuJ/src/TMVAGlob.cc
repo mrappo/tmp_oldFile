@@ -1476,7 +1476,7 @@ void TMVAGlob::plotSignificance (TFile* inputFile, const int & iFile, Significan
      if ((*itInfoList)->methodTitle_.Contains("Cuts"))      
        baseName  = Form("mva_significance_eff_%s_file%d",(*itInfoList)->methodTitle_.Data(),iFile);
      else
-       baseName  = Form("mva_significance_eff_%s",(*itInfoList)->methodTitle_.Data(),iFile);
+       baseName  = Form("mva_significance_eff_%s",(*itInfoList)->methodTitle_.Data());
 
      if(stype == 0)      (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_S_over_B_file",outputPlotDirectory.c_str(),baseName.Data())));
      else if(stype == 1) (*this).PrintImage((*this).cSignificance_, std::string(Form("%s/%s_S_over_sqrtB",outputPlotDirectory.c_str(),baseName.Data())));
