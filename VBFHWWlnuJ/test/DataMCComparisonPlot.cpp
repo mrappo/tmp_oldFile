@@ -38,7 +38,7 @@ void banner4Plot (const bool & isLabel){
   //  pt->AddText("250 < p_{T} < 350 GeV");
   pt->AddText("p_{T} > 200 GeV");
   pt->AddText("|#eta|<2.4");
-  pt->AddText("40 < m_{j} < 130 GeV");                                                                                                                                                       
+  //  pt->AddText("65 < m_{j} < 105 GeV");                                                                                                                                                       
 
   pt->SetFillColor(0);
   pt->SetTextSize(0.035);
@@ -113,7 +113,6 @@ int main (int argc, char **argv){
   std::cout<<"      "<<std::endl;
   std::cout<<" InputCutList: "<<InputCutList<<std::endl;
   std::cout<<"      "<<std::endl;
-
 
   std::string TreeName ;
   try{ TreeName  = gConfigParser -> readStringOption("Input::TreeName");}
@@ -246,6 +245,15 @@ int main (int argc, char **argv){
   std::cout<<" Lumi: "<<Lumi<<std::endl;
   std::cout<<"      "<<std::endl;
 
+  bool isttbar_controlplots = false ;
+  try{ isttbar_controlplots  = gConfigParser -> readBoolOption("Option::ttbarControlplots");}
+  catch(char const* exceptionString) { isttbar_controlplots=false;
+                                       std::cerr<<" isttbar_controlplots  --> false Default "<<std::endl;
+  }
+
+  std::cout<<" isttbar_controlplots: "<<isttbar_controlplots<<std::endl;
+  std::cout<<"      "<<std::endl;
+  
 
   double SignalScaleFactor;
   try{ SignalScaleFactor  = gConfigParser -> readDoubleOption("Option::SignalScaleFactor");}
@@ -323,11 +331,10 @@ int main (int argc, char **argv){
   std::vector <double> SampleCrossSection;
   std::vector <int> NumEntriesBefore;
 
-
   if(ReadInputSampleFile(InputSampleList,NameSample,NameReducedSample,ColorSample,SampleCrossSection,NumEntriesBefore) <= 0){ 
     std::cerr<<" Empty Input Sample File or not Exisisting --> Exit "<<std::endl; return -1;}
 
-
+  
   // read input variables to Plot
 
   std::vector <std::string> Variables;
@@ -363,7 +370,7 @@ int main (int argc, char **argv){
   TH1F* histos[CutList.size()][Variables.size()][NameSample.size()];
   TString hname ;
 
-  bool isttbar_controlplots = false ;
+  bool isHerwig_ttbar = false;
   
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
     
@@ -426,7 +433,7 @@ int main (int argc, char **argv){
 
        else if(NameReducedSample.at(iSample) == "tt_bar_mcatnlo" ){
 
-         isttbar_controlplots = true ;
+         isHerwig_ttbar = true ;
 
          TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+BackgroundWeight_mcatnlo+") * ("+CutList.at(iCut)+")").c_str() ,"goff");
 
@@ -466,10 +473,6 @@ int main (int argc, char **argv){
   
   for (size_t iCut=0; iCut<CutList.size(); iCut++){
 
-    //    std::cout<<std::endl;
-    //    std::cout<<" Normalization Factor for Cut "<<CutList.at(iCut)<<std::endl;
-    //    std::cout<<std::endl;
-
     for (size_t iVar=0; iVar<Variables.size(); iVar++){
 
       int iSampleData = -1 ; 
@@ -486,46 +489,45 @@ int main (int argc, char **argv){
  
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
 
-       //       std::cout<< " Sample to be scaled "<<NameReducedSample.at(iSample)<<" Lumi "<<Lumi<<" xs : "<<SampleCrossSection.at(iSample)<<" numEntries "<<NumEntriesBefore.at(iSample)<<
-       //	           " Normalization Factor "<<norm<<std::endl;
+       //std::cout<< " Sample to be scaled "<<NameReducedSample.at(iSample)<<" Lumi "<<Lumi<<" xs : "<<SampleCrossSection.at(iSample)<<" numEntries "<<NumEntriesBefore.at(iSample)<<" Normalization Factor "<<norm<<std::endl;
 
        if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *scaleFactorWjet_Pythia;
-       if(NameReducedSample.at(iSample) ==  "W+Jets_herwig") norm = norm *scaleFactorWjet_Herwig;
+       if(NameReducedSample.at(iSample) ==  "W+Jets_herwig" || NameReducedSample.at(iSample) ==  "W+Jets_Herwig") norm = norm *scaleFactorWjet_Herwig;
 
        if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL") {
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)); 
-      	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
        }
 
        else if ( NameReducedSample.at(iSample)==SignalqqHName && SignalqqHName!="NULL") {
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGPythiaName && SignalRSGPythiaName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGHerwigName && SignalRSGHerwigName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalGravitonName && SignalGravitonName!="NULL"){
          if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
          else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else{ if(!NormalizeBackgroundToData) histos[iCut][iVar][iSample]->Scale(1.*norm);
 	     else { histos[iCut][iVar][iSample]->Scale(1.*norm); normalizeToData += histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1) ;
-	       //	             std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<"   "<<normalizeToData<<std::endl;
+	       //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<"   "<<normalizeToData<<std::endl;
                   }
            }
       }
@@ -613,51 +615,43 @@ int main (int argc, char **argv){
 
           TString histoName = Form("%s_sTop_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histo_top[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
-                                             VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_top[iCut][iVar]          = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_diboson_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histo_diboson[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
-                                             VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_diboson[iCut][iVar]      = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_WJets_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histo_WJets[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
-                                             VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_WJets[iCut][iVar]        = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_WJets_herwig_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histo_WJets_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
-                                                      VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_WJets_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_ttbar_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histo_ttbar[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
-                                             VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_ttbar[iCut][iVar]        = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_ttbar_herwig_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histo_ttbar_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),
-                                                      VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_ttbar_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_stack_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  hs[iCut][iVar] = new THStack (histoName.Data(),"") ;
+	  hs[iCut][iVar]                 = new THStack (histoName.Data(),"") ;
 
           histoName = Form("%s_stack_herwig%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  hs_herwig[iCut][iVar] = new THStack (histoName.Data(),"") ;
+	  hs_herwig[iCut][iVar]          = new THStack (histoName.Data(),"") ;
 
           histoName = Form("%s_sum_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histoSum[iCut][iVar] = new TH1F ( histoName.Data(),"",
-					    VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histoSum[iCut][iVar]           = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_sum_herwig_%d",Variables.at(iVar).c_str(),int(iCut));
 
-	  histoSum_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",
-					           VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histoSum_herwig[iCut][iVar]    = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           
           TPad* upperPad ; TPad* lowerPad ; TPad* upperPadLog ; TPad* lowerPadLog ;  
@@ -692,8 +686,12 @@ int main (int argc, char **argv){
               upperPadLogNoRatio->SetLogy();
           }
           else{
-	        upperPad = new TPad("upperPad", "upperPad", .005, .025, .995, .950); 
+	        upperPad    = new TPad("upperPad", "upperPad", .005, .025, .995, .950); 
                 upperPadLog = new TPad("upperPadLog", "upperPadLog", .005, .025, .995, .950);
+                upperPad->SetLeftMargin(0.1);
+                upperPad->SetRightMargin(0.1);
+                upperPadLog->SetLeftMargin(0.1);
+                upperPadLog->SetRightMargin(0.1);
                 upperPadLog->SetLogy();
 	  }
 	  
@@ -742,7 +740,7 @@ int main (int argc, char **argv){
 		histo_WJets[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	        histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    }
-	  else if ( NameReducedSample.at(iSample)=="W+Jets_herwig"){
+	    else if ( NameReducedSample.at(iSample)=="W+Jets_herwig" || NameReducedSample.at(iSample)=="W+Jets_Herwig"){
   
 		histo_WJets_herwig[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_WJets_herwig[iCut][iVar]->SetLineColor(kBlack);
@@ -750,7 +748,7 @@ int main (int argc, char **argv){
 		histo_WJets_herwig[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 		histoSum_herwig[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    }
-	    else if ( NameReducedSample.at(iSample)=="tt_bar" && !isttbar_controlplots){  
+	    else if ( NameReducedSample.at(iSample)=="tt_bar" && !isHerwig_ttbar){  
 
 		histo_ttbar[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_ttbar[iCut][iVar]->SetLineColor(kBlack);
@@ -760,7 +758,7 @@ int main (int argc, char **argv){
 		histoSum_herwig[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    } 
 
-	    else if ( NameReducedSample.at(iSample)=="tt_bar" && isttbar_controlplots){  
+	    else if ( NameReducedSample.at(iSample)=="tt_bar" && isHerwig_ttbar){  
 
 		histo_ttbar[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_ttbar[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
@@ -769,7 +767,7 @@ int main (int argc, char **argv){
 		histoSum[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    } 
 
-	    else if ( NameReducedSample.at(iSample)=="tt_bar_mcatnlo" && isttbar_controlplots){
+	    else if ( NameReducedSample.at(iSample)=="tt_bar_mcatnlo" && isHerwig_ttbar){
 		histo_ttbar_herwig[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_ttbar_herwig[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
 		histo_ttbar_herwig[iCut][iVar]->SetLineWidth(2);
@@ -795,15 +793,16 @@ int main (int argc, char **argv){
 
 	   }
 
+
+
           if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries() !=0 && !isttbar_controlplots){
             histo_WJets[iCut][iVar]->SetLineColor(kRed);
             histo_WJets_herwig[iCut][iVar]->SetLineColor(kBlue);
 	  }
 								  
-          
+          //legend entry          
 	  if(histo_top[iCut][iVar]->GetEntries()!=0)     leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
 	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ", "f" );
-
 	  if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0) 
                 leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets Pythia", "f" );
 	  else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0)  
@@ -843,125 +842,131 @@ int main (int argc, char **argv){
                 legNoRatio[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "l" );
 	  }
  
-	  if(histo_top[iCut][iVar]->GetEntries()!=0)     { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);   hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }
-
+          // Single Top in first position
           if(!isttbar_controlplots){
+           // Single Top in first position
+ 	   if(histo_top[iCut][iVar]->GetEntries()!=0)     { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }           
+	   if(histo_ttbar[iCut][iVar]->GetEntries()!=0)   { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);}
+	   if(histo_diboson[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]);}
+	   if(histo_WJets[iCut][iVar]->GetEntries()!=0)  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
+	   if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0) hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); 
 
-	   if(histo_ttbar[iCut][iVar]->GetEntries()!=0)        { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);}
-
-	   if(histo_diboson[iCut][iVar]->GetEntries()!=0)      { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]); }
-
-	   if(histo_WJets[iCut][iVar]->GetEntries()!=0)          hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
-	   if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0)   hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]);
 	  }
           else{
-
-	   if(histo_WJets[iCut][iVar]->GetEntries()!=0)        { hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_WJets[iCut][iVar]);}
-
-	   if(histo_diboson[iCut][iVar]->GetEntries()!=0)      { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]); }
-
-  	   if(histo_ttbar[iCut][iVar]->GetEntries()!=0)        { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]); }
-	   if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0) { hs_herwig[iCut][iVar]->Add(histo_ttbar_herwig[iCut][iVar]); }
-
+	    if(!isHerwig_ttbar){
+  	      if(histo_WJets[iCut][iVar]->GetEntries()!=0) hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
+	      if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0) hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]);
+  	      if(histo_diboson[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]);}
+	      if(histo_top[iCut][iVar]->GetEntries()!=0)     { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }
+	      if(histo_ttbar[iCut][iVar]->GetEntries()!=0)   { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);}
+	    }
+            else{
+     	      if(histo_WJets[iCut][iVar]->GetEntries()!=0)        { hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_WJets[iCut][iVar]);}
+	      if(histo_diboson[iCut][iVar]->GetEntries()!=0)      { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]); }
+   	      if(histo_top[iCut][iVar]->GetEntries()!=0)          { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }
+  	      if(histo_ttbar[iCut][iVar]->GetEntries()!=0)        { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]); }
+	      if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0) { hs_herwig[iCut][iVar]->Add(histo_ttbar_herwig[iCut][iVar]); }
+	    }
 	  }
+
           // Set the systenatic for each sample 
-	  
+          if(!isttbar_controlplots){
+           SystematicErrorMap[0] = 0.00 ;   SystematicErrorMap_herwig[0] = 0.00 ;
+           SystematicErrorMap[1] = 0.30 ;   SystematicErrorMap_herwig[1] = 0.30 ;
+           SystematicErrorMap[2] = 0.07 ;   SystematicErrorMap_herwig[2] = 0.07 ;
+           SystematicErrorMap[3] = 0.30 ;   SystematicErrorMap_herwig[3] = 0.30 ;
+           SystematicErrorMap[4] = 0.00 ;   SystematicErrorMap_herwig[4] = 0.00 ;	  
+	  }
+          else{
+           SystematicErrorMap[0] = 0.00 ;   SystematicErrorMap_herwig[0] = 0.00 ;
+           SystematicErrorMap[1] = 0.00 ;   SystematicErrorMap_herwig[1] = 0.00 ;
+           SystematicErrorMap[2] = 0.30 ;   SystematicErrorMap_herwig[2] = 0.30 ;
+           SystematicErrorMap[3] = 0.30 ;   SystematicErrorMap_herwig[3] = 0.30 ;
+           SystematicErrorMap[4] = 0.07 ;   SystematicErrorMap_herwig[4] = 0.07 ;	  
+	  }
+
           TH1F* MCSysStat = (TH1F*) histo_top[iCut][iVar]->Clone("MCSysStat");
           MCSysStat->SetLineColor(kBlack);
           MCSysStat->SetLineWidth(1);
           MCSysStat->SetFillColor(kBlack);
           MCSysStat->SetFillStyle(3013);
           
-	  if(!isttbar_controlplots){
-           SystematicErrorMap[0] = 0.0 ;   SystematicErrorMap_herwig[0] = 0.0 ;
-	   SystematicErrorMap[1] = 0.3 ;   SystematicErrorMap_herwig[1] = 0.3 ;
-           SystematicErrorMap[2] = 0.07 ;  SystematicErrorMap_herwig[2] = 0.07 ;
-           SystematicErrorMap[3] = 0.0 ;   SystematicErrorMap_herwig[3] = 0.0 ;
-           SystematicErrorMap[4] = 0.30 ;  SystematicErrorMap_herwig[4] = 0.30 ;
-          }
-          else{
-           SystematicErrorMap[0] = 0.07 ;  SystematicErrorMap_herwig[0] = 0.07 ;
-	   SystematicErrorMap[1] = 0.3 ;   SystematicErrorMap_herwig[1] = 0.3 ;
-           SystematicErrorMap[2] = 0.3 ;   SystematicErrorMap_herwig[2] = 0.30 ;
-           SystematicErrorMap[3] = 0.07 ;  SystematicErrorMap_herwig[3] = 0.07 ;
-           SystematicErrorMap[4] = 0.0 ;   SystematicErrorMap_herwig[4] = 0.0 ;
-	  }
-
 	  std::vector<double> SysError ;
 	  std::vector<double> SysError_herwig ;
 
 	  SetTotalSystematicVector(SysError,hs[iCut][iVar],SystematicErrorMap);	  
 	  SetTotalSystematicVector(SysError_herwig,hs_herwig[iCut][iVar],SystematicErrorMap_herwig);	  
 
-          THStack* StackNoRatio           = (THStack*) hs[iCut][iVar]->Clone("StackNoRatio");
-          THStack* StackNoRatio_herwig    = (THStack*) hs_herwig[iCut][iVar]->Clone("StackNoRatio_herwig");
-          THStack* LogStack               = (THStack*) hs[iCut][iVar]->Clone("LogStack");
-          THStack* LogStack_herwig        = (THStack*) hs_herwig[iCut][iVar]->Clone("LogStack_herwig");
+          THStack* StackNoRatio              = (THStack*) hs[iCut][iVar]->Clone("StackNoRatio");
+          THStack* StackNoRatio_herwig       = (THStack*) hs_herwig[iCut][iVar]->Clone("StackNoRatio_herwig");
+          THStack* LogStack                  = (THStack*) hs[iCut][iVar]->Clone("LogStack");
+          THStack* LogStack_herwig           = (THStack*) hs_herwig[iCut][iVar]->Clone("LogStack_herwig");
           THStack* LogStackNoRatio           = (THStack*) hs[iCut][iVar]->Clone("StackNoRatio");
           THStack* LogStackNoRatio_herwig    = (THStack*) hs_herwig[iCut][iVar]->Clone("StackNoRatio_herwig");
 
-
 	  c[iCut][iVar] ->cd();
 	  upperPad->Draw();     
+
 	  if(!WithoutData) lowerPad->Draw();
 
 	  if(!WithoutData) {cNoRatio[iCut][iVar] ->cd(); upperPadNoRatio->Draw(); }
 
-	  
 	  if(WithoutData) { 
 
             upperPad->cd(); 
 
-	    if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots) 
+	    if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar) 
                  DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,false,true); 
-            else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+            else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
                  DrawStackError(hs_herwig[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap_herwig,false,true); 
-	    else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+	    else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
 	         DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,true);                 
-	    else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isttbar_controlplots)
-	         DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,true,isttbar_controlplots);           
+	    else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
+	         DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,true,isHerwig_ttbar);           
+
+  	    upperPad->cd(); leg[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f");
           }
                          
 	  else{ 
+
 	       upperPad->cd();  
 
-               if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots) 
-                  DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,false);
-               else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+               if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
+		  DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,false);
+               else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
                   DrawStackError(hs_herwig[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap_herwig,false,false);
-               else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)  
+               else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)  
  		  DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,SystematicErrorMap_herwig,false,false);
-		 else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isttbar_controlplots)
-	          DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,false,isttbar_controlplots);          
+		 else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
+	          DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,false,isHerwig_ttbar); 
 
   	       upperPadNoRatio->cd();
 
-	       if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots) 
+	       if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar) 
                   DrawStackError(StackNoRatio,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,true);
-               else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+               else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
                   DrawStackError(StackNoRatio_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,true);
-               else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+               else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
  	 	  DrawDoubleStackError(StackNoRatio,StackNoRatio_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,SystematicErrorMap_herwig,false,true);
-    	       else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isttbar_controlplots)
-	          DrawDoubleStackError(StackNoRatio,StackNoRatio_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,true,isttbar_controlplots);            
+    	       else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
+	          DrawDoubleStackError(StackNoRatio,StackNoRatio_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,true,isHerwig_ttbar);            
 
             if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
                   for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
                       iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
 
-		  upperPad->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
-		  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same");  histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
-                
+		       upperPad->cd();        histos[iCut][iVar][iSampleData]->DrawCopy("E same");  histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+		       upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same");  histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
             }
 	    else{
-                  upperPad->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");  
-                  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");  }
+	          upperPad->cd();        histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");  
+                  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame"); 
+            }
+	   upperPad->cd();        leg[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f");
+	   upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f"); 
           }
-
-	  upperPad->cd(); leg[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f");
-	  upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f"); 
-	  
+	   
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
               
               	    TString Name ;
@@ -978,7 +983,7 @@ int main (int argc, char **argv){
                                      
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleggH]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same");  histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
+		    upperPad->cd();  histos[iCut][iVar][iSampleggH]->DrawCopy("hist same");  histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
 		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same");histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
           }
        
@@ -999,7 +1004,7 @@ int main (int argc, char **argv){
  
           	    if(!NormalizeSignalToData) histos[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
+		    upperPad->cd();  histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
 		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
 
           }
@@ -1018,7 +1023,7 @@ int main (int argc, char **argv){
                                      
                     if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGPythia]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
+		    upperPad->cd();  histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
 		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
           }
        
@@ -1060,9 +1065,9 @@ int main (int argc, char **argv){
           }
           
 	  
-	  if(!WithoutData) { upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,false); banner4Plot(false);
-                 	     upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); banner4Plot(true); }
-
+	  if(!WithoutData) { upperPad->cd();        leg[iCut][iVar]->Draw("same");        LatexCMS(Lumi,LeptonType,false); banner4Plot(false);
+                 	     upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true);  banner4Plot(true); 
+          }
           else { upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); banner4Plot(true); }
 
 	  if(!WithoutData) {
@@ -1072,13 +1077,16 @@ int main (int argc, char **argv){
 	                    lowerPad->SetGridy();
 	  
                             RatioDataMC[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
-                            RatioDataMC[iCut][iVar]->Divide(histoSum[iCut][iVar]);
+                            RatioDataMC[iCut][iVar]->Reset();
+                            RatioDataMC[iCut][iVar]->Divide(histos[iCut][iVar][iSampleData],histoSum[iCut][iVar],1,1,"B");
 
                             RatioDataMC_herwig[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
-                            RatioDataMC_herwig[iCut][iVar]->Divide(histoSum_herwig[iCut][iVar]);
+                            RatioDataMC_herwig[iCut][iVar]->Reset();
+                            RatioDataMC_herwig[iCut][iVar]->Divide(histos[iCut][iVar][iSampleData],histoSum_herwig[iCut][iVar],1,1,"B");
 
                             RatioDataMC_error[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
-                            RatioDataMC_error[iCut][iVar]->Divide(histoSum_herwig[iCut][iVar]);
+                            RatioDataMC_error[iCut][iVar]->Reset();
+                            RatioDataMC_error[iCut][iVar]->Divide(histos[iCut][iVar][iSampleData],histoSum_herwig[iCut][iVar],1,1,"B");
                           
                             RatioDataMC[iCut][iVar]->SetMinimum(0.001);
                             RatioDataMC[iCut][iVar]->SetMaximum(2.);
@@ -1120,10 +1128,10 @@ int main (int argc, char **argv){
 			    RatioDataMC_error[iCut][iVar]->GetXaxis()->SetTitleOffset(0.75);
 
                             // Propagate Sys Error to the ratio
-                            if( (histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0) &&  !isttbar_controlplots){
+                            if( (histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0) && !isHerwig_ttbar){
 			     for( int iBin = 0; iBin< RatioDataMC[iCut][iVar]->GetNbinsX() ; iBin++){
 			      RatioDataMC[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
-			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+			      SysError.at(iBin)*(TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
 
 			     }
                              RatioDataMC[iCut][iVar]->GetYaxis()->SetNdivisions(504);
@@ -1136,12 +1144,11 @@ int main (int argc, char **argv){
 	                     RatioDataMC[iCut][iVar]->Draw("PEsame");
 			    }
 
-                            else if((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0) && !isttbar_controlplots){
+                            else if((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0) && !isHerwig_ttbar){
 
-			     for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
- 			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+
-			     SysError_herwig.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
-			    }
+			    for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
+ 			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+SysError_herwig.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+ 			    }
                             RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetNdivisions(504);
 	                    RatioDataMC_herwig[iCut][iVar]->Draw("PE");
 
@@ -1154,15 +1161,14 @@ int main (int argc, char **argv){
 
 			    }
                    
-                            else if ((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0) && !isttbar_controlplots){
+                            else if ((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0) && !isHerwig_ttbar){
 
 			     for( int iBin = 0; iBin< RatioDataMC[iCut][iVar]->GetNbinsX() ; iBin++){
 			      RatioDataMC[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
 			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
 	                      RatioDataMC_error[iCut][iVar]->SetBinContent(iBin+1,1) ;
 			      RatioDataMC_error[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
-			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
-
+			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
 			     }
 
                              RatioDataMC_error[iCut][iVar]->SetBinContent(0,1) ;
@@ -1197,10 +1203,8 @@ int main (int argc, char **argv){
                              RatioDataMC[iCut][iVar]->Draw("hist same");         
                             
 			    
-
        		           for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
- 			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+
-			     SysError_herwig.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+ 			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+SysError_herwig.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
 
 			    }
                             RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetNdivisions(504);
@@ -1210,18 +1214,18 @@ int main (int argc, char **argv){
                             RatioDataMC_herwig[iCut][iVar]->SetLineWidth(2);         
 	                    RatioDataMC_herwig[iCut][iVar]->Draw("hist same");
                            
-			    /*legRatio->SetFillColor(0);
+			    legRatio->SetFillColor(0);
 			    legRatio->SetFillStyle(3001);
 			    legRatio->SetNColumns(2);
                             legRatio->AddEntry(RatioDataMC[iCut][iVar],"Data/MC Pythia","l");
                             legRatio->AddEntry(RatioDataMC_herwig[iCut][iVar],"Data/MC Herwig","l");
-                            legRatio->Draw("same");*/
+                            legRatio->Draw("same");
 	                    lowerPad->Update();
 			    }
 			    /////////////////////////////////////////////////////////////
 
                    
-                            else if ((histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0) && isttbar_controlplots){
+                            else if ((histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0) && isHerwig_ttbar){
 
 			     for( int iBin = 0; iBin< RatioDataMC[iCut][iVar]->GetNbinsX() ; iBin++){
 			      RatioDataMC[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
@@ -1229,13 +1233,12 @@ int main (int argc, char **argv){
 	                      RatioDataMC_error[iCut][iVar]->SetBinContent(iBin+1,1) ;
 			      RatioDataMC_error[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
 			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
-
 			     }
 
                              RatioDataMC_error[iCut][iVar]->SetBinContent(0,1) ;
                              RatioDataMC_error[iCut][iVar]->SetBinContent(RatioDataMC[iCut][iVar]->GetNbinsX()+1,1) ;
                              RatioDataMC_error[iCut][iVar]->SetBinError(0,RatioDataMC[iCut][iVar]->GetBinError(1)) ;
-                             RatioDataMC_error[iCut][iVar]->SetBinError(RatioDataMC[iCut][iVar]->GetNbinsX()+1,RatioDataMC[iCut][iVar]->GetBinError((RatioDataMC[iCut][iVar]->GetNbinsX()))) ;
+                             RatioDataMC_error[iCut][iVar]->SetBinError(RatioDataMC[iCut][iVar]->GetNbinsX()+1,RatioDataMC[iCut][iVar]->GetBinError((RatioDataMC[iCut][iVar]->GetNbinsX())));
 
                              RatioDataMC[iCut][iVar]->GetYaxis()->SetNdivisions(504);
 
@@ -1262,9 +1265,7 @@ int main (int argc, char **argv){
                              RatioLine->Draw("same");
 
                              RatioDataMC[iCut][iVar]->Draw("hist same");         
-                            
-			    
-
+                            			    
        		           for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
  			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+
 			     SysError_herwig.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
@@ -1277,13 +1278,13 @@ int main (int argc, char **argv){
                             RatioDataMC_herwig[iCut][iVar]->SetLineWidth(2);         
 	                    RatioDataMC_herwig[iCut][iVar]->Draw("hist same");
                            
-			    /*legRatio->SetFillColor(0);
+			    legRatio->SetFillColor(0);
 			    legRatio->SetFillStyle(3001);
 			    legRatio->SetNColumns(2);
                             legRatio->AddEntry(RatioDataMC[iCut][iVar],"Data/MC Pythia","l");
                             legRatio->AddEntry(RatioDataMC_herwig[iCut][iVar],"Data/MC Herwig","l");
                             legRatio->Draw("same");
-	                    lowerPad->Update();*/
+	                    lowerPad->Update();
 			    }
 
 
@@ -1330,13 +1331,13 @@ int main (int argc, char **argv){
                              lowerPadLog->SetGridx();
 	                     lowerPadLog->SetGridy();
 
-                             if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && !isttbar_controlplots){
+                             if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && !isHerwig_ttbar){
 
                               RatioDataMC[iCut][iVar]->Draw("PE");
                               RatioLine->Draw("same");
                               RatioDataMC[iCut][iVar]->Draw("PEsame");
 			     }
-                             else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 &&  !isttbar_controlplots){
+                             else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 &&  !isHerwig_ttbar){
 
                               RatioDataMC_herwig[iCut][iVar]->Draw("PE");
                               RatioLine->Draw("same");
@@ -1344,7 +1345,7 @@ int main (int argc, char **argv){
 
 			     }
 
-                             else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 &&  !isttbar_controlplots){
+                             else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 &&  !isHerwig_ttbar){
 
                               RatioDataMC_error[iCut][iVar]->SetBarWidth(1.2); 
                               RatioDataMC_error[iCut][iVar]->Draw("b");
@@ -1352,31 +1353,29 @@ int main (int argc, char **argv){
                               RatioDataMC[iCut][iVar]->Draw("hist same");
 
                               RatioDataMC_herwig[iCut][iVar]->Draw("hist same");
-                              /*legRatio->Clear();
+                              legRatio->Clear();
 			      legRatio->SetFillColor(0);
 			      legRatio->SetFillStyle(3001);
 			      legRatio->SetNColumns(2);
                               legRatio->AddEntry(RatioDataMC[iCut][iVar],"Data/MC Pythia","l");
                               legRatio->AddEntry(RatioDataMC_herwig[iCut][iVar],"Data/MC Herwig","l");
-                              legRatio->Draw("same");*/
-
+	                      legRatio->Draw("same");
 			     }
 
-                             else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 &&  isttbar_controlplots){
+                             else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar){
 
                               RatioDataMC_error[iCut][iVar]->SetBarWidth(1.2); 
                               RatioDataMC_error[iCut][iVar]->Draw("b");
                               RatioLine->Draw("same");
                               RatioDataMC[iCut][iVar]->Draw("hist same");
                               RatioDataMC_herwig[iCut][iVar]->Draw("hist same");
-                              /*legRatio->Clear();
+                              legRatio->Clear();
 			      legRatio->SetFillColor(0);
 			      legRatio->SetFillStyle(3001);
 			      legRatio->SetNColumns(2);
                               legRatio->AddEntry(RatioDataMC[iCut][iVar],"Data/MC Pythia","l");
                               legRatio->AddEntry(RatioDataMC_herwig[iCut][iVar],"Data/MC Herwig","l");
-                              legRatio->Draw("same");*/
-
+                              legRatio->Draw("same");
 			     }
 
           }
@@ -1393,65 +1392,71 @@ int main (int argc, char **argv){
 
             upperPadLog->cd();
 
-	    if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots) 
+	    if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar) 
                DrawStackError(LogStack,VariablesTitle.at(iVar),SystematicErrorMap,true,false);
 
-            else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && !isttbar_controlplots)
+            else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && !isHerwig_ttbar)
                DrawStackError(LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap_herwig,true,false);
 
-            else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+            else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
  	       DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false);
 
-    	    else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isttbar_controlplots)
-	       DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false,isttbar_controlplots);                 
+    	    else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
+	       DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false,isHerwig_ttbar);                 
 
           }
 	  else{ 
 
 	    upperPadLog->cd(); 
 
-            if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots) 
+            if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar) 
               DrawStackError(LogStack,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,true,false);
-            else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && !isttbar_controlplots)
+            else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && !isHerwig_ttbar)
               DrawStackError(LogStack_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap_herwig,true,false);
-            else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+            else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
 	      DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false);
-    	    else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isttbar_controlplots)
-	      DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false,isttbar_controlplots);          
+    	    else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
+	      DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false,isHerwig_ttbar);          
 	    
  	    upperPadLogNoRatio->cd(); 
 
-            if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+            if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
                DrawStackError(LogStackNoRatio,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,true,true);
-	    else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+	    else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
                DrawStackError(LogStackNoRatio_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap_herwig,true,true);
-            else if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isttbar_controlplots)
+            else if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
 	      DrawDoubleStackError(LogStackNoRatio,LogStackNoRatio_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,true);
-            else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isttbar_controlplots)
-	      DrawDoubleStackError(LogStackNoRatio,LogStackNoRatio_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,true,isttbar_controlplots);                 
+            else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
+	      DrawDoubleStackError(LogStackNoRatio,LogStackNoRatio_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,true,isHerwig_ttbar);         
 
             if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
                   for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
                       iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
 
-		  upperPadLog->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
-		  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
-                
+		  		  upperPadLog->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+				  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+
             }
             else{ upperPadLog->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame"); 
-                  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame"); }
+		  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+          }
+          
           }
 	 
-	  if(SignalggHName!="NULL" && iSampleggH!=-1){ upperPadLog->cd() ; histos[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
-	                      if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
+	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
+                   upperPadLog->cd() ; histos[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
+	           if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
 	  }
-	  if(SignalqqHName!="NULL" && iSampleqqH!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
-	                     if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
+	  if(SignalqqHName!="NULL" && iSampleqqH!=-1){ 
+                    upperPadLog->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
+	            if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
 	  }
-	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); 
-                                                                   histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
-	     if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
+	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){ 
+                  upperPadLog->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); 
+                  histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
+	         if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); 
+                                    histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
 	  }
 	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); 
                                                                    histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame");
@@ -1586,6 +1591,5 @@ int main (int argc, char **argv){
  }
 
  outputFile->Close();
-  
  return 0 ;
 }
