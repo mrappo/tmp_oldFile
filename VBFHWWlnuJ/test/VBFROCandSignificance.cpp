@@ -32,6 +32,7 @@
 
 #include "TMVAGlob.h"
 
+// method to get the string cut for the related preselection used in the trainint --> implementation at bottom of the code
 TString GetPreselectionCut (const std::string & LeptonType,const std::string & preselectionCutType, const double & pTJetMin_, const double & pTJetMax_);
 
 /// Main programme 
@@ -52,12 +53,12 @@ int main (int argc, char **argv){
     gROOT->ProcessLine((".x "+ROOTStyle+"/setTDRStyle.C").c_str());
   }
   
-
   gStyle->SetOptStat(0);
   gStyle->SetPadTopMargin(0.09);
   gStyle->SetPadLeftMargin(0.13);
   gStyle->SetErrorX(0.5);
   
+  // parse the config file options
   parseConfigFile(argv[1]);
 
   std::vector<std::string> InputFileName ;
@@ -70,7 +71,6 @@ int main (int argc, char **argv){
   std::cout<<"      "<<std::endl;
   for(size_t iFile = 0; iFile < InputFileName.size(); iFile++)   
     std::cout<<" InputFileName: iFile "<<iFile<<" Name : "<<InputFileName.at(iFile)<<std::endl;
-
 
   std::vector<std::string> InputVariableOrMethodName ;
   try{ InputVariableOrMethodName = gConfigParser -> readStringListOption("Input::InputVariableOrMethodName"); } // get the input file list for the TMVA root file output after training
@@ -107,7 +107,6 @@ int main (int argc, char **argv){
     std::cerr<<" No input TreeName specified for trees --> set to otree "<<std::endl;
     TreeName = "otree";
   }
-
   
   std::cout<<"      "<<std::endl;
   std::cout<<" TreeName "<<TreeName<<std::endl;
@@ -196,25 +195,22 @@ int main (int argc, char **argv){
   std::cout<<"           "<<std::endl;
 
   system(command.c_str());
-
   
   // Declare the object for the manipolation of the TMVA ROOT file
   TMVAGlob* TMVATraining = new TMVAGlob();
-  TMVATraining->Initialize();
-  
+  // open the set of inputFiles and get back to the main code  
   TMVATraining->openFileInput(InputFileName);
   std::vector<TFile*> inputFile = TMVATraining->GetInputFile();
-
+  // set vector with the method name for cut based legend inside roc plot
   TMVATraining->SetMethodName(InputVariableOrMethodName);  
 
-  // Loop on the inputFile and do the ROC plot
+  // Loop on the inputFile and do ROC plot
   for(size_t iFile = 0;  iFile < inputFile.size() ; iFile ++){ 
 
    TIter nextKey(inputFile.at(iFile)->GetListOfKeys()); // iterator to the list of keys in the memory map of the file  
    TKey *key = 0 ; // loop over the keys
 
    while ( (key = (TKey*) nextKey())) {
-
      TClass* classType = gROOT->GetClass(key->GetClassName()); // take the class type of each key inside the root file to check what is inside
      if (!classType->InheritsFrom("TDirectory")) continue;     // if it don't herit from TDirectory it is neglet
      TDirectory *dir = (TDirectory*)key->ReadObj(); 
@@ -222,7 +218,6 @@ int main (int argc, char **argv){
      if (path.Contains("multicutMVA")){ TMVATraining->plotEfficiency(inputFile.at(iFile),dir,jetPTBinofTraining.at(0),jetPTBinofTraining.at(1)); // call the plot efficiency function     
                                         TMVATraining->PrintImageROC(dir,outputPlotDirectory);
      }
-
    }
 
    TMVATraining->plotEfficiency(inputFile.at(iFile),gDirectory,jetPTBinofTraining.at(0),jetPTBinofTraining.at(1)); // call the plot efficiency function 
@@ -243,8 +238,10 @@ int main (int argc, char **argv){
   if(ReadInputSampleFile(InputSampleList,NameSample,NameReducedSample,ColorSample,SampleCrossSection,NumEntriesBefore) <= 0){
     std::cerr<<" Empty Input Sample File or not Exisisting --> Exit "<<std::endl; return -1;}
 
+  // take the preselection string
   TString CutString = GetPreselectionCut(LeptonType,PreselectionCutType,jetPTBinofTraining.at(0),jetPTBinofTraining.at(1));
 
+  // calculate the number of expected signal and background event at pre-selection level
   std::vector <TTree*> TreeVect;
   std::vector <TFile*> FileVect;
 
@@ -284,7 +281,6 @@ int main (int argc, char **argv){
       std::cout<<" Bkg "<<NameSample.at(iSample)<<" Entries "<<histos[iSample]->GetEntries()<<" weighted events "<<
       histos[iSample]->Integral(0,5000)<<std::endl;
     }
-
   }
 
   // Normalization to the lumi of MC samples                                                                                                       
@@ -308,7 +304,7 @@ int main (int argc, char **argv){
 
   std::cout<<" Number of Signal Events "<<numberSignalEvents<<"  Number of Background Events  "<<numberBackgroundEvents<<std::endl;
 
-  // Plot correlation variables
+  // Plot correlation variables, MVA output and Significance
   for(size_t iFile = 0;  iFile < inputFile.size() ; iFile ++){ 
 
    TIter nextKey(inputFile.at(iFile)->GetListOfKeys()); // iterator to the list of keys in the memory map of the file  
@@ -320,7 +316,8 @@ int main (int argc, char **argv){
      if (!classType->InheritsFrom("TDirectory")) continue;     // if it don't herit from TDirectory it is neglet
      TDirectory *dir = (TDirectory*)key->ReadObj(); 
      TString path(dir->GetPath());
-     if (path.Contains("multicutMVA")){ TMVATraining->plotCorrelationMatrix(inputFile.at(iFile),iFile,outputPlotDirectory); // call the plot efficiency function                 
+     if (path.Contains("multicutMVA")){ TMVATraining->plotCorrelationMatrix(inputFile.at(iFile),iFile,outputPlotDirectory);
+
                                         TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->MVAType,outputPlotDirectory);
                                         TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
                                         TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);
@@ -335,10 +332,10 @@ int main (int argc, char **argv){
                             TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB,numberSignalEvents,numberBackgroundEvents,false,false,outputPlotDirectory);
                             TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
      }
-
    }
       
     TMVATraining->plotCorrelationMatrix(inputFile.at(iFile),iFile,outputPlotDirectory); // call the plot efficiency function 
+
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->MVAType,outputPlotDirectory);
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);
@@ -490,6 +487,5 @@ TString GetPreselectionCut (const std::string & LeptonType,const std::string & p
     return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679&& numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 40 && jet_mass_pr <130) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else return Form("v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
-
 
 }
