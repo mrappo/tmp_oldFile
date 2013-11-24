@@ -18,30 +18,27 @@
 #include "TSystem.h"
 #include "TROOT.h"
 
-
 #include "ntpleUtils.h"
 #include "ConfigParser.h"
 
 #include "ReadInputFile.h"
-
 #include "TrainingMVAClass.h"
 
 
-/// Main Programme                                                                                                                                                                                
+/// Main Programme                                                                                                                                                                      
 int main (int argc, char** argv){
 
   if (argc != 2){
-
     std::cerr << ">>> Usage:   " << argv[1] << "   cfg file" << std::endl;
     return -1;
   }
 
-  // Load TTree Lybrary                                                                                                                                                                           
+  // Load TTree Lybrary                                                                                                                                                                  
   gSystem->Load("libTree.so");
 
   TMVA::Tools::Instance();
 
-  // parse config file parameter                                                                                                                                                                  
+  // parse config file parameter                                                                                                                                                          
   parseConfigFile(argv[1]);
 
   std::string InputDirectory        = gConfigParser -> readStringOption("Input::InputDirectory");
@@ -76,7 +73,6 @@ int main (int argc, char** argv){
     isPrintResultwithTMVA = false;
     std::cerr<<" isPrintResultwithTMVA --> set to false "<<std::endl;
   }
-
 
   std::string SignalggHName ;
   try{ SignalggHName = gConfigParser -> readStringOption("Option::SignalggHName"); }
@@ -160,7 +156,7 @@ int main (int argc, char** argv){
   std::cout<<" Input Sample List    "<<outputFileName<<std::endl;
   std::cout<<"                      "<<std::endl;
   
-  // read sample input file list to Plot                                                                                                                                                          
+  // read sample input file list to Plot                                                                                                                                                  
   std::vector <std::string> NameSample;
   std::vector <std::string> NameReducedSample;
   std::vector <int> ColorSample;
@@ -175,7 +171,6 @@ int main (int argc, char** argv){
 
 
   // Read Input File Variables for Training 
- 
   std::vector<std::string> mapTrainingVariables;
 
   std::cout<<" Read Training Variables File List "<<std::endl;
@@ -184,8 +179,7 @@ int main (int argc, char** argv){
   if(ReadInputVariableFile(InputVariableList,mapTrainingVariables) <= 0){
     std::cerr<<" Empty Input Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
-  // Read Spectator Variables for Training 
-  
+  // Read Spectator Variables for Training   
   std::vector<std::string> mapSpectatorVariables;
   
   std::cout<<" Read Spectator File List "<<std::endl;
@@ -194,8 +188,7 @@ int main (int argc, char** argv){
   if(ReadInputVariableFile(InputSpectatorList,mapSpectatorVariables) <= 0){
     std::cerr<<" Empty Spectator Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
-  // Import Sample and signal - background collections
-  
+  // Import Sample and signal - background collections  
   std::vector <TFile*> signalFileList;
   std::vector <TFile*> backgroundFileList;
   std::vector <TTree*> signalTreeList;
@@ -221,8 +214,7 @@ int main (int argc, char** argv){
   }
   std::cout<<std::endl;
   
-  // Book MVA Training Object --> one for each pT bin
- 
+  // Book MVA Training Object --> one for each pT bin 
   std::vector<TrainingMVAClass*> WWTrainingVector ;
   
   for(size_t pTBin = 0; pTBin+1 < JetPtBinOfTraining.size() ; pTBin++){
@@ -243,7 +235,6 @@ int main (int argc, char** argv){
    WWTrainingVector.back()->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
 
    // Set Global Weight and signal + background Tree for MVA Training
-
    std::vector<double> signalGlobalWeight (signalTreeList.size(),0.);
    std::vector<double> backgroundGlobalWeight (backgroundTreeList.size(),0.);
 
@@ -272,15 +263,12 @@ int main (int argc, char** argv){
    std::cout<<std::endl;
    std::cout<<" Prepare MVA  "<<std::endl;
    std::cout<<std::endl;
-
      
    WWTrainingVector.back()->AddPrepareTraining ( LeptonType,PreselectionCutType, EventWeight, &JetPtBinOfTraining, pTBin) ;
   
    // Book and Run TMVA Training and testing for the selected methods
-
    std::cout<<" Loop on the Selected Methods  "<<std::endl;
    std::cout<<std::endl;
-
 
    for(size_t iMethod =0; iMethod<UseMethodName.size(); iMethod++){
 
@@ -289,32 +277,32 @@ int main (int argc, char** argv){
      else if(UseMethodName.at(iMethod) == "CutsGA" ) WWTrainingVector.back()->BookandTrainRectangularCuts("GA");
      else if(UseMethodName.at(iMethod) == "CutsSA" ) WWTrainingVector.back()->BookandTrainRectangularCuts("SA");
  
-    // Likelihood 
+     // Likelihood 
      else if(UseMethodName.at(iMethod) == "Likelihood")     WWTrainingVector.back()->BookandTrainLikelihood(); 
      else if(UseMethodName.at(iMethod) == "LikelihoodKDE")  WWTrainingVector.back()->BookandTrainLikelihood("LikelihoodKDE"); 
      else if(UseMethodName.at(iMethod) == "PDERS")          WWTrainingVector.back()->BookandTrainLikelihood("PDERS"); 
      else if(UseMethodName.at(iMethod) == "PDEFoam")        WWTrainingVector.back()->BookandTrainLikelihood("PDEFoam"); 
      else if(UseMethodName.at(iMethod) == "PDEFoamBoost")   WWTrainingVector.back()->BookandTrainLikelihood("PDEFoamBoost"); 
 
-    // Fisher Discriminant
+     // Fisher Discriminant
      else if(UseMethodName.at(iMethod) == "Fisher")  WWTrainingVector.back()->BookandTrainFisherDiscriminant(); 
     
-    // Linear Discriminant
+     // Linear Discriminant
      else if(UseMethodName.at(iMethod) == "LD")      WWTrainingVector.back()->BookandTrainLinearDiscriminant();
     
-    // MLP
+     // MLP
      else if(UseMethodName.at(iMethod) == "MLP")        WWTrainingVector.back()->BookandTrainMLP();
      else if(UseMethodName.at(iMethod) == "MLPBFG")     WWTrainingVector.back()->BookandTrainMLP(1000,"N+5","sigmoid","BFGS",10,10,"tanh");
      else if(UseMethodName.at(iMethod) == "CFMlpANN")   WWTrainingVector.back()->BookandTrainCFMlpANN();
      else if(UseMethodName.at(iMethod) == "TMlpANN")    WWTrainingVector.back()->BookandTrainTMlpANN();
 
-    // BDT
+     // BDT
      else if(UseMethodName.at(iMethod) == "BDT")     WWTrainingVector.back()->BookandTrainBDT();
 
-    // BDTG
+     // BDTG
      else if(UseMethodName.at(iMethod) == "BDTG")    WWTrainingVector.back()->BookandTrainBDTG();
 
-    // BDTF
+     // BDTF
      else if(UseMethodName.at(iMethod) == "BDTF")    WWTrainingVector.back()->BookandTrainBDTF();
 
      else { std::cerr<<" Training Method not implemented in the TMVATrainingClass >> Go to the next one"<<std::endl; std::cout<<std::endl;}
@@ -332,6 +320,5 @@ int main (int argc, char** argv){
   }
 
   return 0 ;
-
 
 }
