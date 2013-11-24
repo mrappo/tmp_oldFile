@@ -1133,6 +1133,9 @@ int main (int argc, char **argv){
 
                               MCUncertaintyBand[iCut][iVar]->SetBinContent(iBin+1,1);
 			      MCUncertaintyBand[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))*histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1)/(histoSum[iCut][iVar]->GetBinContent(iBin+1)*histoSum[iCut][iVar]->GetBinContent(iBin+1)));
+
+			      if(RatioDataMC[iCut][iVar]->GetBinContent(iBin+1) == 0) RatioDataMC[iCut][iVar]->SetBinError(iBin+1,0);
+			      if(MCUncertaintyBand[iCut][iVar]->GetBinError(iBin+1) != MCUncertaintyBand[iCut][iVar]->GetBinError(iBin+1) ) MCUncertaintyBand[iCut][iVar]->SetBinError(iBin+1,0);
 			     }
 
                              RatioLine->SetRange((RatioDataMC[iCut][iVar]->GetBinCenter(1)-RatioDataMC[iCut][iVar]->GetBinWidth(1)/2),(RatioDataMC[iCut][iVar]->GetBinCenter(RatioDataMC[iCut][iVar]->GetNbinsX()+1)-RatioDataMC[iCut][iVar]->GetBinWidth(RatioDataMC[iCut][iVar]->GetNbinsX()+1)/2));                          
@@ -1174,6 +1177,10 @@ int main (int argc, char **argv){
 
                               MCUncertaintyBand_herwig[iCut][iVar]->SetBinContent(iBin+1,1);
 			      MCUncertaintyBand_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinError(iBin+1),2)+SysError_herwig.at(iBin))*histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1)/(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)*histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)));
+
+                              if(RatioDataMC_herwig[iCut][iVar]->GetBinContent(iBin+1) == 0) RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,0);
+                              if(MCUncertaintyBand_herwig[iCut][iVar]->GetBinError(iBin+1) != MCUncertaintyBand_herwig[iCut][iVar]->GetBinError(iBin+1)) MCUncertaintyBand_herwig[iCut][iVar]->SetBinError(iBin+1,0);
+
 			     }
 
                              RatioLine->SetRange((RatioDataMC_herwig[iCut][iVar]->GetBinCenter(1)-RatioDataMC_herwig[iCut][iVar]->GetBinWidth(1)/2),(RatioDataMC_herwig[iCut][iVar]->GetBinCenter(RatioDataMC_herwig[iCut][iVar]->GetNbinsX()+1)-RatioDataMC_herwig[iCut][iVar]->GetBinWidth(RatioDataMC_herwig[iCut][iVar]->GetNbinsX()+1)/2));
@@ -1207,7 +1214,7 @@ int main (int argc, char **argv){
 			       RatioDataMC_error[iCut][iVar]->SetBinContent(iBin+1,1) ;
 			       RatioDataMC_error[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
 			       SysError.at(iBin)*(TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
-
+                               if(RatioDataMC_error[iCut][iVar]->GetBinError(iBin+1)!=RatioDataMC_error[iCut][iVar]->GetBinError(iBin+1)) RatioDataMC_error[iCut][iVar]->SetBinError(iBin+1,0);
 			     }
 
                              RatioDataMC_error[iCut][iVar]->SetBinContent(0,1) ;
@@ -1241,6 +1248,7 @@ int main (int argc, char **argv){
                             			    
        		           for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
  			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+SysError_herwig.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+			     if(RatioDataMC_herwig[iCut][iVar]->GetBinContent(iBin+1) != RatioDataMC_herwig[iCut][iVar]->GetBinContent(iBin+1) ) RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,0);
 
 			    }
                             RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetNdivisions(504);
@@ -1305,7 +1313,7 @@ int main (int argc, char **argv){
                             			    
        		           for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
  			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+SysError_herwig.at(iBin)*(TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
-
+			     if(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1) != RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)) RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,0);
 			    }
 
                             RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetNdivisions(504);
