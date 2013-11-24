@@ -23,25 +23,22 @@
 #include "ConfigParser.h"
 
 #include "ReadInputFile.h"
-
 #include "ApplyMVAWeightClass.h"
 
-/// Main Programme                                                                                                                                                                            
+/// Main Programme                                                                                                                                                                 
 int main (int argc, char** argv){
 
   if (argc != 2){
-
     std::cerr << ">>> Usage:   " << argv[1] << "   cfg file" << std::endl;
     return -1;
   }
 
   // Load TTree Lybrary
-
   gSystem->Load("libTree.so");
 
   TMVA::Tools::Instance();
 
-  // parse config file                                                                                                                                                                                              
+  // parse config file                                                                                                                                                             
   parseConfigFile(argv[1]);
 
   std::string InputDirectory        = gConfigParser -> readStringOption("Input::InputDirectory");
@@ -49,9 +46,8 @@ int main (int argc, char** argv){
   std::string InputVariableList     = gConfigParser -> readStringOption("Input::InputVariableList");
   std::string InputSpectatorList    = gConfigParser -> readStringOption("Input::InputSpectatorList");
 
-  std::string LeptonType    = gConfigParser -> readStringOption("Input::LeptonType");
-
-  std::string InputWeightFilePath  = gConfigParser -> readStringOption("Input::InputWeightFilePath");
+  std::string LeptonType            = gConfigParser -> readStringOption("Input::LeptonType");
+  std::string InputWeightFilePath   = gConfigParser -> readStringOption("Input::InputWeightFilePath");
 
   std::string TreeName ;
   try{ TreeName = gConfigParser -> readStringOption("Input::TreeName"); }
@@ -114,7 +110,7 @@ int main (int argc, char** argv){
   }
   std::cout << std::endl;
    
-  // Read Input File Variables for Training                                                                                                                                                      
+  // Read Input File Variables for Training                                                                                                                     
   std::vector<std::string> mapTrainingVariables;
 
   std::cout<<" Read Training Variables File List "<<std::endl;
@@ -123,7 +119,7 @@ int main (int argc, char** argv){
   if(ReadInputVariableFile(InputVariableList,mapTrainingVariables) <= 0){
    std::cerr<<" Empty Input Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
-  // Read Spectator Variables for Training                                                                                                                                                    
+  // Read Spectator Variables for Training                                                                                                                                  
   std::vector<std::string> mapSpectatorVariables;
 
   std::cout<<" Read Spectator File List "<<std::endl;
@@ -132,6 +128,7 @@ int main (int argc, char** argv){
   if(ReadInputVariableFile(InputSpectatorList,mapSpectatorVariables) <= 0){
     std::cerr<<" Empty Spectator Variable List File or not Exisisting --> Exit "<<std::endl; return -1;}
 
+  // Take the input file list to run over --> one file per time is the actual strategy --> more jobs but less cpu time
   std::vector <TFile*> SampleFileList;
   std::vector <TTree*> SampleTreeList;
 
@@ -145,85 +142,80 @@ int main (int argc, char** argv){
 
   std::cout<<std::endl;
  
-  // Book MVA Reader  Object --> one for each pT bin                                                                                                                                            
+  // Book MVA Reader  Object --> one for each pT bin                                                                                                                        
   std::vector<ApplyMVAWeightClass*> WWReaderVector ;
 
   std::string weightFile ;
   
+  // loop on the pTbin training 
   for(size_t pTBin = 0; pTBin+1 < JetPtBinOfTraining.size() ; pTBin++){
 
     std::cout<<" pT bin of Training: Min = "<<JetPtBinOfTraining.at(pTBin)<<" Max = "<<JetPtBinOfTraining.at(pTBin+1)<<std::endl;
     std::cout<<std::endl;
+
+    // Loop on the method used in for the training that you want to fill inside the tree
     for( size_t iMethod = 0 ; iMethod < UseMethodName.size() ; iMethod ++){
 
       for( size_t iMethodLabel =0 ; iMethodLabel < MethodLabelName.size() ; iMethodLabel++){
-
 	TString Label_ = Form("otree_%s_PTBin_%d_%d_%s",MethodLabelName.at(iMethodLabel).c_str(),int(JetPtBinOfTraining.at(pTBin)),
                                                       int(JetPtBinOfTraining.at(pTBin+1)),UseMethodName.at(iMethod).c_str()) ;
        std::string buffer ;
 
+       // set automatically the name ogf the weight file just with a ls in the directory
        if( UseMethodName.at(iMethod).find("MLP")==std::string::npos) {
 
-	system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
 	std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp_"+InputSampleName+".txt "<<std::endl;
+	system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
 	std::ifstream inputFile (("./tmp_"+InputSampleName+".txt").c_str());
 	while(!inputFile.eof()){ getline(inputFile,buffer); 
 	                         if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue;
                                  weightFile = buffer ;
-        }
-	
+        }	
 	system(("rm ./tmp_"+InputSampleName+".txt").c_str());
        }
 
-       else{
-  
-	 if(UseMethodName.at(iMethod).find("BFG")!=std::string::npos){
- 
+       else{  
+	 if(UseMethodName.at(iMethod).find("BFG")!=std::string::npos){ 
 	  Label_ = Form("otree_%s_PTBin_%d_%d_%s",MethodLabelName.at(iMethodLabel).c_str(),int(JetPtBinOfTraining.at(pTBin)),
 			int(JetPtBinOfTraining.at(pTBin+1)),"MLP") ;
 
-  	  system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BFG | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
 	  std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BFG  | grep xml > ./tmp_"+InputSampleName+".txt "<<std::endl;
+  	  system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BFG | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
 
 	  std::ifstream inputFile (("./tmp_"+InputSampleName+".txt").c_str());
 	  while(!inputFile.eof()){ getline(inputFile,buffer); 
 	                         if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue;
                                  weightFile = buffer ;
-          }
-	
+          }	
 	  system(("rm ./tmp_"+InputSampleName+".txt").c_str());
        }
-   
        else{
-
-   	      system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BP | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
-	      std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BP  | grep xml > ./tmp_"+InputSampleName+".txt "<<std::endl;
-
+   	      std::cout<<" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BP  | grep xml > ./tmp_"+InputSampleName+".txt "<<std::endl;
+              system((" ls "+InputWeightFilePath+"/ | grep "+std::string(Label_)+" | grep weights | grep BP | grep xml > ./tmp_"+InputSampleName+".txt ").c_str());
+	
 	      std::ifstream inputFile (("./tmp_"+InputSampleName+".txt").c_str());
 	      while(!inputFile.eof()){ getline(inputFile,buffer); 
 	                         if(buffer.empty() || !buffer.find("#") || buffer==" " ) continue;
                                  weightFile = buffer ;
-       }
-	
+       }	
        system(("rm ./tmp_"+InputSampleName+".txt").c_str());
-      }
-      
+       }      
       }
 
-       std::cout<<" Weight File Name " <<weightFile<<std::endl;
-       std::cout<<std::endl;
+      std::cout<<" Weight File Name " <<weightFile<<std::endl;
+      std::cout<<std::endl;
      
-       WWReaderVector.push_back(new ApplyMVAWeightClass(SampleTreeList, TreeName,InputWeightFilePath, std::string(Label_)));
+      WWReaderVector.push_back(new ApplyMVAWeightClass(SampleTreeList,TreeName,InputWeightFilePath, std::string(Label_)));
             
-       WWReaderVector.back()->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
+      WWReaderVector.back()->AddTrainingVariables(mapTrainingVariables, mapSpectatorVariables);
       
-       WWReaderVector.back()->AddPrepareReader(LeptonType,PreselectionCutType,&JetPtBinOfTraining,pTBin);
+      WWReaderVector.back()->AddPrepareReader(LeptonType,PreselectionCutType,&JetPtBinOfTraining,pTBin);
 
-       TString NameBranch = Form("%s_PTBin_%d_%d",UseMethodName.at(iMethod).c_str(),int(JetPtBinOfTraining.at(pTBin)),int(JetPtBinOfTraining.at(pTBin+1))) ;
+      TString NameBranch = Form("%s_PTBin_%d_%d",UseMethodName.at(iMethod).c_str(),int(JetPtBinOfTraining.at(pTBin)),int(JetPtBinOfTraining.at(pTBin+1))) ;
 
-       WWReaderVector.back()->BookMVAWeight(UseMethodName.at(iMethod),weightFile, std::string(NameBranch)); 
+      WWReaderVector.back()->BookMVAWeight(UseMethodName.at(iMethod),weightFile, std::string(NameBranch)); 
 
-       WWReaderVector.back()->FillMVAWeight(LeptonType,PreselectionCutType);
+      WWReaderVector.back()->FillMVAWeight(LeptonType,PreselectionCutType);
        
     }
    }
@@ -235,6 +227,5 @@ int main (int argc, char** argv){
   std::cout<<std::endl;
 
   return 0 ;
-
 
 }
