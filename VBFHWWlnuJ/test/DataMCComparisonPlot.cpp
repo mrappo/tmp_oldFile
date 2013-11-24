@@ -1028,7 +1028,6 @@ int main (int argc, char **argv){
           else { upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); banner4Plot(true); }
 
           // Ratio Plot
-
 	  if(!WithoutData) {
          
                             lowerPad->cd();
@@ -1155,6 +1154,16 @@ int main (int argc, char **argv){
                              legRatio->Draw("same");
                              lowerPad->Update();
 
+                             // Kolmogorov-Smirnov and chi2 test:
+                             double kTest        = histos[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
+                             double chi_over_ndf = histos[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
+
+			     TString probatext  = Form("#chi^{2}/ndf = %0.2f  K_{s} = %0.2f",float(chi_over_ndf),float(kTest));	 	
+ 	                     TLatex* tt         = new TLatex(0.15,0.85,probatext);
+ 	                     tt->SetNDC();
+			     tt->SetTextSize(0.075);
+			     tt->AppendPad("same");
+
 			    }
 
                             else if((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0) && !isHerwig_ttbar){
@@ -1180,6 +1189,16 @@ int main (int argc, char **argv){
                              RatioLine->Draw("same");
 	                     RatioDataMC_herwig[iCut][iVar]->Draw("PEsame");
 
+                             // Kolmogorov-Smirnov and chi2 test:
+                             double kTest        = histos[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
+                             double chi_over_ndf = histos[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
+
+			     TString probatext  = Form("#chi^{2}/ndf = %0.2f  K_{s} = %0.2f",float(chi_over_ndf),float(kTest));	
+ 	                     TLatex* tt         = new TLatex(0.15,0.85,probatext);
+ 		             tt->SetNDC();
+			     tt->SetTextSize(0.075);
+			     tt->AppendPad("same");
+
 			    }
                    
                             else if ((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0) && !isHerwig_ttbar){
@@ -1194,7 +1213,7 @@ int main (int argc, char **argv){
                              RatioDataMC_error[iCut][iVar]->SetBinContent(0,1) ;
                              RatioDataMC_error[iCut][iVar]->SetBinContent(RatioDataMC[iCut][iVar]->GetNbinsX()+1,1) ;
                              RatioDataMC_error[iCut][iVar]->SetBinError(0,RatioDataMC[iCut][iVar]->GetBinError(1)) ;
-                             RatioDataMC_error[iCut][iVar]->SetBinError(RatioDataMC[iCut][iVar]->GetNbinsX()+1,RatioDataMC[iCut][iVar]->GetBinError((RatioDataMC[iCut][iVar]->GetNbinsX()))) ;
+                             RatioDataMC_error[iCut][iVar]->SetBinError(RatioDataMC[iCut][iVar]->GetNbinsX()+1,RatioDataMC[iCut][iVar]->GetBinError((RatioDataMC[iCut][iVar]->GetNbinsX())));
 
                              RatioDataMC_error[iCut][iVar]->GetYaxis()->SetNdivisions(504);
                              RatioDataMC_error[iCut][iVar]->SetMarkerColor(12);
@@ -1247,10 +1266,10 @@ int main (int argc, char **argv){
 
 			     for( int iBin = 0; iBin< RatioDataMC[iCut][iVar]->GetNbinsX() ; iBin++){
 			      RatioDataMC[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
-			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
 	                      RatioDataMC_error[iCut][iVar]->SetBinContent(iBin+1,1) ;
 			      RatioDataMC_error[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
-			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
 			     }
 
                              RatioDataMC_error[iCut][iVar]->SetBinContent(0,1) ;
@@ -1361,16 +1380,37 @@ int main (int argc, char **argv){
 			      legRatio->SetFillStyle(3001);
                               legRatio->Draw("same");
 
-			     }
-                             else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 &&  !isHerwig_ttbar){
+                              // Kolmogorov-Smirnov and chi2 test:
+                              double kTest        = histos[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
+                              double chi_over_ndf = histos[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
+
+	 		      TString probatext  = Form("#chi^{2}/ndf = %0.2f  K_{s} = %0.2f",float(chi_over_ndf),float(kTest));	
+  	                      TLatex* tt         = new TLatex(0.15,0.85,probatext);
+ 		              tt->SetNDC();
+			      tt->SetTextSize(0.075);
+			      tt->AppendPad("same");
+
+			   }
+                           else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 &&  !isHerwig_ttbar){
 		              MCUncertaintyBand_herwig[iCut][iVar]->Draw("E2");
                               RatioLine->Draw("same");
                               RatioDataMC_herwig[iCut][iVar]->Draw("PEsame");
+
    	                      TLegend* legRatio = new TLegend (0.37, 0.32, 0.63, 0.45);
                               legRatio->AddEntry(MCUncertaintyBand[iCut][iVar],"MC stat + syst","f");
 			      legRatio->SetFillColor(0);
 			      legRatio->SetFillStyle(3001);
                               legRatio->Draw("same");
+
+                              // Kolmogorov-Smirnov and chi2 test:
+                              double kTest        = histos[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
+                              double chi_over_ndf = histos[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
+
+	 		      TString probatext  = Form("#chi^{2}/ndf = %0.2f  K_{s} = %0.2f",float(chi_over_ndf),float(kTest));	
+  	                      TLatex* tt         = new TLatex(0.15,0.85,probatext);
+ 		              tt->SetNDC();
+			      tt->SetTextSize(0.075);
+			      tt->AppendPad("same");
 
 			     }
 
