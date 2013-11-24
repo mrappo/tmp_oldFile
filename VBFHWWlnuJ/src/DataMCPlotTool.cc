@@ -75,8 +75,8 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
     std::vector <double> vErrStat (last->GetNbinsX(),0.) ;
 
     for (int i = number-1 ; i >=0 ; --i) {
-      TH1F * histo = (TH1F*) histos->At (i) ;
-      TH1F * histo2 ; 
+      TH1F * histo  = (TH1F*) histos->At (i) ;
+      TH1F * histo2 = 0 ;
 
       if(i!=0) histo2 = (TH1F*) histos->At (i-1) ;
 
@@ -87,10 +87,14 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
       if(i != number-1) histo->Draw ("same hist") ;
 
       for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
-	vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        if(histo2!=0)
+  	  vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        else 
+  	  vErrSys.at(iBin) = vErrSys.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
         vErrStat.at(iBin) = vErrStat.at(iBin) + histo->GetBinError(iBin+1)*histo->GetBinError(iBin+1);  
       }
     }
+
 
     last->SetFillStyle(3013);
     last->SetFillColor(kBlack);
@@ -186,7 +190,7 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     std::vector <double> vErrStat (last->GetNbinsX(),0.) ;
     for (int i = number-1 ; i >=0 ; --i) {
       TH1F * histo = (TH1F*) histos->At (i) ;
-      TH1F * histo2 ; 
+      TH1F * histo2 = 0; 
       if(i!=0) histo2 = (TH1F*) histos->At (i-1) ;
 
       histo->GetXaxis()->SetTitle(Labels.c_str());
@@ -196,7 +200,10 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
       if(i != number-1) histo->Draw ("same hist") ;
 
       for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
-	vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        if(histo2!=0)
+ 	  vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        else 
+  	  vErrSys.at(iBin) = vErrSys.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
         vErrStat.at(iBin) = vErrStat.at(iBin) + histo->GetBinError(iBin+1)*histo->GetBinError(iBin+1);  
       }
     }
@@ -270,7 +277,7 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     for (int i = number-1 ; i >=0 ; --i) {
 
       TH1F * histo = (TH1F*) histos->At (i) ;
-      TH1F * histo2 ; 
+      TH1F * histo2 = 0; 
       if(i!=0) histo2 = (TH1F*) histos->At (i-1) ;
 
       histo->GetXaxis()->SetTitle(Labels.c_str());
@@ -280,10 +287,14 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
       if(i != number-1) histo->Draw ("same hist") ;
 
       for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
-	vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+	if(histo2!=0)
+         vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        else 
+  	  vErrSys.at(iBin) = vErrSys.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
         vErrStat.at(iBin) = vErrStat.at(iBin) + histo->GetBinError(iBin+1)*histo->GetBinError(iBin+1);  
       }
     }
+
 
     last->SetFillStyle(3004);
 
@@ -380,7 +391,7 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
     for (int i = number-1 ; i >=0 ; --i) {
 
       TH1F * histo = (TH1F*) histos->At (i) ;
-      TH1F * histo2 ; 
+      TH1F * histo2 = 0; 
       if(i!=0) histo2 = (TH1F*) histos->At (i-1) ;
 
       histo->GetXaxis()->SetTitle(Labels.c_str());
@@ -390,7 +401,10 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
       if(i != number-1) histo->Draw ("same hist") ;
 
       for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
+	if(histo2!=0)
 	vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        else 
+  	  vErrSys.at(iBin) = vErrSys.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
         vErrStat.at(iBin) = vErrStat.at(iBin) + histo->GetBinError(iBin+1)*histo->GetBinError(iBin+1);  
       }
     }
@@ -488,7 +502,7 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     for (int i = number-1 ; i >=0 ; --i) {
 
       TH1F * histo = (TH1F*) histos->At (i) ;
-      TH1F * histo2 ; 
+      TH1F * histo2 = 0; 
       if(i!=0) histo2 = (TH1F*) histos->At (i-1) ;
 
       histo->GetXaxis()->SetTitle(Labels.c_str());
@@ -498,7 +512,10 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
       if(i != number-1) histo->Draw ("same hist") ;
 
       for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
-	vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+	if(histo2!=0)
+ 	  vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        else 
+  	  vErrSys.at(iBin) = vErrSys.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
         vErrStat.at(iBin) = vErrStat.at(iBin) + histo->GetBinError(iBin+1)*histo->GetBinError(iBin+1);  
       }
     }
@@ -565,7 +582,7 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     for (int i = number-1 ; i >=0 ; --i) {
 
       TH1F * histo = (TH1F*) histos->At (i) ;
-      TH1F * histo2 ; 
+      TH1F * histo2 = 0 ; 
       if(i!=0) histo2 = (TH1F*) histos->At (i-1) ;
 
       histo->GetXaxis()->SetTitle(Labels.c_str());
@@ -575,7 +592,10 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
       if(i != number-1) histo->Draw ("same hist") ;
 
       for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
-	vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+	if(histo2!=0)
+	 vErrSys.at(iBin) = vErrSys.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
+        else 
+  	  vErrSys.at(iBin) = vErrSys.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i);
         vErrStat.at(iBin) = vErrStat.at(iBin) + histo->GetBinError(iBin+1)*histo->GetBinError(iBin+1);  
       }
     }
@@ -616,19 +636,27 @@ void LatexCMS (const double & lumi, const std::string & LeptonType, const bool &
 
 void SetTotalSystematicVector( std::vector<double> & SysError, THStack* hs, const std::map<int,double> & SystematicErrorMap, const double & syst){
 
- TObjArray* histos = hs->GetStack () ;
+  TObjArray* histos = hs->GetStack () ;
+
   if (histos) {
 
     Int_t number = histos->GetEntries();
     TH1F* last = (TH1F*) histos->At (number-1) ;
 
     SysError.assign(last->GetNbinsX(),0.);
-    for (int i = number-1 ; i >=1 ; --i) {
+
+    for (int i = number-1 ; i >=0 ; --i) {
+      
       TH1F * histo  = (TH1F*) histos->At (i) ;
-      TH1F * histo2 = (TH1F*) histos->At (i-1) ;
-      for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++)
-	SysError.at(iBin) = SysError.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i) + last->GetBinContent(iBin+1) * last->GetBinContent(iBin+1) * syst * syst;
+      TH1F * histo2 = 0; 
+      if(i!=0 && histo2 == 0) histo2 = (TH1F*) histos->At (i-1) ;
+
+      for(int iBin = 0 ; iBin < histo->GetNbinsX(); iBin++){
+        if(histo2!=0) 
+	  SysError.at(iBin) = SysError.at(iBin) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*SystematicErrorMap.at(i)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i) + (histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*(histo->GetBinContent(iBin+1)-histo2->GetBinContent(iBin+1))*syst*syst;
+        else SysError.at(iBin) = SysError.at(iBin) + histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*SystematicErrorMap.at(i)*SystematicErrorMap.at(i)+histo->GetBinContent(iBin+1)*histo->GetBinContent(iBin+1)*syst*syst;
+
+      }
     }
   }
-
 }
