@@ -284,7 +284,9 @@ int main (int argc, char **argv){
   }
 
   // Normalization to the lumi of MC samples                                                                                                       
-  double norm = 1.;
+  double norm = 1. ;
+  double scaleFactorWjet = 1. ;
+  if( argc==3 ) scaleFactorWjet =  std::atof(argv[2]);
 
   for (size_t iSample=0; iSample<NameSample.size(); iSample++){
 
@@ -296,7 +298,8 @@ int main (int argc, char **argv){
          histos[iSample]->Scale(1.*norm);
          numberSignalEvents = numberSignalEvents + histos[iSample]->Integral(0,5000) ;     
     }
-    else {  histos[iSample]->Scale(1.*norm);
+    else {  if(NameReducedSample.at(iSample)=="W+Jets") histos[iSample]->Scale(1.*scaleFactorWjet);
+            else histos[iSample]->Scale(1.*norm);
             numberBackgroundEvents = numberBackgroundEvents + histos[iSample]->Integral(0,5000) ;
     }
     std::cout<< " Sample Name "<<NameReducedSample.at(iSample)<<" Rescaled events to Lumi "<<histos[iSample]->Integral(0,5000)<<std::endl;
