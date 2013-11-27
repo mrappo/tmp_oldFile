@@ -197,7 +197,6 @@ int main (int argc, char** argv){
   std::cout<<" Building Tree List for Signal And Background  "<<std::endl;
   std::cout<<std::endl;
 
-
   for (size_t iSample=0; iSample<NameSample.size(); iSample++){
         
 	TString NameFile = Form("%s/%s.root",InputDirectory.c_str(),NameSample.at(iSample).c_str());
@@ -216,6 +215,12 @@ int main (int argc, char** argv){
   
   // Book MVA Training Object --> one for each pT bin 
   std::vector<TrainingMVAClass*> WWTrainingVector ;
+
+  // scale factor for W+jet 
+  double scaleFactorWjet = 1. ;
+  if( argc==3 ) scaleFactorWjet =  std::atof(argv[2]);
+  
+
   
   for(size_t pTBin = 0; pTBin+1 < JetPtBinOfTraining.size() ; pTBin++){
 
@@ -252,7 +257,10 @@ int main (int argc, char** argv){
        isSignal ++; 
     }
     else{
-	  backgroundGlobalWeight.at(isBackground) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);
+          if(NameReducedSample.at(iSample) == "W+Jets")
+  	    backgroundGlobalWeight.at(isBackground) = (SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample))*scaleFactorWjet;
+          else 
+  	    backgroundGlobalWeight.at(isBackground) = (SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample));
           isBackground ++;    
 	 }
    }
