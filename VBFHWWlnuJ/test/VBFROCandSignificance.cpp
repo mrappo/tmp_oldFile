@@ -203,26 +203,7 @@ int main (int argc, char **argv){
   std::vector<TFile*> inputFile = TMVATraining->GetInputFile();
   // set vector with the method name for cut based legend inside roc plot
   TMVATraining->SetMethodName(InputVariableOrMethodName);  
-
-  // Loop on the inputFile and do ROC plot
-  for(size_t iFile = 0;  iFile < inputFile.size() ; iFile ++){ 
-
-   TIter nextKey(inputFile.at(iFile)->GetListOfKeys()); // iterator to the list of keys in the memory map of the file  
-   TKey *key = 0 ; // loop over the keys
-
-   while ( (key = (TKey*) nextKey())) {
-     TClass* classType = gROOT->GetClass(key->GetClassName()); // take the class type of each key inside the root file to check what is inside
-     if (!classType->InheritsFrom("TDirectory")) continue;     // if it don't herit from TDirectory it is neglet
-     TDirectory *dir = (TDirectory*)key->ReadObj(); 
-     TString path(dir->GetPath());
-     if (path.Contains("multicutMVA")){ TMVATraining->plotEfficiency(inputFile.at(iFile),dir,jetPTBinofTraining.at(0),jetPTBinofTraining.at(1)); // call the plot efficiency function     
-                                        TMVATraining->PrintImageROC(dir,outputPlotDirectory);
-     }
-   }
-
-   TMVATraining->plotEfficiency(inputFile.at(iFile),gDirectory,jetPTBinofTraining.at(0),jetPTBinofTraining.at(1)); // call the plot efficiency function 
-  }
-
+  TMVATraining->plotEfficiency(inputFile,gDirectory,jetPTBinofTraining.at(0),jetPTBinofTraining.at(1)); // call the plot efficiency function 
   TMVATraining->PrintImageROC(gDirectory,outputPlotDirectory);
 
   // Read List of Input Files in order to get the number of expected signal and background events
@@ -325,11 +306,6 @@ int main (int argc, char **argv){
                                         TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
                                         TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);
 
-			    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverB,numberSignalEvents,numberBackgroundEvents,true,true,outputPlotDirectory);
-                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB,numberSignalEvents,numberBackgroundEvents,true,true,outputPlotDirectory);
-                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB,numberSignalEvents,numberBackgroundEvents,true,true,outputPlotDirectory);
-                            TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue,numberSignalEvents,numberBackgroundEvents,true,true,outputPlotDirectory);
-
                             TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverB,numberSignalEvents,numberBackgroundEvents,false,false,outputPlotDirectory);
                             TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB,numberSignalEvents,numberBackgroundEvents,false,false,outputPlotDirectory);
                             TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB,numberSignalEvents,numberBackgroundEvents,false,false,outputPlotDirectory);
@@ -343,10 +319,6 @@ int main (int argc, char **argv){
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->ProbaType,outputPlotDirectory);
     TMVATraining->plotMVAs(inputFile.at(iFile),TMVATraining->CompareType,outputPlotDirectory);
         
-    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-    TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,true,true,outputPlotDirectory);
-    
     TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
     TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->SoverSqrtSB, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
     TMVATraining->plotSignificance(inputFile.at(iFile),iFile,TMVATraining->Pvalue, numberSignalEvents, numberBackgroundEvents,false,false,outputPlotDirectory);
