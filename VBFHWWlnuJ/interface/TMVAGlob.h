@@ -36,9 +36,9 @@
 #include "TPaletteAxis.h"
 
 // default definition for ROC curve color, style and width                                                                                                                                
-static double color []      = {1,2,210,6,7,4,12,95};
-static double linestyle []  = {1,1,9,7,1,9,1,9};
-static double linewidth []  = {2.6,2.6,2.5,2,2,2,2,2};
+static double color []      = {1,2,210,6,7,4,12,95,28};
+static double linestyle []  = {1,1,8,7,1,8,1,8,1};
+static double linewidth []  = {2.6,2.6,2.5,2,2,2,2,2,2};
 
 static std::vector<double> vec_color(color, color + sizeof(color)/sizeof(double));
 static std::vector<double> vec_linewidth(linewidth, linewidth + sizeof(linewidth)/sizeof(double));
@@ -199,14 +199,15 @@ class TMVAGlob {
   void SetBackgroundType(const bool & type = false) { backgroundType_ = type; }
 
   // plot ROC curve
-  void plotEfficiency (TFile* inputFile, TDirectory* dir, const double & minPTbin = 200, const double & maxPTbin = 1000, const std::string & outputPlotDirectory = "");
+  void plotEfficiency (std::vector<TFile*> inputFile, TDirectory* dir, const double & minPTbin = 200, const double & maxPTbin = 1000, const std::string & outputPlotDirectory = "");
   // plot correlation Matrix
   void plotCorrelationMatrix (TFile* inputFile = 0, const int & iFile = 0, const std::string & outputPlotDirectory = "");
   // plot output distribution
   void plotMVAs( TFile*inputFile = 0, HistType htype = MVAType, const std::string & outputPlotDirectory = "");
   // plot signficance for different formula using or not the expected number of signal and background events
-  void plotSignificance (TFile* inputFile = 0, const int & iFile = 0, SignificanceType stype = Pvalue, const double & numberSignalEvents = 0., const double & numberBackgroundEvents = 0.,
-                         const bool & UseSignalEfficiency = false, const bool & UseBakgroundEfficiency = false, const std::string & outputPlotDirectory = "");
+  void plotSignificance (TFile* inputFile = 0, const int & iFile = 0, SignificanceType stype = Pvalue, const double & numberSignalEvents = 0., 
+                         const double & numberBackgroundEvents = 0.,const bool & UseSignalEfficiency = false, const bool & UseBakgroundEfficiency = false, 
+                         const std::string & outputPlotDirectory = "");
 
  private:
   
@@ -246,6 +247,7 @@ class TMVAGlob {
   TH1* histoBackground_;
   TH1* effBackground_;
   TH1* effSignal_;
+
 
 };
 
