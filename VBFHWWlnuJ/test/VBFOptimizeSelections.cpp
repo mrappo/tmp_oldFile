@@ -28,8 +28,8 @@
 /// Main Programme                                                                                                                                                                      
 int main (int argc, char** argv){
 
-  if (argc != 2){
-    std::cerr << ">>> Usage:   " << argv[1] << "   cfg file" << std::endl;
+  if (argc < 2){
+    std::cerr << ">>> Usage:   " << argv[1] << "   cfg file" <<  std::endl;
     return -1;
   }
 
