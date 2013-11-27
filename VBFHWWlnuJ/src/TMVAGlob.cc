@@ -55,7 +55,7 @@ TMVAGlob::~TMVAGlob(){
 
   inputFiles_.clear() ;
   inputMethodName_.clear() ;
-  
+    
 }
 
 // destroy the full list of the exsisting canvas
@@ -605,24 +605,28 @@ void TMVAGlob::CreateCanvasandFrameROC(TFile *inputFile, const double & minPTbin
 }
 
 // methods for plot the efficiency (ROC) curve for a given inputFile
-void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double & minPTbin, const double & maxPTbin, const std::string & outputPlotDirectory){
+void TMVAGlob::plotEfficiency (std::vector<TFile*> inputFile, TDirectory* dir, const double & minPTbin, const double & maxPTbin, const std::string & outputPlotDirectory){
 
   // Plot the ROC curve with a proper style from root file originated by TMVA                                                                                                         
-  if(cROC_==NULL) (*this).CreateCanvasandFrameROC(inputFile,minPTbin,maxPTbin,outputPlotDirectory); 
+  if(cROC_==NULL) (*this).CreateCanvasandFrameROC(inputFile.at(0),minPTbin,maxPTbin,outputPlotDirectory); 
       
-  TList TrainingMethods;
-  TList hists;
-
-  int res = (*this).GetListOfMethods(TrainingMethods);
-
-  TIter next(&TrainingMethods);
-  TKey *key = 0, *hkey = 0;
-
-  inputFile->cd();
   cROC_->cd();
+  TH1F *h ; 
 
-  // loop over all methods stored in the TList TrainingMethods                                                                                                              
-  while ((key = (TKey*)next())) {
+  for(size_t iFile = 0; iFile <  inputFile.size();  iFile++){
+ 
+   inputFile.at(iFile)->cd();
+
+   TList TrainingMethods;
+   TList hists;
+
+   int res = (*this).GetListOfMethods(TrainingMethods);
+
+   TIter next(&TrainingMethods);
+   TKey *key = 0, *hkey = 0;
+
+   // loop over all methods stored in the TList TrainingMethods                                                                                                              
+   while ((key = (TKey*)next())) {
     TDirectory * myDir = (TDirectory*)key->ReadObj();
     TList Titles;
     int nTitles = (*this).GetListOfTitles(myDir,Titles); // get the titles list for eack method
@@ -635,8 +639,9 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
       (*this).GetMethodTitle(methodTitle,titDir);
       TIter nextKey( titDir->GetListOfKeys() ); // loop and the list of keys
       while ((hkey = (*this).NextKey(nextKey,"TH1"))) { // take only the TH1 object type
-        TH1F *h = (TH1F*)hkey->ReadObj();
+        h = (TH1F*)hkey->ReadObj();
         TString hname = h->GetName();    // only the one which are called rejBvsS
+        h -> SetName(Form("%s_%s",inputFile.at(iFile)->GetName(),h->GetName()));
         if (hname.Contains("rejBvsS") && hname.BeginsWith("MVA_")) {
           if(size_t(color_index) <= vec_color.size()){
 	    h->SetLineWidth(vec_linewidth[color_index]);
@@ -658,6 +663,7 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
       }
     }
   }
+
   
   /// Loop on the different histos                                                                                                                                                        
   while (hists.GetSize()) {
@@ -679,6 +685,7 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
 
     // set legend names 
    if(TString(histWithLargestInt->GetTitle()).Contains("Cuts")){
+     std::cout<<" histWithLargestInt "<<histWithLargestInt->GetName()<<" name "<<inputMethodName_.at(method_index)<<std::endl;
      legROC_->AddEntry(histWithLargestInt,inputMethodName_.at(method_index).c_str(),"l");
      method_index ++ ;
    }
@@ -702,10 +709,12 @@ void TMVAGlob::plotEfficiency (TFile* inputFile, TDirectory* dir, const double &
     legROC_->AddEntry(histWithLargestInt,TString(histWithLargestInt->GetTitle()).ReplaceAll("MVA_",""),"l");   
    hists.Remove(histWithLargestInt);
   }
-  
+
+  }
+
   legROC_->Draw("same");
   cROC_->Update();
-  
+
   return;
 
 }
