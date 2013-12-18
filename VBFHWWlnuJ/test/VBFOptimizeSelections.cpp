@@ -220,7 +220,6 @@ int main (int argc, char** argv){
   double scaleFactorWjet = 1. ;
   if( argc==3 ) scaleFactorWjet =  std::atof(argv[2]);
   
-
   
   for(size_t pTBin = 0; pTBin+1 < JetPtBinOfTraining.size() ; pTBin++){
 
