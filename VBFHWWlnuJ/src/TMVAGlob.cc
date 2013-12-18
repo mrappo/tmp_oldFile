@@ -166,9 +166,11 @@ void TMVAGlob::PrintImageROC(TDirectory* dir, const std::string & outputPlotDire
 
        TString pngName = fname + ".png";
        TString pdfName = fname + ".pdf";
+       TString rootName = fname + ".root";
        cROC_->cd();
        cROC_->Print(pdfName);
        cROC_->Print(pngName);
+       cROC_->Print(rootName);
  }
 
   return ;
@@ -523,15 +525,15 @@ TDirectory *TMVAGlob::GetCorrelationPlotsDir( TMVAGlob::TypeOfPlot type, TDirect
 // Produce a banner for ROC plots 
 void TMVAGlob::banner4Plot (const bool & isLabel, const float & ptMin, const float & ptMax){
 
-  //  TPaveText* pt = new TPaveText(.76,0.71,.83,.88,"NDC");
-  TPaveText* pt = new TPaveText(.36,0.61,.43,.78,"NDC"); 
+  TPaveText* pt = new TPaveText(.76,0.71,.83,.88,"NDC");
+  //TPaveText* pt = new TPaveText(.36,0.61,.43,.78,"NDC"); 
 
   pt->AddText("CA R = 0.8");
-  //  TString BoostLegend ; BoostLegend.Form("%d < p_{T} < %d GeV",int(ptMin),int(ptMax));
-  //  pt->AddText(BoostLegend.Data());
-  pt->AddText("p_{T} > 200 GeV");
+  TString BoostLegend ; BoostLegend.Form("%d < p_{T} < %d GeV",int(ptMin),int(ptMax));
+  pt->AddText(BoostLegend.Data());
+  //  pt->AddText("p_{T} > 200 GeV");
   pt->AddText("|#eta|<2.4");
-  pt->AddText("65 < m_{j} < 105 GeV");
+  pt->AddText("60 < m_{j} < 100 GeV");
 
   pt->SetBorderSize(0);
   pt->SetFillColor(0);
@@ -591,7 +593,7 @@ void TMVAGlob::CreateCanvasandFrameROC(TFile *inputFile, const double & minPTbin
   latex.SetNDC();
   latex.SetTextAlign(21); // align right                                                                                                                                                  
   latex.SetTextSize(0.033);
-  latex.DrawLatex(0.6,0.92,Form("CMS Preliminary Simulation,#sqrt{s} = 8 TeV, W+jets"));
+  latex.DrawLatex(0.698,0.92,Form("CMS Simulation, #sqrt{s} = 8 TeV, W+jets"));
 
   legROC_ = new TLegend(0.20,0.171,0.6,0.511,NULL,"brNDC");
   legROC_->SetBorderSize(0);
@@ -731,6 +733,9 @@ void TMVAGlob::SetMethodName(const std::vector<std::string> & SetMethodName){
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll(":__:","_{"));
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll(":___:","}"));
     inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll("//"," "));
+    inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll("/../","("));
+    inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll("/::/",")"));
+    inputMethodName_.at(iMethod) = std::string(TString(inputMethodName_.at(iMethod)).ReplaceAll("/:::/","="));
   }       
 
   for(size_t iMethod = 0 ; iMethod < originalMethodName_.size() ; iMethod++){
@@ -739,6 +744,9 @@ void TMVAGlob::SetMethodName(const std::vector<std::string> & SetMethodName){
     originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll(":___:","_"));
     originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll("//","_"));
     originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll("/","_"));
+    originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll("/../","_"));
+    originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll("/::/","_"));
+    originalMethodName_.at(iMethod) = std::string(TString(originalMethodName_.at(iMethod)).ReplaceAll("/:::/","_"));
   }       
 
   return ; 
@@ -836,9 +844,11 @@ void TMVAGlob::PrintImage(TCanvas* c, const std::string & fname){
 
   TString pngName = fname+".png";
   TString pdfName = fname+".pdf";
+  TString rootName = fname+".root";
 
   c->Print(pdfName);
   c->Print(pngName);
+  c->Print(rootName);
 
   return ;
 
@@ -1129,7 +1139,7 @@ void TMVAGlob::plotMVAs(TFile* inputFile, HistType htype, const std::string & ou
       latex.SetNDC();
       latex.SetTextAlign(21); // align right                                                                                                                                 
       latex.SetTextSize(0.033);
-      latex.DrawLatex(0.6,0.92,Form("CMS Preliminary Simulation,#sqrt{s} = 8 TeV, W+jets"));
+      latex.DrawLatex(0.698,0.92,Form("CMS Simulation, #sqrt{s} = 8 TeV, W+jets"));
       cMVAs_->Update();
 
       methodTitle.ReplaceAll(" ","_");
@@ -1297,11 +1307,11 @@ void TMVAGlob::plotSignificance (TFile* inputFile, const int & iFile, Significan
     for (Int_t iBin=1; iBin<=(*itList)->efficiencySignal_->GetNbinsX(); iBin++) {
 
       Float_t S = 0;
-      if(signalType_) S = (*itList)->efficiencySignal_->GetBinContent(iBin) * numberSignalEvents;
+      if(!signalType_) S = (*itList)->efficiencySignal_->GetBinContent(iBin) * numberSignalEvents;
       else S = (*itList)->efficiencySignal_->GetBinContent(iBin) ;      
 
       Float_t B = 0;
-      if(backgroundType_) B = (*itList)->efficiencyBackground_->GetBinContent(iBin) * numberBackgroundEvents;
+      if(!backgroundType_) B = (*itList)->efficiencyBackground_->GetBinContent(iBin) * numberBackgroundEvents;
       else B = (*itList)->efficiencyBackground_->GetBinContent(iBin) ;
 
       Double_t significance = 0. ;
@@ -1312,7 +1322,6 @@ void TMVAGlob::plotSignificance (TFile* inputFile, const int & iFile, Significan
       else if(stype == 1 && B != 0 )   significance = significanceFormula.Eval(S,B);
       else if(stype == 2 && S+B != 0 ) significance = significanceFormula.Eval(S,B);
       else significance = significanceFormula.Eval(S,B);
-
       if ((*this).GetFormulaString() == "S/B") sigErr = sqrt(S/(B*B)+S*S/(B*B*B));	
       else if ((*this).GetFormulaString() == "S/sqrt(B)") sigErr = significance * sqrt( 1./S + 1./(2.*B));	
       else if ((*this).GetFormulaString() == "S/sqrt(S+B)") sigErr = sqrt(S*(TMath::Power(1-0.5/sqrt(S+B),2))*1/(S+B)+B*S*S/(4*(S+B)));	
@@ -1348,7 +1357,7 @@ void TMVAGlob::plotSignificance (TFile* inputFile, const int & iFile, Significan
 
    int bin  = 0 ;   
    for(int iBin = 0; iBin < (*itInfoList)->efficiencyBackground_->GetNbinsX(); iBin++){
-     if((*itInfoList)->efficiencyBackground_->GetBinContent(iBin+1)>0.03) continue; // break when the efficiency on the bkg is less than 3% and save the bin
+     if((*itInfoList)->efficiencyBackground_->GetBinContent(iBin+1)>0.01) continue; // break when the efficiency on the bkg is less than 3% and save the bin
      else{ bin = iBin ; break; }
    }
 
@@ -1492,7 +1501,7 @@ void TMVAGlob::plotSignificance (TFile* inputFile, const int & iFile, Significan
    latex.SetNDC();
    latex.SetTextAlign(21); // align right                                                                                                                                                 
    latex.SetTextSize(0.033);
-   latex.DrawLatex(0.56,0.92,Form("CMS Preliminary Simulation,#sqrt{s} = 8 TeV, W+jets"));
+   latex.DrawLatex(0.698,0.92,Form("CMS Simulation, #sqrt{s} = 8 TeV, W+jets"));
    latex.Delete();
 
    // print comments                                                                                                                                                                    
