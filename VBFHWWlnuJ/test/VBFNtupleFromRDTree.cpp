@@ -1888,10 +1888,10 @@ int main (int argc, char** argv){
   } // End of Muon Analysis
   
   // Electron Sample Processing 
-  else if(LeptonType == "Electron"){
+  if(LeptonType == "Electron"){
 
    std::cout<<" Enter in the Electron Category "<<std::endl;
-   std::cout<<"                                "<<std::endl;
+   std::cout<<"                            "<<std::endl;
 
    // create and open the output file 
 
@@ -1908,7 +1908,7 @@ int main (int argc, char** argv){
    std::cout<<" Clone Tree  "<<std::endl;
    
    TTree *newtree = ElectronTree->fTree->CloneTree(0);
-   
+
    // Add new Branches 
    VBFElectronClass* NewElectronTree = new VBFElectronClass(newtree);
    
@@ -1919,7 +1919,7 @@ int main (int argc, char** argv){
    std::cout<<"                                   "<<std::endl;
    std::cout << "Input Tree Number of Entries : " <<  ElectronTree->fTree->GetEntries ()  << std::endl ;
    std::cout<<"                                   "<<std::endl;
-  
+
    for(int iEntry = 0 ; iEntry <  ElectronTree->fTree->GetEntries ()  ; iEntry++){
 
     nStep = 1 ;
@@ -1954,7 +1954,7 @@ int main (int argc, char** argv){
     std::vector< std::vector <JetAK5> > GenJetPFCor_AK5_Collection(JetPtCutMin.size()); 
     std::vector< std::vector <JetAK5> > GenCleanedJetPFCor_AK5_Collection(JetPtCutMin.size());
     std::vector< std::vector <JetAK5> > GenHadronicW_AK5_Collection(JetPtCutMin.size());
-
+   
     for(int iJetPtCutMin = 0 ; iJetPtCutMin < int(JetPtCutMin.size()); iJetPtCutMin++){
 
      for(int iJet = 0 ; iJet < JetCollectionDimension ; iJet++) { // run over the whole CA8 jet collection and took the 4vetcor 
@@ -1962,27 +1962,29 @@ int main (int argc, char** argv){
       std::string nameCollection ; 
       JetTemp.SetPtEtaPhiE(ElectronTree->fReader->getFloat("GroomedJet_CA8_pt")[iJet],ElectronTree->fReader->getFloat("GroomedJet_CA8_eta")[iJet], 
                            ElectronTree->fReader->getFloat("GroomedJet_CA8_phi")[iJet],ElectronTree->fReader->getFloat("GroomedJet_CA8_e")[iJet]);
-      if(NewElectronTree->fTree->FindBranch("GenGroomedJet_CA8_pt") && NewElectronTree->fTree->FindBranch("JetGen_Pt"))
+
+      if(NewElectronTree->fTree->FindBranch("GenGroomedJet_CA8_pt") && NewElectronTree->fTree->FindBranch("JetGen_Pt")){
        GenJetTemp.SetPtEtaPhiE(ElectronTree->fReader->getFloat("GenGroomedJet_CA8_pt")[iJet],ElectronTree->fReader->getFloat("GenGroomedJet_CA8_eta")[iJet], 
-                               ElectronTree->fReader->getFloat("GenGroomedJet_CA8_phi")[iJet],ElectronTree->fReader->getFloat("GenGroomedJet_CA8_e")[iJet]);
+                              ElectronTree->fReader->getFloat("GenGroomedJet_CA8_phi")[iJet],ElectronTree->fReader->getFloat("GenGroomedJet_CA8_e")[iJet]);
+      }
 
      // Selection on CA8 Jets -> pt cut on each jet over the threshold and acceptance
       if(fabs(JetTemp.Eta())<JetEtaCutMax && JetTemp.Pt()>JetPtCutMin.at(iJetPtCutMin))
 		GroomedJet_CA8_Collection.at(iJetPtCutMin).push_back(JetTemp);
+               
 
       if(NewElectronTree->fTree->FindBranch("GenGroomedJet_CA8_pt") && NewElectronTree->fTree->FindBranch("JetGen_Pt")){
-      if(fabs(GenJetTemp.Eta())<JetEtaCutMax && GenJetTemp.Pt()>JetPtCutMin.at(iJetPtCutMin))
+       if(fabs(GenJetTemp.Eta())<JetEtaCutMax && GenJetTemp.Pt()>JetPtCutMin.at(iJetPtCutMin))
 		GenGroomedJet_CA8_Collection.at(iJetPtCutMin).push_back(GenJetTemp);
       }
-
       // take the central AK5 jets 
       JetTemp.SetPtEtaPhiE(ElectronTree->fReader->getFloat("JetPFCor_Pt")[iJet],ElectronTree->fReader->getFloat("JetPFCor_Eta")[iJet],
  			  ElectronTree->fReader->getFloat("JetPFCor_Phi")[iJet],ElectronTree->fReader->getFloat("JetPFCor_E")[iJet]);
 
       if(NewElectronTree->fTree->FindBranch("GenGroomedJet_CA8_pt") && NewElectronTree->fTree->FindBranch("JetGen_Pt"))
        GenJetTemp.SetPtEtaPhiE(ElectronTree->fReader->getFloat("JetGen_Pt")[iJet],ElectronTree->fReader->getFloat("JetGen_Eta")[iJet],
-   			     ElectronTree->fReader->getFloat("JetGen_Phi")[iJet],ElectronTree->fReader->getFloat("JetGen_E")[iJet]);
-
+   	   		       ElectronTree->fReader->getFloat("JetGen_Phi")[iJet],ElectronTree->fReader->getFloat("JetGen_E")[iJet]);
+      
      // Selection on PF Cor Central Jets --> AK5
      if(fabs(JetTemp.Eta())<JetEtaCutMax && JetTemp.Pt()>JetPtCutMin.at(iJetPtCutMin)){
        JetAK5 tempJetAK5 (iJet,"JetPFCor",JetTemp);
@@ -1991,10 +1993,10 @@ int main (int argc, char** argv){
 
      if(NewElectronTree->fTree->FindBranch("GenGroomedJet_CA8_pt") && NewElectronTree->fTree->FindBranch("JetGen_Pt")){
       if(fabs(GenJetTemp.Eta())<JetEtaCutMax && GenJetTemp.Pt()>JetPtCutMin.at(iJetPtCutMin)){
-        JetAK5 tempJetAK5 (iJet,"GenJet",GenJetTemp);
-        GenJetPFCor_AK5_Collection.at(iJetPtCutMin).push_back(tempJetAK5);
+       JetAK5 tempJetAK5 (iJet,"GenJet",GenJetTemp);
+       GenJetPFCor_AK5_Collection.at(iJetPtCutMin).push_back(tempJetAK5);
       }
-     }
+      }
     }
    
     for(int iJet = 0 ; iJet < JetCollectionDimension ; iJet++) { //only AK5 forward jet over the pt threshold 
@@ -2008,23 +2010,21 @@ int main (int argc, char** argv){
        JetPFCor_AK5_Collection.at(iJetPtCutMin).push_back(tempJetAK5);
      }
     }
-    
+   
     //choose the jet corresponding to the hadronic W and fill new branches with its variables --> apply the pT cut on the whole CA8 jet and select the one with mass closer
     // to the W mass just to have another solution 
     float difference = 1000.;
     int iWHadronic = 0;
- 
-    if(iJetPtCutMin==0){
 
-     for(size_t i = 0; i < GroomedJet_CA8_Collection.size() ; i ++){
-       if ( ElectronTree->fReader->getFloat("GroomedJet_CA8_pt")[i]>JetPtWboostedMin ) {
-	 if ( fabs (ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[i] - Wmass) < difference ) {
-	   difference = fabs (ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[i] - Wmass);
-	   iWHadronic = i;
-	 }
-       }
-     }
-
+    for(size_t i = 0; i < GroomedJet_CA8_Collection.size() ; i ++){
+      if ( ElectronTree->fReader->getFloat("GroomedJet_CA8_pt")[i]>JetPtWboostedMin ) {
+	if ( fabs (ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[i] - Wmass) < difference ) {
+	  difference = fabs (ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[i] - Wmass);
+	  iWHadronic = i;
+	}
+	}
+    }
+    if(iJetPtCutMin == 0){
 
      NewElectronTree -> WHadposition = iWHadronic;   //position of the hadronic W in the CA8Jet collection with pt over threshold + mass closer to the W one
 
@@ -2124,18 +2124,18 @@ int main (int argc, char** argv){
      NewElectronTree->Hadronic_W_Jet_prsubjet1ptoverjetpt = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1ptoverjetpt")[iWHadronic]; 
      NewElectronTree->Hadronic_W_Jet_prsubjet2ptoverjetpt = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet2ptoverjetpt")[iWHadronic]; 
      NewElectronTree->Hadronic_W_Jet_prsubjet1subjet2_deltaR = ElectronTree->fReader->getFloat("GroomedJet_CA8_prsubjet1subjet2_deltaR")[iWHadronic]; 
+
      }
-    }
+   }
     // Calculate Neutrino Pz using all the possible choices : type0 -> if real roots, pick the one nearest to the lepton Pz except when the Pz so chosen 
     //                                                                 is greater than 300 GeV in which case pick the most central root.               
     //                                                        type1 -> type = 1: if real roots, choose the one closest to the lepton Pz                                                                                                                                    if complex roots, use only the real part.     
     //                                                        type = 2: if real roots, choose the most central solution.                                                                                                                                          if complex roots, use only the real part.                                                                                                                                       type = 3: if real roots, pick the largest value of the cosine*                         
-   
 
     TLorentzVector W_electron, W_Met;
    
     W_electron.SetPxPyPzE(ElectronTree->fReader->getFloat("W_electron_px")[0],ElectronTree->fReader->getFloat("W_electron_py")[0],
-                    ElectronTree->fReader->getFloat("W_electron_pz")[0],ElectronTree->fReader->getFloat("W_electron_e")[0]);
+                          ElectronTree->fReader->getFloat("W_electron_pz")[0],ElectronTree->fReader->getFloat("W_electron_e")[0]);
     W_Met.SetPxPyPzE(ElectronTree->fReader->getFloat("event_met_pfmet")[0] * TMath::Cos(ElectronTree->fReader->getFloat("event_met_pfmetPhi")[0]),
                      ElectronTree->fReader->getFloat("event_met_pfmet")[0] * TMath::Sin(ElectronTree->fReader->getFloat("event_met_pfmetPhi")[0]),0.,
                      fabs(ElectronTree->fReader->getFloat("event_met_pfmet")[0]));
@@ -2152,6 +2152,7 @@ int main (int argc, char** argv){
     NeutrinoPz_type0.SetMET(W_Met);
     NeutrinoPz_type0.SetLepton(W_electron);
     NeutrinoPz_type0.SetLeptonType("muon");
+
     double pz1_type0 = NeutrinoPz_type0.Calculate(); // Default one -> according to type0
     double pz2_type0 = NeutrinoPz_type0.getOther(); // Default one
 
@@ -2187,6 +2188,7 @@ int main (int argc, char** argv){
     NewElectronTree->W_nu2_pz_type0 = pz2_type0;
 
   
+
     // type2 calculation of neutrino pZ
     METzCalculator<TLorentzVector> NeutrinoPz_type2;
     NeutrinoPz_type2.SetMET(W_Met);
@@ -2243,9 +2245,10 @@ int main (int argc, char** argv){
     nstepEvents[nStep-1]++;
     nStep = 5;
 
+
     TLorentzVector W_GroomedJet_CA8; 
     W_GroomedJet_CA8.SetPtEtaPhiE(ElectronTree->fReader->getFloat("GroomedJet_CA8_pt")[0], ElectronTree->fReader->getFloat("GroomedJet_CA8_eta")[0],
-                                  ElectronTree->fReader->getFloat("GroomedJet_CA8_phi")[0], ElectronTree->fReader->getFloat("GroomedJet_CA8_e")[0]);
+                                     ElectronTree->fReader->getFloat("GroomedJet_CA8_phi")[0], ElectronTree->fReader->getFloat("GroomedJet_CA8_e")[0]);
 
     if(W_GroomedJet_CA8.Pt() <=0){ std::cerr<<" Problem with pruned CA8 "<<std::endl; continue ;}
 
@@ -2261,8 +2264,10 @@ int main (int argc, char** argv){
     TLorentzVector fit_electron_type0_met(0,0,0,0), fit_neutrino_type0_met(0,0,0,0), fit_W_subjet1_type0_met(0,0,0,0), fit_W_subjet2_type0_met(0,0,0,0) ;
     TLorentzVector fit_electron_type2_met(0,0,0,0), fit_neutrino_type2_met(0,0,0,0), fit_W_subjet1_type2_met(0,0,0,0), fit_W_subjet2_type2_met(0,0,0,0) ;
 
-    doKinematicFit(1, W_electron, W_neutrino_type0, W_subjet1, W_subjet2,  fit_electron_type0, fit_neutrino_type0, fit_W_subjet1_type0, fit_W_subjet2_type0, NewElectronTree->fit_chi2_type0, NewElectronTree->fit_NDF_type0, NewElectronTree->fit_status_type0, LeptonType);
-    doKinematicFit(1, W_electron, W_neutrino_type2, W_subjet1, W_subjet2,  fit_electron_type2, fit_neutrino_type2, fit_W_subjet1_type2, fit_W_subjet2_type2, NewElectronTree->fit_chi2_type2, NewElectronTree->fit_NDF_type2, NewElectronTree->fit_status_type2, LeptonType);
+    doKinematicFit(1, W_electron, W_neutrino_type0, W_subjet1, W_subjet2,  fit_electron_type0, fit_neutrino_type0, fit_W_subjet1_type0, fit_W_subjet2_type0, NewElectronTree->fit_chi2_type0, 
+                   NewElectronTree->fit_NDF_type0, NewElectronTree->fit_status_type0, LeptonType);
+    doKinematicFit(1, W_electron, W_neutrino_type2, W_subjet1, W_subjet2,  fit_electron_type2, fit_neutrino_type2, fit_W_subjet1_type2, fit_W_subjet2_type2, NewElectronTree->fit_chi2_type2, 
+                   NewElectronTree->fit_NDF_type2, NewElectronTree->fit_status_type2, LeptonType);
     doKinematicFit(1, W_electron, W_neutrino_type0_met, W_subjet1, W_subjet2,  fit_electron_type0_met, fit_neutrino_type0_met, fit_W_subjet1_type0_met, fit_W_subjet2_type0_met, 
                    NewElectronTree->fit_chi2_type0_met, NewElectronTree->fit_NDF_type0_met, NewElectronTree->fit_status_type0_met, LeptonType);
     doKinematicFit(1, W_electron, W_neutrino_type2_met, W_subjet1, W_subjet2,  fit_electron_type2_met, fit_neutrino_type2_met, fit_W_subjet1_type2_met, fit_W_subjet2_type2_met,
@@ -2413,7 +2418,7 @@ int main (int argc, char** argv){
     NewElectronTree->boosted_lvj_eta_type0_met = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).Eta();
     NewElectronTree->boosted_lvj_phi_type0_met = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).Phi();
     NewElectronTree->boosted_lvj_e_type0_met   = (W_electron+W_neutrino_type0_met+W_subjet1+W_subjet2).E();
-
+ 
     NewElectronTree->boostedW_lvj_m_type0_met   = (W_electron+W_neutrino_type0_met+W_GroomedJet_CA8).M();
     NewElectronTree->boostedW_lv_m_type0_met    = (W_electron+W_neutrino_type0_met).M();
     NewElectronTree->boostedW_j_m_type0_met     = ElectronTree->fReader->getFloat("GroomedJet_CA8_mass_pr")[0];
@@ -2482,23 +2487,22 @@ int main (int argc, char** argv){
     NewElectronTree->boosted_wjj_ang_phia_type2_met = phistar1;														
     NewElectronTree->boosted_wjj_ang_phib_type2_met = phistar2;
 
-        
     // Clean AK5 Jet Collection from the hadronic W and sotre the jet binning
     std::vector<int> numberJetBin ;
-    for(size_t iJetPtCutMin = 0 ; iJetPtCutMin < JetPtCutMin.size(); iJetPtCutMin++){
-      for(size_t iJet = 0; iJet < JetPFCor_AK5_Collection.at(iJetPtCutMin).size() ; iJet ++){
+    for( size_t iJetPtCutMin = 0; iJetPtCutMin < JetPtCutMin.size(); iJetPtCutMin++){
+      for(size_t iJet = 0; iJet < JetPFCor_AK5_Collection.at(iJetPtCutMin).size() ; iJet ++){       
+	if(deltaR(JetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet).Momentum_.Phi(),GroomedJet_CA8_Collection.at(iJetPtCutMin).at(0).Phi(),
+		  JetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet).Momentum_.Eta(),GroomedJet_CA8_Collection.at(iJetPtCutMin).at(0).Eta()) < CleaningTreshold ){
+	  HadronicW_AK5_Collection.at(iJetPtCutMin).push_back(JetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet)); continue ;}
 
-      if(deltaR(JetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet).Momentum_.Phi(),GroomedJet_CA8_Collection.at(iJetPtCutMin).at(0).Phi(),
-                JetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet).Momentum_.Eta(),GroomedJet_CA8_Collection.at(iJetPtCutMin).at(0).Eta()) < CleaningTreshold ){
-	HadronicW_AK5_Collection.at(iJetPtCutMin).push_back(JetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet)); continue ;}
+	CleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).push_back(JetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet));
 
-      CleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).push_back(JetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet));
-
-    }
-    if(!CleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).empty())
-     numberJetBin.push_back(CleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).size());
-    else
-     numberJetBin.push_back(0);
+      }
+ 
+      if(!CleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).empty())
+       numberJetBin.push_back(CleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).size());
+      else
+       numberJetBin.push_back(0);
 
     }
 
@@ -2506,27 +2510,27 @@ int main (int argc, char** argv){
     if(NewElectronTree->fTree->FindBranch("GenGroomedJet_CA8_pt") && NewElectronTree->fTree->FindBranch("JetGen_Pt")){
      for( size_t iJetPtCutMin = 0; iJetPtCutMin < JetPtCutMin.size(); iJetPtCutMin++){
       for(size_t iJet = 0; iJet < GenJetPFCor_AK5_Collection.at(iJetPtCutMin).size() ; iJet ++){
-        if(GenGroomedJet_CA8_Collection.empty()) break;
+	if(GenGroomedJet_CA8_Collection.at(iJetPtCutMin).empty()) break;
 	if(deltaR(GenJetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet).Momentum_.Phi(),GenGroomedJet_CA8_Collection.at(iJetPtCutMin).at(0).Phi(),
 		  GenJetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet).Momentum_.Eta(),GenGroomedJet_CA8_Collection.at(iJetPtCutMin).at(0).Eta()) < CleaningTreshold ){
 	  GenHadronicW_AK5_Collection.at(iJetPtCutMin).push_back(GenJetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet)); continue ;}
 
 	GenCleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).push_back(GenJetPFCor_AK5_Collection.at(iJetPtCutMin).at(iJet));
-
+        
       }
- 
+      
       if(!GenCleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).empty())
-       numberJetBinGen.push_back(GenCleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).size());
+	numberJetBinGen.push_back(GenCleanedJetPFCor_AK5_Collection.at(iJetPtCutMin).size());
       else
        numberJetBinGen.push_back(0);
-
+     
      }
     }
 
     NewElectronTree -> numberJetBin = numberJetBin;
     NewElectronTree -> numberJetBinGen = numberJetBinGen;
 
-    if (NewElectronTree -> numberJetBin.at(0) == 1 && CleanedJetPFCor_AK5_Collection.at(0).size() ==1){
+    if (NewElectronTree -> numberJetBin.at(0) == 1 && CleanedJetPFCor_AK5_Collection.at(0).size() == 1){
 
       std::sort(CleanedJetPFCor_AK5_Collection.at(0).begin(),CleanedJetPFCor_AK5_Collection.at(0).end(),TLVP_PtSort());
       std::sort(GenCleanedJetPFCor_AK5_Collection.at(0).begin(),GenCleanedJetPFCor_AK5_Collection.at(0).end(),TLVP_PtSort());
@@ -2589,15 +2593,16 @@ int main (int argc, char** argv){
       NewElectronTree->vbf_maxpt_j1_ChargedHadronMultiplicity  = ElectronTree->fReader->getFloat("JetPFCor_ChargedHadronMultiplicity")[CleanedJetPFCor_AK5_Collection.at(0).at(0).position_] ;
       NewElectronTree->vbf_maxpt_j1_NeutralHadronMultiplicity  = ElectronTree->fReader->getFloat("JetPFCor_NeutralHadronMultiplicity")[CleanedJetPFCor_AK5_Collection.at(0).at(0).position_] ;
       NewElectronTree->vbf_maxpt_j1_PhotonMultiplicity         = ElectronTree->fReader->getFloat("JetPFCor_PhotonMultiplicity")[CleanedJetPFCor_AK5_Collection.at(0).at(0).position_] ; 
-      NewElectronTree->vbf_maxpt_j1_ElectronMultiplicity       = ElectronTree->fReader->getFloat("JetPFCor_ElectronMultiplicity")[CleanedJetPFCor_AK5_Collection.at(0).at(0).position_] ;
+      NewElectronTree->vbf_maxpt_j1_MuonMultiplicity           = ElectronTree->fReader->getFloat("JetPFCor_MuonMultiplicity")[CleanedJetPFCor_AK5_Collection.at(0).at(0).position_] ;
       NewElectronTree->vbf_maxpt_j1_HFHadronMultiplicity       = ElectronTree->fReader->getFloat("JetPFCor_HFHadronMultiplicity")[CleanedJetPFCor_AK5_Collection.at(0).at(0).position_] ;
 
 
     }
-    
     /// store info only for the VBF case 
     else if (NewElectronTree -> numberJetBin.at(0) >= 2){
-
+    
+     // vbf Tag Jet Selection
+    
      std::vector<JetAK5> outputAK5_PtSorted;
      std::vector<JetAK5> outputAK5_DEtaSorted;
      std::vector<JetAK5> outputAK5_MjjSorted;
@@ -2612,30 +2617,29 @@ int main (int argc, char** argv){
      outputAK5_PtSorted.push_back(CleanedJetPFCor_AK5_Collection.at(0).at(0));
      outputAK5_PtSorted.push_back(CleanedJetPFCor_AK5_Collection.at(0).at(1));
      if(outputAK5_PtSorted.size() < 2) continue ;
-
-     if(!numberJetBinGen.empty() && !GenCleanedJetPFCor_AK5_Collection.at(0).empty()){
-       if(numberJetBinGen.at(0)>=2 && GenCleanedJetPFCor_AK5_Collection.at(0).size()>=2){
-        std::sort(GenCleanedJetPFCor_AK5_Collection.at(0).begin(),GenCleanedJetPFCor_AK5_Collection.at(0).end(),TLVP_PtSort());
-        outputGenAK5_PtSorted.push_back(GenCleanedJetPFCor_AK5_Collection.at(0).at(0));
-        outputGenAK5_PtSorted.push_back(GenCleanedJetPFCor_AK5_Collection.at(0).at(1));
-       }
-     }
      
+     if(!numberJetBinGen.empty() && !GenCleanedJetPFCor_AK5_Collection.at(0).empty()){
+      if(numberJetBinGen.at(0)>=2 && GenCleanedJetPFCor_AK5_Collection.at(0).size()>=2){
+       std::sort(GenCleanedJetPFCor_AK5_Collection.at(0).begin(),GenCleanedJetPFCor_AK5_Collection.at(0).end(),TLVP_PtSort());
+       outputGenAK5_PtSorted.push_back(GenCleanedJetPFCor_AK5_Collection.at(0).at(0));
+       outputGenAK5_PtSorted.push_back(GenCleanedJetPFCor_AK5_Collection.at(0).at(1));
+      }
+     }
+         
      // Sorting of AK5 Cleaned Collection in DeltaEta
 
      std::sort(CleanedJetPFCor_AK5_Collection.at(0).begin(),CleanedJetPFCor_AK5_Collection.at(0).end(),TLVP_EtaSort());
      outputAK5_DEtaSorted.push_back(CleanedJetPFCor_AK5_Collection.at(0).front());
      outputAK5_DEtaSorted.push_back(CleanedJetPFCor_AK5_Collection.at(0).back());
      if(outputAK5_DEtaSorted.size() < 2) continue ;
-
-     if(!numberJetBinGen.empty() && !GenCleanedJetPFCor_AK5_Collection.at(0).empty() ){
-       if(numberJetBinGen.at(0)>=2 && GenCleanedJetPFCor_AK5_Collection.at(0).size()>=2){
-        std::sort(GenCleanedJetPFCor_AK5_Collection.at(0).begin(),GenCleanedJetPFCor_AK5_Collection.at(0).end(),TLVP_EtaSort());
-        outputGenAK5_DEtaSorted.push_back(GenCleanedJetPFCor_AK5_Collection.at(0).front());
-        outputGenAK5_DEtaSorted.push_back(GenCleanedJetPFCor_AK5_Collection.at(0).back());
-       }
-     }
-
+     
+     if(!numberJetBinGen.empty() && !GenCleanedJetPFCor_AK5_Collection.at(0).empty()){
+      if(numberJetBinGen.at(0)>=2 && GenCleanedJetPFCor_AK5_Collection.at(0).size()>=2){
+       std::sort(GenCleanedJetPFCor_AK5_Collection.at(0).begin(),GenCleanedJetPFCor_AK5_Collection.at(0).end(),TLVP_EtaSort());
+       outputGenAK5_DEtaSorted.push_back(GenCleanedJetPFCor_AK5_Collection.at(0).front());
+       outputGenAK5_DEtaSorted.push_back(GenCleanedJetPFCor_AK5_Collection.at(0).back());
+      }
+     }          
      // Sorting of AK5 Cleaned Collection in Mjj
      float maxMjj = 0. ;
      int iJ1 = 0 ;
@@ -2658,12 +2662,12 @@ int main (int argc, char** argv){
      outputAK5_MjjSorted.push_back (CleanedJetPFCor_AK5_Collection.at(0).at (iJ1)) ;
      outputAK5_MjjSorted.push_back (CleanedJetPFCor_AK5_Collection.at(0).at (iJ2)) ;
      if(outputAK5_MjjSorted.size() < 2) continue ;
-
+    
      maxMjj = 0. ;
      iJ1 = 0 ; iJ2 = 0;
 
      if(!numberJetBinGen.empty() && !GenCleanedJetPFCor_AK5_Collection.at(0).empty()){
-       if(numberJetBinGen.at(0)>=2 && GenCleanedJetPFCor_AK5_Collection.size()>=2){
+       if(numberJetBinGen.at(0)>=2 && GenCleanedJetPFCor_AK5_Collection.at(0).size()>=2){
        for (size_t iJet = 0 ; iJet < GenCleanedJetPFCor_AK5_Collection.at(0).size()-1 ; ++iJet){
         for (size_t jJet = iJet + 1 ; jJet < GenCleanedJetPFCor_AK5_Collection.at(0).size() ; ++jJet){
 
@@ -2678,10 +2682,9 @@ int main (int argc, char** argv){
       }
       outputGenAK5_MjjSorted.push_back (GenCleanedJetPFCor_AK5_Collection.at(0).at (iJ1)) ;
       outputGenAK5_MjjSorted.push_back (GenCleanedJetPFCor_AK5_Collection.at(0).at (iJ2)) ;
-      }
+      }     
      }
-    
-
+      
      //////////////////////////////////////////////////////////////////////////////////////////////////
      // Fill Information for Max Pt Pair of vbf tag jets
      //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2693,24 +2696,26 @@ int main (int argc, char** argv){
      NewElectronTree->vbf_maxpt_jj_eta = Total4VMaxPt.Eta(); 
      NewElectronTree->vbf_maxpt_jj_phi = Total4VMaxPt.Phi(); 
      NewElectronTree->vbf_maxpt_jj_m   = Total4VMaxPt.M(); 
- 
+
      NewElectronTree->vbf_maxpt_j1_e   = outputAK5_PtSorted.at(0).Momentum_.E();
      NewElectronTree->vbf_maxpt_j1_pt  = outputAK5_PtSorted.at(0).Momentum_.Pt();
      NewElectronTree->vbf_maxpt_j1_eta = outputAK5_PtSorted.at(0).Momentum_.Eta();
      NewElectronTree->vbf_maxpt_j1_phi = outputAK5_PtSorted.at(0).Momentum_.Phi();
      NewElectronTree->vbf_maxpt_j1_m   = outputAK5_PtSorted.at(0).Momentum_.M(); 
-
+ 
      NewElectronTree->vbf_maxpt_j2_e   = outputAK5_PtSorted.at(1).Momentum_.E();
      NewElectronTree->vbf_maxpt_j2_pt  = outputAK5_PtSorted.at(1).Momentum_.Pt();
      NewElectronTree->vbf_maxpt_j2_eta = outputAK5_PtSorted.at(1).Momentum_.Eta();
      NewElectronTree->vbf_maxpt_j2_phi = outputAK5_PtSorted.at(1).Momentum_.Phi();
      NewElectronTree->vbf_maxpt_j2_m   = outputAK5_PtSorted.at(1).Momentum_.M();
+
    
      NewElectronTree->vbf_maxpt_jj_deta = fabs(outputAK5_PtSorted.at(0).Momentum_.Eta() - outputAK5_PtSorted.at(1).Momentum_.Eta()) ;
      if (fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) < TMath::Pi())
        NewElectronTree->vbf_maxpt_jj_dphi = fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
      else 
        NewElectronTree->vbf_maxpt_jj_dphi = 2*TMath::Pi() - fabs(outputAK5_PtSorted.at(0).Momentum_.Phi() - outputAK5_PtSorted.at(1).Momentum_.Phi()) ;
+
 
      if(outputAK5_PtSorted.at(0).NameCollection_ == "JetPFCor" && outputAK5_PtSorted.at(1).NameCollection_ == "JetPFCor"){
        NewElectronTree->vbf_maxpt_jj_type = 1 ; /// both central 
@@ -2784,8 +2789,9 @@ int main (int argc, char** argv){
 
      if( NewElectronTree->vbf_maxpt_jj_type < 0 || NewElectronTree->vbf_maxpt_n_excj < 0 || NewElectronTree->vbf_maxpt_n_exfj < 0 ) continue ;
 
+     
      if(!numberJetBinGen.empty() && !outputGenAK5_PtSorted.empty()){
-       if(numberJetBinGen.at(0)>=2 && outputGenAK5_PtSorted.size()>=2){
+      if(numberJetBinGen.at(0)>=2 && outputGenAK5_PtSorted.size()>=2){
 
       TLorentzVector Total4VMaxPtGen = outputGenAK5_PtSorted.at(0).Momentum_ + outputGenAK5_PtSorted.at(1).Momentum_ ;
       NewElectronTree->vbf_maxpt_jj_e_gen   = Total4VMaxPtGen.E(); 
@@ -2822,8 +2828,7 @@ int main (int argc, char** argv){
       NewElectronTree->vbf_maxpt_j2_bDiscriminatorSSVHP_gen = ElectronTree->fReader->getFloat("JetGen_bDiscriminatorSSVHP")[outputGenAK5_PtSorted.at(1).position_] ;
       NewElectronTree->vbf_maxpt_j2_bDiscriminatorTCHP_gen  = ElectronTree->fReader->getFloat("JetGen_bDiscriminatorTCHP")[outputGenAK5_PtSorted.at(1).position_] ;
       }
-     }
-    
+      }    
      if(outputAK5_PtSorted.at(0).NameCollection_ == "JetPFCor") {
     
       NewElectronTree->vbf_maxpt_j1_QGLikelihood = ElectronTree->fReader->getFloat("JetPFCor_QGLikelihood")[outputAK5_PtSorted.at(0).position_] ;
@@ -3106,9 +3111,9 @@ int main (int argc, char** argv){
      nstepEvents[nStep-1]++;
      nStep = 8;
 
-
+     
      if(!numberJetBinGen.empty() && !outputGenAK5_DEtaSorted.empty()){
-       if(numberJetBinGen.at(0)>=2 && outputGenAK5_DEtaSorted.size()>=2){
+      if(numberJetBinGen.at(0)>=2 && outputGenAK5_DEtaSorted.size()>=2){
 
       TLorentzVector Total4VMaxDetaGen = outputGenAK5_DEtaSorted.at(0).Momentum_ + outputGenAK5_DEtaSorted.at(1).Momentum_ ;
       NewElectronTree->vbf_maxDeta_jj_e_gen   = Total4VMaxDetaGen.E(); 
@@ -3144,8 +3149,8 @@ int main (int argc, char** argv){
       NewElectronTree->vbf_maxDeta_j2_bDiscriminatorCSV_gen   = ElectronTree->fReader->getFloat("JetGen_bDiscriminatorCSV")[outputGenAK5_DEtaSorted.at(1).position_]  ;
       NewElectronTree->vbf_maxDeta_j2_bDiscriminatorSSVHP_gen = ElectronTree->fReader->getFloat("JetGen_bDiscriminatorSSVHP")[outputGenAK5_DEtaSorted.at(1).position_] ;
       NewElectronTree->vbf_maxDeta_j2_bDiscriminatorTCHP_gen  = ElectronTree->fReader->getFloat("JetGen_bDiscriminatorTCHP")[outputGenAK5_DEtaSorted.at(1).position_] ;
-      }
      }
+    }
 
     if(outputAK5_DEtaSorted.at(0).NameCollection_ == "JetPFCor") {
     
@@ -3466,7 +3471,7 @@ int main (int argc, char** argv){
       NewElectronTree->vbf_maxMjj_j2_bDiscriminatorCSV_gen   = ElectronTree->fReader->getFloat("JetGen_bDiscriminatorCSV")[outputGenAK5_MjjSorted.at(1).position_]  ;
       NewElectronTree->vbf_maxMjj_j2_bDiscriminatorSSVHP_gen = ElectronTree->fReader->getFloat("JetGen_bDiscriminatorSSVHP")[outputGenAK5_MjjSorted.at(1).position_] ;
       NewElectronTree->vbf_maxMjj_j2_bDiscriminatorTCHP_gen  = ElectronTree->fReader->getFloat("JetGen_bDiscriminatorTCHP")[outputGenAK5_MjjSorted.at(1).position_] ;
-      } 
+      }
      }
 
      if(outputAK5_MjjSorted.at(0).NameCollection_ == "JetPFCor") {
@@ -3496,8 +3501,8 @@ int main (int argc, char** argv){
       NewElectronTree->vbf_maxMjj_j1_NeutralEmEnergyFrac      = ElectronTree->fReader->getFloat("JetPFCor_NeutralEmEnergyFrac")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_PhotonEnergy             = ElectronTree->fReader->getFloat("JetPFCor_PhotonEnergy")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_PhotonEnergyFraction     = ElectronTree->fReader->getFloat("JetPFCor_PhotonEnergyFraction")[outputAK5_MjjSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxMjj_j1_MuonEnergy           = ElectronTree->fReader->getFloat("JetPFCor_MuonEnergy")[outputAK5_MjjSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxMjj_j1_MuonEnergyFraction   = ElectronTree->fReader->getFloat("JetPFCor_MuonEnergyFraction")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_ElectronEnergy           = ElectronTree->fReader->getFloat("JetPFCor_ElectronEnergy")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_ElectronEnergyFraction   = ElectronTree->fReader->getFloat("JetPFCor_ElectronEnergyFraction")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_HFHadronEnergy           = ElectronTree->fReader->getFloat("JetPFCor_HFHadronEnergy")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_HFHadronEnergyFraction   = ElectronTree->fReader->getFloat("JetPFCor_HFHadronEnergyFraction")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_HFEMEnergy               = ElectronTree->fReader->getFloat("JetPFCor_HFEMEnergy")[outputAK5_MjjSorted.at(0).position_] ;
@@ -3505,7 +3510,7 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxMjj_j1_ChargedMultiplicity        = ElectronTree->fReader->getFloat("JetPFCor_ChargedMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_NeutralMultiplicity        = ElectronTree->fReader->getFloat("JetPFCor_NeutralMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxMjj_j1_ElectronMultiplicity           = ElectronTree->fReader->getFloat("JetPFCor_ElectronMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_MuonMultiplicity           = ElectronTree->fReader->getFloat("JetPFCor_MuonMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_ChargedHadronMultiplicity  = ElectronTree->fReader->getFloat("JetPFCor_ChargedHadronMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_NeutralHadronMultiplicity  = ElectronTree->fReader->getFloat("JetPFCor_NeutralHadronMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_PhotonMultiplicity         = ElectronTree->fReader->getFloat("JetPFCor_PhotonMultiplicity")[outputAK5_MjjSorted.at(0).position_] ; 
@@ -3548,7 +3553,7 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxMjj_j1_ChargedMultiplicity        = ElectronTree->fReader->getFloat("JetPFCorVBFTag_ChargedMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_NeutralMultiplicity        = ElectronTree->fReader->getFloat("JetPFCorVBFTag_NeutralMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
-      NewElectronTree->vbf_maxMjj_j1_MuonMultiplicity           = ElectronTree->fReader->getFloat("JetPFCorVBFTag_MuonMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
+      NewElectronTree->vbf_maxMjj_j1_MuonMultiplicity           = ElectronTree->fReader->getFloat("JetPFCorVBFTag_ElectronMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_ChargedHadronMultiplicity  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_ChargedHadronMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_NeutralHadronMultiplicity  = ElectronTree->fReader->getFloat("JetPFCorVBFTag_NeutralHadronMultiplicity")[outputAK5_MjjSorted.at(0).position_] ;
       NewElectronTree->vbf_maxMjj_j1_PhotonMultiplicity         = ElectronTree->fReader->getFloat("JetPFCorVBFTag_PhotonMultiplicity")[outputAK5_MjjSorted.at(0).position_] ; 
@@ -3594,7 +3599,7 @@ int main (int argc, char** argv){
 
       NewElectronTree->vbf_maxMjj_j2_ChargedMultiplicity        = ElectronTree->fReader->getFloat("JetPFCor_ChargedMultiplicity")[outputAK5_MjjSorted.at(1).position_] ;
       NewElectronTree->vbf_maxMjj_j2_NeutralMultiplicity        = ElectronTree->fReader->getFloat("JetPFCor_NeutralMultiplicity")[outputAK5_MjjSorted.at(1).position_] ;
-      NewElectronTree->vbf_maxMjj_j2_MuonMultiplicity           = ElectronTree->fReader->getFloat("JetPFCor_MuonMultiplicity")[outputAK5_MjjSorted.at(1).position_] ;
+      NewElectronTree->vbf_maxMjj_j2_ElectronMultiplicity           = ElectronTree->fReader->getFloat("JetPFCor_ElectronMultiplicity")[outputAK5_MjjSorted.at(1).position_] ;
       NewElectronTree->vbf_maxMjj_j2_ChargedHadronMultiplicity  = ElectronTree->fReader->getFloat("JetPFCor_ChargedHadronMultiplicity")[outputAK5_MjjSorted.at(1).position_] ;
       NewElectronTree->vbf_maxMjj_j2_NeutralHadronMultiplicity  = ElectronTree->fReader->getFloat("JetPFCor_NeutralHadronMultiplicity")[outputAK5_MjjSorted.at(1).position_] ;
       NewElectronTree->vbf_maxMjj_j2_PhotonMultiplicity         = ElectronTree->fReader->getFloat("JetPFCor_PhotonMultiplicity")[outputAK5_MjjSorted.at(1).position_] ; 
@@ -3646,16 +3651,15 @@ int main (int argc, char** argv){
     
      }
      else { std::cerr<<" problem with High Deta Jet Name Collection "<<std::endl; continue ; }
-
+          
     }
-        
     NewElectronTree->fTree->Fill(); // Fill the events 
     
    } // End of Loop on the event
 
-
-    // Save Results in the output
+   // Save Results in the output
    NewElectronTree->fTree->Write(TreeName.c_str());
+
    int ibin = 0 ;
    nStep = 0 ;
    for( ; nstepEvents[ibin]!=0 ; ibin ++){ nStep ++ ; SelectionEvents->SetBinContent(ibin+1,nstepEvents[ibin]); }
@@ -3672,7 +3676,6 @@ int main (int argc, char** argv){
 
    std::cout << " Finish :: " << outputFile->GetName() << "    "<<  ElectronTree->fTree->GetEntries ()  << std::endl;
    outputFile->Close();
-
   } // End of Electron Analysis
   
  return 0 ;
