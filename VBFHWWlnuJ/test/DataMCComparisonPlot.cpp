@@ -38,7 +38,7 @@ void banner4Plot (const bool & isLabel){
   //  pt->AddText("250 < p_{T} < 350 GeV");
   pt->AddText("p_{T} > 200 GeV");
   pt->AddText("|#eta|<2.4");
-  //  pt->AddText("65 < m_{j} < 105 GeV");                                                                                                                                                       
+  pt->AddText("40 < m_{j} < 130 GeV");                                                                                                                                                       
   pt->SetFillColor(0);
   pt->SetTextSize(0.035);
   pt->SetFillStyle(0);
@@ -539,6 +539,7 @@ int main (int argc, char **argv){
 
   TH1F*    histo_top[CutList.size()][Variables.size()];
   TH1F*    histo_diboson[CutList.size()][Variables.size()];
+  TH1F*    histo_diboson_ewk[CutList.size()][Variables.size()];
   TH1F*    histo_WJets[CutList.size()][Variables.size()];
   TH1F*    histo_WJets_herwig[CutList.size()][Variables.size()];
   TH1F*    histo_ttbar[CutList.size()][Variables.size()];
@@ -607,6 +608,9 @@ int main (int argc, char **argv){
 
           histoName = Form("%s_diboson_%d",Variables.at(iVar).c_str(),int(iCut));
 	  histo_diboson[iCut][iVar]      = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+
+          histoName = Form("%s_diboson_ewk_%d",Variables.at(iVar).c_str(),int(iCut));
+	  histo_diboson_ewk[iCut][iVar]      = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
 
           histoName = Form("%s_WJets_%d",Variables.at(iVar).c_str(),int(iCut));
 	  histo_WJets[iCut][iVar]        = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
@@ -741,6 +745,12 @@ int main (int argc, char **argv){
 		histo_diboson[iCut][iVar]->SetLineWidth(2);
 		histo_diboson[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
 	    }
+	    else if (( NameReducedSample.at(iSample)=="WW_EWK") || ( NameReducedSample.at(iSample)=="WZ_EWK") || ( NameReducedSample.at(iSample)=="ZZ_EWK") ){  
+		histo_diboson_ewk[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
+		histo_diboson_ewk[iCut][iVar]->SetLineColor(kBlack);
+		histo_diboson_ewk[iCut][iVar]->SetLineWidth(2);
+		histo_diboson_ewk[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+	    }
 	    else{  histos[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
                    histos[iCut][iVar][iSample]->SetLineColor(kBlack);
 		   hs[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
@@ -759,8 +769,9 @@ int main (int argc, char **argv){
 	  if(histo_top[iCut][iVar]->GetEntries()!=0)     
              leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
 	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) 
-             leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ", "f" );
-
+             leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ QCD", "f" );
+	  if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) 
+             leg[iCut][iVar]->AddEntry( histo_diboson_ewk[iCut][iVar], "WW+2jet EWK", "f" );
 	  if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0) 
                 leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets Pythia", "f" );
 	  else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0)  
@@ -769,7 +780,6 @@ int main (int argc, char **argv){
                 leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets Pythia", "l" );
                 leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "l" );
 	  }
-
          if(histo_ttbar[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()==0) 
                 leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t} powheg", "f" );
 	  else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()==0)  
@@ -781,8 +791,8 @@ int main (int argc, char **argv){
   
 
 	  if(histo_top[iCut][iVar]->GetEntries()!=0)     legNoRatio[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
-	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) legNoRatio[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ", "f" );
-
+	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) legNoRatio[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "WW/WZ/ZZ QCD", "f" );
+	  if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) legNoRatio[iCut][iVar]->AddEntry( histo_diboson_ewk[iCut][iVar], "WW+2jet EWK", "f" );
 	  if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 )  
              legNoRatio[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets Pythia", "f" );
 	  else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0)  
@@ -806,6 +816,7 @@ int main (int argc, char **argv){
  	   if(histo_top[iCut][iVar]->GetEntries()!=0)     { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }           
 	   if(histo_ttbar[iCut][iVar]->GetEntries()!=0)   { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);}
 	   if(histo_diboson[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]);}
+	   if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);}
 	   if(histo_WJets[iCut][iVar]->GetEntries()!=0)  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	   if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0) hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); 
 	  }
@@ -814,12 +825,14 @@ int main (int argc, char **argv){
   	      if(histo_WJets[iCut][iVar]->GetEntries()!=0) hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
 	      if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0) hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]);
   	      if(histo_diboson[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]);}
+  	      if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);}
 	      if(histo_top[iCut][iVar]->GetEntries()!=0)     { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }
 	      if(histo_ttbar[iCut][iVar]->GetEntries()!=0)   { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);}
 	    }
             else{
      	      if(histo_WJets[iCut][iVar]->GetEntries()!=0)        { hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_WJets[iCut][iVar]);}
 	      if(histo_diboson[iCut][iVar]->GetEntries()!=0)      { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]); }
+	      if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0)      { hs[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]); }
    	      if(histo_top[iCut][iVar]->GetEntries()!=0)          { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }
   	      if(histo_ttbar[iCut][iVar]->GetEntries()!=0)        { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]); }
 	      if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0) { hs_herwig[iCut][iVar]->Add(histo_ttbar_herwig[iCut][iVar]); }
@@ -832,14 +845,22 @@ int main (int argc, char **argv){
            SystematicErrorMap[1] = 0.30 ;   SystematicErrorMap_herwig[1] = 0.30 ;
            SystematicErrorMap[2] = 0.07 ;   SystematicErrorMap_herwig[2] = 0.07 ;
            SystematicErrorMap[3] = 0.30 ;   SystematicErrorMap_herwig[3] = 0.30 ;
-           SystematicErrorMap[4] = 0.00 ;   SystematicErrorMap_herwig[4] = 0.00 ;	  
+           if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0){ SystematicErrorMap[4] = 0.30 ;   SystematicErrorMap_herwig[4] = 0.30 ;
+                                                               SystematicErrorMap[5] = 0.00 ;   SystematicErrorMap_herwig[5] = 0.00 ;
+           }
+           else{SystematicErrorMap[4] = 0.00 ;   SystematicErrorMap_herwig[4] = 0.00 ; }
 	  }
           else{
            SystematicErrorMap[0] = 0.00 ;   SystematicErrorMap_herwig[0] = 0.00 ;
            SystematicErrorMap[1] = 0.00 ;   SystematicErrorMap_herwig[1] = 0.00 ;
            SystematicErrorMap[2] = 0.30 ;   SystematicErrorMap_herwig[2] = 0.30 ;
-           SystematicErrorMap[3] = 0.30 ;   SystematicErrorMap_herwig[3] = 0.30 ;
-           SystematicErrorMap[4] = 0.07 ;   SystematicErrorMap_herwig[4] = 0.07 ;	  
+           if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0){ SystematicErrorMap[3] = 0.30 ;   SystematicErrorMap_herwig[3] = 0.30 ;
+                                                               SystematicErrorMap[4] = 0.30 ;   SystematicErrorMap_herwig[4] = 0.30 ;
+                                                               SystematicErrorMap[5] = 0.07 ;   SystematicErrorMap_herwig[5] = 0.07 ;
+           }
+           else{
+                SystematicErrorMap[3] = 0.30 ;   SystematicErrorMap_herwig[3] = 0.30 ;
+                SystematicErrorMap[4] = 0.07 ;   SystematicErrorMap_herwig[4] = 0.07 ;}
 	  }
 
           TH1F* MCSysStat = (TH1F*) histo_top[iCut][iVar]->Clone("MCSysStat");
@@ -1612,23 +1633,27 @@ int main (int argc, char **argv){
     std::cout<<" WJets Herwig  Events:           "<<histo_WJets_herwig[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" TTbar Powegh Events:           "<<histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" TTbar mc@nlo Events:           "<<histo_ttbar_herwig[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
-    std::cout<<" VV Events:              "<<histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+    std::cout<<" VV Events QCD:              "<<histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+    std::cout<<" WW Events EWK:              "<<histo_diboson_ewk[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" STop Events:            "<<histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" All Backgrounds Events Pythia: "<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
       +histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
       +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
-      +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+      +histo_diboson_ewk[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
     if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0){
      std::cout<<" All Backgrounds Events Herwig: "<<histo_WJets_herwig[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
       +histo_ttbar_herwig[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
       +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
-       +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;}
+       +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+       +histo_diboson_ewk[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;}
     else{
      std::cout<<" All Backgrounds Events Herwig: "<<histo_WJets_herwig[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
       +histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
       +histo_top[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
-      +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      +histo_diboson[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)
+      +histo_diboson_ewk[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     }
     if(SignalggHName!="NULL" && iSampleggH!=-1){
       if(!NormalizeSignalToData) histos[iCut][iVar][iSampleggH]->Scale(1./SignalScaleFactor);
