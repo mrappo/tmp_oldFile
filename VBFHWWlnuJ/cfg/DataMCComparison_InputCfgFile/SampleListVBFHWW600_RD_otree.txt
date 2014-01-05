@@ -4,12 +4,15 @@
 ofile_data                                                      DATA             1               1             1
 #ofile_WJets_Pythia100                                          W+Jets           2           272.6       8955318
 #ofile_WJets_Herwig                                             W+Jets           2           272.6      13256090
-ofile_WJets_Pythia180                                          W+Jets           2         28.9755       9739464
+#ofile_WJets_Pythia180                                          W+Jets           2         28.9755       9739464
 ofile_W1Jets_Pythia                                             W+Jets           2            6601      23141598
 ofile_W2Jets_Pythia                                             W+Jets		 2            2110      34044921
 ofile_W3Jets_Pythia                                             W+Jets		 2             633      15539503
 ofile_W4Jets_Pythia                                             W+Jets		 2             263      13382803
-ofile_WW                                                        WW               4          54.838      10000431
+#ofile_WW                                                       WW               4          54.838      10000431
+ofile_WW_mcanlo                                                 WW               4           0.727      119692 
+#ofile_WW2jet_madgraph                                          WW_EWK           6           0.03907    414963
+#ofile_WW2jet_phantom                                           WW_EWK           6           0.232      333061 
 ofile_WZ                                                        WZ               4           33.21      10000283
 ofile_ZJets                                                     Z+Jets           5            3503      30459503
 ofile_ZZ                                                        ZZ               4           17.65       9799908
@@ -25,5 +28,6 @@ ofile_tWch_bar                                                  STop            
 #ofile_TTbar_scaleUp                                            tt_bar           210         225.19      5009488
 #ofile_TTbar_scaleUp                                            tt_bar           210         228.0       5387181
 ofile_TTbar_Powheg                                              tt_bar           210         245.8      21675970
+#ofile_TTbar_mcanlo                                              tt_bar_mcatnlo   53          245.197      24185991
 ofile_ggH600                                                    ggHx600              1           0.1276       197170
 ofile_vbfH600                                                   qqHx600              12          0.0236       198900
