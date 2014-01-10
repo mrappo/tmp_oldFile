@@ -810,34 +810,60 @@ int main (int argc, char **argv){
           ////////// Fill the stacks
           if(!isttbar_controlplots){
 
- 	   if(histo_top[iCut][iVar]->GetEntries()!=0)     { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }           
+ 	   if(histo_top[iCut][iVar]->GetEntries()!=0){
+              hs[iCut][iVar]->Add(histo_top[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]);
+           }           
 
 	   if(histo_ttbar[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()==0){
-            hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);}
+            hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
+           }
 	   else if(histo_ttbar[iCut][iVar]->GetEntries()==0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0) { 
-            hs[iCut][iVar]->Add(histo_ttbar_herwig[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_ttbar_herwig[iCut][iVar]);}
-	   else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0) { 
-            hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);}
+            hs[iCut][iVar]->Add(histo_ttbar_herwig[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_ttbar_herwig[iCut][iVar]);
+           }
+	   else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0) { 
+            hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);
+           }
 
-	   if(histo_diboson[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]);}
-	   if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);}
+	   if(histo_diboson[iCut][iVar]->GetEntries()!=0) { 
+               hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]);
+           }
 
-	   if(histo_WJets[iCut][iVar]->GetEntries()!=0)  hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
-	   if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0) hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); 
+	   if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) { 
+              hs[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);
+           }
 
+	   if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0){ 
+              hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
+           }
+	   else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0){ 
+              hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); hs[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); 
+           }
+           else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0){
+              hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);}
 	  }
 
           else{
 	    if(!isHerwig_ttbar){
-  	      if(histo_WJets[iCut][iVar]->GetEntries()!=0) hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);
-	      if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0) hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]);
+
+  	      if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0){ 
+                 hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_WJets[iCut][iVar]); }
+	      else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0){ 
+                 hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); hs[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); }
+              else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0){
+                 hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);}
+
   	      if(histo_diboson[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]);}
   	      if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) { hs[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);}
 	      if(histo_top[iCut][iVar]->GetEntries()!=0)     { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }
 	      if(histo_ttbar[iCut][iVar]->GetEntries()!=0)   { hs[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_ttbar[iCut][iVar]);}
 	    }
             else{
-     	      if(histo_WJets[iCut][iVar]->GetEntries()!=0)        { hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);    hs_herwig[iCut][iVar]->Add(histo_WJets[iCut][iVar]);}
+  	      if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0){ 
+                 hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]); hs_herwig[iCut][iVar]->Add(histo_WJets[iCut][iVar]); }
+	      else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0){ 
+                 hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); hs[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); }
+              else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0){
+                 hs_herwig[iCut][iVar]->Add(histo_WJets_herwig[iCut][iVar]); hs[iCut][iVar]->Add(histo_WJets[iCut][iVar]);}
 	      if(histo_diboson[iCut][iVar]->GetEntries()!=0)      { hs[iCut][iVar]->Add(histo_diboson[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson[iCut][iVar]); }
 	      if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0)      { hs[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]);  hs_herwig[iCut][iVar]->Add(histo_diboson_ewk[iCut][iVar]); }
    	      if(histo_top[iCut][iVar]->GetEntries()!=0)          { hs[iCut][iVar]->Add(histo_top[iCut][iVar]);      hs_herwig[iCut][iVar]->Add(histo_top[iCut][iVar]); }
@@ -1202,7 +1228,7 @@ int main (int argc, char **argv){
 
 			    }
 
-			    else if( ((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0) && ((histo_ttbar[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0) || (histo_ttbar[iCut][iVar]->GetEntries()==0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0))) || (isHerwig_ttbar && histo_ttbar[iCut][iVar]->GetEntries()==0)){
+			    else if( ((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0) && ((histo_ttbar[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries() ==0) || (histo_ttbar[iCut][iVar]->GetEntries()==0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0))) || (isHerwig_ttbar && histo_ttbar[iCut][iVar]->GetEntries()==0)){
 
 			     for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
 
