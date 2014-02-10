@@ -676,7 +676,7 @@ TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,con
     return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if( preselectionCutType == "basicVBFPreselectionCutHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
-    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
 
   else if( preselectionCutType == "basicVBFSBHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
@@ -686,7 +686,7 @@ TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,con
     return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ((jet_mass_pr > 40 && jet_mass_pr <65) || (jet_mass_pr > 105 && jet_mass_pr < 130)) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if( preselectionCutType == "basicVBFSBHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
-    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ((jet_mass_pr > 40 && jet_mass_pr <65) || (jet_mass_pr > 105 && jet_mass_pr < 130)) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && ((jet_mass_pr > 40 && jet_mass_pr <65) || (jet_mass_pr > 105 && jet_mass_pr < 130)) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
 
   else if( preselectionCutType == "basicVBFSRHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
@@ -696,7 +696,18 @@ TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,con
     return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105)  && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if( preselectionCutType == "basicVBFSRHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
-    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+
+
+  else if( preselectionCutType == "basicVBFSRHiggsTop" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105)  && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f ) && mass_ungroomedjet_closerjet > 200 && mass_leptonic_closerjet > 200",pTJetMin_,pTJetMax_);
+
+  else if( preselectionCutType == "basicVBFSRHiggsTop" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
+    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105)  && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f ) && mass_ungroomedjet_closerjet > 200 && mass_leptonic_closerjet > 200",pTJetMin_,pTJetMax_);
+
+  else if( preselectionCutType == "basicVBFSRHiggsTop" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 65 && jet_mass_pr <105) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f ) && mass_ungroomedjet_closerjet > 200 && mass_leptonic_closerjet > 200",pTJetMin_,pTJetMax_);
+
       
 
   else if( preselectionCutType == "basicVBFSBSRHiggs" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
@@ -706,7 +717,7 @@ TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,con
     return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 40 && jet_mass_pr <130)  && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 
   else if( preselectionCutType == "basicVBFSBSRHiggs" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
-    return Form("issignal && v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 40 && jet_mass_pr <130) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
+    return Form("issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && vbf_maxpt_j1_bDiscriminatorCSV <=0.679 && vbf_maxpt_j2_bDiscriminatorCSV <=0.679 && numberJetBin >= 2 && jet_tau2tau1 < 0.5 && (jet_mass_pr > 40 && jet_mass_pr <130) && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
       
   else return Form("v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",pTJetMin_,pTJetMax_);
 

@@ -525,15 +525,15 @@ TDirectory *TMVAGlob::GetCorrelationPlotsDir( TMVAGlob::TypeOfPlot type, TDirect
 // Produce a banner for ROC plots 
 void TMVAGlob::banner4Plot (const bool & isLabel, const float & ptMin, const float & ptMax){
 
-  TPaveText* pt = new TPaveText(.76,0.71,.83,.88,"NDC");
-  //TPaveText* pt = new TPaveText(.36,0.61,.43,.78,"NDC"); 
+  //TPaveText* pt = new TPaveText(.76,0.71,.83,.88,"NDC");
+  TPaveText* pt = new TPaveText(.36,0.61,.43,.78,"NDC"); 
 
   pt->AddText("CA R = 0.8");
   TString BoostLegend ; BoostLegend.Form("%d < p_{T} < %d GeV",int(ptMin),int(ptMax));
   pt->AddText(BoostLegend.Data());
   //  pt->AddText("p_{T} > 200 GeV");
   pt->AddText("|#eta|<2.4");
-  pt->AddText("60 < m_{j} < 100 GeV");
+  pt->AddText("65 < m_{j} < 105 GeV");
 
   pt->SetBorderSize(0);
   pt->SetFillColor(0);
@@ -1139,7 +1139,7 @@ void TMVAGlob::plotMVAs(TFile* inputFile, HistType htype, const std::string & ou
       latex.SetNDC();
       latex.SetTextAlign(21); // align right                                                                                                                                 
       latex.SetTextSize(0.033);
-      latex.DrawLatex(0.698,0.92,Form("CMS Simulation, #sqrt{s} = 8 TeV, W+jets"));
+      latex.DrawLatex(0.628,0.92,Form("CMS Simulation, #sqrt{s} = 8 TeV, W+jets"));
       cMVAs_->Update();
 
       methodTitle.ReplaceAll(" ","_");
@@ -1501,7 +1501,7 @@ void TMVAGlob::plotSignificance (TFile* inputFile, const int & iFile, Significan
    latex.SetNDC();
    latex.SetTextAlign(21); // align right                                                                                                                                                 
    latex.SetTextSize(0.033);
-   latex.DrawLatex(0.698,0.92,Form("CMS Simulation, #sqrt{s} = 8 TeV, W+jets"));
+   latex.DrawLatex(0.628,0.92,Form("CMS Simulation, #sqrt{s} = 8 TeV, W+jets"));
    latex.Delete();
 
    // print comments                                                                                                                                                                    
