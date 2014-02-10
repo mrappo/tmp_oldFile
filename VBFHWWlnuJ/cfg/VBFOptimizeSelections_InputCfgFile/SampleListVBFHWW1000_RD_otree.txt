@@ -1,7 +1,7 @@
 #####################################################################################################################
 #  Sample Name 					            Reduced Name      Color     XSec (pb)    NumEntriesBefore
 ######################################################################################################################
-ofile_data                                                      DATA             1               1             1
+#ofile_data                                                      DATA             1               1             1
 #ofile_WJets_Pythia100                                          W+Jets           2           272.6       8955318
 #ofile_WJets_Herwig                                             W+Jets           2           272.6      13256090
 #ofile_WJets_Pythia180                                          W+Jets           2         28.9755       9739464
@@ -19,6 +19,7 @@ ofile_tch_bar                                                   STop            
 ofile_tch                                                       STop             7            56.4       3758227
 ofile_tWch                                                      STop             7            11.2        493460
 ofile_tWch_bar                                                  STop             7            11.2        497658
+ofile_WW2jet_phantom                                            WW_EWK           6            0.232      333061
 #ofile_TTbar                                                    tt_bar           210         245.8       6923750
 #ofile_TTbar_matchUp                                            tt_bar           210         228.30      5415010
 #ofile_TTbar_matchDn                                            tt_bar           210         214.60      5476728
