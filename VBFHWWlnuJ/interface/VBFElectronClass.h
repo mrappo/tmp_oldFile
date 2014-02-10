@@ -150,7 +150,7 @@ class VBFElectronClass {
     float W_mass_type0, W_pz_type0,  W_nu1_pz_type0, W_nu2_pz_type0 ;
     float W_mass_type2, W_pz_type2,  W_nu1_pz_type2, W_nu2_pz_type2 ;
 
-    // new Branch for kinematic fit result                                                                                                                                                   
+    // new Branch for kinematic fit result                                                                                                                                                  
 
     float fit_el_px_type0 ,  fit_el_py_type0 ,  fit_el_pz_type0 ,  fit_el_e_type0 ;
     float fit_nv_px_type0 ,  fit_nv_py_type0 ,  fit_nv_pz_type0 ,  fit_nv_e_type0 ;
@@ -234,7 +234,7 @@ class VBFElectronClass {
   float vbf_maxpt_j2_bDiscriminatorSSVHP_gen, vbf_maxpt_j2_bDiscriminatorTCHP_gen ;
 
   float vbf_maxpt_j1_ChargedHadronEnergy,  vbf_maxpt_j1_ChargedHadronEnergyFrac, vbf_maxpt_j1_NeutralHadronEnergy;
-  float vbf_maxpt_j1_NeutralHadronEnergyFrac, vbf_maxpt_j1_ChargedEmEnergy, vbf_maxpt_j1_ChargedEmEnergyFrac, vbf_maxpt_j1_ChargedMuEnergy,;
+  float vbf_maxpt_j1_NeutralHadronEnergyFrac, vbf_maxpt_j1_ChargedEmEnergy, vbf_maxpt_j1_ChargedEmEnergyFrac, vbf_maxpt_j1_ChargedMuEnergy;
   float vbf_maxpt_j1_ChargedMuEnergyFrac, vbf_maxpt_j1_NeutralEmEnergy,vbf_maxpt_j1_NeutralEmEnergyFrac, vbf_maxpt_j1_ChargedMultiplicity;
   float vbf_maxpt_j1_NeutralMultiplicity, vbf_maxpt_j1_MuonMultiplicity,vbf_maxpt_j1_PhotonEnergy, vbf_maxpt_j1_PhotonEnergyFraction;
   float vbf_maxpt_j1_ElectronEnergy, vbf_maxpt_j1_ElectronEnergyFraction,vbf_maxpt_j1_MuonEnergy, vbf_maxpt_j1_MuonEnergyFraction;
