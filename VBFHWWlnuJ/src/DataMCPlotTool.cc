@@ -38,8 +38,8 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
 
     // Set sone style for log and non-log plots
     last->GetYaxis()->SetTitle(Title.Data());
-    last->GetYaxis()->SetTitleSize(0.05);
-    last->GetYaxis()->SetLabelSize(0.05);
+    last->GetYaxis()->SetTitleSize(0.055);
+    last->GetYaxis()->SetLabelSize(0.055);
     last->GetYaxis()->SetTitleOffset(1.05);
 
     if(isLog){ last->SetMaximum(last->GetBinContent(last->GetMaximumBin())*5000000);
@@ -54,7 +54,7 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
                  last->GetXaxis()->SetTitleOffset(1.05);
                  last->GetXaxis()->SetLabelSize(0.035);
 
-                 last->GetYaxis()->SetTitleSize(0.045);
+                 last->GetYaxis()->SetTitleSize(0.055);
                  last->GetYaxis()->SetTitleOffset(0.90);
                  last->GetYaxis()->SetLabelSize(0.035);
     }
@@ -151,8 +151,8 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
  
     // some style options
     last->GetYaxis()->SetTitle(Title.Data());
-    last->GetYaxis()->SetTitleSize(0.05);
-    last->GetYaxis()->SetLabelSize(0.05);
+    last->GetYaxis()->SetTitleSize(0.055);
+    last->GetYaxis()->SetLabelSize(0.055);
     last->GetYaxis()->SetTitleOffset(1.05);
 
     if(isLog){ last->SetMaximum(last->GetBinContent(last->GetMaximumBin())*5000000);
@@ -163,11 +163,11 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     }
 
     if(isLabel){ last->GetXaxis()->SetTitle(Labels.c_str());
-                 last->GetXaxis()->SetTitleSize(0.045);
-                 last->GetXaxis()->SetTitleOffset(1.05);
+                 last->GetXaxis()->SetTitleSize(0.055);
+                 last->GetXaxis()->SetTitleOffset(1.0);
                  last->GetXaxis()->SetLabelSize(0.035);
 
-                 last->GetYaxis()->SetTitleSize(0.045);
+                 last->GetYaxis()->SetTitleSize(0.055);
                  last->GetYaxis()->SetLabelSize(0.035);
     }
     else {
@@ -258,7 +258,7 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     }
  
     last->GetYaxis()->SetTitle(Title.Data());
-    last->GetYaxis()->SetTitleSize(0.05);
+    last->GetYaxis()->SetTitleSize(0.055);
     last->GetYaxis()->SetLabelSize(0.05);
     last->GetYaxis()->SetTitleOffset(1.10);
 
@@ -354,7 +354,7 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
      
     // some plot style
     last->GetYaxis()->SetTitle(Title.Data());
-    last->GetYaxis()->SetTitleSize(0.05);
+    last->GetYaxis()->SetTitleSize(0.055);
     last->GetYaxis()->SetLabelSize(0.05);
     last->GetYaxis()->SetTitleOffset(1.05);
 
@@ -366,11 +366,11 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
     }
 
     if(isLabel){ last->GetXaxis()->SetTitle(Labels.c_str());
-                 last->GetXaxis()->SetTitleSize(0.045);
-                 last->GetXaxis()->SetTitleOffset(1.05);
+                 last->GetXaxis()->SetTitleSize(0.055);
+                 last->GetXaxis()->SetTitleOffset(1.0);
                  last->GetXaxis()->SetLabelSize(0.035);
 
-                 last->GetYaxis()->SetTitleSize(0.035);
+                 last->GetYaxis()->SetTitleSize(0.055);
                  last->GetYaxis()->SetLabelSize(0.035);
     }
     else {
@@ -463,7 +463,7 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
 
     // some plot style
     last->GetYaxis()->SetTitle(Title.Data());
-    last->GetYaxis()->SetTitleSize(0.05);
+    last->GetYaxis()->SetTitleSize(0.055);
     last->GetYaxis()->SetLabelSize(0.05);
     last->GetYaxis()->SetTitleOffset(1.05);
 
@@ -475,11 +475,11 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     }
 
     if(isLabel){ last->GetXaxis()->SetTitle(Labels.c_str());
-                 last->GetXaxis()->SetTitleSize(0.045);
-                 last->GetXaxis()->SetTitleOffset(1.05);
+                 last->GetXaxis()->SetTitleSize(0.05);
+                 last->GetXaxis()->SetTitleOffset(1.0);
                  last->GetXaxis()->SetLabelSize(0.035);
 
-                 last->GetYaxis()->SetTitleSize(0.045);
+                 last->GetYaxis()->SetTitleSize(0.05);
                  last->GetYaxis()->SetLabelSize(0.035);
     }
     else {
@@ -565,7 +565,7 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
 
 
     last->GetYaxis()->SetTitle(Title.Data());
-    last->GetYaxis()->SetTitleSize(0.05);
+    last->GetYaxis()->SetTitleSize(0.055);
     last->GetYaxis()->SetLabelSize(0.05);
     last->GetYaxis()->SetTitleOffset(1.10);
 
@@ -624,11 +624,11 @@ void LatexCMS (const double & lumi, const std::string & LeptonType, const bool &
   latex.SetNDC();
   latex.SetTextAlign(21); // align right                                                                                                                        
 
-  if(isLabel) latex.SetTextSize(0.032);
-  else latex.SetTextSize(0.04);
+  if(isLabel) latex.SetTextSize(0.036);
+  else latex.SetTextSize(0.043);
 
-  if(LeptonType == "muon" || LeptonType == "mu") latex.DrawLatex(0.56,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W #rightarrow #mu#nu",(float)lumi/1000));
-  else if(LeptonType == "electron" || LeptonType == "el") latex.DrawLatex(0.56,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W #rightarrow e#nu",(float)lumi/1000));
+  if(LeptonType == "muon" || LeptonType == "mu") latex.DrawLatex(0.56,0.96,Form("CMS         L = %.1f fb^{-1} at #sqrt{s} = 8 TeV, W+jets",(float)lumi/1000));
+  else if(LeptonType == "electron" || LeptonType == "el") latex.DrawLatex(0.52,0.95,Form("CMS,   L = %.1f fb^{-1} at #sqrt{s} = 8 TeV, W+jets",(float)lumi/1000));
   else latex.DrawLatex(0.56,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W+jets",(float)lumi/1000));
 
 }
