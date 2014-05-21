@@ -32,13 +32,13 @@
 void banner4Plot (const bool & isLabel){
 
   TPaveText* pt ;
-  if (!isLabel) pt = new TPaveText(.20,0.72,.34,.91,"NDC");
-  else pt = new TPaveText(.22,0.72,.28,.91,"NDC");
+  if (!isLabel) pt = new TPaveText(.20,0.69,.34,.91,"NDC");
+  else pt = new TPaveText(.22,0.69,.28,.91,"NDC");
   pt->AddText("CA R = 0.8");
-  //  pt->AddText("250 < p_{T} < 350 GeV");
+  //pt->AddText("250 < p_{T} < 350 GeV");
   pt->AddText("p_{T} > 200 GeV");
   pt->AddText("|#eta|<2.4");
-  pt->AddText("40 < m_{j} < 65 GeV");                                                                                                                                                       
+  pt->AddText("40 < m_{j} < 130 GeV");                                                                                                                                                       
   pt->SetFillColor(0);
   pt->SetTextSize(0.035);
   pt->SetFillStyle(0);
@@ -435,9 +435,9 @@ int main (int argc, char **argv){
        histos[iCut][iVar][iSample]->SetLineColor(ColorSample.at(iSample));
        histos[iCut][iVar][iSample]->SetLineWidth(2);
        histos[iCut][iVar][iSample]->GetXaxis()->SetTitle(VariablesTitle.at(iVar).c_str());
-       histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.04);
+       histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.05);
        histos[iCut][iVar][iSample]->GetYaxis()->SetTitle("Events");
-       histos[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.04);
+       histos[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.05);
     } 
 
    }
@@ -1409,8 +1409,8 @@ int main (int argc, char **argv){
 
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
-	  //	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".root").c_str(),"root");
-	  //	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".cxx").c_str(),"cxx");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".root").c_str(),"root");
+	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".cxx").c_str(),"cxx");
 	  
 	  c[iCut][iVar]->Close();
 	  if(!WithoutData) {
