@@ -353,6 +353,7 @@ int main (int argc, char **argv){
   std::vector <TFile*> FileVect;
 
   TH1F* histos[CutList.size()][Variables.size()][NameSample.size()];
+  TH1F* histos_overflow[CutList.size()][Variables.size()][NameSample.size()];
   TString hname ;
 
   bool isHerwig_ttbar = false;
@@ -385,59 +386,84 @@ int main (int argc, char **argv){
  
        histos[iCut][iVar][iSample] = new TH1F (hname.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar));
        histos[iCut][iVar][iSample]->Sumw2();
+       histos_overflow[iCut][iVar][iSample] = new TH1F ((hname+"_over").Data(),"",VariablesNbin.at(iVar)+1,VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)+histos[iCut][iVar][iSample]->GetBinWidth(1));
+       histos_overflow[iCut][iVar][iSample]->Sumw2();
        
        if( NameReducedSample.at(iSample) == "DATA" ){ 
          TreeVect.at(iSample)-> Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(), (CutList.at(iCut)).c_str() ,"goff");
-	 std::cout<<" Data Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+         for( int iBin = 0 ; iBin < histos[iCut][iVar][iSample]->GetNbinsX() ; iBin ++)
+	   histos_overflow[iCut][iVar][iSample]->SetBinContent(iBin+1,histos[iCut][iVar][iSample]->GetBinContent(iBin+1));
+	 histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
+	 std::cout<<" Data Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar))<<std::endl;
        }
 	 
        else if(NameReducedSample.at(iSample) == SignalggHName && SignalggHName!="NULL"){
-             TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalggHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
-             std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+        TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalggHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+        for( int iBin = 0 ; iBin < histos[iCut][iVar][iSample]->GetNbinsX() ; iBin ++)
+	  histos_overflow[iCut][iVar][iSample]->SetBinContent(iBin+1,histos[iCut][iVar][iSample]->GetBinContent(iBin+1));
+	histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
+std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 	 
        else if(NameReducedSample.at(iSample) == SignalqqHName && SignalqqHName!="NULL") {
-	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalqqHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+        TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalqqHWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+        for( int iBin = 0 ; iBin < histos[iCut][iVar][iSample]->GetNbinsX() ; iBin ++)
+	   histos_overflow[iCut][iVar][iSample]->SetBinContent(iBin+1,histos[iCut][iVar][iSample]->GetBinContent(iBin+1));
+	histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
         std::cout<<" Signal qqH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 	 
        else if(NameReducedSample.at(iSample) == SignalRSGPythiaName && SignalRSGPythiaName!="NULL") {
         TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalRSGPythiaWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+        for( int iBin = 0 ; iBin < histos[iCut][iVar][iSample]->GetNbinsX() ; iBin ++)
+	   histos_overflow[iCut][iVar][iSample]->SetBinContent(iBin+1,histos[iCut][iVar][iSample]->GetBinContent(iBin+1));
+	histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
         std::cout<<" Signal RSGPythia Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 	 
        else if(NameReducedSample.at(iSample) == SignalRSGHerwigName && SignalRSGHerwigName!="NULL") {
 	TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalRSGHerwigWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+        for( int iBin = 0 ; iBin < histos[iCut][iVar][iSample]->GetNbinsX() ; iBin ++)
+	  histos_overflow[iCut][iVar][iSample]->SetBinContent(iBin+1,histos[iCut][iVar][iSample]->GetBinContent(iBin+1));
+	histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
         std::cout<<" Signal RSG Herwig Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weigthed events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 	 
        else if(NameReducedSample.at(iSample) == SignalGravitonName && SignalGravitonName!="NULL") {
 	 TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+SignalGravitonWeight+")*( "+CutList.at(iCut)+")").c_str() ,"goff");
+         for( int iBin = 0 ; iBin < histos[iCut][iVar][iSample]->GetNbinsX() ; iBin ++)
+	   histos_overflow[iCut][iVar][iSample]->SetBinContent(iBin+1,histos[iCut][iVar][iSample]->GetBinContent(iBin+1));
+	 histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
          std::cout<<" Signal Graviton Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weighted events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
-
        else if(NameReducedSample.at(iSample) == "tt_bar_mcatnlo" ){
 
          isHerwig_ttbar = true ;
-
          TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+BackgroundWeight_mcatnlo+") * ("+CutList.at(iCut)+")").c_str() ,"goff");
-
+         for( int iBin = 0 ; iBin < histos[iCut][iVar][iSample]->GetNbinsX() ; iBin ++)
+	   histos_overflow[iCut][iVar][iSample]->SetBinContent(iBin+1,histos[iCut][iVar][iSample]->GetBinContent(iBin+1));
+	 histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
 	 std::cout<<" Bkg mc@nlo "<<NameSample.at(iSample)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<" weighted events "<<
                                  histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl; 
+
        }
        else {
 
          TreeVect.at(iSample)->Draw((Variables.at(iVar)+" >> "+hname.Data()).c_str(),("("+BackgroundWeight+") * ("+CutList.at(iCut)+")").c_str() ,"goff");
+         for( int iBin = 0 ; iBin < histos[iCut][iVar][iSample]->GetNbinsX() ; iBin ++)
+	   histos_overflow[iCut][iVar][iSample]->SetBinContent(iBin+1,histos[iCut][iVar][iSample]->GetBinContent(iBin+1));
+	 histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
 	 std::cout<<" Bkg "<<NameSample.at(iSample)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<" weighted events "<<
                              histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl; 
        }
-       histos[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
-       histos[iCut][iVar][iSample]->SetLineColor(ColorSample.at(iSample));
-       histos[iCut][iVar][iSample]->SetLineWidth(2);
-       histos[iCut][iVar][iSample]->GetXaxis()->SetTitle(VariablesTitle.at(iVar).c_str());
-       histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.05);
-       histos[iCut][iVar][iSample]->GetYaxis()->SetTitle("Events");
-       histos[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.05);
+ 
+       histos_overflow[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
+       histos_overflow[iCut][iVar][iSample]->SetLineColor(ColorSample.at(iSample));
+       histos_overflow[iCut][iVar][iSample]->SetLineWidth(2);
+       histos_overflow[iCut][iVar][iSample]->GetXaxis()->SetTitle(VariablesTitle.at(iVar).c_str());
+       histos_overflow[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.05);
+       histos_overflow[iCut][iVar][iSample]->GetYaxis()->SetTitle("Events");
+       histos_overflow[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.05);       
     } 
 
    }
@@ -485,46 +511,46 @@ int main (int argc, char **argv){
        else if(NameReducedSample.at(iSample) ==  "tt_bar_mcatnlo") norm = norm *scaleFactorTTbar_mcanlo;
 
        if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL") {
-         if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)); 
-      	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+         if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
+         else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)); 
+      	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
        }
 
        else if ( NameReducedSample.at(iSample)==SignalqqHName && SignalqqHName!="NULL") {
-         if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+         if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
+         else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
+	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGPythiaName && SignalRSGPythiaName!="NULL"){
-         if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+         if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
+         else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
+	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGHerwigName && SignalRSGHerwigName!="NULL"){
-         if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+         if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
+         else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
+	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalGravitonName && SignalGravitonName!="NULL"){
-         if(!NormalizeSignalToData)  histos[iCut][iVar][iSample]->Scale(1.*norm);
-         else histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+         if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
+         else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
+	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
-       else{ if(!NormalizeBackgroundToData) histos[iCut][iVar][iSample]->Scale(1.*norm);
-	     else { histos[iCut][iVar][iSample]->Scale(1.*norm); normalizeToData += histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1) ;
-	       //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<"   "<<normalizeToData<<std::endl;
+       else{ if(!NormalizeBackgroundToData) histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
+	     else { histos_overflow[iCut][iVar][iSample]->Scale(1.*norm); normalizeToData += histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1) ;
+	       //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos_overflow[iCut][iVar][iSample]->GetEntries()<<"   "<<normalizeToData<<std::endl;
                   }
            }
       }
       for (size_t iSample=0; iSample<NameReducedSample.size(); iSample++){
 	if(NormalizeBackgroundToData && NameReducedSample.at(iSample)!="DATA" && NameReducedSample.at(iSample)!=SignalGravitonName && NameReducedSample.at(iSample)!=SignalggHName && 
            NameReducedSample.at(iSample)!=SignalqqHName && NameReducedSample.at(iSample)!=SignalRSGHerwigName && NameReducedSample.at(iSample)!=SignalRSGPythiaName ) 
-	  histos[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/normalizeToData);
+	  histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/normalizeToData);
       }
     }
   }
@@ -608,25 +634,25 @@ int main (int argc, char **argv){
 
           // Define Histograms
           TString histoName = Form("%s_sTop_%d",Variables.at(iVar).c_str(),int(iCut));
-	  histo_top[iCut][iVar]          = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_top[iCut][iVar]          = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar)+1,VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)+histos_overflow[iCut][iVar][0]->GetBinWidth(1)) ;
 
           histoName = Form("%s_diboson_%d",Variables.at(iVar).c_str(),int(iCut));
-	  histo_diboson[iCut][iVar]      = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_diboson[iCut][iVar]      = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar)+1,VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)+histos_overflow[iCut][iVar][0]->GetBinWidth(1)) ;
 
           histoName = Form("%s_diboson_ewk_%d",Variables.at(iVar).c_str(),int(iCut));
-	  histo_diboson_ewk[iCut][iVar]      = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_diboson_ewk[iCut][iVar]      = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar)+1,VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)+histos_overflow[iCut][iVar][0]->GetBinWidth(1)) ;
 
           histoName = Form("%s_WJets_%d",Variables.at(iVar).c_str(),int(iCut));
-	  histo_WJets[iCut][iVar]        = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_WJets[iCut][iVar]        = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar)+1,VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)+histos_overflow[iCut][iVar][0]->GetBinWidth(1)) ;
 
           histoName = Form("%s_WJets_herwig_%d",Variables.at(iVar).c_str(),int(iCut));
-	  histo_WJets_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_WJets_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar)+1,VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)+histos_overflow[iCut][iVar][0]->GetBinWidth(1)) ;
 
           histoName = Form("%s_ttbar_%d",Variables.at(iVar).c_str(),int(iCut));
-	  histo_ttbar[iCut][iVar]        = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_ttbar[iCut][iVar]        = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar)+1,VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)+histos_overflow[iCut][iVar][0]->GetBinWidth(1)) ;
 
           histoName = Form("%s_ttbar_herwig_%d",Variables.at(iVar).c_str(),int(iCut));
-	  histo_ttbar_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar),VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)) ;
+	  histo_ttbar_herwig[iCut][iVar] = new TH1F ( histoName.Data(),"",VariablesNbin.at(iVar)+1,VariablesMinValue.at(iVar),VariablesMaxValue.at(iVar)+histos_overflow[iCut][iVar][0]->GetBinWidth(1)) ;
 
           // Define Stacks
           histoName = Form("%s_stack_%d",Variables.at(iVar).c_str(),int(iCut));
@@ -675,25 +701,24 @@ int main (int argc, char **argv){
                 upperPadLog->SetRightMargin(0.1);
                 upperPadLog->SetLogy();
 	  }
-	  
+
 	  // Start to fill histograms and store their location in the NameSample vector
 	  for (size_t iSample = 0; iSample<NameSample.size(); iSample++){
 	  
 	    if( NameReducedSample.at(iSample) == "DATA"){
-	      histos[iCut][iVar][iSample]->SetLineColor(kBlack);
-	      histos[iCut][iVar][iSample]->SetLineStyle(1);
-              histos[iCut][iVar][iSample]->GetXaxis()->SetTitle((VariablesTitle.at(iVar)).c_str());
-              histos[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.04);
-	      histos[iCut][iVar][iSample]->GetYaxis()->SetTitle("Events");
-              histos[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.04);
+	      histos_overflow[iCut][iVar][iSample]->SetLineColor(kBlack);
+	      histos_overflow[iCut][iVar][iSample]->SetLineStyle(1);
+              histos_overflow[iCut][iVar][iSample]->GetXaxis()->SetTitle((VariablesTitle.at(iVar)).c_str());
+              histos_overflow[iCut][iVar][iSample]->GetXaxis()->SetTitleSize(0.04);
+	      histos_overflow[iCut][iVar][iSample]->GetYaxis()->SetTitle("Events");
+              histos_overflow[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.04);
 	      iSampleData = iSample;                                                                       
 
-	      if(!WithoutData){ leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], "Data", "ple" );
-                                legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], "Data", "ple" ); 
+	      if(!WithoutData){ leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "Data", "ple" );
+                                legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "Data", "ple" ); 
               }
 
 	    }
-
 	    
 	    else if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL") iSampleggH = iSample;
 	    else if ( NameReducedSample.at(iSample)==SignalqqHName && SignalqqHName!="NULL") iSampleqqH = iSample;	    
@@ -705,53 +730,53 @@ int main (int argc, char **argv){
 		histo_top[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_top[iCut][iVar]->SetLineColor(kBlack);
 		histo_top[iCut][iVar]->SetLineWidth(2);
-		histo_top[iCut][iVar]->Add(histos[iCut][iVar][iSample]); 
+		histo_top[iCut][iVar]->Add(histos_overflow[iCut][iVar][iSample]); 
 	    }
 	    else if ( NameReducedSample.at(iSample)=="W+Jets"){
   
 		histo_WJets[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_WJets[iCut][iVar]->SetLineColor(kBlack);
 		histo_WJets[iCut][iVar]->SetLineWidth(2);
-		histo_WJets[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histo_WJets[iCut][iVar]->Add(histos_overflow[iCut][iVar][iSample]);
 	    }
 	    else if ( NameReducedSample.at(iSample)=="W+Jets_herwig" || NameReducedSample.at(iSample)=="W+Jets_Herwig"){
   
 		histo_WJets_herwig[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_WJets_herwig[iCut][iVar]->SetLineColor(kBlack);
 		histo_WJets_herwig[iCut][iVar]->SetLineWidth(2);
-		histo_WJets_herwig[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histo_WJets_herwig[iCut][iVar]->Add(histos_overflow[iCut][iVar][iSample]);
 	    }
 	    else if ( NameReducedSample.at(iSample)=="tt_bar"){  
 
 		histo_ttbar[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_ttbar[iCut][iVar]->SetLineColor(kBlack);
 		histo_ttbar[iCut][iVar]->SetLineWidth(2);
-		histo_ttbar[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histo_ttbar[iCut][iVar]->Add(histos_overflow[iCut][iVar][iSample]);
 	    } 
 
 	    else if ( NameReducedSample.at(iSample)=="tt_bar_mcatnlo" && isHerwig_ttbar){
 		histo_ttbar_herwig[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_ttbar_herwig[iCut][iVar]->SetLineColor(ColorSample.at(iSample));
 		histo_ttbar_herwig[iCut][iVar]->SetLineWidth(2);
-		histo_ttbar_herwig[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histo_ttbar_herwig[iCut][iVar]->Add(histos_overflow[iCut][iVar][iSample]);
 	    }
 	    else if (( NameReducedSample.at(iSample)=="WW") || ( NameReducedSample.at(iSample)=="WZ") || ( NameReducedSample.at(iSample)=="ZZ") ){  
 		histo_diboson[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_diboson[iCut][iVar]->SetLineColor(kBlack);
 		histo_diboson[iCut][iVar]->SetLineWidth(2);
-		histo_diboson[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histo_diboson[iCut][iVar]->Add(histos_overflow[iCut][iVar][iSample]);
 	    }
 	    else if (( NameReducedSample.at(iSample)=="WW_EWK") || ( NameReducedSample.at(iSample)=="WZ_EWK") || ( NameReducedSample.at(iSample)=="ZZ_EWK") ){  
 		histo_diboson_ewk[iCut][iVar]->SetFillColor(ColorSample.at(iSample));
 		histo_diboson_ewk[iCut][iVar]->SetLineColor(kBlack);
 		histo_diboson_ewk[iCut][iVar]->SetLineWidth(2);
-		histo_diboson_ewk[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
+		histo_diboson_ewk[iCut][iVar]->Add(histos_overflow[iCut][iVar][iSample]);
 	    }
-	    else{  histos[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
-                   histos[iCut][iVar][iSample]->SetLineColor(kBlack);
-		   hs[iCut][iVar]->Add(histos[iCut][iVar][iSample]);
-		   leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "f" );
-		   legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "f" );
+	    else{  histos_overflow[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
+                   histos_overflow[iCut][iVar][iSample]->SetLineColor(kBlack);
+		   hs[iCut][iVar]->Add(histos_overflow[iCut][iVar][iSample]);
+		   leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], (NameReducedSample.at(iSample)).c_str(), "f" );
+		   legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample] , (NameReducedSample.at(iSample)).c_str(), "f" );
 	    }
 	   }
 
@@ -943,43 +968,43 @@ int main (int argc, char **argv){
 	  else{ 
 	       upperPad->cd();  
   	       if((histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()==0 && histo_ttbar[iCut][iVar]->GetEntries()!=0) || (histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()==0)) 
-		  DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,false);
+		  DrawStackError(hs[iCut][iVar],VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,false,false);
                else if((histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()==0 && histo_ttbar[iCut][iVar]->GetEntries()!=0) || (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()==0)) 
- 		  DrawStackError(hs_herwig[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap_herwig,false,false,isHerwig_ttbar);
+ 		  DrawStackError(hs_herwig[iCut][iVar],VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap_herwig,false,false,isHerwig_ttbar);
   	       else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && ((histo_ttbar_herwig[iCut][iVar]->GetEntries()==0 && histo_ttbar[iCut][iVar]->GetEntries()!=0) || (histo_ttbar_herwig[iCut][iVar]->GetEntries()==0 && histo_ttbar[iCut][iVar]->GetEntries()!=0)))
- 		  DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,SystematicErrorMap_herwig,false,false);
+ 		  DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,SystematicErrorMap_herwig,false,false);
   	       else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0)
 	          DrawDoubleStackError(hs[iCut][iVar],hs_herwig[iCut][iVar],VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,false,isHerwig_ttbar); 
 
   	       upperPadNoRatio->cd();
 
 	       if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar) 
-                  DrawStackError(StackNoRatio,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,true);
+                  DrawStackError(StackNoRatio,VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,false,true);
                else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0)
-		 DrawStackError(StackNoRatio_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,false,true,isHerwig_ttbar);
+		 DrawStackError(StackNoRatio_herwig,VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,false,true,isHerwig_ttbar);
                else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
- 	 	  DrawDoubleStackError(StackNoRatio,StackNoRatio_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,SystematicErrorMap_herwig,false,true);
+ 	 	  DrawDoubleStackError(StackNoRatio,StackNoRatio_herwig,VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,SystematicErrorMap_herwig,false,true);
     	       else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
 	          DrawDoubleStackError(StackNoRatio,StackNoRatio_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,false,true,isHerwig_ttbar);            
 
             if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
-                  for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
-                      iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
+                  for(int iBin = histos_overflow[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
+                      iBin< histos_overflow[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos_overflow[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
 
-		       upperPad->cd();        histos[iCut][iVar][iSampleData]->DrawCopy("E same");  histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
-		       upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same");  histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+		       upperPad->cd();        histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same");  histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+		       upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same");  histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame");
             }
 	    else{
-	          upperPad->cd();        histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");  
-                  upperPadNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame"); 
+	          upperPad->cd();        histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same"); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame");  
+                  upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same"); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame"); 
             }
 
 	   upperPad->cd();        leg[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f");
 	   upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->AddEntry(MCSysStat,"MC Stat + Sys","f"); 
 
           }
-          
+
           /// Draw MC signals not stacking them 	   
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
               
@@ -989,16 +1014,16 @@ int main (int argc, char **argv){
 
                     Name = Form("ggH x %d, 600GeV",int(SignalScaleFactor));
 
-                    histos[iCut][iVar][iSampleggH]->SetLineWidth(3);
-                    histos[iCut][iVar][iSampleggH]->SetFillStyle(0);
+                    histos_overflow[iCut][iVar][iSampleggH]->SetLineWidth(3);
+                    histos_overflow[iCut][iVar][iSampleggH]->SetFillStyle(0);
 
-                    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], Name.Data(), "l" );
-                    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleggH], Name.Data(), "l" );
+                    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleggH], Name.Data(), "l" );
+                    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleggH], Name.Data(), "l" );
                                      
-                    if(!NormalizeSignalToData) histos[iCut][iVar][iSampleggH]->Scale(SignalScaleFactor*1.);
+                    if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleggH]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd();  histos[iCut][iVar][iSampleggH]->DrawCopy("hist same");  histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same");histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
+		    upperPad->cd();  histos_overflow[iCut][iVar][iSampleggH]->DrawCopy("hist same");  histos_overflow[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleggH]->DrawCopy("hist same");histos_overflow[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
           }
        
           if(SignalqqHName!="NULL" && iSampleqqH!=-1){ 
@@ -1010,16 +1035,16 @@ int main (int argc, char **argv){
 
                     Name = Form("qqH x %d, 600GeV",int(SignalScaleFactor));
 
-                    histos[iCut][iVar][iSampleqqH]->SetLineWidth(3);
-                    histos[iCut][iVar][iSampleqqH]->SetFillStyle(0);
+                    histos_overflow[iCut][iVar][iSampleqqH]->SetLineWidth(3);
+                    histos_overflow[iCut][iVar][iSampleqqH]->SetFillStyle(0);
 
-               	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleqqH], Name.Data(), "l" );
-               	    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleqqH], Name.Data(), "l" );
+               	    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleqqH], Name.Data(), "l" );
+               	    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleqqH], Name.Data(), "l" );
  
-          	    if(!NormalizeSignalToData) histos[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
+          	    if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd();  histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
+		    upperPad->cd();  histos_overflow[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
 
           }
 
@@ -1029,16 +1054,16 @@ int main (int argc, char **argv){
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleRSGPythia).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleRSGPythia).c_str());
 
-               	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
-               	    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
+               	    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
+               	    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
 
-                    histos[iCut][iVar][iSampleRSGPythia]->SetLineWidth(3);
-                    histos[iCut][iVar][iSampleRSGPythia]->SetFillStyle(0);
+                    histos_overflow[iCut][iVar][iSampleRSGPythia]->SetLineWidth(3);
+                    histos_overflow[iCut][iVar][iSampleRSGPythia]->SetFillStyle(0);
                                      
-                    if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGPythia]->Scale(SignalScaleFactor*1.);
+                    if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleRSGPythia]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd();  histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
+		    upperPad->cd();  histos_overflow[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
           }
        
 	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ 
@@ -1047,16 +1072,16 @@ int main (int argc, char **argv){
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleRSGHerwig).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleRSGHerwig).c_str());
  
-               	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
-               	    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
+               	    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
+               	    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
                                      
-                    histos[iCut][iVar][iSampleRSGHerwig]->SetLineWidth(3);
-                    histos[iCut][iVar][iSampleRSGHerwig]->SetFillStyle(0);
+                    histos_overflow[iCut][iVar][iSampleRSGHerwig]->SetLineWidth(3);
+                    histos_overflow[iCut][iVar][iSampleRSGHerwig]->SetFillStyle(0);
 
-                    if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGHerwig]->Scale(SignalScaleFactor*1.);
+                    if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleRSGHerwig]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame"); }
+		    upperPad->cd(); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame"); }
           }
 
 	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ 
@@ -1065,16 +1090,16 @@ int main (int argc, char **argv){
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleGraviton).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleGraviton).c_str());
  
-              	    leg[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
-              	    legNoRatio[iCut][iVar]->AddEntry( histos[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
+              	    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
+              	    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
                                      
-                    histos[iCut][iVar][iSampleGraviton]->SetLineWidth(3);
-                    histos[iCut][iVar][iSampleGraviton]->SetFillStyle(0);
+                    histos_overflow[iCut][iVar][iSampleGraviton]->SetLineWidth(3);
+                    histos_overflow[iCut][iVar][iSampleGraviton]->SetFillStyle(0);
 
-                    if(!NormalizeSignalToData) histos[iCut][iVar][iSampleGraviton]->Scale(SignalScaleFactor*1.);
+                    if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleGraviton]->Scale(SignalScaleFactor*1.);
 
-		    upperPad->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist same"); histos[iCut][iVar][iSampleGraviton]->Draw("hist axissame");
-		    if(!WithoutData) { upperPadNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->Draw("hist axissame"); }
+		    upperPad->cd(); histos_overflow[iCut][iVar][iSampleGraviton]->Draw("hist same"); histos_overflow[iCut][iVar][iSampleGraviton]->Draw("hist axissame");
+		    if(!WithoutData) { upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleGraviton]->Draw("hist axissame"); }
 
           }
           
@@ -1092,35 +1117,35 @@ int main (int argc, char **argv){
 	                    lowerPad->SetGridy();
 
 	                    // Ratio Data MC looking at the default W+jets sample --> clone the last histo in the stack
-                            for(int iBin = 0; iBin<histos[iCut][iVar][iSampleData]->GetNbinsX(); iBin++)
-			      if( histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1)==0) histos[iCut][iVar][iSampleData]->SetBinError(iBin+1,1);
+                            for(int iBin = 0; iBin<histos_overflow[iCut][iVar][iSampleData]->GetNbinsX(); iBin++)
+			      if( histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1)==0) histos_overflow[iCut][iVar][iSampleData]->SetBinError(iBin+1,1);
 
 			    TObjArray * histoStack = hs[iCut][iVar]->GetStack() ;
 			    histoSum[iCut][iVar] = (TH1F*) histoStack->At(histoStack->GetEntries()-1) ;
 
-                            RatioDataMC[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
+                            RatioDataMC[iCut][iVar] = (TH1F*) histos_overflow[iCut][iVar][iSampleData]->Clone(("RatioDataMC-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
                             RatioDataMC[iCut][iVar]->Reset();
-                            RatioDataMC[iCut][iVar]->Divide(histos[iCut][iVar][iSampleData],histoSum[iCut][iVar],1,1,"B");
+                            RatioDataMC[iCut][iVar]->Divide(histos_overflow[iCut][iVar][iSampleData],histoSum[iCut][iVar],1,1,"B");
 
 	                    // Ratio Data MC looking at the second W+jets sample
 			    TObjArray* histoStack_herwig = hs_herwig[iCut][iVar]->GetStack () ;
 			    histoSum_herwig[iCut][iVar] = (TH1F*) histoStack_herwig->At(histoStack_herwig->GetEntries()-1) ;
 
-                            RatioDataMC_herwig[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC_herwig-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
+                            RatioDataMC_herwig[iCut][iVar] = (TH1F*) histos_overflow[iCut][iVar][iSampleData]->Clone(("RatioDataMC_herwig-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
                             RatioDataMC_herwig[iCut][iVar]->Reset();
-                            RatioDataMC_herwig[iCut][iVar]->Divide(histos[iCut][iVar][iSampleData],histoSum_herwig[iCut][iVar],1,1,"B");
+                            RatioDataMC_herwig[iCut][iVar]->Divide(histos_overflow[iCut][iVar][iSampleData],histoSum_herwig[iCut][iVar],1,1,"B");
 
 	                    // Ratio Data MC set at 1 with error bar --> for same pythia / Herwig plots
-                            RatioDataMC_error[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("RatioDataMC_error-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
+                            RatioDataMC_error[iCut][iVar] = (TH1F*) histos_overflow[iCut][iVar][iSampleData]->Clone(("RatioDataMC_error-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
                             RatioDataMC_error[iCut][iVar]->Reset();
-                            RatioDataMC_error[iCut][iVar]->Divide(histos[iCut][iVar][iSampleData],histoSum_herwig[iCut][iVar],1,1,"B");
+                            RatioDataMC_error[iCut][iVar]->Divide(histos_overflow[iCut][iVar][iSampleData],histoSum_herwig[iCut][iVar],1,1,"B");
 
 	                    // MC uncertainty band centered at one
-                            MCUncertaintyBand[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("MCUncertaintyBand-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
+                            MCUncertaintyBand[iCut][iVar] = (TH1F*) histos_overflow[iCut][iVar][iSampleData]->Clone(("MCUncertaintyBand-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
                             MCUncertaintyBand[iCut][iVar]->Reset();
 
 	                    // MC uncertainty band centered at one
-                            MCUncertaintyBand_herwig[iCut][iVar] = (TH1F*) histos[iCut][iVar][iSampleData]->Clone(("MCUncertaintyBand_herwig-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
+                            MCUncertaintyBand_herwig[iCut][iVar] = (TH1F*) histos_overflow[iCut][iVar][iSampleData]->Clone(("MCUncertaintyBand_herwig-"+Variables.at(iVar)+"-"+CutList.at(iCut)).c_str()) ;
                             MCUncertaintyBand_herwig[iCut][iVar]->Reset();
                           
                             // Some style
@@ -1189,10 +1214,10 @@ int main (int argc, char **argv){
 
 			     for( int iBin = 0; iBin< RatioDataMC[iCut][iVar]->GetNbinsX() ; iBin++){
 
-			      RatioDataMC[iCut][iVar]->SetBinError(iBin+1,histos[iCut][iVar][iSampleData]->GetBinError(iBin+1)/(histoSum[iCut][iVar]->GetBinContent(iBin+1)));
+			      RatioDataMC[iCut][iVar]->SetBinError(iBin+1,histos_overflow[iCut][iVar][iSampleData]->GetBinError(iBin+1)/(histoSum[iCut][iVar]->GetBinContent(iBin+1)));
                               MCUncertaintyBand[iCut][iVar]->SetBinContent(iBin+1,1);
-                              if(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1)==0) MCUncertaintyBand[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))/(histoSum[iCut][iVar]->GetBinContent(iBin+1)));
-                              else MCUncertaintyBand[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))*histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1)/(histoSum[iCut][iVar]->GetBinContent(iBin+1)*histoSum[iCut][iVar]->GetBinContent(iBin+1)));
+                              if(histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1)==0) MCUncertaintyBand[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))/(histoSum[iCut][iVar]->GetBinContent(iBin+1)));
+                              else MCUncertaintyBand[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))*histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1)/(histoSum[iCut][iVar]->GetBinContent(iBin+1)*histoSum[iCut][iVar]->GetBinContent(iBin+1)));
                               if(histoSum[iCut][iVar]->GetBinContent(iBin+1) == 0)  { RatioDataMC[iCut][iVar]->SetBinError(iBin+1,0); MCUncertaintyBand[iCut][iVar]->SetBinError(iBin+1,0);}
                               if(MCUncertaintyBand[iCut][iVar]->GetBinError(iBin+1) != MCUncertaintyBand[iCut][iVar]->GetBinError(iBin+1)) MCUncertaintyBand[iCut][iVar]->SetBinError(iBin+1,0);
 			     }
@@ -1217,8 +1242,8 @@ int main (int argc, char **argv){
                              lowerPad->Update();
 
                              // Kolmogorov-Smirnov and chi2 test:
-                             double kTest        = histos[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
-                             double chi_over_ndf = histos[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
+                             double kTest        = histos_overflow[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
+                             double chi_over_ndf = histos_overflow[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
 
 			     TString probatext  = Form("#chi^{2}/ndf = %0.2f  K_{s} = %0.2f",float(chi_over_ndf),float(kTest));	 	
  	                     TLatex* tt         = new TLatex(0.15,0.85,probatext);
@@ -1235,8 +1260,8 @@ int main (int argc, char **argv){
 			      RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,histos[iCut][iVar][iSampleData]->GetBinError(iBin+1)/(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)));
 
                               MCUncertaintyBand_herwig[iCut][iVar]->SetBinContent(iBin+1,1);
-                              if(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1)==0) MCUncertaintyBand_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))/(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)));
-                              else MCUncertaintyBand_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))*histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1)/(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)*histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)));
+                              if(histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1)==0) MCUncertaintyBand_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))/(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)));
+                              else MCUncertaintyBand_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinError(iBin+1),2)+SysError.at(iBin))*histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1)/(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)*histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1)));
 
                               if(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1) == 0)  { RatioDataMC[iCut][iVar]->SetBinError(iBin+1,0); MCUncertaintyBand_herwig[iCut][iVar]->SetBinError(iBin+1,0);}
                               if(MCUncertaintyBand_herwig[iCut][iVar]->GetBinError(iBin+1) != MCUncertaintyBand_herwig[iCut][iVar]->GetBinError(iBin+1)) MCUncertaintyBand_herwig[iCut][iVar]->SetBinError(iBin+1,0);
@@ -1257,8 +1282,8 @@ int main (int argc, char **argv){
 	                     RatioDataMC_herwig[iCut][iVar]->Draw("PEsame");
 
                              // Kolmogorov-Smirnov and chi2 test:
-                             double kTest        = histos[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
-                             double chi_over_ndf = histos[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
+                             double kTest        = histos_overflow[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
+                             double chi_over_ndf = histos_overflow[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
 
 			     TString probatext  = Form("#chi^{2}/ndf = %0.2f  K_{s} = %0.2f",float(chi_over_ndf),float(kTest));	
  	                     TLatex* tt         = new TLatex(0.15,0.85,probatext);
@@ -1273,7 +1298,7 @@ int main (int argc, char **argv){
 			     for( int iBin = 0; iBin< RatioDataMC[iCut][iVar]->GetNbinsX() ; iBin++){
 			       RatioDataMC_error[iCut][iVar]->SetBinContent(iBin+1,1) ;
 			       RatioDataMC_error[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
-			       SysError.at(iBin)*(TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
+			       SysError.at(iBin)*(TMath::Power(histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
                                if(RatioDataMC_error[iCut][iVar]->GetBinError(iBin+1)!=RatioDataMC_error[iCut][iVar]->GetBinError(iBin+1)) RatioDataMC_error[iCut][iVar]->SetBinError(iBin+1,0);
 			     }
 
@@ -1307,7 +1332,7 @@ int main (int argc, char **argv){
                              RatioDataMC[iCut][iVar]->Draw("hist same");         
                             			    
        		           for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
- 			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+SysError_herwig.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+ 			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+SysError_herwig.at(iBin) * (TMath::Power(histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
 			     if(RatioDataMC_herwig[iCut][iVar]->GetBinContent(iBin+1) != RatioDataMC_herwig[iCut][iVar]->GetBinContent(iBin+1) ) RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,0);
 
 			    }
@@ -1334,10 +1359,10 @@ int main (int argc, char **argv){
 
 			     for( int iBin = 0; iBin< RatioDataMC[iCut][iVar]->GetNbinsX() ; iBin++){
 			      RatioDataMC[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
-			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
+			      SysError.at(iBin) * (TMath::Power(histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
 	                      RatioDataMC_error[iCut][iVar]->SetBinContent(iBin+1,1) ;
 			      RatioDataMC_error[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC[iCut][iVar]->GetBinError(iBin+1)+
-			      SysError.at(iBin) * (TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
+			      SysError.at(iBin) * (TMath::Power(histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum[iCut][iVar]->GetBinContent(iBin+1),4))));
 			     }
 
                              RatioDataMC_error[iCut][iVar]->SetBinContent(0,1) ;
@@ -1372,7 +1397,7 @@ int main (int argc, char **argv){
                              RatioDataMC[iCut][iVar]->Draw("hist same");         
                             			    
        		           for( int iBin = 0; iBin< RatioDataMC_herwig[iCut][iVar]->GetNbinsX() ; iBin++){
- 			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+SysError_herwig.at(iBin)*(TMath::Power(histos[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
+ 			     RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,sqrt(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)*RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)+SysError_herwig.at(iBin)*(TMath::Power(histos_overflow[iCut][iVar][iSampleData]->GetBinContent(iBin+1),2))/(TMath::Power(histoSum_herwig[iCut][iVar]->GetBinContent(iBin+1),4)))) ;
 			     if(RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1) != RatioDataMC_herwig[iCut][iVar]->GetBinError(iBin+1)) RatioDataMC_herwig[iCut][iVar]->SetBinError(iBin+1,0);
 			    }
 
@@ -1406,12 +1431,12 @@ int main (int argc, char **argv){
 	  std::replace(canvasname.begin(),canvasname.end(),']','_');
 	  std::replace(canvasname.begin(),canvasname.end(),'(','_');
 	  std::replace(canvasname.begin(),canvasname.end(),')','_');
-
+	  
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".pdf").c_str(),"pdf");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".png").c_str(),"png");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".root").c_str(),"root");
 	  c[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasname+".cxx").c_str(),"cxx");
-	  
+	  /*	  
 	  c[iCut][iVar]->Close();
 	  if(!WithoutData) {
             
@@ -1432,7 +1457,7 @@ int main (int argc, char **argv){
 	    
 	    cNoRatio[iCut][iVar]->Close();
 	  }
-
+	  /*
 	  if(!WithoutData){  lowerPadLog->cd();
                              lowerPadLog->SetGridx();
 	                     lowerPadLog->SetGridy();
@@ -1449,8 +1474,8 @@ int main (int argc, char **argv){
                               legRatio->Draw("same");
 
                               // Kolmogorov-Smirnov and chi2 test:
-                              double kTest        = histos[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
-                              double chi_over_ndf = histos[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
+                              double kTest        = histos_overflow[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
+                              double chi_over_ndf = histos_overflow[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
 
 	 		      TString probatext  = Form("#chi^{2}/ndf = %0.2f  K_{s} = %0.2f",float(chi_over_ndf),float(kTest));	
   	                      TLatex* tt         = new TLatex(0.15,0.85,probatext);
@@ -1471,8 +1496,8 @@ int main (int argc, char **argv){
                               legRatio->Draw("same");
 
                               // Kolmogorov-Smirnov and chi2 test:
-                              double kTest        = histos[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
-                              double chi_over_ndf = histos[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
+                              double kTest        = histos_overflow[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
+                              double chi_over_ndf = histos_overflow[iCut][iVar][iSampleData]->Chi2Test(histoSum[iCut][iVar],"UW CHI2/NDF"); 
 
 	 		      TString probatext  = Form("#chi^{2}/ndf = %0.2f  K_{s} = %0.2f",float(chi_over_ndf),float(kTest));	
   	                      TLatex* tt         = new TLatex(0.15,0.85,probatext);
@@ -1548,7 +1573,7 @@ int main (int argc, char **argv){
 	    upperPadLog->cd(); 
 
             if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar) 
-              DrawStackError(LogStack,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,true,false);
+              DrawStackError(LogStack,VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,true,false);
             else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && !isHerwig_ttbar)
               DrawStackError(LogStack_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap_herwig,true,false);
             else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
@@ -1559,9 +1584,9 @@ int main (int argc, char **argv){
  	    upperPadLogNoRatio->cd(); 
 
             if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
-               DrawStackError(LogStackNoRatio,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap,true,true);
+               DrawStackError(LogStackNoRatio,VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,true,true);
 	    else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
-               DrawStackError(LogStackNoRatio_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap_herwig,true,true);
+               DrawStackError(LogStackNoRatio_herwig,VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap_herwig,true,true);
             else if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
 	      DrawDoubleStackError(LogStackNoRatio,LogStackNoRatio_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,true);
             else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
@@ -1569,40 +1594,40 @@ int main (int argc, char **argv){
 
             if((VariablesBlindedMinValue.at(iVar) != -999. && VariablesBlindedMaxValue.at(iVar) != -999.) && VariablesBlindedMinValue.at(iVar) != VariablesBlindedMaxValue.at(iVar)){
 	     
-                  for(int iBin = histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
-                      iBin< histos[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
+                  for(int iBin = histos_overflow[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMinValue.at(iVar)) ; 
+                      iBin< histos_overflow[iCut][iVar][iSampleData]->FindBin(VariablesBlindedMaxValue.at(iVar)) ; iBin++) histos_overflow[iCut][iVar][iSampleData]->SetBinContent(iBin,-1.);
 
-		  		  upperPadLog->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
-				  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+		  		  upperPadLog->cd(); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same"); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+				  upperPadLogNoRatio->cd(); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same"); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame");
 
             }
-            else{ upperPadLog->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame"); 
-		  upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleData]->DrawCopy("E same"); histos[iCut][iVar][iSampleData]->DrawCopy("E axissame");
+            else{ upperPadLog->cd(); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same"); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame"); 
+		  upperPadLogNoRatio->cd(); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same"); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame");
           }
           
           }
 	 
 	  if(SignalggHName!="NULL" && iSampleggH!=-1){ 
-                   upperPadLog->cd() ; histos[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
-	           if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
+                   upperPadLog->cd() ; histos_overflow[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleggH]->DrawCopy("hist axissame");
+	           if(!WithoutData) { upperPadLogNoRatio->cd(); histos_overflow[iCut][iVar][iSampleggH]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleggH]->DrawCopy("hist axissame"); }
 	  }
 	  if(SignalqqHName!="NULL" && iSampleqqH!=-1){ 
-                    upperPadLog->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
-	            if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
+                    upperPadLog->cd(); histos_overflow[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame");
+	            if(!WithoutData) { upperPadLogNoRatio->cd(); histos_overflow[iCut][iVar][iSampleqqH]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleqqH]->DrawCopy("hist axissame"); }
 	  }
 	  if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){ 
-                  upperPadLog->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); 
-                  histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
-	         if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); 
-                                    histos[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
+                  upperPadLog->cd(); histos_overflow[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); 
+                  histos_overflow[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame");
+	         if(!WithoutData) { upperPadLogNoRatio->cd(); histos_overflow[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist same"); 
+                                    histos_overflow[iCut][iVar][iSampleRSGPythia]->DrawCopy("hist axissame"); }
 	  }
-	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); 
-                                                                   histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame");
-	     if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame"); }
+	  if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){ upperPadLog->cd(); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); 
+                                                                   histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame");
+	     if(!WithoutData) { upperPadLogNoRatio->cd(); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame"); }
 	  }
-	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ upperPadLog->cd(); histos[iCut][iVar][iSampleGraviton]->DrawCopy("hist same"); 
-                                                                 histos[iCut][iVar][iSampleGraviton]->DrawCopy("hist axissame");
-	     if(!WithoutData) { upperPadLogNoRatio->cd(); histos[iCut][iVar][iSampleGraviton]->DrawCopy("hist same"); histos[iCut][iVar][iSampleGraviton]->DrawCopy("hist axissame"); }
+	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ upperPadLog->cd(); histos_overflow[iCut][iVar][iSampleGraviton]->DrawCopy("hist same"); 
+                                                                 histos_overflow[iCut][iVar][iSampleGraviton]->DrawCopy("hist axissame");
+	     if(!WithoutData) { upperPadLogNoRatio->cd(); histos_overflow[iCut][iVar][iSampleGraviton]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleGraviton]->DrawCopy("hist axissame"); }
           }
 	  
 	  if(!WithoutData) { upperPadLog->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,false); banner4Plot(false);
@@ -1622,7 +1647,7 @@ int main (int argc, char **argv){
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".pdf").c_str(),"pdf");
 	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".png").c_str(),"png");
 	  //	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".root").c_str(),"root");
-	  //	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".cxx").c_str(),"cxx");
+	  cLog[iCut][iVar]->Print( (OutputPlotDirectory+"/"+canvasnameLog+".cxx").c_str(),"cxx");
 	  
           cLog[iCut][iVar]->Close();
 	  if(!WithoutData) {
@@ -1654,9 +1679,9 @@ int main (int argc, char **argv){
           if(!upperPadNoRatio)    delete upperPadNoRatio ;
           if(!upperPadLogNoRatio) delete upperPadLogNoRatio ;
           if(!MCSysStat)          delete MCSysStat ;
+	  */
     }
      
-	  
     //Print Signal/Background ratios for every cut
     int iVar = 0 ;
 
@@ -1667,7 +1692,7 @@ int main (int argc, char **argv){
    
     std::cout<<std::endl;
     std::cout<<" Signal to Background ratios: Cut_"<<int(iCut)<<"  String: "<<CutList.at(iCut)<<std::endl;
-    std::cout<<" Data Events:            "<<histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+    std::cout<<" Data Events:            "<<histos_overflow[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" WJets Pythia  Events:           "<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" WJets Herwig  Events:           "<<histo_WJets_herwig[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" TTbar Powegh Events:           "<<histo_ttbar[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
@@ -1695,40 +1720,39 @@ int main (int argc, char **argv){
       +histo_diboson_ewk[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     }
     if(SignalggHName!="NULL" && iSampleggH!=-1){
-      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleggH]->Scale(1./SignalScaleFactor);
-      else histos[iCut][iVar][iSampleggH]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());     
-      std::cout<<" Signal ggH:             "<<histos[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleggH]->Scale(1./SignalScaleFactor);
+      else histos_overflow[iCut][iVar][iSampleggH]->Scale(1./histos_overflow[iCut][iVar][iSampleData]->Integral());     
+      std::cout<<" Signal ggH:             "<<histos_overflow[iCut][iVar][iSampleggH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
     }
 
     if(SignalqqHName!="NULL" && iSampleqqH!=-1){
-      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleqqH]->Scale(1./SignalScaleFactor);
-      else histos[iCut][iVar][iSampleqqH]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());
-      std::cout<<" Signal qqH:             "<<histos[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleqqH]->Scale(1./SignalScaleFactor);
+      else histos_overflow[iCut][iVar][iSampleqqH]->Scale(1./histos_overflow[iCut][iVar][iSampleData]->Integral());
+      std::cout<<" Signal qqH:             "<<histos_overflow[iCut][iVar][iSampleqqH]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
     }
 
     if(SignalRSGPythiaName!="NULL" && iSampleRSGPythia!=-1){
-      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGPythia]->Scale(1./SignalScaleFactor);
-      else histos[iCut][iVar][iSampleRSGPythia]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());
-      std::cout<<" Signal RSGPythia:       "<<histos[iCut][iVar][iSampleRSGPythia]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleRSGPythia]->Scale(1./SignalScaleFactor);
+      else histos_overflow[iCut][iVar][iSampleRSGPythia]->Scale(1./histos_overflow[iCut][iVar][iSampleData]->Integral());
+      std::cout<<" Signal RSGPythia:       "<<histos_overflow[iCut][iVar][iSampleRSGPythia]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
     }
 
     if(SignalRSGHerwigName!="NULL" && iSampleRSGHerwig!=-1){
-      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleRSGHerwig]->Scale(1./SignalScaleFactor);
-      else histos[iCut][iVar][iSampleRSGHerwig]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());
-      std::cout<<" Signal RSGHerwig:       "<<histos[iCut][iVar][iSampleRSGHerwig]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleRSGHerwig]->Scale(1./SignalScaleFactor);
+      else histos_overflow[iCut][iVar][iSampleRSGHerwig]->Scale(1./histos_overflow[iCut][iVar][iSampleData]->Integral());
+      std::cout<<" Signal RSGHerwig:       "<<histos_overflow[iCut][iVar][iSampleRSGHerwig]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
     }
 
     if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){
-      if(!NormalizeSignalToData) histos[iCut][iVar][iSampleGraviton]->Scale(1./SignalScaleFactor);
-      else histos[iCut][iVar][iSampleGraviton]->Scale(1./histos[iCut][iVar][iSampleData]->Integral());
-      std::cout<<" Signal Graviton:        "<<histos[iCut][iVar][iSampleGraviton]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleGraviton]->Scale(1./SignalScaleFactor);
+      else histos_overflow[iCut][iVar][iSampleGraviton]->Scale(1./histos_overflow[iCut][iVar][iSampleData]->Integral());
+      std::cout<<" Signal Graviton:        "<<histos_overflow[iCut][iVar][iSampleGraviton]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 	  
     }
-     
  }
 
  outputFile->Close();
