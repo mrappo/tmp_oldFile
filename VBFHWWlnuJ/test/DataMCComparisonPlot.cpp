@@ -1712,7 +1712,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
     std::cout<<" ##################### "<<std::endl;
    
     std::cout<<std::endl;
-    std::cout<<" Signal to Background ratios: Cut_"<<int(iCut)<<"  String: "<<CutList.at(iCut)<<std::endl;
+    /*    std::cout<<" Signal to Background ratios: Cut_"<<int(iCut)<<"  String: "<<CutList.at(iCut)<<std::endl;
     std::cout<<" Data Events:            "<<histos_overflow[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" WJets Pythia  Events:           "<<histo_WJets[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
     std::cout<<" WJets Herwig  Events:           "<<histo_WJets_herwig[iCut][iVar]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
@@ -1774,6 +1774,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
       std::cout<<" Signal Graviton:        "<<histos_overflow[iCut][iVar][iSampleGraviton]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 	  
     }
+    */
  }
 
  outputFile->Close();
