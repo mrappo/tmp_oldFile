@@ -1,0 +1,33 @@
+#####################################################################################################################
+#  Sample Name 					            Reduced Name      Color     XSec (pb)    NumEntriesBefore
+######################################################################################################################
+#WWTree_data                                                      DATA             1               1             1
+#WWTree_WJets_Pythia100                                          W+Jets           2           272.6       8955318
+#WWTree_WJets_Herwig                                             W+Jets           2           272.6      13256090
+#WWTree_WJets_Pythia180                                          W+Jets           2         28.9755       9739464
+WWTree_WJets                                             W+Jets           2            50100      10017462
+#WWTree_W2Jets_Pythia                                             W+Jets		 2            2110      34044921
+#WWTree_W3Jets_Pythia                                             W+Jets		 2             633      15539503
+#WWTree_W4Jets_Pythia                                             W+Jets		 2             263      13382803
+#WWTree_WW                                                       WW               4          54.838      10000431
+#WWTree_WW_mcanlo                                                 WW               4           0.727      119692 
+#WWTree_WW2jet_madgraph                                          WW_EWK           6          0.117      414963
+#WWTree_WW2jet_phantom                                            WW_EWK           6            0.232      333061 
+#WWTree_WZ                                                        WZ               4           33.21      10000283
+#WWTree_ZJets                                                     Z+Jets           5            3503      30459503
+#WWTree_ZZ                                                        ZZ               4           17.65       9799908
+#WWTree_sch_bar                                                   STop             7            1.75        139974
+#WWTree_sch                                                       STop             7            3.79        259961
+#WWTree_tch_bar                                                   STop             7            30.7       1935072
+#WWTree_tch                                                       STop             7            56.4       3758227
+#WWTree_tWch                                                      STop             7            11.2        493460
+#WWTree_tWch_bar                                                  STop             7            11.2        497658
+WWTree_TTbar                                                    tt_bar           210         424.5       2991609
+#WWTree_TTbar_matchUp                                            tt_bar           210         228.30      5415010
+#WWTree_TTbar_matchDn                                            tt_bar           210         214.60      5476728
+#WWTree_TTbar_scaleUp                                            tt_bar           210         225.19      5009488
+#WWTree_TTbar_scaleUp                                            tt_bar           210         228.0       5387181
+#WWTree_TTbar_Powheg                                              tt_bar           210         245.8      21675970
+#WWTree_TTbar_mcanlo                                             tt_bar_mcatnlo   53          245.197      24185991
+WWTree_RSGraviton1000                                                    RSGrav1000              1           0.42       29205
+#WWTree_vbfH600                                                   qqHx600              12          0.0236       198900
