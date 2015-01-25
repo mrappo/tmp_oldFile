@@ -627,9 +627,9 @@ void LatexCMS (const double & lumi, const std::string & LeptonType, const bool &
   if(isLabel) latex.SetTextSize(0.036);
   else latex.SetTextSize(0.043);
 
-  if(LeptonType == "muon" || LeptonType == "mu") latex.DrawLatex(0.56,0.96,Form("CMS         L = %.1f fb^{-1} at #sqrt{s} = 8 TeV, W+jets",(float)lumi/1000));
-  else if(LeptonType == "electron" || LeptonType == "el") latex.DrawLatex(0.52,0.95,Form("CMS,   L = %.1f fb^{-1} at #sqrt{s} = 8 TeV, W+jets",(float)lumi/1000));
-  else latex.DrawLatex(0.56,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 8 TeV, W+jets",(float)lumi/1000));
+  if(LeptonType == "muon" || LeptonType == "mu") latex.DrawLatex(0.56,0.96,Form("CMS         L = %.1f fb^{-1} at #sqrt{s} = 13 TeV, W+jets",(float)lumi/1000));
+  else if(LeptonType == "electron" || LeptonType == "el") latex.DrawLatex(0.52,0.95,Form("CMS,   L = %.1f fb^{-1} at #sqrt{s} = 13 TeV, W+jets",(float)lumi/1000));
+  else latex.DrawLatex(0.56,0.962,Form("CMS Preliminary, %.1f fb^{-1} at #sqrt{s} = 13 TeV, W+jets",(float)lumi/1000));
 
 }
 
