@@ -34,11 +34,11 @@ void banner4Plot (const bool & isLabel){
   TPaveText* pt ;
   if (!isLabel) pt = new TPaveText(.20,0.69,.34,.91,"NDC");
   else pt = new TPaveText(.22,0.69,.28,.91,"NDC");
-  pt->AddText("CA R = 0.8");
+  pt->AddText("AK R = 0.8");
   //pt->AddText("250 < p_{T} < 350 GeV");
   pt->AddText("p_{T} > 200 GeV");
-  pt->AddText("|#eta|<2.1");
-  pt->AddText("40 < m_{j} < 130 GeV");                                                                                                                                                       
+  //  pt->AddText("|#eta|<2.1");
+  //  pt->AddText("40 < m_{j} < 130 GeV");                                                                                                                                                       
   pt->SetFillColor(0);
   pt->SetTextSize(0.035);
   pt->SetFillStyle(0);
