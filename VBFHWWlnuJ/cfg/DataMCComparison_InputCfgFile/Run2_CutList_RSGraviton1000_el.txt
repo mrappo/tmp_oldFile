@@ -4,7 +4,7 @@
 
 ## SB + SR
 
-v_pt>200 && pfMET>70 && l_pt>35 && ungroomed_jet_pt>200 && abs(l_eta)<2.4
+v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && deltaR_lak8jet > (3.14/2.) && deltaphi_Vak8jet > 2.0 && deltaphi_METak8jet > 2.0 && nBTagJet_medium ==0 && jet_mass_pr > 40 && jet_mass_pr < 130
 
 #issignal && v_pt>200 && pfMET>50 && l_pt>30 && ungroomed_jet_pt>200 && abs(l_eta)<2.4 && numberJetBin >= 2
 
