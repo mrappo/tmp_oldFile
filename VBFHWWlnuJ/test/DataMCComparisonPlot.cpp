@@ -816,19 +816,19 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	  if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) 
              leg[iCut][iVar]->AddEntry( histo_diboson_ewk[iCut][iVar], "WW+2jet EWK", "f" );
 	  if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0) 
-                leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets Pythia", "f" );
+                leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets", "f" );
 	  else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0)  
                 leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "f" );
 	  else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0){
-                leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets Pythia", "l" );
+                leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets", "l" );
                 leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "l" );
 	  }
          if(histo_ttbar[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()==0) 
-                leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t} powheg", "f" );
+                leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
 	  else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()==0)  
                 leg[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "f" );
 	  else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0){
-                leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t} powheg", "l" );
+                leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "l" );
                 leg[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "l" );
 	  }
   
@@ -846,11 +846,11 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	  }
 
 	  if(histo_ttbar_herwig[iCut][iVar]->GetEntries()==0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 )  
-             legNoRatio[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t} powheg", "f" );
+             legNoRatio[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
 	  else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()==0)  
              legNoRatio[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "f" );
 	  else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0){
-                legNoRatio[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t} powheg", "l" );
+                legNoRatio[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "l" );
                 legNoRatio[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "l" );
 	  }
  
