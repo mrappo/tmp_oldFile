@@ -18,4 +18,4 @@ WWTree_tWch                                                      STop           
 WWTree_tWch_bar                                                  STop             7            35.6        971800
 #WWTree_TTbar_old                                                    tt_bar           210         424.5       2991609
 WWTree_TTbar							     tt_bar           210         831.76      25446993
-WWTree_RSGraviton1000                                                    RSGrav1000              1           2.37       29205
+WWTree_RSGraviton2000                                                    RSGrav2000              1           0.04797       29854
