@@ -74,6 +74,8 @@ int main (int argc, char **argv){
   gStyle->SetPalette(1);
   gStyle->SetErrorX(0.5);
 
+  gStyle->SetOptStat(0);
+
   // parse config file parameter
   parseConfigFile(argv[1]);
 
@@ -1578,16 +1580,16 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
             upperPadLog->cd();
 
 	    if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar) 
-               DrawStackError(LogStack,VariablesTitle.at(iVar),SystematicErrorMap,true,false);
+               DrawStackError(LogStack,VariablesTitle.at(iVar),SystematicErrorMap,true,true);
 
             else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && !isHerwig_ttbar)
-               DrawStackError(LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap_herwig,true,false);
+               DrawStackError(LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap_herwig,true,true);
 
             else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
- 	       DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false);
+ 	       DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,true);
 
     	    else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
-	       DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false,isHerwig_ttbar);                 
+	       DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,true,isHerwig_ttbar);                 
 
           }
 	  else{ 
@@ -1595,13 +1597,13 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	    upperPadLog->cd(); 
 
             if(histo_WJets_herwig[iCut][iVar]->GetEntries()==0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar) 
-              DrawStackError(LogStack,VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,true,false);
+              DrawStackError(LogStack,VariablesTitle.at(iVar),histos_overflow[iCut][iVar][iSampleData],SystematicErrorMap,true,true);
             else if (histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0 && !isHerwig_ttbar)
-              DrawStackError(LogStack_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap_herwig,true,false);
+              DrawStackError(LogStack_herwig,VariablesTitle.at(iVar),histos[iCut][iVar][iSampleData],SystematicErrorMap_herwig,true,true);
             else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0 && !isHerwig_ttbar)
-	      DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false);
+	      DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,true);
     	    else if (histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar)
-	      DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,false,isHerwig_ttbar);          
+	      DrawDoubleStackError(LogStack,LogStack_herwig,VariablesTitle.at(iVar),SystematicErrorMap,SystematicErrorMap_herwig,true,true,isHerwig_ttbar);          
 	    
  	    upperPadLogNoRatio->cd(); 
 
