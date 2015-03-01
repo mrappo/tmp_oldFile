@@ -13,7 +13,7 @@ ungroomed_jet_pt                 20    150       1000      pT^{AK8}_(GeV)
 ungroomed_jet_eta                35    -3.      3.        #eta^{AK8}
 ungroomed_jet_phi                40    -3.14     3.14     #phi^{AK8}
 #jet_mass_pr                       15      65       105     Jet_Pruned_Mass_(GeV/c^{2})
-jet_mass_pr                      30      40       130    Jet_Pruned_Mass_(GeV/c^{2})
+jet_mass_pr                      45      40       130    Jet_Pruned_Mass_(GeV/c^{2})
 mass_lvj_type0                   56    200       3000    M_{WW}_(GeV/c^{2})
 mass_lvj_type2                   56    200       3000    M_{WW}_(GeV/c^{2})
 #mass_lvj_type0_met                   56    200       3000    M_{WW}_(GeV/c^{2})
