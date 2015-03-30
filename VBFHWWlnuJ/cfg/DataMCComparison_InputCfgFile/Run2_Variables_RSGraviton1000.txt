@@ -15,7 +15,7 @@ ungroomed_jet_phi                40    -3.14     3.14     #phi^{AK8}
 #jet_mass_pr                       15      65       105     Jet_Pruned_Mass_(GeV/c^{2})
 jet_mass_pr                      45      40       130    Jet_Pruned_Mass_(GeV/c^{2})
 mass_lvj_type0                   56    200       3000    M_{WW}_(GeV/c^{2})
-mass_lvj_type2                   56    200       3000    M_{WW}_(GeV/c^{2})
+mass_lvj_type2                   16    700       1500    M_{WW}_(GeV/c^{2})
 #mass_lvj_type0_met                   56    200       3000    M_{WW}_(GeV/c^{2})
 #mass_lvj_type2_met                   56    200       3000    M_{WW}_(GeV/c^{2})
 nu_pz_type0                   60   -500      500        pZ^{#nu}[GeV]
