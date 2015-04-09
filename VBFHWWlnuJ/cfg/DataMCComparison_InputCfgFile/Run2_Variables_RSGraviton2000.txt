@@ -1,21 +1,21 @@
 ####################################################################
 # Variable                      Nbin    Min     Max        Label
 ####################################################################
-l_pt                             50      0       600      pT_{l}_(GeV)
+l_pt                             100      0       2000      pT_{l}_(GeV)
 l_eta                            25   -2.1       2.1      #eta_{l}
 l_phi                            30   -3.14      3.14     #phi_{l}
-v_pt                             45    150       600      pT^{W}_{l}_(GeV)
+v_pt                             100    0       2000      pT^{W}_{l}_(GeV)
 v_mt                             30      0       150      mT^{W}_{l}_(GeV)
-pfMET                            35      0       500      MET[GeV]
+pfMET                            75      0       1500      MET[GeV]
 pfMET_Phi                        30   -3.14      3.14	  #phi_{MET} 
 nPV                              40      0       40       nPV
-ungroomed_jet_pt                 20    150       1000      pT^{AK8}_(GeV)
+ungroomed_jet_pt                 100    200       1200      pT^{AK8}_(GeV)
 ungroomed_jet_eta                35    -3.      3.        #eta^{AK8}
 ungroomed_jet_phi                40    -3.14     3.14     #phi^{AK8}
 #jet_mass_pr                       15      65       105     Jet_Pruned_Mass_(GeV/c^{2})
 jet_mass_pr                      30      40       130    Jet_Pruned_Mass_(GeV/c^{2})
-mass_lvj_type0                   56    200       3500    M_{WW}_(GeV/c^{2})
-mass_lvj_type2                   56    200       3500    M_{WW}_(GeV/c^{2})
+mass_lvj_type0                   66    200       3500    M_{WW}_(GeV/c^{2})
+mass_lvj_type2                   66    200       3500    M_{WW}_(GeV/c^{2})
 #mass_lvj_type0_met                   56    200       3000    M_{WW}_(GeV/c^{2})
 #mass_lvj_type2_met                   56    200       3000    M_{WW}_(GeV/c^{2})
 nu_pz_type0                   60   -500      500        pZ^{#nu}[GeV]
