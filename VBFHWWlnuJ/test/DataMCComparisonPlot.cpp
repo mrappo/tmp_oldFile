@@ -453,7 +453,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	 }
 	 histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
 	 histos_overflow[iCut][iVar][iSample]->SetBinError(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),sqrt(histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1)));       
-         std::cout<<" Signal Graviton Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weighted events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+         std::cout<<" Signal Graviton Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< " weighted events "<<histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)*Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample)<<std::endl;
        }
        else if(NameReducedSample.at(iSample) == "tt_bar_mcatnlo" ){
 
@@ -465,7 +465,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	 }
 	 histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
 	 std::cout<<" Bkg mc@nlo "<<NameSample.at(iSample)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<" weighted events "<<
-                                 histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl; 
+                                 histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)*Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample)<<std::endl; 
 
        }
        else {
@@ -478,7 +478,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	 histos_overflow[iCut][iVar][iSample]->SetBinContent(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1));       
 	 histos_overflow[iCut][iVar][iSample]->SetBinError(histos_overflow[iCut][iVar][iSample]->GetNbinsX(),sqrt(histos[iCut][iVar][iSample]->GetBinContent(histos[iCut][iVar][iSample]->GetNbinsX()+1)));       
 	 std::cout<<" Bkg "<<NameSample.at(iSample)<<" Entries "<<histos[iCut][iVar][iSample]->GetEntries()<<" weighted events "<<
-                             histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl; 
+	   histos[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)*Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample)<<std::endl; 
        }
  
        histos_overflow[iCut][iVar][iSample]->SetFillColor(ColorSample.at(iSample));
@@ -528,7 +528,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
        norm =  Lumi*SampleCrossSection.at(iSample) / NumEntriesBefore.at(iSample);
        //       norm = 1.; 
 
-       //std::cout<< " Sample to be scaled "<<NameReducedSample.at(iSample)<<" Lumi "<<Lumi<<" xs : "<<SampleCrossSection.at(iSample)<<" numEntries "<<NumEntriesBefore.at(iSample)<<" Normalization Factor "<<norm<<std::endl;
+       std::cout<< " Sample to be scaled "<<NameReducedSample.at(iSample)<<" Lumi "<<Lumi<<" xs : "<<SampleCrossSection.at(iSample)<<" numEntries "<<NumEntriesBefore.at(iSample)<<" Normalization Factor "<<norm<<std::endl;
 
        if(NameReducedSample.at(iSample) ==  "W+Jets") norm = norm *scaleFactorWjet_Pythia;
        else if(NameReducedSample.at(iSample) ==  "W+Jets_herwig" || NameReducedSample.at(iSample) ==  "W+Jets_Herwig") norm = norm *scaleFactorWjet_Herwig;
@@ -538,37 +538,37 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
        if ( NameReducedSample.at(iSample)==SignalggHName && SignalggHName!="NULL") {
          if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
          else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)); 
-      	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+      	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
 
        }
 
        else if ( NameReducedSample.at(iSample)==SignalqqHName && SignalqqHName!="NULL") {
          if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
          else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGPythiaName && SignalRSGPythiaName!="NULL"){
          if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
          else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalRSGHerwigName && SignalRSGHerwigName!="NULL"){
          if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
          else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else if ( NameReducedSample.at(iSample)==SignalGravitonName && SignalGravitonName!="NULL"){
          if(!NormalizeSignalToData)  histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
          else histos_overflow[iCut][iVar][iSample]->Scale(1.*histos[iCut][iVar][iSampleData]->Integral(0, VariablesNbin.at(iVar)+1)/histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1));
-	 //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
+	 std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<std::endl;
        }
 
        else{ if(!NormalizeBackgroundToData) histos_overflow[iCut][iVar][iSample]->Scale(1.*norm);
 	     else { histos_overflow[iCut][iVar][iSample]->Scale(1.*norm); normalizeToData += histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1) ;
-	       //std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos_overflow[iCut][iVar][iSample]->GetEntries()<<"   "<<normalizeToData<<std::endl;
+	       std::cout<<" Scaled entries for "<<NameReducedSample.at(iSample)<<" : "<<histos_overflow[iCut][iVar][iSample]->Integral(0, VariablesNbin.at(iVar)+1)<<" Entries "<<histos_overflow[iCut][iVar][iSample]->GetEntries()<<"   "<<normalizeToData<<std::endl;
                   }
            }
       }
