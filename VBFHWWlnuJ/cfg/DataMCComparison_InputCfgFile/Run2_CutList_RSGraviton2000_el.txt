@@ -4,7 +4,9 @@
 
 ## SB + SR
 
-v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 40 && jet_mass_pr < 130
+v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 40 && jet_mass_pr < 130 && jet_tau2tau1<0.5
+
+#v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 40 && jet_mass_pr < 130
 
 #v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 40 && jet_mass_pr < 130 && jet_tau2tau1<0.5
 

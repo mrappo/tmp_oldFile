@@ -31,7 +31,7 @@ numberJetBin                       5      0       5        N_{jets}
 numberJetBin2                      5      0       5        N_{jets}
 numberJetBin3                      5      0       5        N_{jets}
 numberJetBin4                      5      0       5        N_{jets}
-jet_tau2tau1                     35     0.1      1.0       #tau_{2}/#tau_{1}
+jet_tau2tau1                     30     0.1      1.0       #tau_{2}/#tau_{1}
 #jet_tau2tau1                     35     0.1      0.9       #tau_{2}/#tau_{1}
 #jet_tau2tau1_exkT                35     0.1      1.1       #tau_{2}/#tau_{1}_extk_T
 #jet_tau2tau1_exkT                35     0.1      1.0       #tau_{2}/#tau_{1}_extk_T

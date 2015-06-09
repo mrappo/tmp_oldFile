@@ -6,7 +6,7 @@ WWTree_WJets100                                             W+Jets           2  
 WWTree_WJets200                                             W+Jets           2            471.6      4936077
 WWTree_WJets400                                             W+Jets           2            55.61      4640594
 WWTree_WJets600                                             W+Jets           2            18.81      4581841
-#WWTree_WW                                                       WW               4          ?      ?
+WWTree_WW                                                       WW               4          0.29      19800
 #WWTree_WZ                                                        WZ               4           ?      ?
 #WWTree_ZJets                                                     Z+Jets           5            ?      ?
 #WWTree_ZZ                                                        ZZ               4           ?       ?
