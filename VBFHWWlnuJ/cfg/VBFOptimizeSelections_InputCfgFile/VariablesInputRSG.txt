@@ -1,6 +1,8 @@
 ######################################
 ## Input Variables for Cut Optimization
 ########################################
+#jet_mass_pr
+jet_mass_so
 #jet_tau2tau1
 #jet_qjetvol
 #jet_massdrop_pr
@@ -12,4 +14,4 @@
 #ungroomed_jet_pt
 #jet_tau2tau1_exkT 
 #jet_tau2tau1_pr
-jet_GeneralizedECF
+#jet_GeneralizedECF
