@@ -135,7 +135,7 @@ int main (int argc, char** argv){
   std::vector<double> JetPtBinOfTraining;
   try{ JetPtBinOfTraining = gConfigParser -> readDoubleListOption("Option::JetPtBinOfTraining"); }
   catch(char const* exceptionString){ JetPtBinOfTraining.push_back(0);
-                                      JetPtBinOfTraining.push_back(2000);
+                                      JetPtBinOfTraining.push_back(5000);
 				      std::cerr<<" Default Method just 1 bin  "<<std::endl;
   }
 
@@ -250,6 +250,7 @@ int main (int argc, char** argv){
   
    for(size_t iSample =0; iSample<NameSample.size() ; iSample++){
 
+     std::cout<<"sample: "<<NameReducedSample.at(iSample)<<std::endl;
     if( NameReducedSample.at(iSample) == SignalqqHName ) {
        
        signalGlobalWeight.at(isSignal) = SampleCrossSection.at(iSample)/NumEntriesBefore.at(iSample);

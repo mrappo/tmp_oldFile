@@ -221,6 +221,7 @@ TString StatDialogMVAEffs::GetLatexFormula()
    f.ReplaceAll("epsilonS","#epsilon_{S}");
    f.ReplaceAll("epsilonB","#epsilon_{B}");
 
+   return "significance";
    return f;
 }
 
@@ -529,6 +530,7 @@ void StatDialogMVAEffs::DrawHistograms()
       legend2->Draw("same");
       legend2->SetBorderSize(1);
       legend2->SetMargin( 0.3 );
+      legend2->SetTextSize(0.05);
          
       // line to indicate maximum efficiency
       TLine* effline = new TLine( info->sSig->GetXaxis()->GetXmin(), 1, info->sSig->GetXaxis()->GetXmax(), 1 );
@@ -645,7 +647,8 @@ void StatDialogMVAEffs::PrintResults( const MethodInfo* info )
 }
 
 void mvaeffs( TString fin = "TMVA.root", 
-              Bool_t useTMVAStyle = kTRUE, TString formula="epsilonS/(sqrt(epsilonB))", bool UseSignalEfficiency = true, bool UseBackgroundEfficiency = true )
+	      //	      Bool_t useTMVAStyle = kTRUE, TString formula="epsilonS/(sqrt(epsilonB))", bool UseSignalEfficiency = false, bool UseBackgroundEfficiency = false )
+	      Bool_t useTMVAStyle = kTRUE, TString formula="epsilonS/(1+sqrt(B))", bool UseSignalEfficiency = true, bool UseBackgroundEfficiency = false )
 {
    TMVAGlob::Initialize( useTMVAStyle );
 

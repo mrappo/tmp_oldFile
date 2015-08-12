@@ -582,11 +582,12 @@ TString TrainingMVAClass::GetPreselectionCut (const std::string & LeptonType,con
 
 
   if(preselectionCutType == "basicPreselectionCutEXO" && (LeptonType == "Mu" || LeptonType == "mu" || LeptonType == "Muon" || LeptonType == "muon") )
-    return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
+        return Form("issignal && v_pt > 200 && pfMET > 40 && l_pt > 50 && ungroomed_jet_pt > 200 && nBTagJet_medium == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f ) && jet_mass_so >40 && jet_mass_so<130 && mass_lvj_type0>2550 && mass_lvj_type0<3450",
+		    //    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && nBTagJet_medium == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f ) && jet_mass_so >40 && jet_mass_so<130 && mass_lvj_type0>3200 && mass_lvj_type0<4800",
                 pTJetMin_,pTJetMax_);
 	     
   else if(preselectionCutType == "basicPreselectionCutEXO" && (LeptonType == "El" || LeptonType == "el" || LeptonType == "Electron" || LeptonType == "electron") )
-    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && nbjets_csvm_veto == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
+    return Form("issignal && v_pt > 200 && pfMET > 80 && l_pt > 90 && ungroomed_jet_pt > 200 && nBTagJet_medium == 0 && ( ungroomed_jet_pt > %f  && ungroomed_jet_pt < %f )",
                 pTJetMin_,pTJetMax_);
 
   else if(preselectionCutType == "basicPreselectionCutEXO" && (LeptonType == "MuEl" || LeptonType == "muel" || LeptonType == "MuonEle" || LeptonType == "muonele") )
