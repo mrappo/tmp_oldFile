@@ -23,4 +23,4 @@ WWTree_tWch_bar                                             STop             7		
 WWTree_TTbar_amcatnlo					    tt_bar           210		831.76		42730273
 #WWTree_TTbar_madgraph					    tt_bar           210		831.76		11339232
 #WWTree_TTbar_powheg					    tt_bar           210		831.76		19899500
-WWTree_RSGraviton1000                                       RSGrav1000       1			0.377865	32448
+WWTree_RSGraviton600                                       RSGrav600       1			4.76735		32354
