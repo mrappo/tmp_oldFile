@@ -3,9 +3,9 @@
 ######################################################################################################################
 WWTree_data                                                 DATA             1                  1               1
 WWTree_WJets_50ns                                           W+Jets           2                  61526.7         24089991
-WWTree_WW_50ns                                              WW               4                  118.7           994416
-WWTree_WZ_50ns                                              WZ               4                  66.1            989608
-WWTree_ZZ_50ns                                              ZZ               4                  15.4            998848
+WWTree_WW_50ns                                              WW               4                  118.7		989608
+WWTree_WZ_50ns                                              WZ               4                  66.1            996920
+WWTree_ZZ_50ns                                              ZZ               4                  15.4            99884
 #WWTree_sch_bar                                             STop             7                  4.16            ?
 #WWTree_sch                                                 STop             7                  10.11           ?
 WWTree_tch_bar_50ns                                         STop             7                  26.07           681900
