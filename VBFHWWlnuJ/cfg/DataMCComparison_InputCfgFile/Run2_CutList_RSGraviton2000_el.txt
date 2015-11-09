@@ -4,7 +4,11 @@
 
 ## SB + SR
 
-v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 40 && jet_mass_pr < 130 && jet_tau2tau1<0.5
+#v_pt>200 && pfMET>80 && l_pt>120 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 40 && jet_mass_pr < 130 && jet_tau2tau1<0.5
+
+v_pt>200 && pfMET>80 && l_pt>120 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && ((jet_mass_pr > 40 && jet_mass_pr < 65) || (jet_mass_pr>135 && jet_mass_pr<150))
+
+#v_pt>200 && pfMET>80 && l_pt>120 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && ((jet_mass_so > 40 && jet_mass_so < 65) || (jet_mass_so>135 && jet_mass_so<150))
 
 #v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 40 && jet_mass_pr < 130
 
@@ -17,10 +21,11 @@ v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && issignal==1 && nBTagJ
 
 ## SR
 
-#v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 65 && jet_mass_pr < 105 && jet_tau2tau1<0.5
+#v_pt>200 && pfMET>80 && l_pt>120 && ungroomed_jet_pt>200 && issignal==1 && nBTagJet_medium<1 && jet_mass_pr > 65 && jet_mass_pr < 105 && jet_tau2tau1<0.5
 
 
 ####### ttbbar control region
 
-#v_pt>200 && pfMET>80 && l_pt>90 && ungroomed_jet_pt>200 && nBTagJet_medium > 0 && jet_mass_pr > 40 && jet_mass_pr < 130
-
+#v_pt>200 && pfMET>80 && l_pt>120 && ungroomed_jet_pt>200 && nBTagJet_medium > 0 && jet_mass_pr > 40 && jet_mass_pr < 150
+#v_pt>200 && pfMET>80 && l_pt>120 && ungroomed_jet_pt>200 && jet_mass_pr > 40 && jet_mass_pr < 150
+#v_pt>200 && pfMET>80 && l_pt>120 && ungroomed_jet_pt>200 && nBTagJet_medium > 0 && jet_mass_so > 40 && jet_mass_so < 150
