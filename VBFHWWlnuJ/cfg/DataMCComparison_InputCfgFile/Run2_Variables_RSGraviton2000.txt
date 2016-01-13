@@ -3,17 +3,17 @@
 ####################################################################
 #l_pt                             50    0       1000      pT_{l}_(GeV)
 nPV                              25      0       50       nPV
-l_pt                             28    0       560      pT_{l}_(GeV)
+l_pt                             25    0       500      pT_{l}_(GeV)
 #l_eta                            25   -2.5       2.5      #eta_{l}
 l_eta                            20   -2.5       2.5      #eta_{l}
 l_phi                            30   -3.14      3.14     #phi_{l}
-v_pt                             40    200       1000      pT^{W}_{l}_(GeV)
-v_mt                             22      0       440      mT^{W}_{l}_(GeV)
+v_pt                             25    200       700      pT^{W}_{l}_(GeV)
+v_mt                             20      0       400      mT^{W}_{l}_(GeV)
 pfMET                            28      0       560      MET[GeV]
 #pfMET                            50      0       1000      MET[GeV]
-pfMET_Phi                        20   -3.14      3.14	  #phi_{MET} 
+pfMET_Phi                        20   -3.15      3.15	  #phi_{MET} 
 #pfMET_Phi                        30   -3.14      3.14	  #phi_{MET} 
-ungroomed_jet_pt                 45    100       1000      pT^{AK8}_(GeV)
+ungroomed_jet_pt                 32    100       740      pT^{AK8}_(GeV)
 ungroomed_jet_eta                25    -2.5      2.5        #eta^{AK8}
 ungroomed_jet_phi                30    -3.14     3.14     #phi^{AK8}
 #jet_mass_pr                       15      65       105     Jet_Pruned_Mass_(GeV/c^{2})

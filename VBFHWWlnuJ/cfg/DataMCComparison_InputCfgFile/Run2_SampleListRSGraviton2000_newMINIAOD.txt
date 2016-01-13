@@ -1,7 +1,7 @@
 #####################################################################################################################
 #  Sample Name 					            Reduced Name      Color     XSec (pb)    NumEntriesBefore
 ######################################################################################################################
-WWTree_data                                                 DATA             1                  1               1
+WWTree_data_golden_2p1                                                 DATA             1                  1               1
 #WWTree_data_muonPhys                                                 DATA             1                  1               1
 #WWTree_WJets                                               W+Jets           2                  61526.7         24184766
 WWTree_WJets100                                             W+Jets           2                  1347            10152718
@@ -30,12 +30,13 @@ WWTree_tWch                                                 STop             7  
 WWTree_tWch_bar                                             STop             7                  35.6             988500
 #WWTree_TTbar_amcatnlo                                       tt_bar           210                831.76          42784971
 #WWTree_TTbar_madgraph                                      tt_bar           210                831.76          11344206
-WWTree_TTbar_powheg                                        tt_bar           210                831.76          19757190
-WWTree_RSGraviton2000                                       RSGrav2000       1                  0.00751431      31295
-#WWTree_BulkGraviton2000                                       BulkGrav2000       1              0.000004197     50000
-#WWTree_WprimeToWZ1000                                       Wprime1000       1                  0.102236        50000
-#WWTree_BulkGraviton1000                                       BulkGrav1000       1              0.000359194     50000
-#WWTree_RSGraviton1000                                       RSGrav1000       1                  0.377865        32448
+WWTree_TTbar                                        tt_bar           210                831.76          19757190
+#WWTree_RSGraviton2000                                       RSGrav2000       1                  0.00751431      31295
+#WWTree_BulkGraviton2000                                       BulkG2000       1              0.000004197     50000
+#######WWTree_WprimeToWZ1000                                       Wprime1TeV       1                  0.102236        50000
+#WWTree_BulkGraviton1000                                       BulkG1TeV       1              0.000359194     50000
+#WWTree_RSGraviton1000                                       RSGrav1TeV       1                  0.377865        32448
+WWTree_RSGraviton800                                       RSGrav800GeV       1                  1.16691        31906
 #WWTree_BulkGraviton1400                                       RSGrav1000       1                 0.000045798         50000
 #WWTree_WprimeToWZ1400                                       Wprime1000       1                  0.031283         50000
 #WWTree_BulkGraviton2000                                       RSGrav1000       1                 0.000004197          14800

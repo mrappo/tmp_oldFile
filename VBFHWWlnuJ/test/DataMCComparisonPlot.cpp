@@ -28,6 +28,7 @@
 #include "ConfigParser.h"
 #include "ReadInputFile.h"
 #include "DataMCPlotTool.h"
+#include "CMS_lumi.h"
 
 void banner4Plot (const bool & isLabel){
 
@@ -46,7 +47,7 @@ void banner4Plot (const bool & isLabel){
   pt->SetLineWidth(0);
   pt->SetMargin(0);
   pt->SetShadowColor(0);
-  pt->Draw();
+  //  pt->Draw();
 
 }
 
@@ -642,7 +643,9 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 
           // Define Legends
 	  //	  leg[iCut][iVar] = new TLegend (0.46, 0.51, 0.85, 0.91);
-	  leg[iCut][iVar] = new TLegend (0.55, 0.65, 0.85, 0.95);
+	  //	  leg[iCut][iVar] = new TLegend (0.45, 0.65, 0.85, 0.95);
+	  leg[iCut][iVar] = new TLegend (0.3, 0.66, 0.85, 0.95);
+	  //	  leg[iCut][iVar] = new TLegend (0.45, 0.65, 0.85, 0.95);
   	  leg[iCut][iVar]->SetFillColor(0);
   	  leg[iCut][iVar]->SetTextSize(0.04);
   	  leg[iCut][iVar]->SetFillStyle(0);
@@ -650,7 +653,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
           leg[iCut][iVar]->SetBorderSize(0);
 
 	  //	  legNoRatio[iCut][iVar] = new TLegend (0.49, 0.51, 0.85, 0.91);
-	  legNoRatio[iCut][iVar] = new TLegend (0.55, 0.66, 0.85, 0.95);
+	  legNoRatio[iCut][iVar] = new TLegend (0.3, 0.66, 0.85, 0.95);
   	  legNoRatio[iCut][iVar]->SetFillColor(0);
   	  legNoRatio[iCut][iVar]->SetFillStyle(0);
   	  legNoRatio[iCut][iVar]->SetTextSize(0.04);
@@ -739,8 +742,8 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
               histos_overflow[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.04);
 	      iSampleData = iSample;                                                                       
 
-	      if(!WithoutData){ leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "Data", "ple" );
-                                legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "Data", "ple" ); 
+	      if(!WithoutData){ leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "CMS Data", "ple" );
+                                legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "CMS Data", "ple" ); 
               }
 
 	    }
@@ -812,29 +815,58 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	  }
 								  
           //legend entry from the classification made in the loop          
-	  if(histo_top[iCut][iVar]->GetEntries()!=0)     
-             leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
-	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) 
-             leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "VV", "f" );
-	  if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) 
-             leg[iCut][iVar]->AddEntry( histo_diboson_ewk[iCut][iVar], "WW+2jet EWK", "f" );
-	  if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0) 
-                leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets", "f" );
-	  else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0)  
-                leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "f" );
-	  else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0){
-                leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets", "l" );
-                leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "l" );
+          if(!isttbar_controlplots){
+
+	    if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0) 
+	      leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets", "f" );
+	    if(histo_diboson[iCut][iVar]->GetEntries()!=0) 
+	      leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "VV", "f" );
+	    if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) 
+	      leg[iCut][iVar]->AddEntry( histo_diboson_ewk[iCut][iVar], "WW+2jet EWK", "f" );
+	    if(histo_ttbar[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()==0) 
+	      leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
+	    else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()==0)  
+	      leg[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "f" );
+	    else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0){
+	      leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "l" );
+	      leg[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "l" );
+	    }
+	    if(histo_top[iCut][iVar]->GetEntries()!=0)     
+	      leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
+	    
+	    else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0)  
+	      leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "f" );
+	    else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0){
+	      leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets", "l" );
+	      leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "l" );
+	    }
 	  }
-         if(histo_ttbar[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()==0) 
-                leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
-	  else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()==0)  
-                leg[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "f" );
-	  else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0){
-                leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "l" );
-                leg[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "l" );
-	  }
-  
+          else{
+
+	    if(histo_ttbar[iCut][iVar]->GetEntries()!=0 && histo_ttbar_herwig[iCut][iVar]->GetEntries()==0) 
+	      leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "f" );
+	    else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()==0)  
+	      leg[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "f" );
+	    else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0){
+	      leg[iCut][iVar]->AddEntry( histo_ttbar[iCut][iVar], "t#bar{t}", "l" );
+	      leg[iCut][iVar]->AddEntry( histo_ttbar_herwig[iCut][iVar], "t#bar{t} mc@nlo", "l" );
+	    }
+	    if(histo_top[iCut][iVar]->GetEntries()!=0)     
+	      leg[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
+	    if(histo_diboson[iCut][iVar]->GetEntries()!=0) 
+	      leg[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "VV", "f" );
+	    if(histo_diboson_ewk[iCut][iVar]->GetEntries()!=0) 
+	      leg[iCut][iVar]->AddEntry( histo_diboson_ewk[iCut][iVar], "WW+2jet EWK", "f" );
+	    if(histo_WJets[iCut][iVar]->GetEntries()!=0 && histo_WJets_herwig[iCut][iVar]->GetEntries()==0) 
+	      leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets", "f" );
+	    
+	    else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()==0)  
+	      leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "f" );
+	    else if(histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 && histo_WJets[iCut][iVar]->GetEntries()!=0){
+	      leg[iCut][iVar]->AddEntry( histo_WJets[iCut][iVar], "W+jets", "l" );
+	      leg[iCut][iVar]->AddEntry( histo_WJets_herwig[iCut][iVar], "W+jets Herwig", "l" );
+	    }
+	  }	    
 
 	  if(histo_top[iCut][iVar]->GetEntries()!=0)     legNoRatio[iCut][iVar]->AddEntry( histo_top[iCut][iVar], "Single Top", "f" );
 	  if(histo_diboson[iCut][iVar]->GetEntries()!=0) legNoRatio[iCut][iVar]->AddEntry( histo_diboson[iCut][iVar], "VV", "f" );
@@ -1025,7 +1057,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                   upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E same"); histos_overflow[iCut][iVar][iSampleData]->DrawCopy("E axissame"); 
             }
 
-	   upperPad->cd();        leg[iCut][iVar]->AddEntry(MCSysStat,"MC Stat","f");
+	    upperPad->cd();        leg[iCut][iVar]->AddEntry(MCSysStat,"MC Stat","f");
 	   upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->AddEntry(MCSysStat,"MC Stat","f"); 
 
           }
@@ -1042,8 +1074,8 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                     histos_overflow[iCut][iVar][iSampleggH]->SetLineWidth(3);
                     histos_overflow[iCut][iVar][iSampleggH]->SetFillStyle(0);
 
-		    //                    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleggH], Name.Data(), "l" );
-		    //                    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleggH], Name.Data(), "l" );
+		    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleggH], Name.Data(), "l" );
+		    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleggH], Name.Data(), "l" );
                                      
                     if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleggH]->Scale(SignalScaleFactor*1.);
 
@@ -1063,8 +1095,8 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                     histos_overflow[iCut][iVar][iSampleqqH]->SetLineWidth(3);
                     histos_overflow[iCut][iVar][iSampleqqH]->SetFillStyle(0);
 
-		    //               	    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleqqH], Name.Data(), "l" );
-		    //               	    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleqqH], Name.Data(), "l" );
+		    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleqqH], Name.Data(), "l" );
+		    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleqqH], Name.Data(), "l" );
  
           	    if(!NormalizeSignalToData) histos_overflow[iCut][iVar][iSampleqqH]->Scale(SignalScaleFactor*1.);
 
@@ -1079,8 +1111,8 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleRSGPythia).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleRSGPythia).c_str());
 
-		    //               	    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
-		    //               	    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
+		    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
+		    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGPythia], Name.Data(), "l" );
 
                     histos_overflow[iCut][iVar][iSampleRSGPythia]->SetLineWidth(3);
                     histos_overflow[iCut][iVar][iSampleRSGPythia]->SetFillStyle(0);
@@ -1097,8 +1129,8 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleRSGHerwig).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleRSGHerwig).c_str());
 		     
-		    //               	    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
-		    //               	    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
+		    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
+		    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleRSGHerwig], Name.Data(), "l" );
                                      
                     histos_overflow[iCut][iVar][iSampleRSGHerwig]->SetLineWidth(3);
                     histos_overflow[iCut][iVar][iSampleRSGHerwig]->SetFillStyle(0);
@@ -1109,14 +1141,16 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 		    if(!WithoutData) { upperPadNoRatio->cd(); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist same"); histos_overflow[iCut][iVar][iSampleRSGHerwig]->DrawCopy("hist axissame"); }
           }
 
+	  std::cout<<"QUI: "<<SignalGravitonName<<" "<<iSampleGraviton<<std::endl;
 	  if(SignalGravitonName!="NULL" && iSampleGraviton!=-1){ 
 
              	    TString Name ;
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleGraviton).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleGraviton).c_str());
+		    std::cout<<"string for tlegend: "<<Name<<std::endl;
  
-		    //              	    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
-		    //              	    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
+		    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
+		    legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleGraviton], Name.Data(), "l" );
                                      
                     histos_overflow[iCut][iVar][iSampleGraviton]->SetLineWidth(3);
                     histos_overflow[iCut][iVar][iSampleGraviton]->SetFillStyle(0);
@@ -1129,10 +1163,13 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
           }
           
 	  
-	  if(!WithoutData) { upperPad->cd();        leg[iCut][iVar]->Draw("same");        LatexCMS(Lumi,LeptonType,false); banner4Plot(false);
-                 	     upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true);  banner4Plot(true); 
+	  if(!WithoutData) { upperPad->cd();        leg[iCut][iVar]->Draw("same");      //  LatexCMS(Lumi,LeptonType,false); 
+	    CMS_lumi( upperPad, 4, 11 ); //banner4Plot(false);
+	    upperPadNoRatio->cd(); legNoRatio[iCut][iVar]->Draw("same"); //LatexCMS(Lumi,LeptonType,true);  
+	    CMS_lumi( upperPad, 4, 11 ); //banner4Plot(true); 
           }
-          else { upperPad->cd(); leg[iCut][iVar]->Draw("same"); LatexCMS(Lumi,LeptonType,true); banner4Plot(true); }
+          else { upperPad->cd(); leg[iCut][iVar]->Draw("same"); //LatexCMS(Lumi,LeptonType,true); 
+	    CMS_lumi( upperPad, 4, 11 ); }//banner4Plot(true); }
 
           // Ratio Plot
 	  if(!WithoutData) {
@@ -1176,7 +1213,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                             // Some style
                             RatioDataMC[iCut][iVar]->SetMinimum(0.001);
                             RatioDataMC[iCut][iVar]->SetMaximum(2.);			
-			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitle("Data / Sim");
+			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitle("Data / MC");
 			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitleSize(0.105);
 			    RatioDataMC[iCut][iVar]->GetYaxis()->SetLabelSize(0.100);
 			    RatioDataMC[iCut][iVar]->GetYaxis()->SetTitleOffset(0.48);
@@ -1189,7 +1226,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                             // Some style
                             RatioDataMC_herwig[iCut][iVar]->SetMinimum(0.001);
                             RatioDataMC_herwig[iCut][iVar]->SetMaximum(2.);			
-			    RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetTitle("Data / Sim");
+			    RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetTitle("Data / MC");
 			    RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetTitleSize(0.105);
 			    RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetLabelSize(0.100);
 			    RatioDataMC_herwig[iCut][iVar]->GetYaxis()->SetTitleOffset(0.48);
@@ -1202,7 +1239,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                             // Some style
                             RatioDataMC_error[iCut][iVar]->SetMinimum(0.001);
                             RatioDataMC_error[iCut][iVar]->SetMaximum(2.);		      
-			    RatioDataMC_error[iCut][iVar]->GetYaxis()->SetTitle("Data / Sim");
+			    RatioDataMC_error[iCut][iVar]->GetYaxis()->SetTitle("Data / MC");
 			    RatioDataMC_error[iCut][iVar]->GetYaxis()->SetTitleSize(0.105);
 			    RatioDataMC_error[iCut][iVar]->GetYaxis()->SetLabelSize(0.100);
 			    RatioDataMC_error[iCut][iVar]->GetYaxis()->SetTitleOffset(0.48);
@@ -1214,7 +1251,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                             // Some style
                             MCUncertaintyBand[iCut][iVar]->SetMinimum(0.001);
                             MCUncertaintyBand[iCut][iVar]->SetMaximum(2.);		      
-			    MCUncertaintyBand[iCut][iVar]->GetYaxis()->SetTitle("Data / Sim");
+			    MCUncertaintyBand[iCut][iVar]->GetYaxis()->SetTitle("Data / MC");
 			    MCUncertaintyBand[iCut][iVar]->GetYaxis()->SetTitleSize(0.105);
 			    MCUncertaintyBand[iCut][iVar]->GetYaxis()->SetLabelSize(0.100);
 			    MCUncertaintyBand[iCut][iVar]->GetYaxis()->SetTitleOffset(0.48);
@@ -1225,7 +1262,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 
                             MCUncertaintyBand_herwig[iCut][iVar]->SetMinimum(0.001);
                             MCUncertaintyBand_herwig[iCut][iVar]->SetMaximum(2.);		      
-			    MCUncertaintyBand_herwig[iCut][iVar]->GetYaxis()->SetTitle("Data / Sim");
+			    MCUncertaintyBand_herwig[iCut][iVar]->GetYaxis()->SetTitle("Data / MC");
 			    MCUncertaintyBand_herwig[iCut][iVar]->GetYaxis()->SetTitleSize(0.105);
 			    MCUncertaintyBand_herwig[iCut][iVar]->GetYaxis()->SetLabelSize(0.100);
 			    MCUncertaintyBand_herwig[iCut][iVar]->GetYaxis()->SetTitleOffset(0.48);
@@ -1264,7 +1301,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                              legRatio->AddEntry(MCUncertaintyBand[iCut][iVar],"MC stat","f");
 			     legRatio->SetFillColor(0);
 			     legRatio->SetFillStyle(3001);
-                             legRatio->Draw("same");
+			     //                             legRatio->Draw("same");
                              lowerPad->Update();
 
                              // Kolmogorov-Smirnov and chi2 test:
@@ -1275,7 +1312,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
  	                     TLatex* tt         = new TLatex(0.15,0.85,probatext);
  	                     tt->SetNDC();
 			     tt->SetTextSize(0.075);
-			     tt->AppendPad("same");
+			     //			     tt->AppendPad("same");
 
 			    }
 
@@ -1315,7 +1352,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
  	                     TLatex* tt         = new TLatex(0.15,0.85,probatext);
  		             tt->SetNDC();
 			     tt->SetTextSize(0.075);
-			     tt->AppendPad("same");
+			     //			     tt->AppendPad("same");
 
 			    }
                    
@@ -1375,7 +1412,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 			    legRatio->SetNColumns(2);
                             legRatio->AddEntry(RatioDataMC[iCut][iVar],"Data/MC Pythia","l");
                             legRatio->AddEntry(RatioDataMC_herwig[iCut][iVar],"Data/MC Herwig","l");
-                            legRatio->Draw("same");
+			    //                            legRatio->Draw("same");
 	                    lowerPad->Update();
 			    }
 			    /////////////////////////////////////////////////////////////
@@ -1440,7 +1477,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 			    legRatio->SetNColumns(2);
                             legRatio->AddEntry(RatioDataMC[iCut][iVar],"Data/MC Pythia","l");
                             legRatio->AddEntry(RatioDataMC_herwig[iCut][iVar],"Data/MC Herwig","l");
-                            legRatio->Draw("same");
+			    //                            legRatio->Draw("same");
 	                    lowerPad->Update();
 			    }
 
@@ -1494,10 +1531,10 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                               RatioDataMC[iCut][iVar]->Draw("PEsame");
 
    	                      TLegend* legRatio = new TLegend (0.37, 0.32, 0.63, 0.45);
-                              legRatio->AddEntry(MCUncertaintyBand[iCut][iVar],"MC stat","f");
+			      legRatio->AddEntry(MCUncertaintyBand[iCut][iVar],"MC stat","f");
 			      legRatio->SetFillColor(0);
 			      legRatio->SetFillStyle(3001);
-                              legRatio->Draw("same");
+			      //                              legRatio->Draw("same");
 
                               // Kolmogorov-Smirnov and chi2 test:
                               double kTest        = histos_overflow[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
@@ -1507,7 +1544,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
   	                      TLatex* tt         = new TLatex(0.15,0.85,probatext);
  		              tt->SetNDC();
 			      tt->SetTextSize(0.075);
-			      tt->AppendPad("same");
+			      //			      tt->AppendPad("same");
 
 			   }
                            else if (histo_WJets[iCut][iVar]->GetEntries()==0 && histo_WJets_herwig[iCut][iVar]->GetEntries()!=0 &&  !isHerwig_ttbar){
@@ -1516,10 +1553,10 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
                               RatioDataMC_herwig[iCut][iVar]->Draw("PEsame");
 
    	                      TLegend* legRatio = new TLegend (0.37, 0.32, 0.63, 0.45);
-                              legRatio->AddEntry(MCUncertaintyBand[iCut][iVar],"MC stat","f");
+			      legRatio->AddEntry(MCUncertaintyBand[iCut][iVar],"MC stat","f");
 			      legRatio->SetFillColor(0);
 			      legRatio->SetFillStyle(3001);
-                              legRatio->Draw("same");
+			      //                              legRatio->Draw("same");
 
                               // Kolmogorov-Smirnov and chi2 test:
                               double kTest        = histos_overflow[iCut][iVar][iSampleData]->KolmogorovTest(histoSum[iCut][iVar]);
@@ -1529,7 +1566,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
   	                      TLatex* tt         = new TLatex(0.15,0.85,probatext);
  		              tt->SetNDC();
 			      tt->SetTextSize(0.075);
-			      tt->AppendPad("same");
+			      //			      tt->AppendPad("same");
 
 			     }
 
@@ -1548,7 +1585,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 			      legRatio->SetNColumns(2);
                               legRatio->AddEntry(RatioDataMC[iCut][iVar],"Data/MC Pythia","l");
                               legRatio->AddEntry(RatioDataMC_herwig[iCut][iVar],"Data/MC Herwig","l");
-	                      legRatio->Draw("same");
+			      //	                      legRatio->Draw("same");
 			     }
 
                              else if(histo_ttbar_herwig[iCut][iVar]->GetEntries()!=0 && histo_ttbar[iCut][iVar]->GetEntries()!=0 && isHerwig_ttbar){
