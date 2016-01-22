@@ -33,11 +33,12 @@
 
 ## SB 
 
-#####issignal==1 && v_pt>150 && pfMET>40 && l_pt>30 && ungroomed_jet_pt>150 && nBTagJet_medium <1 && jet_tau2tau1<0.6 && ((jet_mass_pr > 40 && jet_mass_pr < 65) || (jet_mass_pr>135 && jet_mass_pr<150))
+#####issignal==1 && v_pt>200 && pfMET>40 && l_pt>30 && ungroomed_jet_pt>200 && nBTagJet_medium <1 && ((jet_mass_pr > 40 && jet_mass_pr < 65) || (jet_mass_pr>135 && jet_mass_pr<150)) 
+#&& jet_tau2tau1<0.6
 
 ## SR
 
-####issignal==1 && v_pt>150 && pfMET>40 && l_pt>30 && ungroomed_jet_pt>150 && nBTagJet_medium <1 && (jet_mass_pr > 65 && jet_mass_pr < 105) && jet_tau2tau1<0.6
+issignal==1 && v_pt>200 && pfMET>40 && l_pt>30 && ungroomed_jet_pt>200 && nBTagJet_medium <1 && (jet_mass_pr > 65 && jet_mass_pr < 105) && jet_tau2tau1<0.6
 
 #issignal==1 && v_pt>200 && pfMET>40 && l_pt>53 && ungroomed_jet_pt>200 && nBTagJet_medium <1 && jet_mass_pr > 65 && jet_mass_pr < 105 && jet_tau2tau1<0.6
 
@@ -49,7 +50,7 @@
 
 ######v_pt>200 && pfMET>40 && l_pt>53 && ungroomed_jet_pt>200 && nBTagJet_medium > 0 && jet_mass_pr > 40 && jet_mass_pr < 150
 
-v_pt>150 && pfMET>40 && l_pt>30 && ungroomed_jet_pt>150 && nBTagJet_medium > 0 && jet_mass_pr > 40 && jet_mass_pr < 150
+#v_pt>200 && pfMET>40 && l_pt>30 && ungroomed_jet_pt>200 && nBTagJet_medium > 0 && jet_mass_pr > 40 && jet_mass_pr < 150
 
 #v_pt>200 && pfMET>40 && l_pt>30 && ungroomed_jet_pt>200 && nBTagJet_medium > 0 && jet_mass_pr > 40 && jet_mass_pr < 150
 
