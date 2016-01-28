@@ -2489,10 +2489,10 @@ RooAbsPdf* MakeGeneralPdf(RooWorkspace* workspace, const std::string & label, co
         if(model == "2Gaus_ErfExp"){
 
 	  std::cout<< "########### 2Gaus + Erf*Exp for mj fit  ############"<<std::endl;
-	  //          double mean1_tmp      = 8.3141e+01; 
-	  //          double mean1_tmp      = 80; 
-	  //          double mean1_tmp      = 85; 
-          double mean1_tmp      = 95; 
+	  double mean1_tmp      = 8.3141e+01; 
+	  //	  double mean1_tmp      = 80; 
+	  //double mean1_tmp      = 85; 
+	  //          double mean1_tmp      = 95; 
           double deltamean_tmp  = 6.9129e+00; 
           double sigma1_tmp     = 7.5145e+00; 
           double scalesigma_tmp = 3.6819e+00;           

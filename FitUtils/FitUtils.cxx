@@ -1682,8 +1682,8 @@ void get_WJets_mlvj_correction_sb_lo_to_signal_region(RooWorkspace* workspace,co
     RooRealVar* rrv_delta_c = new RooRealVar(("rrv_delta_c_Exp"+label+"_"+mlvj_model+"_"+channel+mass_spectrum).c_str(),
                             ("rrv_delta_c_Exp"+label+"_"+mlvj_model+"_"+channel+mass_spectrum).c_str(),
                             workspace->var(("rrv_c_Exp"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal(),
-                            workspace->var(("rrv_c_Exp"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal()-4*rrv_c_sb->getError(),
-			    workspace->var(("rrv_c_Exp"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal()+4*rrv_c_sb->getError());
+                            workspace->var(("rrv_c_Exp"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal()-3*rrv_c_sb->getError(),
+			    workspace->var(("rrv_c_Exp"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal()+3*rrv_c_sb->getError());
     rrv_delta_c->Print();
 
     correct_factor_pdf = new RooExponential("correct_factor_pdf","correct_factor_pdf",*rrv_x,*rrv_delta_c);
@@ -1707,13 +1707,13 @@ void get_WJets_mlvj_correction_sb_lo_to_signal_region(RooWorkspace* workspace,co
 
     RooRealVar* rrv_delta_c = new RooRealVar(("rrv_delta_c_ExpN"+label+"_"+channel+mass_spectrum).c_str(),("rrv_delta_c_ExpN"+label+"_"+channel+mass_spectrum).c_str(),
                                   workspace->var(("rrv_c_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal(),
-                                  workspace->var(("rrv_c_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal()-8*rrv_c_sb->getError(),
-				  workspace->var(("rrv_c_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal()+8*rrv_c_sb->getError());
+                                  workspace->var(("rrv_c_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal()-3*rrv_c_sb->getError(),
+				  workspace->var(("rrv_c_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_c_sb->getVal()+3*rrv_c_sb->getError());
 
     RooRealVar* rrv_delta_n = new RooRealVar(("rrv_delta_n_ExpN"+label+"_"+channel+mass_spectrum).c_str(),("rrv_delta_n_ExpN"+label+"_"+channel+mass_spectrum).c_str(),
                                   workspace->var(("rrv_n_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_n_sb->getVal(),
-                                  workspace->var(("rrv_n_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_n_sb->getVal()-8*rrv_n_sb->getError(),
-				  workspace->var(("rrv_n_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_n_sb->getVal()+8*rrv_n_sb->getError());
+                                  workspace->var(("rrv_n_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_n_sb->getVal()-3*rrv_n_sb->getError(),
+				  workspace->var(("rrv_n_ExpN"+label+"_signal_region"+mlvj_model+"_"+channel+mass_spectrum).c_str())->getVal()-rrv_n_sb->getVal()+3*rrv_n_sb->getError());
 
 
     //    RooFormulaVar* rrv_c_sr      = new RooFormulaVar(("rrv_c_sr"+label+mlvj_model+"_"+channel+mass_spectrum).c_str(),      "@0+@1",RooArgList(*rrv_c_sb,*rrv_delta_c));
