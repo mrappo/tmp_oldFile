@@ -106,7 +106,7 @@ class doFit_wj_and_wlvj:
         self.mlvj_shape["WJets0"]  = fit_model;
         self.mlvj_shape["WJets1"]  = fit_model;
         self.mlvj_shape["WJets01"] = fit_model_alter;
-        self.mlvj_shape["RSGraviton"]     = "CB_v1";
+        self.mlvj_shape["BulkGraviton"]     = "CB_v1";
         self.mlvj_shape["vbfH"]    = "SCB_Exp_v1";
 
         self.tmpFile = TFile("tmp2.root","RECREATE");
@@ -115,13 +115,13 @@ class doFit_wj_and_wlvj:
         self.channel = in_channel;
         self.higgs_sample = in_higgs_sample;
 
-        if in_higgs_sample == "RSGraviton600":  self.vbfhiggs_sample = "vbfH600";
-        if in_higgs_sample == "RSGraviton700":  self.vbfhiggs_sample = "vbfH700";
-        if in_higgs_sample == "RSGraviton800":  self.vbfhiggs_sample = "vbfH800";
-        if in_higgs_sample == "RSGraviton900":  self.vbfhiggs_sample = "vbfH900";
-        if in_higgs_sample == "RSGraviton1000": self.vbfhiggs_sample = "vbfH1000";
-        if in_higgs_sample == "RSGraviton1500": self.vbfhiggs_sample = "vbfH1500";
-        if in_higgs_sample == "RSGraviton2000": self.vbfhiggs_sample = "vbfH2000";
+        if in_higgs_sample == "BulkGraviton600":  self.vbfhiggs_sample = "vbfH600";
+        if in_higgs_sample == "BulkGraviton700":  self.vbfhiggs_sample = "vbfH700";
+        if in_higgs_sample == "BulkGraviton800":  self.vbfhiggs_sample = "vbfH800";
+        if in_higgs_sample == "BulkGraviton900":  self.vbfhiggs_sample = "vbfH900";
+        if in_higgs_sample == "BulkGraviton1000": self.vbfhiggs_sample = "vbfH1000";
+        if in_higgs_sample == "BulkGraviton1500": self.vbfhiggs_sample = "vbfH1500";
+        if in_higgs_sample == "BulkGraviton2000": self.vbfhiggs_sample = "vbfH2000";
 
         print "########################################################################################"
         print "######## define class: binning, variables, cuts, files and nuissance parameters ########"
@@ -271,11 +271,11 @@ class doFit_wj_and_wlvj:
 
         if self.wtagger_label=="HP" :
             if self.channel=="el":
-                self.wtagger_cut=0.6 ; self.wtagger_cut_min=0. ;
+                self.wtagger_cut=0.45 ; self.wtagger_cut_min=0. ;
             if self.channel=="mu":
-                self.wtagger_cut=0.6 ; self.wtagger_cut_min=0. ;
+                self.wtagger_cut=0.45 ; self.wtagger_cut_min=0. ;
             if self.channel=="em":
-                self.wtagger_cut=0.6 ; self.wtagger_cut_min=0. ;
+                self.wtagger_cut=0.45 ; self.wtagger_cut_min=0. ;
         if self.wtagger_label=="LP":
             self.wtagger_cut=0.75 ;
             self.wtagger_cut_min=0.5 ;
@@ -287,36 +287,36 @@ class doFit_wj_and_wlvj:
 	if self.channel=="mu" and self.wtagger_label=="HP":
           if options.pseudodata == 1:
            self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",1.);
-           self.rrv_wtagger_eff_reweight_forT.setError(0.06);
+           self.rrv_wtagger_eff_reweight_forT.setError(0.042);
            self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.);
-           self.rrv_wtagger_eff_reweight_forV.setError(0.097*self.rrv_wtagger_eff_reweight_forV.getVal());
+           self.rrv_wtagger_eff_reweight_forV.setError(0.144*self.rrv_wtagger_eff_reweight_forV.getVal());
           elif options.pseudodata == 0 and  options.jetBin == "_2jet":
-           self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",1.128);
-           self.rrv_wtagger_eff_reweight_forT.setError(0.338);
-           self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.93);
-           self.rrv_wtagger_eff_reweight_forV.setError(0.097*self.rrv_wtagger_eff_reweight_forV.getVal());
+           self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",0.850);
+           self.rrv_wtagger_eff_reweight_forT.setError(0.042);
+           self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.692);
+           self.rrv_wtagger_eff_reweight_forV.setError(0.144*self.rrv_wtagger_eff_reweight_forV.getVal());
           elif options.pseudodata == 0 and not options.jetBin == "_2jet":
-           self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",0.891);
-           self.rrv_wtagger_eff_reweight_forT.setError(0.046*self.rrv_wtagger_eff_reweight_forT.getVal());
-           self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.021);
-           self.rrv_wtagger_eff_reweight_forV.setError(0.054*self.rrv_wtagger_eff_reweight_forV.getVal());
+           self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",0.850);
+           self.rrv_wtagger_eff_reweight_forT.setError(0.042*self.rrv_wtagger_eff_reweight_forT.getVal());
+           self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.692);
+           self.rrv_wtagger_eff_reweight_forV.setError(0.144*self.rrv_wtagger_eff_reweight_forV.getVal());
                                                                                                                           
         if self.channel=="el" and self.wtagger_label=="HP":
           if options.pseudodata == 1:
            self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",1.);
-           self.rrv_wtagger_eff_reweight_forT.setError(0.08);
+           self.rrv_wtagger_eff_reweight_forT.setError(0.042);
            self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.);
-           self.rrv_wtagger_eff_reweight_forV.setError(0.097*self.rrv_wtagger_eff_reweight_forV.getVal());
+           self.rrv_wtagger_eff_reweight_forV.setError(0.144*self.rrv_wtagger_eff_reweight_forV.getVal());
           elif options.pseudodata == 0 and options.jetBin == "_2jet":
-           self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",0.96);
-           self.rrv_wtagger_eff_reweight_forT.setError(0.369);
-           self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.93);
-           self.rrv_wtagger_eff_reweight_forV.setError(0.097*self.rrv_wtagger_eff_reweight_forV.getVal());
+           self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",0.850);
+           self.rrv_wtagger_eff_reweight_forT.setError(0.042);
+           self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.692);
+           self.rrv_wtagger_eff_reweight_forV.setError(0.144*self.rrv_wtagger_eff_reweight_forV.getVal());
           elif options.pseudodata == 0 and not  options.jetBin == "_2jet":
-           self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",0.837);
-           self.rrv_wtagger_eff_reweight_forT.setError(0.081*self.rrv_wtagger_eff_reweight_forT.getVal());
-           self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",1.043);
-           self.rrv_wtagger_eff_reweight_forV.setError(0.098*self.rrv_wtagger_eff_reweight_forV.getVal());
+           self.rrv_wtagger_eff_reweight_forT = RooRealVar("rrv_wtagger_eff_reweight_forT","rrv_wtagger_eff_reweight_forT",0.850);
+           self.rrv_wtagger_eff_reweight_forT.setError(0.042*self.rrv_wtagger_eff_reweight_forT.getVal());
+           self.rrv_wtagger_eff_reweight_forV = RooRealVar("rrv_wtagger_eff_reweight_forV","rrv_wtagger_eff_reweight_forV",0.692);
+           self.rrv_wtagger_eff_reweight_forV.setError(0.144*self.rrv_wtagger_eff_reweight_forV.getVal());
                                                   
         if self.channel=="em" and self.wtagger_label=="HP":
           if options.pseudodata == 1:
@@ -390,20 +390,20 @@ class doFit_wj_and_wlvj:
         if options.jetBin == "_2jet" : 
          self.file_rlt_txt                   = self.rlt_DIR+"other_hwwlvj_%s_%s%s_%02d_%02d.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
          self.file_rlt_root                  = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_workspace.root"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
-         self.file_datacard_unbin_RSGravitonvbfH    = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
-         self.file_datacard_unbin_RSGraviton        = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
+         self.file_datacard_unbin_BulkGravitonvbfH    = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
+         self.file_datacard_unbin_BulkGraviton        = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
          self.file_datacard_unbin_vbfH       = self.rlt_DIR+"hwwlvj_%s_%s%s_vbfH_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
-         self.file_datacard_counting_RSGravitonvbfH = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
-         self.file_datacard_counting_RSGraviton     = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
+         self.file_datacard_counting_BulkGravitonvbfH = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
+         self.file_datacard_counting_BulkGraviton     = self.rlt_DIR+"hwwlvj_%s_%s%s_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
          self.file_datacard_counting_vbfH    = self.rlt_DIR+"hwwlvj_%s_%s%s_vbfH_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.jetBin,options.cprime,options.BRnew)
         else:
          self.file_rlt_txt                   = self.rlt_DIR+"other_hwwlvj_%s_%s_%02d_%02d.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
          self.file_rlt_root                  = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_workspace.root"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
-         self.file_datacard_unbin_RSGravitonvbfH    = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
-         self.file_datacard_unbin_RSGraviton        = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
+         self.file_datacard_unbin_BulkGravitonvbfH    = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
+         self.file_datacard_unbin_BulkGraviton        = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
          self.file_datacard_unbin_vbfH       = self.rlt_DIR+"hwwlvj_%s_%s_vbfH_%02d_%02d_unbin.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
-         self.file_datacard_counting_RSGravitonvbfH = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
-         self.file_datacard_counting_RSGraviton     = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
+         self.file_datacard_counting_BulkGravitonvbfH = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
+         self.file_datacard_counting_BulkGraviton     = self.rlt_DIR+"hwwlvj_%s_%s_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
          self.file_datacard_counting_vbfH    = self.rlt_DIR+"hwwlvj_%s_%s_vbfH_%02d_%02d_counting.txt"%(self.higgs_sample,self.channel,options.cprime,options.BRnew)
             
         self.file_out = open(self.file_rlt_txt,"w");
@@ -421,7 +421,7 @@ class doFit_wj_and_wlvj:
         self.color_palet["WW_EWK"] = 6;
         self.color_palet["STop"]   = 7;
         self.color_palet["TTbar"]  = 210;
-        self.color_palet["RSGraviton"]    = 1;
+        self.color_palet["BulkGraviton"]    = 1;
         self.color_palet["vbfH"]   = 12;
         self.color_palet["Signal"] = 1;
         self.color_palet["Uncertainty"] = 1;
@@ -436,7 +436,7 @@ class doFit_wj_and_wlvj:
 
 	#met cut:el 70; mu: 50
         self.pfMET_cut = 40;
-        self.lpt_cut   = 30;
+        self.lpt_cut   = 40;
         self.vpt_cut   = 200;
 #        self.pfMET_cut = 40;
 #        self.lpt_cut   = 53;
@@ -444,8 +444,8 @@ class doFit_wj_and_wlvj:
         if self.channel=="el":
 #            self.pfMET_cut = 80; 
 #            self.lpt_cut   = 120;        
-            self.pfMET_cut = 50; 
-            self.lpt_cut   = 35;        
+            self.pfMET_cut = 80; 
+            self.lpt_cut   = 45;        
         #deltaPhi_METj cut
         self.deltaPhi_METj_cut = 2.0;
         self.top_veto_had = 200 ;
@@ -463,11 +463,11 @@ class doFit_wj_and_wlvj:
         self.datadriven_alpha_WJets_counting = -1;
 
         #uncertainty for datacard
-        self.lumi_uncertainty        = 0.026;
-        self.XS_STop_uncertainty     = 0.30 ;
-        self.XS_VV_uncertainty       = 0.20 ;
+        self.lumi_uncertainty        = 0.046;
+        self.XS_STop_uncertainty     = 0.05 ;
+        self.XS_VV_uncertainty       = 0.03 ;
         self.XS_WW_EWK_uncertainty   = 0.20 ;        
-        self.XS_TTbar_uncertainty    = 0.07 ;
+        self.XS_TTbar_uncertainty    = 0.084 ;
         self.XS_TTbar_NLO_uncertainty = 0.063 ;# from AN-12-368 table8
         self.XS_STop_NLO_uncertainty  = 0.05 ; # from AN-12-368 table8
         self.XS_VV_NLO_uncertainty    = 0.10 ; # from AN-12-368 table8
@@ -487,40 +487,53 @@ class doFit_wj_and_wlvj:
         self.QCDscale_qqH_ACCEPT = 0.0;
 
         # from twiki https:#twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageAt8TeV,  
-        if self.higgs_sample == "RSGraviton600": 
+        if self.higgs_sample == "BulkGraviton600": 
             self.QCDscale_qqH         = 0.007 ;
             self.pdf_gg               = 0.091 ;
             self.pdf_qqbar            = 0.050 ;
             self.QCDscale_ggH_ACCEPT  = 0.036 ;
             self.QCDscale_qqH_ACCEPT  = 0.007 ;
+            self.XS_BulkG_uncertainty  = 0.090 ;
 
-        elif self.higgs_sample == "RSGraviton700": 
+        elif self.higgs_sample == "BulkGraviton700": 
             self.QCDscale_qqH         = 0.008;
             self.pdf_gg               = 0.101;
             self.pdf_qqbar            = 0.042
             self.QCDscale_ggH_ACCEPT  = 0.038;
             self.QCDscale_qqH_ACCEPT  = 0.008
+            self.XS_BulkG_uncertainty  = 0.100 ;
 
-        elif self.higgs_sample == "RSGraviton800": 
+        elif self.higgs_sample == "BulkGraviton750": 
+            self.QCDscale_qqH         = 0.008;
+            self.pdf_gg               = 0.101;
+            self.pdf_qqbar            = 0.042
+            self.QCDscale_ggH_ACCEPT  = 0.038;
+            self.QCDscale_qqH_ACCEPT  = 0.008
+            self.XS_BulkG_uncertainty  = 0.105 ;
+
+        elif self.higgs_sample == "BulkGraviton800": 
             self.QCDscale_qqH        = 0.010;
             self.pdf_gg              = 0.106;
             self.pdf_qqbar           = 0.047;
             self.QCDscale_ggH_ACCEPT = 0.040;
             self.QCDscale_qqH_ACCEPT = 0.009
+            self.XS_BulkG_uncertainty  = 0.110 ;
 
-        elif self.higgs_sample == "RSGraviton900": 
+        elif self.higgs_sample == "BulkGraviton900": 
             self.QCDscale_qqH        = 0.012
             self.pdf_gg              = 0.111;
             self.pdf_qqbar           = 0.053
             self.QCDscale_ggH_ACCEPT = 0.042;
             self.QCDscale_qqH_ACCEPT = 0.010
+            self.XS_BulkG_uncertainty  = 0.120 ;
 
-        elif self.higgs_sample == "RSGraviton1000": 
+        elif self.higgs_sample == "BulkGraviton1000": 
             self.QCDscale_qqH        = 0.013;
             self.pdf_gg              = 0.121;
             self.pdf_qqbar           = 0.059; 
             self.QCDscale_ggH_ACCEPT = 0.046;
             self.QCDscale_qqH_ACCEPT = 0.011
+            self.XS_BulkG_uncertainty  = 0.130 ;
 
         ### interference effect 
         self.interference_ggH_uncertainty  = 0.10;
@@ -547,20 +560,20 @@ class doFit_wj_and_wlvj:
         #normalization uncertainty from lep scale
         if self.channel == "mu":
          self.WJets_normalization_uncertainty_from_lep_scale  = 1.000;        
-         self.VV_normalization_uncertainty_from_lep_scale     = 1.083;
-         self.WW_EWK_normalization_uncertainty_from_lep_scale = 1.008;        
-         self.STop_normalization_uncertainty_from_lep_scale   = 1.000;
-         self.TTbar_normalization_uncertainty_from_lep_scale  = 1.008;
-         self.ggH_normalization_uncertainty_from_lep_scale    = 1.028;
-         self.vbf_normalization_uncertainty_from_lep_scale    = 1.015;
+         self.VV_normalization_uncertainty_from_lep_scale     = 1.007;
+         self.WW_EWK_normalization_uncertainty_from_lep_scale = 1.007;        
+         self.STop_normalization_uncertainty_from_lep_scale   = 1.007;
+         self.TTbar_normalization_uncertainty_from_lep_scale  = 1.007;
+         self.ggH_normalization_uncertainty_from_lep_scale    = 1.007;
+         self.vbf_normalization_uncertainty_from_lep_scale    = 1.007;
         elif self.channel == "el":
          self.WJets_normalization_uncertainty_from_lep_scale  = 1.000;        
-         self.VV_normalization_uncertainty_from_lep_scale     = 1.068;
-         self.WW_EWK_normalization_uncertainty_from_lep_scale = 1.006;        
-         self.STop_normalization_uncertainty_from_lep_scale   = 1.000;
-         self.TTbar_normalization_uncertainty_from_lep_scale  = 1.000;
-         self.ggH_normalization_uncertainty_from_lep_scale    = 1.014;
-         self.vbf_normalization_uncertainty_from_lep_scale    = 1.004;
+         self.VV_normalization_uncertainty_from_lep_scale     = 1.002;
+         self.WW_EWK_normalization_uncertainty_from_lep_scale = 1.002;        
+         self.STop_normalization_uncertainty_from_lep_scale   = 1.002;
+         self.TTbar_normalization_uncertainty_from_lep_scale  = 1.002;
+         self.ggH_normalization_uncertainty_from_lep_scale    = 1.002;
+         self.vbf_normalization_uncertainty_from_lep_scale    = 1.002;
         elif self.channel == "em":
          self.WJets_normalization_uncertainty_from_lep_scale  = 1.000;        
          self.VV_normalization_uncertainty_from_lep_scale     = 1.075;
@@ -574,19 +587,19 @@ class doFit_wj_and_wlvj:
         #normalization uncertainty from lep_res
         if self.channel == "mu":
          self.WJets_normalization_uncertainty_from_lep_res  = 1.000;        
-         self.VV_normalization_uncertainty_from_lep_res     = 1.016;
-         self.WW_EWK_normalization_uncertainty_from_lep_res = 1.000;        
-         self.STop_normalization_uncertainty_from_lep_res   = 1.000;
-         self.TTbar_normalization_uncertainty_from_lep_res  = 1.000;
+         self.VV_normalization_uncertainty_from_lep_res     = 1.001;
+         self.WW_EWK_normalization_uncertainty_from_lep_res = 1.001;        
+         self.STop_normalization_uncertainty_from_lep_res   = 1.001;
+         self.TTbar_normalization_uncertainty_from_lep_res  = 1.001;
          self.ggH_normalization_uncertainty_from_lep_res    = 1.001;
-         self.vbf_normalization_uncertainty_from_lep_res    = 1.000;        
+         self.vbf_normalization_uncertainty_from_lep_res    = 1.001;        
         elif self.channel == "el":
          self.WJets_normalization_uncertainty_from_lep_res  = 1.000;        
-         self.VV_normalization_uncertainty_from_lep_res     = 1.000;
-         self.WW_EWK_normalization_uncertainty_from_lep_res = 1.000;        
-         self.STop_normalization_uncertainty_from_lep_res   = 1.000;
-         self.TTbar_normalization_uncertainty_from_lep_res  = 1.000;
-         self.ggH_normalization_uncertainty_from_lep_res    = 1.015;
+         self.VV_normalization_uncertainty_from_lep_res     = 1.001;
+         self.WW_EWK_normalization_uncertainty_from_lep_res = 1.001;        
+         self.STop_normalization_uncertainty_from_lep_res   = 1.001;
+         self.TTbar_normalization_uncertainty_from_lep_res  = 1.001;
+         self.ggH_normalization_uncertainty_from_lep_res    = 1.001;
          self.vbf_normalization_uncertainty_from_lep_res    = 1.001;        
         elif self.channel == "em":
          self.WJets_normalization_uncertainty_from_lep_res  = 1.000;        
@@ -599,25 +612,25 @@ class doFit_wj_and_wlvj:
            
         #normalization uncertainty from btag
         self.WJets_normalization_uncertainty_from_btag  = 1.000;        
-        self.VV_normalization_uncertainty_from_btag     = 1.006;
-        self.WW_EWK_normalization_uncertainty_from_btag = 1.007;        
-        self.STop_normalization_uncertainty_from_btag   = 1.033;
-        self.TTbar_normalization_uncertainty_from_btag  = 1.017;
-        self.ggH_normalization_uncertainty_from_btag    = 1.005;
-        self.vbf_normalization_uncertainty_from_btag    = 1.002;        
+        self.VV_normalization_uncertainty_from_btag     = 1.000;
+        self.WW_EWK_normalization_uncertainty_from_btag = 1.000;        
+        self.STop_normalization_uncertainty_from_btag   = 1.000;
+        self.TTbar_normalization_uncertainty_from_btag  = 1.000;
+        self.ggH_normalization_uncertainty_from_btag    = 1.002;
+        self.vbf_normalization_uncertainty_from_btag    = 1.000;        
 
         #el and mu trigger and eff uncertainty, AN2012_368_v5 12.3
         self.lep_trigger_uncertainty = 0.01;
         self.lep_eff_uncertainty     = 0.02;
 
         #### increase shape uncertainty
-        self.shape_para_error_WJets0 = 2.0;
+        self.shape_para_error_WJets0 = 1.4;
         self.shape_para_error_TTbar  = 2.0;
 
-        if self.higgs_sample == "RSGraviton600" or self.higgs_sample == "RSGraviton700":
-            self.shape_para_error_alpha = 2.0;
+        if self.higgs_sample == "BulkGraviton600" or self.higgs_sample == "BulkGraviton700":
+            self.shape_para_error_alpha = 1.4;
         else:
-            self.shape_para_error_alpha = 2.0;
+            self.shape_para_error_alpha = 1.4;
         
         # shape parameter uncertainty
         self.FloatingParams = RooArgList("floatpara_list");
@@ -822,9 +835,9 @@ class doFit_wj_and_wlvj:
          if(self.workspace4fit_.var("rrv_number_dataset_signal_region_%smassvbf_jes_up_%s_mj"%(self.higgs_sample,self.channel)) and self.workspace4fit_.var("rrv_number_dataset_signal_region_%smassvbf_jes_up_%s_mj"%(self.higgs_sample,self.channel)) and self.workspace4fit_.var("rrv_number_dataset_signal_region_%smassvbf_jer_up_%s_mj"%(self.higgs_sample,self.channel)) and self.workspace4fit_.var("rrv_number_dataset_signal_region_%smassvbf_jes_dn_%s_mj"%(self.higgs_sample,self.channel)) and self.workspace4fit_.var("rrv_number_dataset_signal_region_%smassvbf_jer_%s_mj"%(self.higgs_sample,self.channel))):    
 
             self.ggH_normalization_uncertainty_from_jet_scale = ((TMath.Abs(rrv_ggHmassvbf_jes_up.getVal()-rrv_ggH.getVal())+TMath.Abs(rrv_ggHmassvbf_jes_dn.getVal()-rrv_ggH.getVal() ) )/2.)/rrv_ggH.getVal();         
-            print "Total Uncertainty on RSGraviton due to jes: uncertainty ",self.ggH_normalization_uncertainty_from_jet_scale;
+            print "Total Uncertainty on BulkGraviton due to jes: uncertainty ",self.ggH_normalization_uncertainty_from_jet_scale;
             self.ggH_normalization_uncertainty_from_jet_res = ((TMath.Abs(rrv_ggHmassvbf_jer_up.getVal()-rrv_ggH.getVal())+TMath.Abs(rrv_ggHmassvbf_jer_dn.getVal()-rrv_ggH.getVal() )+TMath.Abs(rrv_ggHmassvbf_jer.getVal()-rrv_ggH.getVal() ) )/3.)/rrv_ggH.getVal();         
-            print "Total Uncertainty on RSGraviton due to jer: uncertainty ",self.ggH_normalization_uncertainty_from_jet_res;
+            print "Total Uncertainty on BulkGraviton due to jer: uncertainty ",self.ggH_normalization_uncertainty_from_jet_res;
 
 
          #jet mass uncertainty on vbf normalizatio
@@ -868,10 +881,10 @@ class doFit_wj_and_wlvj:
         rdataset_mj     = RooDataSet("rdataset"+label+"_"+self.channel+"_mj","rdataset"+label+"_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
         rdataset4fit_mj = RooDataSet("rdataset4fit"+label+"_"+self.channel+"_mj","rdataset4fit"+label+"_"+self.channel+"_mj",RooArgSet(rrv_mass_j,rrv_weight),RooFit.WeightVar(rrv_weight) );
 
-        if TString(label).Contains("RSGraviton") or TString(label).Contains("vbfH"):
+        if TString(label).Contains("BulkGraviton") or TString(label).Contains("vbfH"):
           rdataset4fit_m_WW_gen = RooDataSet("rdataset4fit"+label+"_genHMass_"+self.channel,"rdataset4fit"+label+"_genHMass_"+self.channel,RooArgSet(rrv_mass_gen_WW,rrv_weight),RooFit.WeightVar(rrv_weight));
 
-        if TString(label).Contains("vbfH") or TString(label).Contains("RSGraviton"):
+        if TString(label).Contains("vbfH") or TString(label).Contains("BulkGraviton"):
 
          rdataset_signal_region_mlvj_int_up = RooDataSet("rdataset"+label+"massvbf_int_up"+"_signal_region"+"_"+self.channel+"_mlvj","rdataset"+label+"massvbf_int_up"+"_signal_region"+"_"+self.channel+"_mlvj",RooArgSet(rrv_mass_lvj,rrv_weight),RooFit.WeightVar(rrv_weight) );
          rdataset_signal_region_mlvj_int_dn = RooDataSet("rdataset"+label+"massvbf_int_dn"+"_signal_region"+"_"+self.channel+"_mlvj","rdataset"+label+"massvbf_int_dn"+"_signal_region"+"_"+self.channel+"_mlvj",RooArgSet(rrv_mass_lvj,rrv_weight),RooFit.WeightVar(rrv_weight) ); 
@@ -997,7 +1010,7 @@ class doFit_wj_and_wlvj:
         hnum_4region = TH1D("hnum_4region"+label+"_"+self.channel,"hnum_4region"+label+"_"+self.channel,4,-1.5,2.5);# m_j   -1: sb_lo; 0:signal_region; 1: sb_hi; 2:total        
         hnum_2region = TH1D("hnum_2region"+label+"_"+self.channel,"hnum_2region"+label+"_"+self.channel,2,-0.5,1.5);# m_lvj  0: signal_region; 1: total
 
-        if TString(label).Contains("RSGraviton") or TString(label).Contains("vbfH"): 
+        if TString(label).Contains("BulkGraviton") or TString(label).Contains("vbfH"): 
 
          hnum_4region_int_up = TH1D("hnum_4region"+label+"massvbf_int_up"+"_"+self.channel,"hnum_4region"+label+"massvbf_int_up"+"_"+self.channel,4,-1.5,2.5);
          hnum_4region_int_dn = TH1D("hnum_4region"+label+"massvbf_int_dn"+"_"+self.channel,"hnum_4region"+label+"massvbf_int_dn"+"_"+self.channel,4,-1.5,2.5);
@@ -1046,7 +1059,7 @@ class doFit_wj_and_wlvj:
           jet_2 = ROOT.TLorentzVector();
 
           mass_WW_gen = 0 ;
-          if TString(label).Contains("RSGraviton") or TString(label).Contains("vbfH"):
+          if TString(label).Contains("BulkGraviton") or TString(label).Contains("vbfH"):
            mass_WW_gen = getattr(treeIn,"genGravMass");
                               
 
@@ -1382,7 +1395,7 @@ class doFit_wj_and_wlvj:
                  tmp_event_weightDn = tmp_event_weightDn/self.higgs_xs_scale;
                  tmp_event_weight4fitDn = tmp_event_weight4fitDn/self.higgs_xs_scale; 
 
-             if TString(label).Contains("RSGraviton"):
+             if TString(label).Contains("BulkGraviton"):
 
                  tmp_event_weight4fitUp = tmp_event_weight4fitUp*treeIn.wSampleWeight/tmp_scale_to_lumi;
                  tmp_event_weight4fitDn = tmp_event_weight4fitDn*treeIn.wSampleWeight/tmp_scale_to_lumi;
@@ -1408,17 +1421,17 @@ class doFit_wj_and_wlvj:
                      if TString(label).Contains("_TTbar") or TString(label).Contains("_STop") :
                          tmp_event_weight     = tmp_event_weight*self.rrv_wtagger_eff_reweight_forT.getVal();
                          tmp_event_weight4fit = tmp_event_weight4fit*self.rrv_wtagger_eff_reweight_forT.getVal();
-                     elif TString(label).Contains("_RSGraviton") or TString(label).Contains("_vbfH") or TString(label).Contains("_VV") or TString(label).Contains("_WW_EWK") :
+                     elif TString(label).Contains("_BulkGraviton") or TString(label).Contains("_vbfH") or TString(label).Contains("_VV") or TString(label).Contains("_WW_EWK") :
                          tmp_event_weight     = tmp_event_weight*self.rrv_wtagger_eff_reweight_forV.getVal();
                          tmp_event_weight4fit = tmp_event_weight4fit*self.rrv_wtagger_eff_reweight_forV.getVal();
 
-#                     if TString(label).Contains("vbfH") or TString(label).Contains("_RSGraviton"):    
+#                     if TString(label).Contains("vbfH") or TString(label).Contains("_BulkGraviton"):    
 #                         tmp_event_weightUp     = tmp_event_weightUp*self.rrv_wtagger_eff_reweight_forV.getVal();
 #                         tmp_event_weight4fitUp = tmp_event_weight4fitUp*self.rrv_wtagger_eff_reweight_forV.getVal();
 #                         tmp_event_weightDn     = tmp_event_weightDn*self.rrv_wtagger_eff_reweight_forV.getVal();
 #                         tmp_event_weight4fitDn = tmp_event_weight4fitDn*self.rrv_wtagger_eff_reweight_forV.getVal();
 
-#             if TString(label).Contains("RSGraviton") or TString(label).Contains("vbfH"):     
+#             if TString(label).Contains("BulkGraviton") or TString(label).Contains("vbfH"):     
 #              tmp_event_weightUp        = tmp_event_weightUp* getattr(treeIn,"btag_weight"); ## add the btag weight 
 #              tmp_event_weight4fitUp    = tmp_event_weight4fitUp* getattr(treeIn,"btag_weight"); ## add the btag weight
 #              tmp_event_weightDn        = tmp_event_weightDn* getattr(treeIn,"btag_weight"); ## add the btag weight 
@@ -1428,7 +1441,7 @@ class doFit_wj_and_wlvj:
 
  
 
-             if TString(label).Contains("RSGraviton") or TString(label).Contains("vbfH"):
+             if TString(label).Contains("BulkGraviton") or TString(label).Contains("vbfH"):
               rrv_mass_gen_WW.setVal(mass_WW_gen);
               rdataset4fit_m_WW_gen.add( RooArgSet( rrv_mass_gen_WW ), tmp_event_weight4fit );
                                                 
@@ -1446,7 +1459,7 @@ class doFit_wj_and_wlvj:
              if tmp_jet_mass >= self.mj_signal_min and tmp_jet_mass < self.mj_signal_max and isPassingCut == 1:
                  rdataset_signal_region_mlvj.add( RooArgSet( rrv_mass_lvj ), tmp_event_weight );
                  rdataset4fit_signal_region_mlvj.add( RooArgSet( rrv_mass_lvj ), tmp_event_weight4fit );
-#                 if TString(label).Contains("vbfH") or TString(label).Contains("RSGraviton") :
+#                 if TString(label).Contains("vbfH") or TString(label).Contains("BulkGraviton") :
 #                     rdataset_signal_region_mlvj_int_up.add( RooArgSet( rrv_mass_lvj ), tmp_event_weightUp );
 #                     rdataset4fit_signal_region_mlvj_int_up.add( RooArgSet( rrv_mass_lvj ), tmp_event_weight4fitUp );
 #                     rdataset_signal_region_mlvj_int_dn.add( RooArgSet( rrv_mass_lvj ), tmp_event_weightDn );
@@ -1455,12 +1468,12 @@ class doFit_wj_and_wlvj:
                  combData.add(RooArgSet(rrv_mass_lvj,data_category),tmp_event_weight);
                  combData4fit.add(RooArgSet(rrv_mass_lvj,data_category),tmp_event_weight4fit);
                  hnum_2region.Fill(1,tmp_event_weight);
-#                 if TString(label).Contains("vbfH") or TString(label).Contains("RSGraviton"):
+#                 if TString(label).Contains("vbfH") or TString(label).Contains("BulkGraviton"):
 #                       hnum_2region_int_up.Fill(1,tmp_event_weightUp);
 #                       hnum_2region_int_dn.Fill(1,tmp_event_weightDn);                 
                  if mass_lvj >=self.mlvj_signal_min and mass_lvj <self.mlvj_signal_max: 
                    hnum_2region.Fill(0,tmp_event_weight);
-#                   if TString(label).Contains("vbfH") or TString(label).Contains("RSGraviton"):
+#                   if TString(label).Contains("vbfH") or TString(label).Contains("BulkGraviton"):
 #                       hnum_2region_int_up.Fill(0,tmp_event_weightUp);
 #                       hnum_2region_int_dn.Fill(0,tmp_event_weightDn);
 
@@ -1473,21 +1486,21 @@ class doFit_wj_and_wlvj:
               rdataset4fit_mj.add( RooArgSet( rrv_mass_j ), tmp_event_weight4fit );
               if tmp_jet_mass >=self.mj_sideband_lo_min and tmp_jet_mass <self.mj_sideband_lo_max: 
                  hnum_4region.Fill(-1,tmp_event_weight );
-#                 if TString(label).Contains("vbfH") or TString(label).Contains("RSGraviton"):
+#                 if TString(label).Contains("vbfH") or TString(label).Contains("BulkGraviton"):
 #                     hnum_4region_int_up.Fill(-1,tmp_event_weightUp );
 #                     hnum_4region_int_dn.Fill(-1,tmp_event_weightDn );                 
               if tmp_jet_mass >=self.mj_signal_min and tmp_jet_mass <self.mj_signal_max : 
                  hnum_4region.Fill(0,tmp_event_weight);
-#                 if TString(label).Contains("vbfH") or TString(label).Contains("RSGraviton"):
+#                 if TString(label).Contains("vbfH") or TString(label).Contains("BulkGraviton"):
 #                     hnum_4region_int_up.Fill(0,tmp_event_weightUp );
 #                     hnum_4region_int_dn.Fill(0,tmp_event_weightDn );                 
               if tmp_jet_mass >=self.mj_sideband_hi_min and tmp_jet_mass <self.mj_sideband_hi_max: 
                  hnum_4region.Fill(1,tmp_event_weight);
-#                 if TString(label).Contains("vbfH") and TString(label).Contains("RSGraviton"):
+#                 if TString(label).Contains("vbfH") and TString(label).Contains("BulkGraviton"):
 #                     hnum_4region_int_up.Fill(1,tmp_event_weightUp );
 #                     hnum_4region_int_dn.Fill(1,tmp_event_weightDn );                 
               hnum_4region.Fill(2,tmp_event_weight);
-#              if TString(label).Contains("vbfH") and TString(label).Contains("RSGraviton"):
+#              if TString(label).Contains("vbfH") and TString(label).Contains("BulkGraviton"):
 #                     hnum_4region_int_up.Fill(2,tmp_event_weightUp );
 #                     hnum_4region_int_dn.Fill(2,tmp_event_weightDn );                 
 
@@ -1697,7 +1710,7 @@ class doFit_wj_and_wlvj:
         getattr(self.workspace4fit_,"import")(rrv_scale_to_lumi_sb_hi);
         getattr(self.workspace4fit_,"import")(rrv_scale_to_lumi_signal_region);
 
-        if TString(label).Contains("RSGraviton") or TString(label).Contains("vbfH"):
+        if TString(label).Contains("BulkGraviton") or TString(label).Contains("vbfH"):
          print "######### genHMass for BW fit #########";
          getattr(self.workspace4fit_,"import")(rdataset4fit_m_WW_gen);
          rdataset4fit_m_WW_gen.Print();
@@ -1718,7 +1731,7 @@ class doFit_wj_and_wlvj:
         getattr(self.workspace4fit_,"import")(combData); combData.Print();
         getattr(self.workspace4fit_,"import")(combData4fit); combData4fit.Print();
 
-        if TString(label).Contains("vbfH") or TString(label).Contains("RSGraviton"):
+        if TString(label).Contains("vbfH") or TString(label).Contains("BulkGraviton"):
              rrv_number_dataset_signal_region_mlvj_int_up = RooRealVar("rrv_number_dataset_signal_region"+label+"massvbf_int_up"+"_"+self.channel+"_mlvj","rrv_number_dataset_signal_region"+label+"massvbf_int_up"+"_"+self.channel+"_mlvj",hnum_2region_int_up.GetBinContent(1));
              rrv_number_dataset_signal_region_mlvj_int_dn = RooRealVar("rrv_number_dataset_signal_region"+label+"massvbf_int_dn"+"_"+self.channel+"_mlvj","rrv_number_dataset_signal_region"+label+"massvbf_int_dn"+"_"+self.channel+"_mlvj",hnum_2region_int_dn.GetBinContent(1));
              rrv_number_dataset_signal_region_mj_int_up = RooRealVar("rrv_number_dataset_signal_region"+label+"massvbf_int_up"+"_"+self.channel+"_mj","rrv_number_dataset_signal_region"+label+"massvbf_int_up"+"_"+self.channel+"_mj",hnum_4region_int_up.GetBinContent(2));
@@ -1962,7 +1975,7 @@ class doFit_wj_and_wlvj:
         ### number of signal, Wjets, VV, TTbar and STop --> unbinned shape analysis  ###
         ################################################################################
         
-        getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).clone("rate_%s_for_unbin"%(self.higgs_sample)));
+        getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).clone("rate_%s_for_unbin"%(self.higgs_sample)));
 #        getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).clone("rate_%s_for_unbin"%(self.vbfhiggs_sample)));
 
         getattr(self.workspace4limit_,"import")(self.workspace4fit_.var("rrv_number_WJets0_signal_region%s_%s_mlvj"%(self.mlvj_shape["WJets0"],self.channel)).clone("rate_WJets_for_unbin"));
@@ -2012,7 +2025,7 @@ class doFit_wj_and_wlvj:
           getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_WW_EWK_signal_region%s_%s_mlvj"%(self.mlvj_shape["WW_EWK"],self.channel)).clone("WW_EWK_%s"%(self.channel)));         
 
         ### signal shape
-        getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).clone("RSGraviton_%s"%(self.channel)))
+        getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).clone("BulkGraviton_%s"%(self.channel)))
  #       getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).clone("qqH_%s"%(self.channel)))
 
         ##create "fake data" for the limit
@@ -2067,7 +2080,7 @@ class doFit_wj_and_wlvj:
         fix_Pdf(self.workspace4limit_.pdf("VV_%s"%(self.channel)),    RooArgSet(rrv_x));
         if options.jetBin == "_2jet": fix_Pdf(self.workspace4limit_.pdf("WW_EWK_%s"%(self.channel)),RooArgSet(rrv_x));         
         fix_Pdf(self.workspace4limit_.pdf("WJets_%s"%(self.channel)), RooArgSet(rrv_x)); 
-        fix_Pdf(self.workspace4limit_.pdf("RSGraviton_%s"%(self.channel)),   RooArgSet(rrv_x));
+        fix_Pdf(self.workspace4limit_.pdf("BulkGraviton_%s"%(self.channel)),   RooArgSet(rrv_x));
  #       fix_Pdf(self.workspace4limit_.pdf("qqH_%s"%(self.channel)),   RooArgSet(rrv_x));
 
         ### print the workspace 4 limit 
@@ -2224,94 +2237,95 @@ class doFit_wj_and_wlvj:
   
         if TString(self.higgs_sample).Contains("600") :
 
-           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_600);
-           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_600);
-           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_600);
+           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_600);
+           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_600);
+#           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_600);
                                                                                                                    
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_vbfH_600);
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_vbfH_600);
                                                                                                                                                                   
-           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_600);
-           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_600);
+           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_600);
+           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_600);
                                      
 #           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_vbfH_600);
 #           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_vbfH_600);
 
         elif TString(self.higgs_sample).Contains("700") :
 
-           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_700);
-           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_700);
-           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_700);
+           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_700);
+           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_700);
+#           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_700);
                                                                                                                    
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_vbfH_700);
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_vbfH_700);
                                                                                                                                                                   
 
-           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_700);
-           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_700);
+           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_700);
+           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_700);
                                      
 #           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_vbfH_700);
 #           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_vbfH_700);
 
-#        elif TString(self.higgs_sample).Contains("800") :
 
-#           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_800);
-#           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_800);
-#           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_800);
+        elif TString(self.higgs_sample).Contains("800") :
+
+#           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_800);
+#           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_800);
+#           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_800);
                                                                                                                    
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_vbfH_800);
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_vbfH_800);
                                                                                                                                                                   
 
-           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_800);
-           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_800);
+           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_800);
+           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_800);
                                      
 #           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_vbfH_800);
 #           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_vbfH_800);
 
         elif TString(self.higgs_sample).Contains("900") :
 
-           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_900);
-           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_900);
-           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_900);
+           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_900);
+           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_900);
+#           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_900);
                                                                                                                    
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_vbfH_900);
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_vbfH_900);
                                                                                                                                                                   
 
-           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_900);
-           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_900);
+           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_900);
+           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_900);
                                      
 #           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_vbfH_900);
 #           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_vbfH_900);
 
         elif TString(self.higgs_sample).Contains("1000") :
 
-           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_1000);
-           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_1000);
-#           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_1000);
+           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_ggH_1000);
+           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_ggH_1000);
+#           self.workspace4limit_.var("rrv_mean_shift_scale_interference_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.mean_signal_uncertainty_interference_ggH_1000);
                                                                                                                    
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_scale_vbfH_1000);
 #           self.workspace4limit_.var("rrv_mean_shift_scale_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.mean_signal_uncertainty_jet_res_vbfH_1000);
                                                                                                                                                                   
 
-           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_1000);
-           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_1000);
+           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_ggH_1000);
+           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_ggH_1000);
                                      
 #           self.workspace4limit_.var("rrv_sigma_shift_jes_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_scale_vbfH_1000);
 #           self.workspace4limit_.var("rrv_sigma_shift_jer_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).setVal(systematic.sigma_signal_uncertainty_jet_res_vbfH_1000);
 
         self.workspace4limit_.var("CMS_scale_j").setError(1);
         self.workspace4limit_.var("CMS_res_j").setError(1);
-#        self.workspace4limit_.var("intf_RSGraviton").setError(1);
+#        self.workspace4limit_.var("intf_BulkGraviton").setError(1);
 
         params_list.append(self.workspace4limit_.var("CMS_scale_j"));
         params_list.append(self.workspace4limit_.var("CMS_res_j"));
- #       params_list.append(self.workspace4limit_.var("intf_RSGraviton"));
+ #       params_list.append(self.workspace4limit_.var("intf_BulkGraviton"));
 
         ### print the datacard                                       
-#        self.print_limit_datacard("unbin", "RSGravitonvbfH",params_list);
-        self.print_limit_datacard("unbin", "RSGraviton",params_list);
+#        self.print_limit_datacard("unbin", "BulkGravitonvbfH",params_list);
+        self.print_limit_datacard("unbin", "BulkGraviton",params_list);
 
         if mode == "sideband_correction_method1":
 
@@ -2428,7 +2442,7 @@ class doFit_wj_and_wlvj:
  
         self.FloatingParams.add(self.workspace4limit_.var("CMS_scale_j"));
         self.FloatingParams.add(self.workspace4limit_.var("CMS_res_j"));
-#        self.FloatingParams.add(self.workspace4limit_.var("intf_RSGraviton"));
+#        self.FloatingParams.add(self.workspace4limit_.var("intf_BulkGraviton"));
 
         ### Add the floating list to the combiner --> the pdf which are not fixed are floating by default
         getattr(self.workspace4limit_,"import")(self.FloatingParams);
@@ -2454,9 +2468,9 @@ class doFit_wj_and_wlvj:
          ### open the datacard
          datacard_out = open(getattr(self,"file_datacard_%s_%s"%(mode, signalchannel)),"w");
          datacard_out.write( "imax 1" )
-         if signalchannel == "RSGraviton" or signalchannel == "vbfH":
+         if signalchannel == "BulkGraviton" or signalchannel == "vbfH":
             datacard_out.write( "\njmax *" )
-         elif signalchannel=="RSGravitonvbfH":
+         elif signalchannel=="BulkGravitonvbfH":
             datacard_out.write( "\njmax *" )
          else:
             raw_input("Wrong signal channel, please check!!");
@@ -2475,15 +2489,15 @@ class doFit_wj_and_wlvj:
 
          if mode == "unbin":
           fnOnly = ntpath.basename(self.file_rlt_root)
-          getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["RSGraviton"],self.channel)).clone(self.higgs_sample+"_%s"%(self.channel)))
+          getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_signal_region%s_%s_mlvj"%(self.higgs_sample,self.mlvj_shape["BulkGraviton"],self.channel)).clone(self.higgs_sample+"_%s"%(self.channel)))
 #          getattr(self.workspace4limit_,"import")(self.workspace4fit_.pdf("model_pdf_%s_signal_region%s_%s_mlvj"%(self.vbfhiggs_sample,self.mlvj_shape["vbfH"],self.channel)).clone(self.vbfhiggs_sample+"_%s"%(self.channel)))
 
-          if signalchannel == "RSGraviton":
-              datacard_out.write("\nshapes RSGraviton CMS_%s %s %s:$PROCESS_%s"%(self.channel,fnOnly,self.workspace4limit_.GetName(),self.channel));
+          if signalchannel == "BulkGraviton":
+              datacard_out.write("\nshapes BulkGraviton CMS_%s %s %s:$PROCESS_%s"%(self.channel,fnOnly,self.workspace4limit_.GetName(),self.channel));
           elif signalchannel == "vbfH":
               datacard_out.write("\nshapes qqH CMS_%s %s %s:$PROCESS_%s"%(self.channel,fnOnly,self.workspace4limit_.GetName(),self.channel));
-          elif signalchannel == "RSGravitonvbfH":
-              datacard_out.write("\nshapes RSGraviton CMS_%s %s %s:$PROCESS_%s"%(self.channel,fnOnly,self.workspace4limit_.GetName(),self.channel));
+          elif signalchannel == "BulkGravitonvbfH":
+              datacard_out.write("\nshapes BulkGraviton CMS_%s %s %s:$PROCESS_%s"%(self.channel,fnOnly,self.workspace4limit_.GetName(),self.channel));
               datacard_out.write("\nshapes qqH CMS_%s %s %s:$PROCESS_%s"%(self.channel,fnOnly,self.workspace4limit_.GetName(),self.channel));
           
           datacard_out.write("\nshapes WJets CMS_%s %s %s:$PROCESS_%s"%(self.channel,fnOnly,self.workspace4limit_.GetName(),self.channel));
@@ -2496,11 +2510,11 @@ self.channel));
           datacard_out.write( "\n--------------- ")
           
 
-         if signalchannel == "RSGraviton":
+         if signalchannel == "BulkGraviton":
              
             if options.jetBin == "_2jet" : 
              datacard_out.write( "\nbin                CMS_%s    CMS_%s   CMS_%s   CMS_%s  CMS_%s   CMS_%s"%(self.channel,self.channel,self.channel,self.channel,self.channel,self.channel));
-             datacard_out.write( "\nprocess            RSGraviton        WJets    TTbar    STop    VV     WW_EWK");
+             datacard_out.write( "\nprocess            BulkGraviton        WJets    TTbar    STop    VV     WW_EWK");
              datacard_out.write( "\nprocess            -1          1        2        3       4       5  " );
 
              if mode == "unbin":
@@ -2511,26 +2525,26 @@ self.channel));
                 
              datacard_out.write( "\n-------------------------------- " );
 
-             datacard_out.write( "\nQCDscale_RSGraviton0in     lnN   %0.3f     -             -        -       -       - "%(1.+self.QCDscale_ggH0in));
+#             datacard_out.write( "\nQCDscale_BulkGraviton0in     lnN   %0.3f     -             -        -       -       - "%(1.+self.QCDscale_ggH0in));
 
-             datacard_out.write( "\nQCDscale_RSGraviton2in     lnN   %0.3f     -             -        -       -       - "%(1.+self.QCDscale_ggH2in));   
+#             datacard_out.write( "\nQCDscale_BulkGraviton2in     lnN   %0.3f     -             -        -       -       - "%(1.+self.QCDscale_ggH2in));   
 
-             datacard_out.write( "\npdf_gg              lnN   %0.3f     -             -        -       -       - "%(1.+self.pdf_gg));
+#             datacard_out.write( "\npdf_gg              lnN   %0.3f     -             -        -       -       - "%(1.+self.pdf_gg));
 
-             datacard_out.write( "\nQCDscale_RSGraviton_ACCEPT lnN   %0.3f     -             -        -       -       - "%(1.+self.QCDscale_ggH_ACCEPT));
+#             datacard_out.write( "\nQCDscale_BulkGraviton_ACCEPT lnN   %0.3f     -             -        -       -       - "%(1.+self.QCDscale_ggH_ACCEPT));
 
-             datacard_out.write( "\nintf_RSGraviton            lnN   %0.3f     -             -        -       -       - "%(1.+self.interference_ggH_uncertainty));
+#             datacard_out.write( "\nintf_BulkGraviton            lnN   %0.3f     -             -        -       -       - "%(1.+self.interference_ggH_uncertainty));
 
-             datacard_out.write( "\nCMS_hwwlvj_STop     lnN   -         -             -      %0.3f     -        - "%(1+self.XS_STop_uncertainty));
+             datacard_out.write( "\nCMS_xww_XS_STop_13TeV     lnN   -         -             -      %0.3f     -        - "%(1+self.XS_STop_uncertainty));
 
-             datacard_out.write( "\nCMS_hwwlvj_VV       lnN   -         -             -        -     %0.3f      - "%(1+self.XS_VV_uncertainty));
+             datacard_out.write( "\nCMS_xww_XS_VV_13TeV       lnN   -         -             -        -     %0.3f      - "%(1+self.XS_VV_uncertainty));
 
-             datacard_out.write( "\nCMS_hwwlvj_WW_EWK   lnN   -         -             -        -       -     %0.3f "%(1+self.XS_WW_EWK_uncertainty));
+#             datacard_out.write( "\nCMS_hwwlvj_WW_EWK   lnN   -         -             -        -       -     %0.3f "%(1+self.XS_WW_EWK_uncertainty));
 
             else:
 
              datacard_out.write( "\nbin                CMS_%s    CMS_%s   CMS_%s    CMS_%s   CMS_%s "%(self.channel,self.channel,self.channel,self.channel,self.channel));
-             datacard_out.write( "\nprocess            RSGraviton        WJets    TTbar     STop      VV   ");
+             datacard_out.write( "\nprocess            BulkGraviton        WJets    TTbar     STop      VV   ");
              datacard_out.write( "\nprocess            -1          1        2        3         4    ");
 
              if mode == "unbin":
@@ -2541,15 +2555,15 @@ self.channel));
                 
              datacard_out.write( "\n-------------------------------- " ); 
 
-             datacard_out.write( "\nQCDscale_RSGraviton0in     lnN   %0.3f       -      -        -       -     "%(1.+self.QCDscale_ggH0in));
+#             datacard_out.write( "\nQCDscale_BulkGraviton0in     lnN   %0.3f       -      -        -       -     "%(1.+self.QCDscale_ggH0in));
 
-             datacard_out.write( "\nQCDscale_RSGraviton2in     lnN   %0.3f       -      -        -       -     "%(1.+self.QCDscale_ggH2in));   
+#             datacard_out.write( "\nQCDscale_BulkGraviton2in     lnN   %0.3f       -      -        -       -     "%(1.+self.QCDscale_ggH2in));   
 
-             datacard_out.write( "\npdf_gg              lnN   %0.3f       -      -        -       -     "%(1.+self.pdf_gg));
+#             datacard_out.write( "\npdf_gg              lnN   %0.3f       -      -        -       -     "%(1.+self.pdf_gg));
 
-             datacard_out.write( "\nQCDscale_RSGraviton_ACCEPT lnN   %0.3f       -      -        -       -     "%(1.+self.QCDscale_ggH_ACCEPT));
+#             datacard_out.write( "\nQCDscale_BulkGraviton_ACCEPT lnN   %0.3f       -      -        -       -     "%(1.+self.QCDscale_ggH_ACCEPT));
 
-             datacard_out.write( "\nintf_RSGraviton            lnN   %0.3f       -      -        -       -     "%(1.+self.interference_ggH_uncertainty));
+#             datacard_out.write( "\nintf_BulkGraviton            lnN   %0.3f       -      -        -       -     "%(1.+self.interference_ggH_uncertainty));
 
              datacard_out.write( "\nCMS_hwwlvj_STop     lnN     -         -      -      %0.3f     -     "%(1+self.XS_STop_uncertainty));
 
@@ -2611,12 +2625,12 @@ self.channel));
              datacard_out.write( "\nCMS_hwwlvj_VV       lnN      -           -        -       -      %0.3f  "%(1+self.XS_VV_uncertainty));
  
 
-         elif signalchannel == "RSGravitonvbfH":
+         elif signalchannel == "BulkGravitonvbfH":
              
             if options.jetBin == "_2jet":
                 
              datacard_out.write( "\nbin                CMS_%s    CMS_%s     CMS_%s   CMS_%s   CMS_%s   CMS_%s    CMS_%s"%(self.channel,self.channel,self.channel,self.channel,self.channel,self.channel,self.channel));            
-             datacard_out.write( "\nprocess            RSGraviton        qqH        WJets     TTbar    STop       VV     WW_EWK ");
+             datacard_out.write( "\nprocess            BulkGraviton        qqH        WJets     TTbar    STop       VV     WW_EWK ");
              datacard_out.write( "\nprocess            -1         0           1          2       3         4     5       ");
 
              if mode == "unbin":
@@ -2628,15 +2642,15 @@ self.channel));
 
              datacard_out.write( "\n-------------------------------- " );
 
-             datacard_out.write( "\nQCDscale_RSGraviton0in     lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.QCDscale_ggH0in));
+             datacard_out.write( "\nQCDscale_BulkGraviton0in     lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.QCDscale_ggH0in));
 
-             datacard_out.write( "\nQCDscale_RSGraviton2in      lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.QCDscale_ggH2in));   
+             datacard_out.write( "\nQCDscale_BulkGraviton2in      lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.QCDscale_ggH2in));   
 
              datacard_out.write( "\npdf_gg               lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.pdf_gg));
 
-             datacard_out.write( "\nQCDscale_RSGraviton_ACCEPT  lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.QCDscale_ggH_ACCEPT));
+             datacard_out.write( "\nQCDscale_BulkGraviton_ACCEPT  lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.QCDscale_ggH_ACCEPT));
 
-             datacard_out.write( "\nintf_RSGraviton             lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.interference_ggH_uncertainty));
+             datacard_out.write( "\nintf_BulkGraviton             lnN   %0.3f       -        -        -       -       -       -   "%(1.+self.interference_ggH_uncertainty));
             
              datacard_out.write( "\nQCDscale_qqH         lnN    -         %0.3f     -        -       -       -       -   "%(1.+self.QCDscale_qqH));
 
@@ -2655,7 +2669,7 @@ self.channel));
             else:
 
              datacard_out.write( "\nbin                CMS_%s    CMS_%s    CMS_%s   CMS_%s   CMS_%s  CMS_%s  "%(self.channel,self.channel,self.channel,self.channel,self.channel,self.channel));            
-             datacard_out.write( "\nprocess            RSGraviton       qqH       WJets    TTbar    STop    VV   ");
+             datacard_out.write( "\nprocess            BulkGraviton       qqH       WJets    TTbar    STop    VV   ");
              datacard_out.write( "\nprocess            -1        0          1        2        3      4    ");
 
              if mode == "unbin":
@@ -2667,15 +2681,15 @@ self.channel));
 
              datacard_out.write( "\n-------------------------------- " );
 
-             datacard_out.write( "\nQCDscale_RSGraviton0in    lnN   %0.3f     -       -       -       -       -       "%(1.+self.QCDscale_ggH0in));
+             datacard_out.write( "\nQCDscale_BulkGraviton0in    lnN   %0.3f     -       -       -       -       -       "%(1.+self.QCDscale_ggH0in));
 
-             datacard_out.write( "\nQCDscale_RSGraviton2in     lnN   %0.3f     -       -       -       -       -       "%(1.+self.QCDscale_ggH2in));   
+             datacard_out.write( "\nQCDscale_BulkGraviton2in     lnN   %0.3f     -       -       -       -       -       "%(1.+self.QCDscale_ggH2in));   
 
              datacard_out.write( "\npdf_gg              lnN   %0.3f     -       -       -       -       -       "%(1.+self.pdf_gg));
 
-             datacard_out.write( "\nQCDscale_RSGraviton_ACCEPT lnN   %0.3f     -       -       -       -       -       "%(1.+self.QCDscale_ggH_ACCEPT));
+             datacard_out.write( "\nQCDscale_BulkGraviton_ACCEPT lnN   %0.3f     -       -       -       -       -       "%(1.+self.QCDscale_ggH_ACCEPT));
 
-             datacard_out.write( "\nintf_RSGraviton            lnN   %0.3f     -       -       -       -       -       "%(1.+self.interference_ggH_uncertainty));
+             datacard_out.write( "\nintf_BulkGraviton            lnN   %0.3f     -       -       -       -       -       "%(1.+self.interference_ggH_uncertainty));
             
              datacard_out.write( "\nQCDscale_qqH        lnN   -         %0.3f   -       -       -       -       "%(1.+self.QCDscale_qqH));
 
@@ -2692,7 +2706,7 @@ self.channel));
             
          if options.jetBin == "_2jet":
              
-          datacard_out.write( "\nlumi_8TeV       lnN       %0.3f     %0.3f         -        -  %0.3f   %0.3f    %0.3f"%(1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty) );
+          datacard_out.write( "\nlumi_13TeV       lnN       %0.3f     %0.3f         -        -  %0.3f   %0.3f    %0.3f"%(1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty) );
 
           datacard_out.write( "\nCMS_trigger_m  lnN       %0.3f     %0.3f         -        %0.3f   %0.3f   %0.3f    %0.3f"%(1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty, 1+self.lep_trigger_uncertainty ) );
 
@@ -2705,13 +2719,13 @@ self.channel));
           datacard_out.write( "\nCMS_TTbar_norm_2jet lnN       -          -            -        %0.3f   -   -            -"%(1+self.rrv_wtagger_eff_reweight_forT.getError()));
 
           datacard_out.write( "\nCMS_wtagger     lnN       %0.3f     %0.3f         -        -       -       %0.3f    %0.3f"%(1+self.rrv_wtagger_eff_reweight_forV.getError(), 1+self.rrv_wtagger_eff_reweight_forV.getError(), 1+self.rrv_wtagger_eff_reweight_forV.getError(), 1+self.rrv_wtagger_eff_reweight_forV.getError() ) );
-            
+#LUCA            
           ### nousiance for the bkg
           ### WJets normaliztion due to data fit and alternate modellization
           if self.number_WJets_insideband >0:
-            datacard_out.write( "\nWjet_Norm%s lnN     %0.3f       -         %0.3f      -       -        -        -  "%(options.jetBin,self.number_WJets_insideband, getattr(self,"datadriven_alpha_WJets_%s"%(mode))));
+            datacard_out.write( "\nCMS_xww_WJ_norm_%s_13TeV%s lnN     %0.3f       -         %0.3f      -       -        -        -  "%(self.channel,options.jetBin,self.number_WJets_insideband, getattr(self,"datadriven_alpha_WJets_%s"%(mode))));
           else:              
-            datacard_out.write( "\nWjet_Norm%s lnN     -           -         %0.3f      -       -        -        -  "%(options.jetBin, 1+ self.workspace4limit_.var("rate_WJets_for_unbin").getError()/self.workspace4limit_.var("rate_WJets_for_unbin").getVal() ) );
+            datacard_out.write( "\nCMS_xww_WJ_norm_%s_13TeV%s lnN     -           -         %0.3f      -       -        -        -  "%(self.channel,options.jetBin, 1+ self.workspace4limit_.var("rate_WJets_for_unbin").getError()/self.workspace4limit_.var("rate_WJets_for_unbin").getVal() ) );
 
 
           ## jet mass systematic scaling up and down vbf jets detajj, mjj, and pt selection effect
@@ -2725,42 +2739,44 @@ self.channel));
 
           if self.ggH_normalization_uncertainty_from_lep_scale!=0 and self.vbf_normalization_uncertainty_from_lep_scale!=0 and self.WJets_normalization_uncertainty_from_lep_scale!=0 and self.TTbar_normalization_uncertainty_from_lep_scale!=0 and self.STop_normalization_uncertainty_from_lep_scale!=0 and self.VV_normalization_uncertainty_from_lep_scale!=0 : 
 
-           datacard_out.write( "\nCMS_scale_e lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_lep_scale, self.vbf_normalization_uncertainty_from_lep_scale, self.WJets_normalization_uncertainty_from_lep_scale, self.TTbar_normalization_uncertainty_from_lep_scale, self.STop_normalization_uncertainty_from_lep_scale, self.VV_normalization_uncertainty_from_lep_scale, self.WW_EWK_normalization_uncertainty_from_lep_scale ) )        
+           datacard_out.write( "\nCMS_scale_e_13TeV lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_lep_scale, self.vbf_normalization_uncertainty_from_lep_scale, self.WJets_normalization_uncertainty_from_lep_scale, self.TTbar_normalization_uncertainty_from_lep_scale, self.STop_normalization_uncertainty_from_lep_scale, self.VV_normalization_uncertainty_from_lep_scale, self.WW_EWK_normalization_uncertainty_from_lep_scale ) )        
 
-           datacard_out.write( "\nCMS_scale_m lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_lep_scale, self.vbf_normalization_uncertainty_from_lep_scale, self.WJets_normalization_uncertainty_from_lep_scale, self.TTbar_normalization_uncertainty_from_lep_scale, self.STop_normalization_uncertainty_from_lep_scale, self.VV_normalization_uncertainty_from_lep_scale, self.WW_EWK_normalization_uncertainty_from_lep_scale ) )        
+           datacard_out.write( "\nCMS_scale_m_13TeV lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_lep_scale, self.vbf_normalization_uncertainty_from_lep_scale, self.WJets_normalization_uncertainty_from_lep_scale, self.TTbar_normalization_uncertainty_from_lep_scale, self.STop_normalization_uncertainty_from_lep_scale, self.VV_normalization_uncertainty_from_lep_scale, self.WW_EWK_normalization_uncertainty_from_lep_scale ) )        
 
 
           if self.ggH_normalization_uncertainty_from_lep_res!=0 and self.vbf_normalization_uncertainty_from_lep_res!=0 and self.WJets_normalization_uncertainty_from_lep_res!=0 and self.TTbar_normalization_uncertainty_from_lep_res!=0 and self.STop_normalization_uncertainty_from_lep_res!=0 and self.VV_normalization_uncertainty_from_lep_res!=0 : 
 
-           datacard_out.write( "\nCMS_res_m lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_lep_res, self.vbf_normalization_uncertainty_from_lep_res, self.WJets_normalization_uncertainty_from_lep_res, self.TTbar_normalization_uncertainty_from_lep_res, self.STop_normalization_uncertainty_from_lep_res, self.VV_normalization_uncertainty_from_lep_res, self.WW_EWK_normalization_uncertainty_from_lep_res ) )
+           datacard_out.write( "\nCMS_res_m_13TeV lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_lep_res, self.vbf_normalization_uncertainty_from_lep_res, self.WJets_normalization_uncertainty_from_lep_res, self.TTbar_normalization_uncertainty_from_lep_res, self.STop_normalization_uncertainty_from_lep_res, self.VV_normalization_uncertainty_from_lep_res, self.WW_EWK_normalization_uncertainty_from_lep_res ) )
 
-           datacard_out.write( "\nCMS_res_e lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_lep_res, self.vbf_normalization_uncertainty_from_lep_res, self.WJets_normalization_uncertainty_from_lep_res, self.TTbar_normalization_uncertainty_from_lep_res, self.STop_normalization_uncertainty_from_lep_res, self.VV_normalization_uncertainty_from_lep_res, self.WW_EWK_normalization_uncertainty_from_lep_res ) )
+           datacard_out.write( "\nCMS_res_e_13TeV lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_lep_res, self.vbf_normalization_uncertainty_from_lep_res, self.WJets_normalization_uncertainty_from_lep_res, self.TTbar_normalization_uncertainty_from_lep_res, self.STop_normalization_uncertainty_from_lep_res, self.VV_normalization_uncertainty_from_lep_res, self.WW_EWK_normalization_uncertainty_from_lep_res ) )
 
 
           if self.ggH_normalization_uncertainty_from_btag!=0 and self.vbf_normalization_uncertainty_from_btag!=0 and self.WJets_normalization_uncertainty_from_btag!=0 and self.TTbar_normalization_uncertainty_from_btag!=0 and self.STop_normalization_uncertainty_from_btag!=0 and self.VV_normalization_uncertainty_from_btag!=0 : 
 
-           datacard_out.write( "\nCMS_eff_b lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_btag, self.vbf_normalization_uncertainty_from_btag, self.WJets_normalization_uncertainty_from_btag, self.TTbar_normalization_uncertainty_from_btag, self.STop_normalization_uncertainty_from_btag, self.VV_normalization_uncertainty_from_btag, self.WW_EWK_normalization_uncertainty_from_btag ) )                  
+           datacard_out.write( "\nCMS_xww_btag_eff_13TeV lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    %0.3f"%(self.ggH_normalization_uncertainty_from_btag, self.vbf_normalization_uncertainty_from_btag, self.WJets_normalization_uncertainty_from_btag, self.TTbar_normalization_uncertainty_from_btag, self.STop_normalization_uncertainty_from_btag, self.VV_normalization_uncertainty_from_btag, self.WW_EWK_normalization_uncertainty_from_btag ) )                  
 
          else:
  
-          datacard_out.write( "\nlumi_8TeV       lnN       %0.3f     %0.3f         -        -   %0.3f   %0.3f  "%(1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty) )
+          datacard_out.write( "\nlumi_13TeV       lnN       %0.3f         -     %0.3f   %0.3f   %0.3f  "%(1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty,1.+self.lumi_uncertainty) )
 
           if self.channel == "el" :
-           datacard_out.write( "\nCMS_trigger_e  lnN       %0.3f     %0.3f         -        %0.3f   %0.3f   %0.3f   "%(1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty) );
+           datacard_out.write( "\nCMS_xww_trigger_e_13TeV  lnN       %0.3f         -        %0.3f   %0.3f   %0.3f   "%(1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty) );
           elif self.channel == "mu" :
-           datacard_out.write( "\nCMS_trigger_m  lnN       %0.3f     %0.3f         -        %0.3f   %0.3f   %0.3f   "%(1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty) );
+           datacard_out.write( "\nCMS_xww_trigger_m_13TeV  lnN       %0.3f     -        %0.3f   %0.3f   %0.3f   "%(1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty,1+self.lep_trigger_uncertainty) );
 
           if self.channel == "el" :
-           datacard_out.write( "\nCMS_eff_e      lnN       %0.3f     %0.3f         -        %0.3f   %0.3f   %0.3f   "%(1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty) );
+           datacard_out.write( "\nCMS_eff_e_13TeV      lnN       %0.3f     -        %0.3f   %0.3f   %0.3f   "%(1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty) );
           elif self.channel == "mu" :
-           datacard_out.write( "\nCMS_eff_m      lnN       %0.3f     %0.3f         -        %0.3f   %0.3f   %0.3f   "%(1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty) );
+           datacard_out.write( "\nCMS_eff_m_13TeV      lnN       %0.3f     -        %0.3f   %0.3f   %0.3f   "%(1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty,1+self.lep_eff_uncertainty) );
    
           if self.channel == "el" :
-           datacard_out.write( "\nCMS_TTbar_norm_e lnN         -         -           -        %0.3f   -   -      "%(1+self.rrv_wtagger_eff_reweight_forT.getError()));
+           datacard_out.write( "\nCMS_xww_Top_norm_el_13TeV lnN         -         -        %0.3f  %0.3f   -      "%(1+self.rrv_wtagger_eff_reweight_forT.getError(),1+self.rrv_wtagger_eff_reweight_forT.getError()));
           elif self.channel == "mu":
-           datacard_out.write( "\nCMS_TTbar_norm_m lnN         -         -           -        %0.3f   -   -      "%(1+self.rrv_wtagger_eff_reweight_forT.getError()));
+           datacard_out.write( "\nCMS_xww_Top_norm_mu_13TeV lnN         -           -        %0.3f  %0.3f   -      "%(1+self.rrv_wtagger_eff_reweight_forT.getError(),1+self.rrv_wtagger_eff_reweight_forT.getError()));
+
+          datacard_out.write( "\nCMS_xww_XS_BulkG_WW_13TeV       lnN     %0.3f         -      -        -     -   "%(1+self.XS_BulkG_uncertainty));
               
-          datacard_out.write( "\nCMS_wtagger     lnN       %0.3f     %0.3f         -        -       -       %0.3f    "%(1+self.rrv_wtagger_eff_reweight_forV.getError(), 1+self.rrv_wtagger_eff_reweight_forV.getError(), 1+self.rrv_wtagger_eff_reweight_forV.getError()) );
+          datacard_out.write( "\nCMS_eff_vtag_tau21_sf_13TeV     lnN       %0.3f/%0.3f      -        -       -       %0.3f/%0.3f    "%(1+self.rrv_wtagger_eff_reweight_forV.getError(),1-self.rrv_wtagger_eff_reweight_forV.getError(), 1+self.rrv_wtagger_eff_reweight_forV.getError(),1-self.rrv_wtagger_eff_reweight_forV.getError()) );
             
           ### nousiance for the bkg
           ### WJets normaliztion due to data fit and alternate modellization
@@ -2768,33 +2784,42 @@ self.channel));
           elif self.channel == "el" : channel = "e" ;
           
           if self.number_WJets_insideband >0:
-            datacard_out.write( "\nWjet_Norm_%s   lnN    %0.3f      -    %0.3f     -      -        -      "%(channel,self.number_WJets_insideband, getattr(self,"datadriven_alpha_WJets_%s"%(mode))));
+            datacard_out.write( "\nCMS_xww_WJ_norm_%s_13TeV   lnN    %0.3f     %0.3f     -      -        -      "%(channel,self.number_WJets_insideband, getattr(self,"datadriven_alpha_WJets_%s"%(mode))));
           else:
-            datacard_out.write( "\nWjet_Norm_%s   lnN     -         -    %0.3f     -      -        -      "%(channel,1+ self.workspace4limit_.var("rate_WJets_for_unbin").getError()/self.workspace4limit_.var("rate_WJets_for_unbin").getVal() ) );
+            datacard_out.write( "\nCMS_xww_WJ_norm_%s_13TeV   lnN     -        %0.3f     -      -        -      "%(channel,1+ self.workspace4limit_.var("rate_WJets_for_unbin").getError()/self.workspace4limit_.var("rate_WJets_for_unbin").getVal() ) );
+
+          datacard_out.write( "\nCMS_scale_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.937,1.048)        
+
+          datacard_out.write( "\nCMS_res_j lnN   %0.3f    -   -   -   - "%(1.003)        
+
+          datacard_out.write( "\nCMS_mass_scale_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.957,1.042)        
+
+          datacard_out.write( "\nCMS_mass_res_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.985,1.006)        
 
 
           ## jet mass systematic scaling up and down vbf jets detajj, mjj, and pt selection effect
           if self.ggH_normalization_uncertainty_from_jet_scale!=0 and self.vbf_normalization_uncertainty_from_jet_scale!=0 and self.WJets_normalization_uncertainty_from_jet_scale!=0 and self.TTbar_normalization_uncertainty_from_jet_scale!=0 and self.STop_normalization_uncertainty_from_jet_scale!=0 and self.VV_normalization_uncertainty_from_jet_scale!=0 : 
 
-           datacard_out.write( "\nCMS_scale_j lnN   %0.3f     %0.3f     %0.3f/%0.3f    %0.3f/%0.3f   %0.3f/%0.3f   %0.3f/%0.3f    "%(1+self.ggH_normalization_uncertainty_from_jet_scale, 1+self.vbf_normalization_uncertainty_from_jet_scale, 1-self.WJets_normalization_uncertainty_from_jet_scale, 1+self.WJets_normalization_uncertainty_from_jet_scale, 1+self.TTbar_normalization_uncertainty_from_jet_scale, 1-self.TTbar_normalization_uncertainty_from_jet_scale, 1+self.STop_normalization_uncertainty_from_jet_scale, 1-self.STop_normalization_uncertainty_from_jet_scale, 1+self.VV_normalization_uncertainty_from_jet_scale, 1-self.VV_normalization_uncertainty_from_jet_scale) )        
+           datacard_out.write( "\nCMS_scale_j lnN   %0.3f     %0.3f/%0.3f    %0.3f/%0.3f   %0.3f/%0.3f   %0.3f/%0.3f    "%(1+self.ggH_normalization_uncertainty_from_jet_scale, 1-self.WJets_normalization_uncertainty_from_jet_scale, 1+self.WJets_normalization_uncertainty_from_jet_scale, 1+self.TTbar_normalization_uncertainty_from_jet_scale, 1-self.TTbar_normalization_uncertainty_from_jet_scale, 1+self.STop_normalization_uncertainty_from_jet_scale, 1-self.STop_normalization_uncertainty_from_jet_scale, 1+self.VV_normalization_uncertainty_from_jet_scale, 1-self.VV_normalization_uncertainty_from_jet_scale) )        
 
           if self.ggH_normalization_uncertainty_from_jet_res!=0 and self.vbf_normalization_uncertainty_from_jet_res!=0 and self.WJets_normalization_uncertainty_from_jet_res!=0 and self.TTbar_normalization_uncertainty_from_jet_res!=0 and self.STop_normalization_uncertainty_from_jet_res!=0 and self.VV_normalization_uncertainty_from_jet_res!=0 :
              
-           datacard_out.write( "\nCMS_res_j lnN   %0.3f     %0.3f     %0.3f/%0.3f    %0.3f/%0.3f   %0.3f/%0.3f   %0.3f/%0.3f  "%(1+self.ggH_normalization_uncertainty_from_jet_res, 1+self.vbf_normalization_uncertainty_from_jet_res, 1-self.WJets_normalization_uncertainty_from_jet_res, 1+self.WJets_normalization_uncertainty_from_jet_res, 1+self.TTbar_normalization_uncertainty_from_jet_res, 1-self.TTbar_normalization_uncertainty_from_jet_res, 1+self.STop_normalization_uncertainty_from_jet_res, 1-self.STop_normalization_uncertainty_from_jet_res, 1+self.VV_normalization_uncertainty_from_jet_res, 1-self.VV_normalization_uncertainty_from_jet_res) )        
+           datacard_out.write( "\nCMS_res_j lnN   %0.3f     %0.3f/%0.3f    %0.3f/%0.3f   %0.3f/%0.3f   %0.3f/%0.3f  "%(1+self.ggH_normalization_uncertainty_from_jet_res, 1-self.WJets_normalization_uncertainty_from_jet_res, 1+self.WJets_normalization_uncertainty_from_jet_res, 1+self.TTbar_normalization_uncertainty_from_jet_res, 1-self.TTbar_normalization_uncertainty_from_jet_res, 1+self.STop_normalization_uncertainty_from_jet_res, 1-self.STop_normalization_uncertainty_from_jet_res, 1+self.VV_normalization_uncertainty_from_jet_res, 1-self.VV_normalization_uncertainty_from_jet_res) )        
 
           if self.ggH_normalization_uncertainty_from_lep_scale!=0 and self.vbf_normalization_uncertainty_from_lep_scale!=0 and self.WJets_normalization_uncertainty_from_lep_scale!=0 and self.TTbar_normalization_uncertainty_from_lep_scale!=0 and self.STop_normalization_uncertainty_from_lep_scale!=0 and self.VV_normalization_uncertainty_from_lep_scale!=0 : 
 
-           datacard_out.write( "\nCMS_scale_%s lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    "%(channel,self.ggH_normalization_uncertainty_from_lep_scale, self.vbf_normalization_uncertainty_from_lep_scale, self.WJets_normalization_uncertainty_from_lep_scale, self.TTbar_normalization_uncertainty_from_lep_scale, self.STop_normalization_uncertainty_from_lep_scale, self.VV_normalization_uncertainty_from_lep_scale) )        
+           datacard_out.write( "\nCMS_scale_%s lnN   %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    "%(channel,self.ggH_normalization_uncertainty_from_lep_scale, self.WJets_normalization_uncertainty_from_lep_scale, self.TTbar_normalization_uncertainty_from_lep_scale, self.STop_normalization_uncertainty_from_lep_scale, self.VV_normalization_uncertainty_from_lep_scale) )        
 
 
           if self.ggH_normalization_uncertainty_from_lep_res!=0 and self.vbf_normalization_uncertainty_from_lep_res!=0 and self.WJets_normalization_uncertainty_from_lep_res!=0 and self.TTbar_normalization_uncertainty_from_lep_res!=0 and self.STop_normalization_uncertainty_from_lep_res!=0 and self.VV_normalization_uncertainty_from_lep_res!=0 : 
 
-           datacard_out.write( "\nCMS_res_%s lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    "%(channel,self.ggH_normalization_uncertainty_from_lep_res, self.vbf_normalization_uncertainty_from_lep_res, self.WJets_normalization_uncertainty_from_lep_res, self.TTbar_normalization_uncertainty_from_lep_res, self.STop_normalization_uncertainty_from_lep_res, self.VV_normalization_uncertainty_from_lep_res) )
+           datacard_out.write( "\nCMS_res_%s lnN   %0.3f     %0.3f    %0.3f   %0.3f   %0.3f    "%(channel,self.ggH_normalization_uncertainty_from_lep_res, self.WJets_normalization_uncertainty_from_lep_res, self.TTbar_normalization_uncertainty_from_lep_res, self.STop_normalization_uncertainty_from_lep_res, self.VV_normalization_uncertainty_from_lep_res) )
 
 
           if self.ggH_normalization_uncertainty_from_btag!=0 and self.vbf_normalization_uncertainty_from_btag!=0 and self.WJets_normalization_uncertainty_from_btag!=0 and self.TTbar_normalization_uncertainty_from_btag!=0 and self.STop_normalization_uncertainty_from_btag!=0 and self.VV_normalization_uncertainty_from_btag!=0 : 
 
-           datacard_out.write( "\nCMS_eff_b lnN   %0.3f     %0.3f     %0.3f    %0.3f   %0.3f   %0.3f "%(self.ggH_normalization_uncertainty_from_btag, self.vbf_normalization_uncertainty_from_btag, self.WJets_normalization_uncertainty_from_btag, self.TTbar_normalization_uncertainty_from_btag, self.STop_normalization_uncertainty_from_btag, self.VV_normalization_uncertainty_from_btag) )                  
+#           datacard_out.write( "\nCMS_xww_btag_eff_13TeV lnN   %0.3f    %0.3f     %0.3f    %0.3f   %0.3f "%(self.ggH_normalization_uncertainty_from_btag, self.WJets_normalization_uncertainty_from_btag, self.TTbar_normalization_uncertainty_from_btag, self.STop_normalization_uncertainty_from_btag, self.VV_normalization_uncertainty_from_btag) )                  
+           datacard_out.write( "\nCMS_xww_btag_eff_13TeV lnN   %0.3f    -     -    -   - "%(self.ggH_normalization_uncertainty_from_btag )                  
 
          if mode == "unbin":
             for i in range(len(params_list)):
@@ -2837,7 +2862,7 @@ self.channel));
 
         rrv_x = workspace.var("rrv_mass_lvj");
         data_obs = workspace.data("data_obs_%s"%(self.channel));
-        model_pdf_ggH   = workspace.pdf("RSGraviton_%s"%(self.channel));
+        model_pdf_ggH   = workspace.pdf("BulkGraviton_%s"%(self.channel));
 #        model_pdf_vbfH  = workspace.pdf("qqH_%s"%(self.channel));
         model_pdf_WJets = workspace.pdf("WJets_%s"%(self.channel));
         model_pdf_VV = workspace.pdf("VV_%s"%(self.channel));        
@@ -2959,39 +2984,39 @@ self.channel));
          model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Name("STop_line_invisible"), RooFit.Components("STop_%s"%(self.channel)), RooFit.LineColor(kBlack), RooFit.LineWidth(2), RooFit.VLines());
 
 
-        if self.higgs_sample == "RSGraviton600" or self.higgs_sample == "RSGraviton700":
+        if self.higgs_sample == "BulkGraviton600" or self.higgs_sample == "BulkGraviton700":
            signal_scale = 5;
         else: 
            signal_scale = 5;
         
-        if self.higgs_sample == "RSGraviton600":
-            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("RSGraviton#times%s, m_{H}=0.6TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["RSGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
+        if self.higgs_sample == "BulkGraviton600":
+            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("BulkGraviton#times%s, m_{H}=0.6TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["BulkGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
 #            model_pdf_vbfH.plotOn(mplot,RooFit.Normalization(scale_number_vbfH*signal_scale),RooFit.Name("qqH#times%s, m_{H}=0.6TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["vbfH"]), RooFit.LineStyle( 9), RooFit.VLines());
 
-        if self.higgs_sample=="RSGraviton700":
-            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("RSGraviton#times%s, m_{H}=0.7TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["RSGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
+        if self.higgs_sample=="BulkGraviton700":
+            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("BulkGraviton#times%s, m_{H}=0.7TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["BulkGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
 #            model_pdf_vbfH.plotOn(mplot,RooFit.Normalization(scale_number_vbfH*signal_scale),RooFit.Name("qqH#times%s, m_{H}=0.7TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["vbfH"]), RooFit.LineStyle( 9), RooFit.VLines());
 
-        if self.higgs_sample=="RSGraviton800":
-            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("RSGraviton#times%s, m_{H}=0.8TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["RSGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
+        if self.higgs_sample=="BulkGraviton800":
+            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("BulkGraviton#times%s, m_{H}=0.8TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["BulkGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
 #            model_pdf_vbfH.plotOn(mplot,RooFit.Normalization(scale_number_vbfH*signal_scale),RooFit.Name("qqH#times%s, m_{H}=0.8TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["vbfH"]), RooFit.LineStyle( 9), RooFit.VLines());
 
-        if self.higgs_sample=="RSGraviton900":
-            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("RSGraviton#times%s, m_{H}=0.9TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["RSGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
+        if self.higgs_sample=="BulkGraviton900":
+            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("BulkGraviton#times%s, m_{H}=0.9TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["BulkGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
 #            model_pdf_vbfH.plotOn(mplot,RooFit.Normalization(scale_number_vbfH*signal_scale),RooFit.Name("qqH#times%s, m_{H}=0.9TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["vbfH"]), RooFit.LineStyle( 9), RooFit.VLines());
 
-        if self.higgs_sample=="RSGraviton1000":
-            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("RSGraviton#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["RSGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
+        if self.higgs_sample=="BulkGraviton1000":
+            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("BulkGraviton#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["BulkGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
 #            model_pdf_vbfH.plotOn(mplot,RooFit.Normalization(scale_number_vbfH*signal_scale),RooFit.Name("qqH#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["vbfH"]), RooFit.LineStyle( 9), RooFit.VLines());
 
-        if self.higgs_sample=="RSGraviton2000":
-            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("RSGraviton#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["RSGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
+        if self.higgs_sample=="BulkGraviton2000":
+            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("BulkGraviton#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["BulkGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
 
-        if self.higgs_sample=="RSGraviton3000":
-            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("RSGraviton#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["RSGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
+        if self.higgs_sample=="BulkGraviton3000":
+            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("BulkGraviton#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["BulkGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
 
-#        if self.higgs_sample=="RSGraviton4000":
-#            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("RSGraviton#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["RSGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
+#        if self.higgs_sample=="BulkGraviton4000":
+#            model_pdf_ggH.plotOn(mplot,RooFit.Normalization(scale_number_ggH*signal_scale),RooFit.Name("BulkGraviton#times%s, m_{H}=1TeV"%(signal_scale)),RooFit.DrawOption("L"), RooFit.LineColor(self.color_palet["BulkGraviton"]), RooFit.LineStyle(2), RooFit.VLines());
 
         GetDataPoissonInterval(data_obs,rrv_x,mplot,self.narrow_factor);
         model_Total_background_MC.plotOn(mplot,RooFit.Normalization(scale_number_Total_background_MC),RooFit.Invisible(),RooFit.Name("model_mc"));
@@ -3066,7 +3091,7 @@ self.channel));
          fit_mlvj_model_single_MC(self.workspace4fit_,self.file_ggH,"_%smassvbf_int_dn"%(self.higgs_sample),"_signal_region","CB_v1",self.channel,self.wtagger_label,0,0,0,0,"_%s"%(self.higgs_sample));      
          self.workspace4fit_.writeToFile(self.tmpFile.GetName());
 
-        fit_mlvj_model_single_MC(self.workspace4fit_,self.file_ggH,"_%s"%(self.higgs_sample),"_signal_region",self.mlvj_shape["RSGraviton"],self.channel,self.wtagger_label,0,0,0,0,"_%s"%(self.higgs_sample));
+        fit_mlvj_model_single_MC(self.workspace4fit_,self.file_ggH,"_%s"%(self.higgs_sample),"_signal_region",self.mlvj_shape["BulkGraviton"],self.channel,self.wtagger_label,0,0,0,0,"_%s"%(self.higgs_sample));
 
         '''
         self.get_mj_and_mlvj_dataset(self.file_vbfH,"_%s"%(self.vbfhiggs_sample));
@@ -3498,7 +3523,7 @@ self.channel));
 
       ### Fix the pdf of signal, TTbar, STop and VV in the signal region
       
-      fix_Model(self.workspace4fit_,"_%s"%(self.higgs_sample),"_signal_region","_mlvj",self.mlvj_shape["RSGraviton"],self.channel,"",0);
+      fix_Model(self.workspace4fit_,"_%s"%(self.higgs_sample),"_signal_region","_mlvj",self.mlvj_shape["BulkGraviton"],self.channel,"",0);
 #      fix_Model(self.workspace4fit_,"_%s"%(self.vbfhiggs_sample),"_signal_region","_mlvj",self.mlvj_shape["vbfH"],self.channel,"",0);
       fix_Model(self.workspace4fit_,"_TTbar","_signal_region","_mlvj",self.mlvj_shape["TTbar"],self.channel,"",0);
       fix_Model(self.workspace4fit_,"_STop","_signal_region","_mlvj",self.mlvj_shape["STop"],self.channel,"",0);
@@ -3507,7 +3532,7 @@ self.channel));
       self.workspace4fit_.writeToFile(self.tmpFile.GetName());
 
       ### Call the evaluation of the normalization in the signal region for signal, TTbar, VV, STop, and WJets after the extrapolation via alpha
-      get_mlvj_normalization_insignalregion(self.workspace4fit_,"_%s"%(self.higgs_sample),self.mlvj_shape["RSGraviton"],"_signal_region",self.channel);
+      get_mlvj_normalization_insignalregion(self.workspace4fit_,"_%s"%(self.higgs_sample),self.mlvj_shape["BulkGraviton"],"_signal_region",self.channel);
 #      get_mlvj_normalization_insignalregion(self.workspace4fit_,"_%s"%(self.vbfhiggs_sample),self.mlvj_shape["vbfH"],"_signal_region",self.channel);
       get_mlvj_normalization_insignalregion(self.workspace4fit_,"_TTbar",self.mlvj_shape["TTbar"],"_signal_region",self.channel);
       get_mlvj_normalization_insignalregion(self.workspace4fit_,"_STop",self.mlvj_shape["STop"],"_signal_region",self.channel);
@@ -3552,7 +3577,7 @@ def pre_limit_sb_correction(method, channel, higgs_sample="HWWMH600", in_mlvj_si
 ### funtion to run the analysis without systematic
 def pre_limit_simple(channel):
     print "######################### pre_limit_simple for %s sampel"%(channel)
-    pre_limit_sb_correction_without_systermatic(channel, "RSGraviton600",550, 700,40,130,400,1000,"ErfPowExp_v1","ErfPow2_v1");
+    pre_limit_sb_correction_without_systermatic(channel, "BulkGraviton600",550, 700,40,130,400,1000,"ErfPowExp_v1","ErfPow2_v1");
     
 ### function to check the workspace once it has already created
 def check_workspace(channel, higgs):
@@ -3569,7 +3594,7 @@ if __name__ == '__main__':
 
     if options.check:
         print '################# check workspace for %s sample'%(channel);
-        check_workspace(channel,"RSGraviton600");
+        check_workspace(channel,"BulkGraviton600");
 
     if options.simple and ( not options.multi) and ( not options.check) :
         print '################# simple mode for %s sample'%(channel)

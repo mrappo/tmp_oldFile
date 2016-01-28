@@ -78,8 +78,8 @@ struct SystematicUncertaintyEXO{ const double mean_signal_uncertainty_jet_scale 
                                  const double sigma_signal_uncertainty_jet_scale = 0.033;
                                  const double sigma_signal_uncertainty_jet_res   = 0.030;
                                  const double sigma_signal_uncertainty_lep_scale = 0.005;
-                                 const double mean_mj_shift = 1.4 ;
-                                 const double sigma_mj_smear = 1.16 ;
+                                 const double mean_mj_shift = -0.6 ;
+                                 const double sigma_mj_smear = 1.12 ;
 };       
 
 struct SystematicUncertaintyHiggs_01jetBin{
@@ -141,8 +141,8 @@ struct SystematicUncertaintyHiggs_01jetBin{
                                   const double sigma_signal_uncertainty_jet_res_vbfH_900  = 0.099;
                                   const double sigma_signal_uncertainty_jet_res_vbfH_1000 = 0.056;
 
-                                  const double mean_mj_shift = 0.1 ;
-                                  const double sigma_mj_smear = 1.30 ;
+                                 const double mean_mj_shift = -0.6 ;
+                                 const double sigma_mj_smear = 1.12 ;
   //                                  const double mean_mj_shift = 1.4 ;
   //                                  const double sigma_mj_smear = 1.16 ;
 };       
@@ -207,6 +207,8 @@ struct SystematicUncertaintyHiggs_2jetBin{
                                   const double sigma_signal_uncertainty_jet_res_vbfH_900  = 0.191;
                                   const double sigma_signal_uncertainty_jet_res_vbfH_1000 = 0.170;
 
-                                  const double mean_mj_shift = 1.4 ;
-                                  const double sigma_mj_smear = 1.16 ;
+  //                                  const double mean_mj_shift = 1.4 ;
+  //                                  const double sigma_mj_smear = 1.16 ;
+                                 const double mean_mj_shift = -0.6 ;
+                                 const double sigma_mj_smear = 1.12 ;
 };       

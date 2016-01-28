@@ -99,21 +99,21 @@ parser.add_option('--plotLikelihoodScan',    action="store", type="int",    dest
 #mass = [1000,2000,3000,4000]
 #mass = [4000]
 #mass = [4000]
-mass = [800]
-ccmlo = [600,700,700,700]
+mass = [600,700,750,800,900,1000]
+ccmlo = [600,600,600,600,600,600]
 #ccmhi = [1500,2500,3500,4500]
-ccmhi = [1500,5000,5000,5000]
-mjlo = [40,40,40,40]
-mjhi = [150,150,150,150]
+ccmhi = [1500,1500,1500,1500,1500,1500]
+mjlo = [40,40,40,40,40,40]
+mjhi = [150,150,150,150,150,150]
 #mjlo = [35,35,35,35]
 #mjhi = [110,110,110,110]
-mlo = [600,700,700,700]
+mlo = [600,600,600,600,600,600]
 #mlo = [1000,1000,1000,1000]
 #mhi = [1500,2500,3500,4500]
-mhi = [1500,5000,5000,5000]
-shape = ["Exp","ExpN","ExpN","ExpN"]
+mhi = [1500,1500,1500,1500,1500,1500]
+shape = ["ExpN","ExpN","ExpN","ExpN","ExpN","ExpN"]
 #shape = ["ExpN","ExpN","ExpN","ExpN"]
-shapeAlt = ["ExpTail","ExpTail","ExpTail","ExpTail"]
+shapeAlt = ["ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
 #shape = ["Exp","Exp","Exp","Exp"]
 #shapeAlt = ["Pow","Pow","Pow","Pow"]
 
@@ -324,9 +324,9 @@ def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
     # create a dummy bash/csh
     outScript = open(fn+".sh","w");
 
-    file1 = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d_unbin.txt"%(mass,SIGCH,cprime,BRnew);
-    file2 = "hwwlvj_RSGraviton%03d_mu%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
-    file3 = "hwwlvj_RSGraviton%03d_el%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
+    file1 = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d_unbin.txt"%(mass,SIGCH,cprime,BRnew);
+    file2 = "hwwlvj_BulkGraviton%03d_mu%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
+    file3 = "hwwlvj_BulkGraviton%03d_el%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
 
     if not options.lxbatchCern and not options.herculesMilano :   
      outScript.write('#!/bin/bash');
@@ -371,10 +371,10 @@ def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
      outScript.write("\n"+'cd -');
      outScript.write("\n"+'ls');    
     
-     file1 = "hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt"%(mass,options.channel,SIGCH,cprime,BRnew);
-     file2 = "hwwlvj_RSGraviton%03d_mu%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
-     file3 = "hwwlvj_RSGraviton%03d_el%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
-     file4 = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
+     file1 = "hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt"%(mass,options.channel,SIGCH,cprime,BRnew);
+     file2 = "hwwlvj_BulkGraviton%03d_mu%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
+     file3 = "hwwlvj_BulkGraviton%03d_el%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
+     file4 = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
 
      outScript.write("\n"+'cp '+currentDir+'/'+file1+' ./');
      outScript.write("\n"+'cp '+currentDir+'/'+file2+' ./');
@@ -401,10 +401,10 @@ def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
      outScript.write("\n"+'cd -');
      outScript.write("\n"+'ls');    
     
-     file1 = "hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt"%(mass,options.channel,SIGCH,cprime,BRnew);
-     file2 = "hwwlvj_RSGraviton%03d_mu%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
-     file3 = "hwwlvj_RSGraviton%03d_el%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
-     file4 = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
+     file1 = "hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt"%(mass,options.channel,SIGCH,cprime,BRnew);
+     file2 = "hwwlvj_BulkGraviton%03d_mu%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
+     file3 = "hwwlvj_BulkGraviton%03d_el%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
+     file4 = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d_workspace.root"%(mass,SIGCH,cprime,BRnew);
 
      outScript.write("\n"+'cp '+currentDir+'/'+file1+' ./');
      outScript.write("\n"+'cp '+currentDir+'/'+file2+' ./');
@@ -529,7 +529,8 @@ def getPValueFromCard(file,observed):
 def makeSMLimitPlot(SIGCH,cprime = 10, brnew = 00):
 
     nPoints = len(mass);
-    xsec = [2.37, 0.04797, 0.00292, 0.0002739];
+#    xsec = [2.37, 0.04797, 0.00292, 0.0002739];
+    xsec = [0.0036811073, 0.0020387519, 0.0015261237, 0.001332687, 0.0006552327, 0.000359194];
     
     xbins     = array('f', []); xbins_env = array('f', []);
     ybins_exp = array('f', []); ybins_obs = array('f', []);
@@ -538,7 +539,7 @@ def makeSMLimitPlot(SIGCH,cprime = 10, brnew = 00):
     setStyle();
      
     for i in range(len(mass)):
-	curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+	curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
         print curFile
 	curAsymLimits = getAsymLimits(curFile);
         xbins.append( mass[i] );
@@ -549,7 +550,7 @@ def makeSMLimitPlot(SIGCH,cprime = 10, brnew = 00):
         ybins_1s.append( curAsymLimits[2] );
         
     for i in range( len(mass)-1, -1, -1 ):
-	curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+	curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
 	curAsymLimits = getAsymLimits(curFile);
         xbins_env.append( mass[i] );
         ybins_2s.append( curAsymLimits[5] );
@@ -675,7 +676,7 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
     setStyle();
      
     for i in range(len(mass)):
-	curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+	curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
         print curFile
 	curAsymLimits = getAsymLimits(curFile);
         xbins.append( mass[i] );
@@ -687,7 +688,7 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
         ybins_xsec.append(xsec[i]);
 
     for i in range( len(mass)-1, -1, -1 ):
-	curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+	curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
 	curAsymLimits = getAsymLimits(curFile);
         xbins_env.append( mass[i] );
         ybins_2s.append( curAsymLimits[5]*xsec[i] );
@@ -824,14 +825,14 @@ def makeSMPValuePlot(SIGCH,cprime = 10,brnew = 00):
     setStyle();
 
     for i in range(len(mass)):
-	curFile_obs = "higgsCombinehwwlvj_pval_obs_RSGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
-	curFile_exp = "higgsCombinehwwlvj_pval_exp_RSGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+	curFile_obs = "higgsCombinehwwlvj_pval_obs_BulkGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+	curFile_exp = "higgsCombinehwwlvj_pval_exp_BulkGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
         xbins_obs.append(mass[i]); 
         xbins_exp.append(mass[i]); 
-        print "higgsCombinehwwlvj_pval_obs_RSGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+        print "higgsCombinehwwlvj_pval_obs_BulkGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
         ybins_obs.append(getPValueFromCard(curFile_obs,1));
         print getPValueFromCard(curFile_obs,1)
-        print "higgsCombinehwwlvj_pval_exp_RSGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]); 
+        print "higgsCombinehwwlvj_pval_exp_BulkGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]); 
         ybins_exp.append(getPValueFromCard(curFile_exp,0));
         print getPValueFromCard(curFile_exp,0)
 
@@ -930,7 +931,7 @@ def makeSignalStrenghtPlot(SIGCH,cprime = 10,brnew = 00):
         
     for i in range(len(mass)):
         
-     curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.MaxLikelihoodFit.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+     curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.MaxLikelihoodFit.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
  
      f = ROOT.TFile(curFile);
      t = f.Get("limit");
@@ -970,7 +971,7 @@ def makeSignalStrenghtPlot(SIGCH,cprime = 10,brnew = 00):
      else:        ybins_mu_ratio.append(mu/mu_err_up);
 
      if options.plotPValue == 1:
-	curFile_obs = "higgsCombinehwwlvj_pval_obs_RSGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+	curFile_obs = "higgsCombinehwwlvj_pval_obs_BulkGraviton%03d_%s%s_%02d_%02d_unbin.ProfileLikelihood.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
         xbins_obs.append(mass[i]); 
         ybins_obs.append(getPValueFromCard(curFile_obs,1));
 
@@ -1107,7 +1108,7 @@ def makeLikelihoodScanPlot(SIGCH,cprime,brnew):
     
     for i in range(len(mass)):
 
-	curFile = "higgsCombinehwwlvj_LikelihoodScan_RSGraviton%03d_%s%s_%02d_%02d_unbin.MultiDimFit.mH%02d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
+	curFile = "higgsCombinehwwlvj_LikelihoodScan_BulkGraviton%03d_%s%s_%02d_%02d_unbin.MultiDimFit.mH%02d.root"%(mass[i],options.channel,SIGCH,cprime,brnew,mass[i]);
         f = ROOT.TFile(curFile);
         t = f.Get("limit");
         
@@ -1162,7 +1163,7 @@ def makeBSMLimitPlotMass(SIGCH,brnew):
         massCS.append((0.1097+0.04365));
         massCS.append((0.0571+0.03164));
         massCS.append((0.0320+0.02399));
-    elif SIGCH == "_RSGraviton":
+    elif SIGCH == "_BulkGraviton":
         massCS.append((0.5230));
         massCS.append((0.2290));
         massCS.append((0.1097));
@@ -1200,7 +1201,7 @@ def makeBSMLimitPlotMass(SIGCH,brnew):
 
         for i in range(len(mass)):
 
-            curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime[j],brnew,mass[i]);
+            curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[i],options.channel,SIGCH,cprime[j],brnew,mass[i]);
 
             curAsymLimits = getAsymLimits(curFile);
             xbins.append( mass[i] );
@@ -1414,7 +1415,7 @@ def makeBSMLimitPlotBRnew(SIGCH,mass):
         massXS.append((0.1095+0.04365));
         massXS.append((0.05684+0.03164));
         massXS.append((0.03163+0.02399));
-    elif SIGCH == "_RSGraviton":
+    elif SIGCH == "_BulkGraviton":
         massXS.append((0.5230));
         massXS.append((0.2288));
         massXS.append((0.1095));
@@ -1455,7 +1456,7 @@ def makeBSMLimitPlotBRnew(SIGCH,mass):
         for i in range(len(BRnew)):
             if (cprime[j]*0.1) > (1-BRnew[i]*0.1): continue ;
             nPoints = nPoints+1 ;
-            curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass,options.channel,SIGCH,cprime[j],BRnew[i],mass);
+            curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass,options.channel,SIGCH,cprime[j],BRnew[i],mass);
             curAsymLimits = getAsymLimits(curFile);
             xbins.append(BRnew_x[i]);
             ybins_exp.append( curAsymLimits[3] );
@@ -1671,7 +1672,7 @@ def makeBSMLimitPlot2D( SIGCH, mass, contourListMassExp=0, contourListMassObs=0)
         mass_XS.append((0.1095+0.04365));
         mass_XS.append((0.05684+0.03164));
         mass_XS.append((0.03163+0.02399));
-    elif SIGCH == "_RSGraviton":
+    elif SIGCH == "_BulkGraviton":
         mass_XS.append((0.5230));
         mass_XS.append((0.2288));
         mass_XS.append((0.1095));
@@ -1700,7 +1701,7 @@ def makeBSMLimitPlot2D( SIGCH, mass, contourListMassExp=0, contourListMassObs=0)
          binX = h2d_exp.GetXaxis().FindBin(cprime[j]*0.1);
          binY = h2d_exp.GetYaxis().FindBin(BRnew[i]*0.1);
                 
-         curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass,options.channel,SIGCH,cprime[j],BRnew[i],mass); 
+         curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass,options.channel,SIGCH,cprime[j],BRnew[i],mass); 
          curAsymLimits = getAsymLimits(curFile);
          h2d_exp.SetBinContent(binX+1,binY+1,curAsymLimits[3]);
          h2d_csXbr_exp.SetBinContent(binX+1,binY+1,curAsymLimits[3]*mass_XS[massindex[mass]]*cprime[j]*0.1*(1-BRnew[i]*0.1)*massBRWW[massindex[mass]]);
@@ -2048,7 +2049,7 @@ def makeBSMLimitPlot2DBRnew( SIGCH, brNew, contourListBrNewExp =0, counturListBr
         mass_XS.append((0.1095+0.04365));
         mass_XS.append((0.05684+0.03164));
         mass_XS.append((0.03163+0.02399));
-    elif SIGCH == "_RSGraviton":
+    elif SIGCH == "_BulkGraviton":
         mass_XS.append((0.5230));
         mass_XS.append((0.2288));
         mass_XS.append((0.1095));
@@ -2076,7 +2077,7 @@ def makeBSMLimitPlot2DBRnew( SIGCH, brNew, contourListBrNewExp =0, counturListBr
             binX = h2d_exp.GetXaxis().FindBin(mass[j]);
             binY = h2d_exp.GetYaxis().FindBin(cprime[i]*0.1);
                            
-            curFile = "higgsCombinehwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[j],options.channel,SIGCH,cprime[i],brNew,mass[j]);
+            curFile = "higgsCombinehwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.Asymptotic.mH%03d.root"%(mass[j],options.channel,SIGCH,cprime[i],brNew,mass[j]);
             curAsymLimits = getAsymLimits(curFile);
             h2d_exp.SetBinContent(binX+1,binY+1,curAsymLimits[3]);
             h2d_obs.SetBinContent(binX+1,binY+1,curAsymLimits[0]);
@@ -2743,7 +2744,7 @@ if __name__ == '__main__':
                     
                     time.sleep(0.3);
                     
-                    command = "python doFit_class_run2exo.py %s RSGraviton%03d %02d %02d %02d %02d %02d %02d %s %s -b -s --cprime %01d --BRnew %01d --inPath %s/ --jetBin %s --channel %s --pseudodata %d --closuretest %d --skipJetSystematics %d --interferenceModel %s -f %s --category %s"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j], BRnew[k], os.getcwd(), options.jetBin, options.channel,options.pseudodata,options.closuretest,options.skipJetSystematics,options.interferenceModel,options.treeFolder,options.category);
+                    command = "python doFit_class_run2exo.py %s BulkGraviton%03d %02d %02d %02d %02d %02d %02d %s %s -b -s --cprime %01d --BRnew %01d --inPath %s/ --jetBin %s --channel %s --pseudodata %d --closuretest %d --skipJetSystematics %d --interferenceModel %s -f %s --category %s"%(CHAN, mass[i], ccmlo[i], ccmhi[i], mjlo[i], mjhi[i], mlo[i], mhi[i], shape[i], shapeAlt[i], cprime[j], BRnew[k], os.getcwd(), options.jetBin, options.channel,options.pseudodata,options.closuretest,options.skipJetSystematics,options.interferenceModel,options.treeFolder,options.category);
                     print command ;
 
                     if options.batchMode :
@@ -2763,7 +2764,7 @@ if __name__ == '__main__':
                 for k in range(brLo,brHi):
 
                     print "--------------------------------------------------";
-                    print "analyzing card: hwwlvj_RSGraviton%03d_em%s_%02d_%02d_unbin.txt"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                    print "analyzing card: hwwlvj_BulkGraviton%03d_em%s_%02d_%02d_unbin.txt"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                     print "--------------------------------------------------";                
 
                     ###############################################
@@ -2772,13 +2773,13 @@ if __name__ == '__main__':
 
 
                     if options.channel =="em" and options.jetBin != "_2jet" :
-                     combineCmmd = "combineCards.py hwwlvj_RSGraviton%03d_el%s_%02d_%02d_unbin.txt hwwlvj_RSGraviton%03d_mu%s_%02d_%02d_unbin.txt > hwwlvj_RSGraviton%03d_em%s_%02d_%02d_unbin.txt"%(mass[i],SIGCH,cprime[j],BRnew[k],mass[i],SIGCH,cprime[j],BRnew[k],mass[i],SIGCH,cprime[j],BRnew[k]);
+                     combineCmmd = "combineCards.py hwwlvj_BulkGraviton%03d_el%s_%02d_%02d_unbin.txt hwwlvj_BulkGraviton%03d_mu%s_%02d_%02d_unbin.txt > hwwlvj_BulkGraviton%03d_em%s_%02d_%02d_unbin.txt"%(mass[i],SIGCH,cprime[j],BRnew[k],mass[i],SIGCH,cprime[j],BRnew[k],mass[i],SIGCH,cprime[j],BRnew[k]);
                      print "combineCmmd ",combineCmmd; 
                      os.system(combineCmmd);
 
                     if options.higgsCombination == 1:
                      options.channel = "combo" ; 
-                     combineCmmd = "combineCards.py hwwlvj_RSGraviton%03d_mu%s_%02d_%02d_unbin.txt hwwlvj_RSGraviton%03d_el%s_%02d_%02d_unbin.txt hwwlvj_RSGraviton%03d_em_2jet%s_%02d_%02d_unbin.txt > hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt"%(mass[i],SIGCH,cprime[j],BRnew[k],mass[i],SIGCH,cprime[j],BRnew[k],mass[i],SIGCH,cprime[j],BRnew[k],mass[i],options.channel,SIGCH,cprime[j],BRnew[k]);
+                     combineCmmd = "combineCards.py hwwlvj_BulkGraviton%03d_mu%s_%02d_%02d_unbin.txt hwwlvj_BulkGraviton%03d_el%s_%02d_%02d_unbin.txt hwwlvj_BulkGraviton%03d_em_2jet%s_%02d_%02d_unbin.txt > hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt"%(mass[i],SIGCH,cprime[j],BRnew[k],mass[i],SIGCH,cprime[j],BRnew[k],mass[i],SIGCH,cprime[j],BRnew[k],mass[i],options.channel,SIGCH,cprime[j],BRnew[k]);
                      print "combineCmmd ",combineCmmd; 
                      os.system(combineCmmd);
                         
@@ -2793,13 +2794,13 @@ if __name__ == '__main__':
                       if options.outputTree == 0 :
                           for iToy in range(options.nToys):                              
                            if options.systematics == 1:
-                               runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 --expectSignal=%d "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.injectSingalStrenght);
+                               runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 --expectSignal=%d "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.injectSingalStrenght);
                            else:
-                               runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 -S 0 --expectSignal=%d "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.injectSingalStrenght);
+                               runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 -S 0 --expectSignal=%d "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.injectSingalStrenght);
                            print "runCmmd ",runCmmd;
                            if options.batchMode:
                               fn = "combineScript_%s_%03d%s_%02d_%02d_iToy%d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k],iToy);
-                              cardStem = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                              cardStem = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                               submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                            else: 
                               os.system(runCmmd);
@@ -2807,11 +2808,11 @@ if __name__ == '__main__':
                            continue ;
 
                       else:
-                           runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t %d --expectSignal=%d "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.nToys,options.injectSingalStrenght);
+                           runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t %d --expectSignal=%d "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.nToys,options.injectSingalStrenght);
                            print "runCmmd ",runCmmd;
                            if options.batchMode:
                               fn = "combineScript_%s_%03d%s_%02d_%02d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k]);
-                              cardStem = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                              cardStem = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                               submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                            else: 
                               os.system(runCmmd);
@@ -2829,7 +2830,7 @@ if __name__ == '__main__':
                        #################################################
                         
                        if options.nToys == 0 and options.crossedToys == 0 : 
-                        runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties  -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2  --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);                     
+                        runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties  -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2  --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);                     
                         print "runCmmd ",runCmmd;
                         if options.batchMode:
                            fn = "combineScript_%s_%03d%s_%02d_%02d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k]);
@@ -2845,23 +2846,23 @@ if __name__ == '__main__':
                           if options.outputTree == 0:  
                            for iToy in range(options.nToys):
                              if options.systematics == 1:  
-                                 runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveToys --saveWithUncertainties --toysNoSystematics -s -1 -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 --expectSignal=%d --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.injectSingalStrenght);                     
+                                 runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveToys --saveWithUncertainties --toysNoSystematics -s -1 -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 --expectSignal=%d --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.injectSingalStrenght);                     
                              else:  
-                                 runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveToys --saveWithUncertainties --toysNoSystematics -s -1 -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 --expectSignal=%d --robustFit=1 -S 0 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.injectSingalStrenght);                     
+                                 runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveToys --saveWithUncertainties --toysNoSystematics -s -1 -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 --expectSignal=%d --robustFit=1 -S 0 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.injectSingalStrenght);                     
                              print "runCmmd ",runCmmd;
                              if options.batchMode:
                               fn = "combineScript_%s_%03d%s_%02d_%02d_iToy%d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k],iToy);
-                              cardStem = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                              cardStem = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                               submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                              else: 
                               os.system(runCmmd);
                            continue ;
                           else:
-                             runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties  --toysNoSystematics --saveToys -s -1 -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t %d --expectSignal=%d --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.nToys,options.injectSingalStrenght);                     
+                             runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties  --toysNoSystematics --saveToys -s -1 -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t %d --expectSignal=%d --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.nToys,options.injectSingalStrenght);                     
                              print "runCmmd ",runCmmd;
                              if options.batchMode:
                               fn = "combineScript_%s_%03d%s_%02d_%02d_iToy%d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k],options.nToys);
-                              cardStem = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                              cardStem = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                               submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                              else: 
                               os.system(runCmmd);
@@ -2873,10 +2874,10 @@ if __name__ == '__main__':
 
                        elif options.nToys != 0 and options.crossedToys == 1 :
 
-                          command = "ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep RSGraviton"+str(mass[i])+" > list_temp.txt";
+                          command = "ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep BulkGraviton"+str(mass[i])+" > list_temp.txt";
                           os.system(command);
                           print command;
-#                          os.system("ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep RSGraviton"+str(mass[i])+" > list_temp.txt"); 
+#                          os.system("ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep BulkGraviton"+str(mass[i])+" > list_temp.txt"); 
                           iToy = 0 ;
                           if options.outputTree == 0:  
                            with open("list_temp.txt") as input_list:
@@ -2885,12 +2886,12 @@ if __name__ == '__main__':
                              print line;   
                              for name in line.split():
                                 if iToy >= options.nToys: continue ; 
-                                runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -s -1 -t 1  --toysFile %s/%s --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.inputGeneratedDataset,name);
+                                runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -s -1 -t 1  --toysFile %s/%s --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.inputGeneratedDataset,name);
                                 iToy = iToy + 1 ;
                                 print "runCmmd ",runCmmd;                                
                                 if options.batchMode:
                                   fn = "combineScript_%s_%03d%s_%02d_%02d_iToy%d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k],iToy);
-                                  cardStem = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                                  cardStem = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                                   submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                                 else: 
                                   os.system(runCmmd);
@@ -2899,11 +2900,11 @@ if __name__ == '__main__':
                            with open("list_temp.txt") as input_list:
                               for line in input_list:
                                for name in line.split():                                                                       
-                                runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -s -1 -t %d --toysFile %s/%s --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.nToys,options.inputGeneratedDataset,name);                     
+                                runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -s -1 -t %d --toysFile %s/%s --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts,options.nToys,options.inputGeneratedDataset,name);                     
                                 print "runCmmd ",runCmmd;                                
                                 if options.batchMode:
                                   fn = "combineScript_%s_%03d%s_%02d_%02d_iToy%d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k],iToy);
-                                  cardStem = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                                  cardStem = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                                   submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                                 else: 
                                   os.system(runCmmd);
@@ -2916,23 +2917,23 @@ if __name__ == '__main__':
                     ###############################
                       
                     elif options.systematics == 1 and not options.computePvalue == 1 and not options.computeSignif == 1 and not options.makeLikelihoodScan == 1:
-                       runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                       runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                        print "runCmmd ",runCmmd ;
 
                        if options.batchMode:
                         fn = "combineScript_%s_%03d%s_%02d_%02d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k]);
-                        cardStem = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                        cardStem = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                         submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                        else: 
                         os.system(runCmmd);
 
                     elif options.systematics == 0 and not options.computePvalue == 1 and not options.computeSignif == 1 and not options.makeLikelihoodScan == 1:
-                       runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -S 0"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                       runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -S 0"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                        print "runCmmd ",runCmmd ;
 
                        if options.batchMode:
                         fn = "combineScript_%s_%03d%s_%02d_%02d"%(options.channel,mass[i],SIGCH,cprime[j],BRnew[k]);
-                        cardStem = "hwwlvj_RSGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
+                        cardStem = "hwwlvj_BulkGraviton%03d_em%s_%02d_%02d"%(mass[i],SIGCH,cprime[j],BRnew[k]);
                         submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                        else: 
                         os.system(runCmmd);
@@ -2945,7 +2946,7 @@ if __name__ == '__main__':
                        #############################################  
 
                        if options.nToys == 0: 
-                        runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);                                        
+                        runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);                                        
                         print "runCmmd ",runCmmd;
 
                         if options.batchMode:
@@ -2961,7 +2962,7 @@ if __name__ == '__main__':
                        #############################################  
 
                         for iToy in range(options.nToys):   
-                         runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 -s -1"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);                                        
+                         runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 -t 1 -s -1"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);                                        
                          print "runCmmd ",runCmmd;
 
                          if options.batchMode:
@@ -2977,7 +2978,7 @@ if __name__ == '__main__':
                        ###### run the observed and expected pvalue  ##### 
                        ##################################################  
 
-                        runCmmd = "combine -M ProfileLikelihood --signif --pvalue -n hwwlvj_pval_obs_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                        runCmmd = "combine -M ProfileLikelihood --signif --pvalue -n hwwlvj_pval_obs_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                         print "runCmmd ",runCmmd;
 
                         if options.batchMode:
@@ -2988,13 +2989,13 @@ if __name__ == '__main__':
 
                         if options.nToys==-1: 
                             if options.systematics==1:
-                                runCmmd = "combine -M ProfileLikelihood --signif --pvalue -n hwwlvj_pval_exp_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t -1 --expectSignal=1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                                runCmmd = "combine -M ProfileLikelihood --signif --pvalue -n hwwlvj_pval_exp_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t -1 --expectSignal=1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                             else:
-                                runCmmd = "combine -M ProfileLikelihood --signif --pvalue -n hwwlvj_pval_exp_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t -1 -S 0 --expectSignal=1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                                runCmmd = "combine -M ProfileLikelihood --signif --pvalue -n hwwlvj_pval_exp_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t -1 -S 0 --expectSignal=1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                             os.system(runCmmd);
                         else:        
                          for iToy in range(options.nToys):
-                          runCmmd = "combine -M ProfileLikelihood --signif --pvalue -n hwwlvj_pval_exp_RSGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t 1 --expectSignal=1 -s -1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                          runCmmd = "combine -M ProfileLikelihood --signif --pvalue -n hwwlvj_pval_exp_BulkGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t 1 --expectSignal=1 -s -1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                           print "runCmmd ",runCmmd;
 
                           if options.batchMode:
@@ -3006,7 +3007,7 @@ if __name__ == '__main__':
 
 
                     elif options.computeSignif == 1 and not options.makeLikelihoodScan == 1: 
-                        runCmmd = "combine -M ProfileLikelihood --signif -n hwwlvj_pval_obs_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                        runCmmd = "combine -M ProfileLikelihood --signif -n hwwlvj_pval_obs_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                         print "runCmmd ",runCmmd;
 
                         if options.batchMode:
@@ -3017,13 +3018,13 @@ if __name__ == '__main__':
 
                         if options.nToys==-1: 
                             if options.systematics==1:
-                                runCmmd = "combine -M ProfileLikelihood --signif -n hwwlvj_pval_exp_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t -1 --expectSignal=1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                                runCmmd = "combine -M ProfileLikelihood --signif -n hwwlvj_pval_exp_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t -1 --expectSignal=1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                             else:
-                                runCmmd = "combine -M ProfileLikelihood --signif -n hwwlvj_pval_exp_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t -1 -S 0 --expectSignal=1"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                                runCmmd = "combine -M ProfileLikelihood --signif -n hwwlvj_pval_exp_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t -1 -S 0 --expectSignal=1"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                             os.system(runCmmd);
                         else:        
                          for iToy in range(options.nToys):
-                          runCmmd = "combine -M ProfileLikelihood --signif -n hwwlvj_pval_exp_RSGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t 1 --expectSignal=1 -s -1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                          runCmmd = "combine -M ProfileLikelihood --signif -n hwwlvj_pval_exp_BulkGraviton%03d_%s%s_%02d_%02d_unbin_%d -m %03d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt %s -v 2 --toysFreq -t 1 --expectSignal=1 -s -1 "%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],iToy,mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                           print "runCmmd ",runCmmd;
 
                           if options.batchMode:
@@ -3036,7 +3037,7 @@ if __name__ == '__main__':
 
                     elif options.makeLikelihoodScan == 1:
                         
-                         runCmmd = "combine -M MultiDimFit -n hwwlvj_LikelihoodScan_RSGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_RSGraviton%03d_%s%s_%02d_%02d_unbin.txt  --algo=grid --points=150 --setPhysicsModelParameterRanges r=-1,5 %s"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
+                         runCmmd = "combine -M MultiDimFit -n hwwlvj_LikelihoodScan_BulkGraviton%03d_%s%s_%02d_%02d_unbin -m %03d -d hwwlvj_BulkGraviton%03d_%s%s_%02d_%02d_unbin.txt  --algo=grid --points=150 --setPhysicsModelParameterRanges r=-1,5 %s"%(mass[i],options.channel,SIGCH,cprime[j],BRnew[k],mass[i],mass[i],options.channel,SIGCH,cprime[j],BRnew[k],moreCombineOpts);
                          print "runCmmd ",runCmmd;
  
                          if options.batchMode:
@@ -3060,9 +3061,9 @@ if __name__ == '__main__':
             print "--------------------------------------------------";  
 
             if options.jetBin == "_2jet" :
-             command = "python BiasStudy/do_fitBias_higgs.py RSGraviton%d %d %d %d %d -b --pseudodata %d --fgen %s --fres %s --nexp %d --isMC %d --storeplot %d --channel %s --inPath %s --ttbarcontrolregion %d --fitjetmass %d --mlvjregion %s --onlybackgroundfit %d --inflatejobstatistic %d --scalesignalwidth %0.1f --injectSingalStrenght %0.1f --jetBin %s"%(mass[i],mlo[i],mhi[i],mjlo[i],mjhi[i],options.pseudodata,shape_gen[i],shape_fit[i],options.nToys,isMC[i],1,options.channel,os.getcwd(),options.ttbarcontrolregion,options.fitjetmass,options.mlvjregion,options.onlybackgroundfit,options.inflatejobstatistic,options.scalesignalwidth,options.injectSingalStrenght,options.jetBin);
+             command = "python BiasStudy/do_fitBias_higgs.py BulkGraviton%d %d %d %d %d -b --pseudodata %d --fgen %s --fres %s --nexp %d --isMC %d --storeplot %d --channel %s --inPath %s --ttbarcontrolregion %d --fitjetmass %d --mlvjregion %s --onlybackgroundfit %d --inflatejobstatistic %d --scalesignalwidth %0.1f --injectSingalStrenght %0.1f --jetBin %s"%(mass[i],mlo[i],mhi[i],mjlo[i],mjhi[i],options.pseudodata,shape_gen[i],shape_fit[i],options.nToys,isMC[i],1,options.channel,os.getcwd(),options.ttbarcontrolregion,options.fitjetmass,options.mlvjregion,options.onlybackgroundfit,options.inflatejobstatistic,options.scalesignalwidth,options.injectSingalStrenght,options.jetBin);
             else:
-             command = "python BiasStudy/do_fitBias_higgs.py RSGraviton%d %d %d %d %d -b --pseudodata %d --fgen %s --fres %s --nexp %d --isMC %d --storeplot %d --channel %s --inPath %s --ttbarcontrolregion %d --fitjetmass %d --mlvjregion %s --onlybackgroundfit %d --inflatejobstatistic %d --scalesignalwidth %0.1f --injectSingalStrenght %0.1f "%(mass[i],mlo[i],mhi[i],mjlo[i],mjhi[i],options.pseudodata,shape_gen[i],shape_fit[i],options.nToys,isMC[i],1,options.channel,os.getcwd(),options.ttbarcontrolregion,options.fitjetmass,options.mlvjregion,options.onlybackgroundfit,options.inflatejobstatistic,options.scalesignalwidth,options.injectSingalStrenght);
+             command = "python BiasStudy/do_fitBias_higgs.py BulkGraviton%d %d %d %d %d -b --pseudodata %d --fgen %s --fres %s --nexp %d --isMC %d --storeplot %d --channel %s --inPath %s --ttbarcontrolregion %d --fitjetmass %d --mlvjregion %s --onlybackgroundfit %d --inflatejobstatistic %d --scalesignalwidth %0.1f --injectSingalStrenght %0.1f "%(mass[i],mlo[i],mhi[i],mjlo[i],mjhi[i],options.pseudodata,shape_gen[i],shape_fit[i],options.nToys,isMC[i],1,options.channel,os.getcwd(),options.ttbarcontrolregion,options.fitjetmass,options.mlvjregion,options.onlybackgroundfit,options.inflatejobstatistic,options.scalesignalwidth,options.injectSingalStrenght);
                 
             print command ;
             if options.batchMode:
@@ -3076,7 +3077,7 @@ if __name__ == '__main__':
              else :suffix = suffix+"_B";
              if options.onlybackgroundfit  : suffix = suffix+"_B";
              else: suffix = suffix+"_SB";
-             fn = "biasScript_RSGraviton%03d_%s_%s%s"%(mass[i],shape_gen[i],shape_fit[i],suffix);
+             fn = "biasScript_BulkGraviton%03d_%s_%s%s"%(mass[i],shape_gen[i],shape_fit[i],suffix);
              submitBatchJob( command, fn );
             else: 
              os.system(command);
