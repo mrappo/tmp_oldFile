@@ -2788,13 +2788,13 @@ self.channel));
           else:
             datacard_out.write( "\nCMS_xww_WJ_norm_%s_13TeV   lnN     -        %0.3f     -      -        -      "%(channel,1+ self.workspace4limit_.var("rate_WJets_for_unbin").getError()/self.workspace4limit_.var("rate_WJets_for_unbin").getVal() ) );
 
-          datacard_out.write( "\nCMS_scale_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.937,1.048)        
+          datacard_out.write( "\nCMS_scale_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.937,1.048))        
 
-          datacard_out.write( "\nCMS_res_j lnN   %0.3f    -   -   -   - "%(1.003)        
+          datacard_out.write( "\nCMS_res_j lnN   %0.3f    -   -   -   - "%(1.003))        
 
-          datacard_out.write( "\nCMS_mass_scale_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.957,1.042)        
+          datacard_out.write( "\nCMS_mass_scale_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.957,1.042))        
 
-          datacard_out.write( "\nCMS_mass_res_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.985,1.006)        
+          datacard_out.write( "\nCMS_mass_res_j lnN   %0.3f/%0.3f    -   -   -   - "%(0.985,1.006))        
 
 
           ## jet mass systematic scaling up and down vbf jets detajj, mjj, and pt selection effect
@@ -2819,7 +2819,7 @@ self.channel));
           if self.ggH_normalization_uncertainty_from_btag!=0 and self.vbf_normalization_uncertainty_from_btag!=0 and self.WJets_normalization_uncertainty_from_btag!=0 and self.TTbar_normalization_uncertainty_from_btag!=0 and self.STop_normalization_uncertainty_from_btag!=0 and self.VV_normalization_uncertainty_from_btag!=0 : 
 
 #           datacard_out.write( "\nCMS_xww_btag_eff_13TeV lnN   %0.3f    %0.3f     %0.3f    %0.3f   %0.3f "%(self.ggH_normalization_uncertainty_from_btag, self.WJets_normalization_uncertainty_from_btag, self.TTbar_normalization_uncertainty_from_btag, self.STop_normalization_uncertainty_from_btag, self.VV_normalization_uncertainty_from_btag) )                  
-           datacard_out.write( "\nCMS_xww_btag_eff_13TeV lnN   %0.3f    -     -    -   - "%(self.ggH_normalization_uncertainty_from_btag )                  
+           datacard_out.write( "\nCMS_xww_btag_eff_13TeV lnN   %0.3f    -     -    -   - "%(self.ggH_normalization_uncertainty_from_btag ))                  
 
          if mode == "unbin":
             for i in range(len(params_list)):
