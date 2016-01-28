@@ -1217,12 +1217,12 @@ class doFit_wj_and_wlvj:
 #             tmp_event_weight4fit = getattr(treeIn,"eff_and_pu_Weight");
              
              if options.pseudodata==1: 
-                 tmp_event_weight = getattr(treeIn,"wSampleWeight")*self.Lumi*getattr(treeIn,"eff_and_pu_Weight")*getattr(treeIn,"genWeight");
-                 tmp_event_weight4fit = getattr(treeIn,"wSampleWeight")*self.Lumi*getattr(treeIn,"eff_and_pu_Weight")*getattr(treeIn,"genWeight");
+                 tmp_event_weight = getattr(treeIn,"wSampleWeight")*self.Lumi*getattr(treeIn,"eff_and_pu_Weight")*getattr(treeIn,"genWeight")*getattr(treeIn,"trig_eff_Weight")*getattr(treeIn,"id_eff_Weight");
+                 tmp_event_weight4fit = getattr(treeIn,"wSampleWeight")*self.Lumi*getattr(treeIn,"eff_and_pu_Weight")*getattr(treeIn,"genWeight")*getattr(treeIn,"trig_eff_Weight")*getattr(treeIn,"id_eff_Weight");
              else:    
                  if not TString(label).Contains("data"):
-                     tmp_event_weight = getattr(treeIn,"wSampleWeight")*self.Lumi*getattr(treeIn,"eff_and_pu_Weight")*getattr(treeIn,"genWeight");
-                     tmp_event_weight4fit = getattr(treeIn,"wSampleWeight")*self.Lumi*getattr(treeIn,"eff_and_pu_Weight")*getattr(treeIn,"genWeight");
+                     tmp_event_weight = getattr(treeIn,"wSampleWeight")*self.Lumi*getattr(treeIn,"eff_and_pu_Weight")*getattr(treeIn,"genWeight")*getattr(treeIn,"trig_eff_Weight")*getattr(treeIn,"id_eff_Weight");
+                     tmp_event_weight4fit = getattr(treeIn,"wSampleWeight")*self.Lumi*getattr(treeIn,"eff_and_pu_Weight")*getattr(treeIn,"genWeight")*getattr(treeIn,"trig_eff_Weight")*getattr(treeIn,"id_eff_Weight");
                  else:
                      tmp_event_weight = 1.;
                      tmp_event_weight4fit = 1.;
