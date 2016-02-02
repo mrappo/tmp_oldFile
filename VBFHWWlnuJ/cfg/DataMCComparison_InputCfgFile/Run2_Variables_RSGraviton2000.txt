@@ -16,9 +16,14 @@ pfMET_Phi                        20   -3.15      3.15	  #phi_{MET}
 ungroomed_jet_pt                 32    100       740      pT^{AK8}_(GeV)
 ungroomed_jet_eta                25    -2.5      2.5        #eta^{AK8}
 ungroomed_jet_phi                30    -3.14     3.14     #phi^{AK8}
+ungroomed_PuppiAK8_jet_pt                 32    100       740      pT^{puppi AK8}_(GeV)
+ungroomed_PuppiAK8_jet_eta                25    -2.5      2.5        #eta^{puppi AK8}
+ungroomed_PuppiAK8_jet_phi                30    -3.14     3.14     #phi^{puppi AK8}
 #jet_mass_pr                       15      65       105     Jet_Pruned_Mass_(GeV/c^{2})
 jet_mass_pr                      22      40       150    Jet_Pruned_Mass_(GeV/c^{2})
 jet_mass_so                      22      40       150    Jet_Softdrop_Mass_(GeV/c^{2})
+PuppiAK8_jet_mass_pr                      22      40       150    puppiAK8_Jet_Pruned_Mass_(GeV/c^{2})
+PuppiAK8_jet_mass_so                      22      40       150    puppiAK8_Jet_Softdrop_Mass_(GeV/c^{2})
 mass_lvj_type0                   40    0       3000    M_{WW}_(GeV/c^{2})
 mass_lvj_type2                   40    0       3000    M_{WW}_(GeV/c^{2})
 #mass_lvj_type0_met                   56    200       3000    M_{WW}_(GeV/c^{2})
@@ -32,6 +37,7 @@ nu_pz_type2                   30   -500      500        pZ^{#nu}[GeV]
 #nbjets_csvt_veto                  5      0       5        N_{bjet}^{csvt}
 #numberJetBin                      5      0       5        N_{jets}
 jet_tau2tau1                     25     0.      1.       #tau_{2}/#tau_{1}
+PuppiAK8_jet_tau2tau1                     25     0.      1.       puppiAK8_#tau_{2}/#tau_{1}
 jet2_pt				 25	0	500	 pT^{AK4}_{1}_(GeV)
 jet2_btag				 25	0	1	 btag^{AK4}_{1}_(GeV)
 jet3_pt				 25	0	500	 pT^{AK4}_{1}_(GeV)
