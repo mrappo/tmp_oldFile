@@ -384,7 +384,8 @@ def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
      outScript.write("\n"+command);
      if options.inputGeneratedDataset != "" and options.generateOnly:
       outScript.write("\n "+"cp higgsCombine* "+currentDir+"/"+options.inputGeneratedDataset);
-     outScript.write("\n "+"cp higgsCombine* "+currentDir+"/"+options.datacardDIR);
+#     outScript.write("\n "+"cp higgsCombine* "+currentDir);#+"/"+options.datacardDIR);
+     outScript.write("\n "+"cp mlfit* "+currentDir);#+"/"+options.datacardDIR);
      outScript.write("\n "+"rm rootstats* ");
      outScript.close();
 
