@@ -32,8 +32,10 @@ void DrawStackError(THStack* hs, const std::string & Labels,  const std::map<int
     }   
     else{
      if(atoi(BinWidth.Data()) == 1) Title = Form("Events");
-     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
-     else Title = Form("Events/ ( %s )",BinWidth.Data());
+     if(!isnumber) Title = Form("Events / ( %d GeV )",atoi(BinWidth.Data()));
+     else Title = Form("Events / ( %s GeV )",BinWidth.Data());
+     //else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
+     //else Title = Form("Events/ ( %s )",BinWidth.Data());
     }
 
     // Set sone style for log and non-log plots
@@ -145,8 +147,10 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     }   
     else{
      if(atoi(BinWidth.Data()) == 1) Title = Form("Events");
-     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
-     else Title = Form("Events / ( %s )",BinWidth.Data());
+      if(!isnumber) Title = Form("Events / ( %d GeV )",atoi(BinWidth.Data()));
+      else Title = Form("Events / ( %s GeV )",BinWidth.Data());
+      // else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
+     //     else Title = Form("Events / ( %s )",BinWidth.Data());
     }
  
     // some style options
@@ -253,8 +257,10 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     }   
     else{
      if(atoi(BinWidth.Data()) == 1) Title = Form("Events");
-     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
-     else Title = Form("Events / ( %s )",BinWidth.Data());
+     //     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
+     //else Title = Form("Events / ( %s )",BinWidth.Data());
+     else if(!isnumber) Title = Form("Events / ( %d GeV )",atoi(BinWidth.Data()));
+     else Title = Form("Events / ( %s GeV )",BinWidth.Data());
     }
  
     last->GetYaxis()->SetTitle(Title.Data());
@@ -348,8 +354,10 @@ void DrawStackError(THStack* hs, const std::string & Labels, const TH1F* dataHis
     }   
     else{
      if(atoi(BinWidth.Data()) == 1) Title = Form("Events");
-     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
-     else Title = Form("Events / ( %s )",BinWidth.Data());
+      if(!isnumber) Title = Form("Events / ( %d GeV )",atoi(BinWidth.Data()));
+      else Title = Form("Events / ( %s GeV )",BinWidth.Data());
+      //     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
+      //else Title = Form("Events / ( %s )",BinWidth.Data());
     }
      
     // some plot style
@@ -457,8 +465,10 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     }   
     else{
      if(atoi(BinWidth.Data()) == 1) Title = Form("Events");
-     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
-     else Title = Form("Events / ( %s )",BinWidth.Data());
+      if(!isnumber) Title = Form("Events / ( %d GeV )",atoi(BinWidth.Data()));
+      else Title = Form("Events / ( %s GeV )",BinWidth.Data());
+      //     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
+      //else Title = Form("Events / ( %s )",BinWidth.Data());
     }
 
     // some plot style
@@ -559,8 +569,10 @@ void DrawDoubleStackError(THStack* hs, THStack* hs_herwig, const std::string & L
     }   
     else{
      if(atoi(BinWidth.Data()) == 1) Title = Form("Events");
-     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
-     else Title = Form("Events / ( %s )",BinWidth.Data());
+      if(!isnumber) Title = Form("Events / ( %d GeV )",atoi(BinWidth.Data()));
+      else Title = Form("Events / ( %s GeV )",BinWidth.Data());
+      //     else if(!isnumber) Title = Form("Events / ( %d )",atoi(BinWidth.Data()));
+      //else Title = Form("Events / ( %s )",BinWidth.Data());
     }
 
 

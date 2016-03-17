@@ -34,9 +34,9 @@ WWTree_TTbar                                        tt_bar           210        
 #WWTree_RSGraviton2000                                       RSGrav2000       1                  0.00751431      31295
 #WWTree_BulkGraviton2000                                       BulkG2000       1              0.000004197     50000
 #######WWTree_WprimeToWZ1000                                       Wprime1TeV       1                  0.102236        50000
-#WWTree_BulkGraviton1000                                       BulkG1TeV       1              0.000359194     50000
+###WWTree_BulkGraviton1000                                       BulkG1TeV       1              0.000359194     50000
 #WWTree_RSGraviton1000                                       RSGrav1TeV       1                  0.377865        32448
-WWTree_Higgs1000					     Higgs1TeV	      1			 0.11877	 400000
+#WWTree_Higgs1000					     Higgs1TeV	      1			 0.11877	 400000
 #WWTree_RSGraviton800                                       RSGrav800GeV       1                  1.16691        31906
 #WWTree_BulkGraviton1400                                       RSGrav1000       1                 0.000045798         50000
 #WWTree_WprimeToWZ1400                                       Wprime1000       1                  0.031283         50000
@@ -44,3 +44,4 @@ WWTree_Higgs1000					     Higgs1TeV	      1			 0.11877	 400000
 #WWTree_WprimeToWZ1800                                       Wprime1000       1                  0.010458          49800
 #WWTree_BulkGraviton3000                                       RSGrav1000       1                 0.000000172          49800
 #WWTree_WprimeToWZ3000                                       Wprime1000       1                  0.0006039          49600
+WWTree_BulkGraviton750					     BulkGrav750      1			 0.110500282	    50000

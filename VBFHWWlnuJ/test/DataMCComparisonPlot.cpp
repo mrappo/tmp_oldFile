@@ -41,7 +41,7 @@ void banner4Plot (const bool & isLabel){
   //  pt->AddText("|#eta|<2.1");
   //  pt->AddText("40 < m_{j} < 130 GeV");                                                                                                                                                       
   pt->SetFillColor(0);
-  pt->SetTextSize(0.035);
+  pt->SetTextSize(0.038);
   pt->SetFillStyle(0);
   pt->SetLineColor(0);
   pt->SetLineWidth(0);
@@ -644,7 +644,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
           // Define Legends
 	  //	  leg[iCut][iVar] = new TLegend (0.46, 0.51, 0.85, 0.91);
 	  //	  leg[iCut][iVar] = new TLegend (0.45, 0.65, 0.85, 0.95);
-	  leg[iCut][iVar] = new TLegend (0.3, 0.66, 0.85, 0.95);
+	  leg[iCut][iVar] = new TLegend (0.3, 0.69, 0.85, 0.95);
 	  //	  leg[iCut][iVar] = new TLegend (0.45, 0.65, 0.85, 0.95);
   	  leg[iCut][iVar]->SetFillColor(0);
   	  leg[iCut][iVar]->SetTextSize(0.04);
@@ -653,7 +653,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
           leg[iCut][iVar]->SetBorderSize(0);
 
 	  //	  legNoRatio[iCut][iVar] = new TLegend (0.49, 0.51, 0.85, 0.91);
-	  legNoRatio[iCut][iVar] = new TLegend (0.3, 0.66, 0.85, 0.95);
+	  legNoRatio[iCut][iVar] = new TLegend (0.3, 0.69, 0.85, 0.95);
   	  legNoRatio[iCut][iVar]->SetFillColor(0);
   	  legNoRatio[iCut][iVar]->SetFillStyle(0);
   	  legNoRatio[iCut][iVar]->SetTextSize(0.04);
@@ -742,8 +742,16 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
               histos_overflow[iCut][iVar][iSample]->GetYaxis()->SetTitleSize(0.04);
 	      iSampleData = iSample;                                                                       
 
-	      if(!WithoutData){ leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "CMS Data", "ple" );
-                                legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "CMS Data", "ple" ); 
+	      //	      if(!WithoutData){ leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "Data", "ple" );
+              //                  legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], "Data", "ple" ); 
+              //}
+	      TString Name ;
+	      if (!strcmp(LeptonType.c_str(),"muon"))
+		  Name = Form("Data, W #rightarrow #mu #nu"); //LUCA   
+	      else
+		  Name = Form("Data, W #rightarrow e #nu"); //LUCA   
+	      if(!WithoutData){ leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], Name.Data(), "ple" ); //LUCA
+		legNoRatio[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSample], Name.Data(), "ple" ); 
               }
 
 	    }
@@ -1147,6 +1155,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
              	    TString Name ;
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleGraviton).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleGraviton).c_str());
+		    Name = Form("G_{Bulk} M_{G}=750 GeV (x%d)",int(SignalScaleFactor)); //LUCA
 		    std::cout<<"string for tlegend: "<<Name<<std::endl;
  
 		    leg[iCut][iVar]->AddEntry( histos_overflow[iCut][iVar][iSampleGraviton], Name.Data(), "l" );

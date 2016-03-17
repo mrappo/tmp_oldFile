@@ -20,7 +20,7 @@ ungroomed_PuppiAK8_jet_pt                 32    100       740      pT^{puppi AK8
 ungroomed_PuppiAK8_jet_eta                25    -2.5      2.5        #eta^{puppi AK8}
 ungroomed_PuppiAK8_jet_phi                30    -3.14     3.14     #phi^{puppi AK8}
 #jet_mass_pr                       15      65       105     Jet_Pruned_Mass_(GeV/c^{2})
-jet_mass_pr                      22      40       150    Jet_Pruned_Mass_(GeV/c^{2})
+jet_mass_pr                      22      40       150    Jet_Pruned_Mass_(GeV)
 jet_mass_so                      22      40       150    Jet_Softdrop_Mass_(GeV/c^{2})
 PuppiAK8_jet_mass_pr                      22      40       150    puppiAK8_Jet_Pruned_Mass_(GeV/c^{2})
 PuppiAK8_jet_mass_so                      22      40       150    puppiAK8_Jet_Softdrop_Mass_(GeV/c^{2})
