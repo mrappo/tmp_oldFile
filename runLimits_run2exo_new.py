@@ -10,7 +10,8 @@ import ROOT
 
 from optparse import OptionParser
 from subprocess import Popen
-from ROOT import gROOT, gStyle, gSystem, TLatex, TGaxis, TPaveText, TH2D, TColor, gPad, TGraph2D, TLine,TGraph,TList
+from ROOT import gROOT, gStyle, gSystem, TLatex, TGaxis, TPaveText, TH2D, TColor, gPad, TGraph2D, TLine,TGraph,TList,TPad
+import ROOT as rt
 
 ROOT.gStyle.SetPadRightMargin(0.16);
 
@@ -33,6 +34,8 @@ parser.add_option('--computePvalue', action='store_true', dest='computePvalue', 
 parser.add_option('--computeSignif', action='store_true', dest='computeSignif',     default=False, help='basic option to plot asymptotic and pvalue')
 parser.add_option('--biasStudy',     action='store_true', dest='biasStudy',         default=False, help='basic option to perform bias study with our own tool')
 parser.add_option('--maximumLikelihoodFit', action='store_true', dest='maximumLikelihoodFit', default=False, help='basic option to run max Likelihood fit inside combination tool')
+parser.add_option('--asymptotic', action='store_true', dest='asymptotic', default=False, help='basic option to run asymptotic CLS inside combination tool')
+parser.add_option('--fullCLs', action='store_true', dest='fullCLs', default=False, help='basic option to run full CLS inside combination tool')
 parser.add_option('--generateOnly',  action='store_true', dest='generateOnly', default=False, help='basic option to run the only generation with combiner')
 parser.add_option('--makeLikelihoodScan', action='store_true', dest='makeLikelihoodScan', default=False, help='basic option to run the likelihood scan')
 
@@ -100,6 +103,7 @@ parser.add_option('--plotLikelihoodScan',    action="store", type="int",    dest
 #mass = [4000]
 #mass = [4000]
 mass = [600,700,750,800,900,1000]
+#mass = [750]
 ccmlo = [600,600,600,600,600,600]
 #ccmhi = [1500,2500,3500,4500]
 ccmhi = [1500,1500,1500,1500,1500,1500]
@@ -117,6 +121,15 @@ shape = ["Exp","Exp","Exp","Exp","Exp","Exp"]
 shapeAlt = ["ExpTail","ExpTail","ExpTail","ExpTail","ExpTail","ExpTail"]
 #shape = ["Exp","Exp","Exp","Exp"]
 #shapeAlt = ["Pow","Pow","Pow","Pow"]
+
+points = []  
+for p in range(1,2):
+   points+=[float(p/10.)]
+   points+=[float(p/10.+0.05)]
+   points+=[float(p/1.)]
+   points+=[float(p/1.+0.5)]
+   points+=[float(p*10.)]
+   points+=[float(p*10.+5.)]
 
 '''
 mass = [2000]#,2000,3000,4000]
@@ -192,6 +205,160 @@ if options.biasStudy:
 cprime = [10]
 BRnew = [00]
 
+####CMS lumi
+
+cmsText     = "CMS";
+cmsTextFont   = 61  
+
+writeExtraText = True
+extraText   = "Preliminary"
+extraTextFont = 52 
+
+lumiTextSize     = 0.6
+lumiTextOffset   = 0.2
+
+cmsTextSize      = 0.75
+cmsTextOffset    = 0.1
+
+relPosX    = 0.045
+relPosY    = 0.035
+relExtraDY = 1.2
+
+extraOverCmsTextSize  = 0.76
+
+lumi_13TeV = "2.3 fb^{-1}"
+lumi_8TeV  = "19.7 fb^{-1}" 
+lumi_7TeV  = "5.1 fb^{-1}"
+lumi_sqrtS = ""
+
+drawLogo      = False
+
+def CMS_lumi(pad,  iPeriod,  iPosX ):
+    outOfFrame    = False
+    if(iPosX/10==0 ): outOfFrame = True
+
+    alignY_=3
+    alignX_=2
+    if( iPosX/10==0 ): alignX_=1
+    if( iPosX==0    ): alignY_=1
+    if( iPosX/10==1 ): alignX_=1
+    if( iPosX/10==2 ): alignX_=2
+    if( iPosX/10==3 ): alignX_=3
+    align_ = 10*alignX_ + alignY_
+
+    H = pad.GetWh()
+    W = pad.GetWw()
+    l = pad.GetLeftMargin()
+    t = pad.GetTopMargin()
+    r = pad.GetRightMargin()
+    b = pad.GetBottomMargin()
+    e = 0.025
+
+    pad.cd()
+
+    lumiText = ""
+    if( iPeriod==1 ):
+        lumiText += lumi_7TeV
+        lumiText += " (7 TeV)"
+    elif ( iPeriod==2 ):
+        lumiText += lumi_8TeV
+        lumiText += " (8 TeV)"
+
+    elif( iPeriod==3 ):      
+        lumiText = lumi_8TeV 
+        lumiText += " (8 TeV)"
+        lumiText += " + "
+        lumiText += lumi_7TeV
+        lumiText += " (7 TeV)"
+    elif ( iPeriod==4 ):
+        lumiText += lumi_13TeV
+        lumiText += " (13 TeV)"
+    elif ( iPeriod==7 ):
+        if( outOfFrame ):lumiText += "#scale[0.85]{"
+        lumiText += lumi_13TeV 
+        lumiText += " (13 TeV)"
+        lumiText += " + "
+        lumiText += lumi_8TeV 
+        lumiText += " (8 TeV)"
+        lumiText += " + "
+        lumiText += lumi_7TeV
+        lumiText += " (7 TeV)"
+        if( outOfFrame): lumiText += "}"
+    elif ( iPeriod==12 ):
+        lumiText += "8 TeV"
+    elif ( iPeriod==0 ):
+        lumiText += lumi_sqrtS
+            
+    print lumiText
+
+    latex = rt.TLatex()
+    latex.SetNDC()
+    latex.SetTextAngle(0)
+    latex.SetTextColor(rt.kBlack)    
+    
+    extraTextSize = extraOverCmsTextSize*cmsTextSize
+    
+    latex.SetTextFont(42)
+    latex.SetTextAlign(31) 
+    latex.SetTextSize(lumiTextSize*t)    
+
+    latex.DrawLatex(1-r,1-t+lumiTextOffset*t,lumiText)
+
+    if( outOfFrame ):
+        latex.SetTextFont(cmsTextFont)
+        latex.SetTextAlign(11) 
+        latex.SetTextSize(cmsTextSize*t)    
+        latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
+  
+    pad.cd()
+
+    posX_ = 0
+    if( iPosX%10<=1 ):
+        posX_ =   l + relPosX*(1-l-r)
+    elif( iPosX%10==2 ):
+        posX_ =  l + 0.5*(1-l-r)
+    elif( iPosX%10==3 ):
+        posX_ =  1-r - relPosX*(1-l-r)
+
+    posY_ = 1-t - relPosY*(1-t-b)
+
+    if( not outOfFrame ):
+        if( drawLogo ):
+            posX_ =   l + 0.045*(1-l-r)*W/H
+            posY_ = 1-t - 0.045*(1-t-b)
+            xl_0 = posX_
+            yl_0 = posY_ - 0.15
+            xl_1 = posX_ + 0.15*H/W
+            yl_1 = posY_
+            CMS_logo = rt.TASImage("CMS-BW-label.png")
+            pad_logo =  rt.TPad("logo","logo", xl_0, yl_0, xl_1, yl_1 )
+            pad_logo.Draw()
+            pad_logo.cd()
+            CMS_logo.Draw("X")
+            pad_logo.Modified()
+            pad.cd()          
+        else:
+            latex.SetTextFont(cmsTextFont)
+            latex.SetTextSize(cmsTextSize*t)
+            latex.SetTextAlign(align_)
+            latex.DrawLatex(posX_, posY_, cmsText)
+            if( writeExtraText ) :
+                latex.SetTextFont(extraTextFont)
+                latex.SetTextAlign(align_)
+                latex.SetTextSize(extraTextSize*t)
+                latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText)
+    elif( writeExtraText ):
+        if( iPosX==0):
+            posX_ =   l +  relPosX*(1-l-r)
+            posY_ =   1-t+lumiTextOffset*t
+
+        latex.SetTextFont(extraTextFont)
+        latex.SetTextSize(extraTextSize*t)
+        latex.SetTextAlign(align_)
+        latex.DrawLatex(posX_, posY_, extraText)      
+
+    pad.Update()
+
 ########################################
 ###### Make Asymptotic Limit Plot ######
 ########################################
@@ -211,7 +378,8 @@ def getAsymLimits(file):
   t_quantileExpected = t.quantileExpected;
   t_limit = t.limit;
         
-  #print "limit: ", t_limit, ", quantileExpected: ",t_quantileExpected;        
+#  if t_quantileExpected == 0.5:  print "entry: ",i," limit: ", t_limit, ", quantileExpected: ",t_quantileExpected;        
+
   if t_quantileExpected == -1.: lims[0] += t_limit; 
   elif t_quantileExpected >= 0.024 and t_quantileExpected <= 0.026: lims[1] += t_limit;
   elif t_quantileExpected >= 0.15 and t_quantileExpected <= 0.17: lims[2] += t_limit;            
@@ -219,6 +387,8 @@ def getAsymLimits(file):
   elif t_quantileExpected >= 0.83 and t_quantileExpected <= 0.85: lims[4] += t_limit;
   elif t_quantileExpected >= 0.974 and t_quantileExpected <= 0.976: lims[5] += t_limit;
   else: print "Unknown quantile!"
+
+# print lims[0]," / ",limit_entries, " = ",lims[0]/limit_entries;
 
  lims[0] = lims[0]/limit_entries ;
  lims[1] = lims[1]/limit_entries ;
@@ -236,6 +406,7 @@ def getAsymLimits(file):
 def submitBatchJob( command, fn ):
     
  currentDir = os.getcwd();
+ CMSSWDir = currentDir+"/../";
     
  # create a dummy bash/csh
  outScript = open(fn+".sh","w");
@@ -274,11 +445,17 @@ def submitBatchJob( command, fn ):
 
  elif options.lxbatchCern and not options.herculesMilano:
   outScript.write('#!/bin/bash');
-  outScript.write("\n"+'cd '+currentDir);
+  outScript.write("\n"+'cd '+CMSSWDir);
   outScript.write("\n"+'eval `scram runtime -sh`');
-  outScript.write("\n"+'export PATH=${PATH}:'+currentDir);
-  outScript.write("\n"+'echo ${PATH}');
-  outScript.write("\n"+'ls');  
+  outScript.write("\n"+'cd -');
+  outScript.write("\necho $PWD");
+  outScript.write("\nls");
+  outScript.write("\ncp "+currentDir+"/"+options.datacardDIR+"/ww* ./")
+#  outScript.write("\n"+'cd '+currentDir);
+#  outScript.write("\n"+'eval `scram runtime -sh`');
+#  outScript.write("\n"+'export PATH=${PATH}:'+currentDir);
+#  outScript.write("\n"+'echo ${PATH}');
+#  outScript.write("\n"+'ls');  
   outScript.write("\n"+command);
   outScript.write("\n"+'rm *.out');  
   outScript.close();
@@ -315,12 +492,14 @@ def submitBatchJob( command, fn ):
 
 def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
     
+    currentDir = os.getcwd();
+    CMSSWDir = currentDir+"/../";
     
     if options.sigChannel !="": 
      SIGCH = options.jetBin+"_"+options.sigChannel;
     else:
      SIGCH = options.jetBin;
-    currentDir = os.getcwd();
+#    currentDir = os.getcwd();
     
     # create a dummy bash/csh
     outScript = open(fn+".sh","w");
@@ -366,26 +545,40 @@ def submitBatchJobCombine( command, fn, mass, cprime, BRnew ):
     elif options.lxbatchCern and not options.herculesMilano: 
 
      outScript.write('#!/bin/bash');
-     outScript.write("\n"+'date');
-     outScript.write("\n"+'cd '+currentDir);
+     outScript.write("\n"+'cd '+CMSSWDir);
      outScript.write("\n"+'eval `scram runtime -sh`');
      outScript.write("\n"+'cd -');
-     outScript.write("\n"+'ls');    
+     outScript.write("\necho $PWD");
+     outScript.write("\nls");
+#     outScript.write('#!/bin/bash');
+#     outScript.write("\n"+'date');
+#     outScript.write("\n"+'cd '+currentDir);
+#     outScript.write("\n"+'eval `scram runtime -sh`');
+#     outScript.write("\n"+'cd -');
+#     outScript.write("\n"+'ls');    
     
      file1 = "wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt"%(mass,options.channel,SIGCH);
      file2 = "wwlvj_BulkGraviton_newxsec%03d_mu%s_HP_workspace.root"%(mass,SIGCH);
      file3 = "wwlvj_BulkGraviton_newxsec%03d_el%s_HP_workspace.root"%(mass,SIGCH);
      file4 = "wwlvj_BulkGraviton_newxsec%03d_em%s_HP_workspace.root"%(mass,SIGCH);
 
-     outScript.write("\n"+'cp '+currentDir+'/'+file1+' ./');
-     outScript.write("\n"+'cp '+currentDir+'/'+file2+' ./');
-     outScript.write("\n"+'cp '+currentDir+'/'+file3+' ./');
-     outScript.write("\n"+'cp '+currentDir+'/'+file4+' ./');
+     outScript.write("\ncp "+currentDir+"/"+file1+" ./")
+     outScript.write("\ncp "+currentDir+"/"+file2+" ./")
+     outScript.write("\ncp "+currentDir+"/"+file3+" ./")
+     outScript.write("\ncp "+currentDir+"/"+file4+" ./")
+     outScript.write("\ncp -r "+currentDir+"/"+options.inputGeneratedDataset+" ./")
+     outScript.write("\ncp "+currentDir+"/"+"list* ./")
+
+#     outScript.write("\n"+'cp '+currentDir+'/'+file1+' ./');
+#     outScript.write("\n"+'cp '+currentDir+'/'+file2+' ./');
+#     outScript.write("\n"+'cp '+currentDir+'/'+file3+' ./');
+#     outScript.write("\n"+'cp '+currentDir+'/'+file4+' ./');
      outScript.write("\n"+command);
      if options.inputGeneratedDataset != "" and options.generateOnly:
-      outScript.write("\n "+"cp higgsCombine* "+currentDir+"/"+options.inputGeneratedDataset);
-#     outScript.write("\n "+"cp higgsCombine* "+currentDir);#+"/"+options.datacardDIR);
-     outScript.write("\n "+"cp mlfit* "+currentDir);#+"/"+options.datacardDIR);
+#      outScript.write("\n "+"cp higgsCombine* "+currentDir+"/"+options.inputGeneratedDataset);
+      outScript.write("\n "+"cp higgsCombine* "+currentDir+"/"+options.datacardDIR);
+     outScript.write("\n "+"cp higgsCombine* "+currentDir+"/"+options.inputGeneratedDataset);
+     outScript.write("\n "+"cp mlfit* "+currentDir+"/"+options.inputGeneratedDataset);
      outScript.write("\n "+"rm rootstats* ");
      outScript.close();
 
@@ -532,12 +725,8 @@ def getPValueFromCard(file,observed):
 def makeSMLimitPlot(SIGCH,cprime = 10, brnew = 00):
 
     nPoints = len(mass);
-#    xsec = [2.37, 0.04797, 0.00292, 0.0002739]; 
-#    xsec = [0.007147913, 0.002900665, 0.001941461, 0.001336325, 0.000671447, 0.000360174];
     xsec = [0.406830851,0.165094354,0.110500282,0.076058293,0.0382161,0.020499693];
-#    xsec = [ 0.007147913, 0.002900665 , 0.001941461, 0.001336325, 0.000671447, 0.000360174 ];
     xsec_corr = [1.,1.,1.,1.,1.,1.];
-#    xsec_corr = [0.515, 0.70286, 0.7861, 0.9973, 0.97585, 0.99728 ];   
 
     xbins     = array('f', []); xbins_env = array('f', []);
     ybins_exp = array('f', []); ybins_obs = array('f', []);
@@ -659,7 +848,7 @@ def makeSMLimitPlot(SIGCH,cprime = 10, brnew = 00):
     label_sqrt.SetTextSize(0.03);
     label_sqrt.SetTextFont(62);
     label_sqrt.SetTextAlign(31); # align right                                                                                                                                         
-    label_sqrt.AddText("W #rightarrow l#nu, L = 2.2 fb^{-1} at #sqrt{s} = 13 TeV");
+    label_sqrt.AddText("W #rightarrow l#nu, L = 2.3 fb^{-1} at #sqrt{s} = 13 TeV");
     label_sqrt.Draw();
 
     os.system("mkdir -p %s/limitFigs/"%(os.getcwd()));
@@ -673,11 +862,7 @@ def makeSMLimitPlot(SIGCH,cprime = 10, brnew = 00):
 def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
 
     nPoints = len(mass);
-#    xsec = [2.37, 0.04797, 0.00292, 0.0002739];
-#    xsec = [0.007147913, 0.002900665, 0.001941461, 0.001336325, 0.000671447, 0.000360174];
     xsec = [0.406830851,0.165094354,0.110500282,0.076058293,0.0382161,0.020499693];
-#    xsec = [ 0.007147913, 0.002900665 , 0.001941461, 0.001336325, 0.000671447, 0.000360174 ];
-#    xsec_corr = [0.515, 0.70286, 0.7861, 0.9973, 0.97585, 0.99728 ];
     xsec_corr = [1,1,1,1,1,1 ];
     
     xbins     = array('f', []); xbins_env = array('f', []);
@@ -693,8 +878,11 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
 	curAsymLimits = getAsymLimits(curFile);
         xbins.append( mass[i] );
 	xbins_env.append( mass[i] );
+
         ybins_exp.append( curAsymLimits[3]*xsec[i]*xsec_corr[i] );
+        print "expected: ",curAsymLimits[3]*xsec[i]*xsec_corr[i];
         ybins_obs.append( curAsymLimits[0]*xsec[i]*xsec_corr[i] );
+        print "observed: ",curAsymLimits[0]*xsec[i]*xsec_corr[i];
         ybins_2s.append( curAsymLimits[1]*xsec[i]*xsec_corr[i] );
         ybins_1s.append( curAsymLimits[2]*xsec[i]*xsec_corr[i] );
 #        ybins_xsec.append(25.*xsec[i]/0.43924356);
@@ -745,6 +933,7 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
     curGraph_xsec.SetLineColor(ROOT.kRed);
                                
     oneG = ROOT.TGraph(4);
+    print "length: ", len(xsec)
     for i in range(len(xsec)):
         oneG.SetPoint(i, mass[i], xsec[i]);
     oneLine = ROOT.TSpline3("oneLine",oneG);    
@@ -754,9 +943,15 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
     setStyle();
     
     can_SM = ROOT.TCanvas("can_SM","can_SM",600,650); 
+#    can_SM.cd();
 
     hrl_SM = can_SM.DrawFrame(599,0.001,1001,100);#ROOT.TMath.MaxElement(curGraph_2s.GetN(),curGraph_2s.GetY())*1.2);
-    hrl_SM.GetYaxis().SetTitle("#sigma_{95%} x BR(G_{RS} #rightarrow WW)(pb)");
+#    upperPad    = ROOT.TPad("upperPad", "upperPad", .005, .005, .995, .950);
+#    upperPad.SetLeftMargin(0.18);
+#    upperPad.Draw();
+#    upperPad.cd();
+
+    hrl_SM.GetYaxis().SetTitle("#sigma_{95%} x BR(G_{Bulk} #rightarrow WW)(pb)");
     hrl_SM.GetYaxis().SetTitleOffset(1.35);
     hrl_SM.GetYaxis().SetTitleSize(0.045);
     hrl_SM.GetYaxis().SetTitleFont(42);
@@ -777,18 +972,23 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
     curGraph_xsec.Draw("Csame");
 #    oneLine.Draw("same");
 
-    leg2 = ROOT.TLegend(0.3,0.72,0.75,0.9);
+#    leg2 = ROOT.TLegend(0.3,0.72,0.75,0.9);
+    leg2 = ROOT.TLegend(0.4,0.72,0.9,0.9);
     leg2.SetFillColor(0);
     leg2.SetShadowColor(0);
     leg2.SetTextFont(42);
     leg2.SetTextSize(0.028);
 
     leg2.AddEntry(curGraph_exp,"Asympt. CL_{S} Expected","L")
-    leg2.AddEntry(curGraph_1s, "Asympt. CL_{S} Expected #pm 1#sigma","LF")
-    leg2.AddEntry(curGraph_2s, "Asympt. CL_{S} Expected #pm 2#sigma","LF")
-    leg2.AddEntry(curGraph_xsec, "#sigma_{theory}","L")
+#    leg2.AddEntry(curGraph_1s, "Asympt. CL_{S} Expected #pm 1#sigma","LF")
+#    leg2.AddEntry(curGraph_2s, "Asympt. CL_{S} Expected #pm 2#sigma","LF")
+    leg2.AddEntry(curGraph_1s, "Asympt. CL_{S} Expected #pm 1 s.d.","LF")
+    leg2.AddEntry(curGraph_2s, "Asympt. CL_{S} Expected #pm 2 s.d.","LF")
+    leg2.AddEntry(curGraph_xsec, "#sigma_{TH} #times BR_{G_{Bulk}#rightarrow WW}, k = 0.5","L")
                                        
     if not options.blindObservedLine:     leg2.AddEntry(curGraph_obs,"Asympt. CL_{S} Observed","LP")
+
+    CMS_lumi(can_SM,4,11);
 
     can_SM.Update();
     can_SM.RedrawAxis();
@@ -804,17 +1004,24 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
     banner.SetTextFont(62);
     banner.SetBorderSize(0);
     leftText = "CMS Preliminary";
-    banner.AddText(leftText);
-    banner.Draw();
+#    banner.AddText(leftText);
+#    banner.Draw();
 
     label_sqrt = TPaveText(0.5,0.953,0.96,0.975, "brNDC");
     label_sqrt.SetFillColor(ROOT.kWhite);
     label_sqrt.SetBorderSize(0);
     label_sqrt.SetTextSize(0.03);
     label_sqrt.SetTextFont(62);
-    label_sqrt.SetTextAlign(31); # align right                                                                                                                                         
-    label_sqrt.AddText("W #rightarrow l#nu, L = 2.2 fb^{-1} at #sqrt{s} = 13 TeV");
-    label_sqrt.Draw();
+    label_sqrt.SetTextAlign(31); # align right                                                                                                                   
+
+    if (options.channel=="el"):
+        label_sqrt.AddText("W #rightarrow e#nu, L = 2.3 fb^{-1} at #sqrt{s} = 13 TeV");
+    elif (options.channel=="mu"):
+        label_sqrt.AddText("W #rightarrow #mu#nu, L = 2.3 fb^{-1} at #sqrt{s} = 13 TeV");
+    else:
+        label_sqrt.AddText("W #rightarrow l#nu, L = 2.3 fb^{-1} at #sqrt{s} = 13 TeV");
+
+#    label_sqrt.Draw();
 
     os.system("mkdir -p %s/limitFigs/"%(os.getcwd()));
     
@@ -885,7 +1092,7 @@ def makeSMPValuePlot(SIGCH,cprime = 10,brnew = 00):
     
     if options.jetBin == "":
      leg2.AddEntry( gr_obs, "obs signif, %s "%options.channel, "pl" );
-     leg2.AddEntry( gr_exp, "exp signif, RS Graviton", "pl" );
+     leg2.AddEntry( gr_exp, "exp signif, Bulk Graviton", "pl" );
     else:
      leg2.AddEntry( gr_obs, "obs signif, VBF e+mu", "pl" );
      leg2.AddEntry( gr_exp, "exp signif, SM Higgs", "pl" );
@@ -2807,9 +3014,9 @@ if __name__ == '__main__':
                       if options.outputTree == 0 :
                           for iToy in range(options.nToys):                              
                            if options.systematics == 1:
-                               runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t 1 --expectSignal=%d "%(mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.injectSingalStrenght);
+                               runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t 1 --expectSignal=%f "%(mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.injectSingalStrenght);
                            else:
-                               runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t 1 -S 0 --expectSignal=%d "%(mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.injectSingalStrenght);
+                               runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t 1 -S 0 --expectSignal=%f "%(mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.injectSingalStrenght);
                            print "runCmmd ",runCmmd;
                            if options.batchMode:
                               fn = "combineScript_%s_%03d%s_HP_iToy%d"%(options.channel,mass[i],SIGCH,iToy);
@@ -2821,7 +3028,7 @@ if __name__ == '__main__':
                            continue ;
 
                       else:
-                           runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t %d --expectSignal=%d "%(mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.nToys,options.injectSingalStrenght);
+                           runCmmd =  "combine -M GenerateOnly --saveToys -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t %d --expectSignal=%f  --saveNormalizations --saveWithUncertainties"%(mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.nToys,options.injectSingalStrenght);
                            print "runCmmd ",runCmmd;
                            if options.batchMode:
                               fn = "combineScript_%s_%03d%s_HP"%(options.channel,mass[i],SIGCH);
@@ -2859,9 +3066,9 @@ if __name__ == '__main__':
                           if options.outputTree == 0:  
                            for iToy in range(options.nToys):
                              if options.systematics == 1:  
-                                 runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveToys --saveWithUncertainties --toysNoSystematics -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin_%d -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t 1 --expectSignal=%d --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,iToy,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.injectSingalStrenght);                     
+                                 runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveToys --saveWithUncertainties --toysNoSystematics -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin_%d -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t 1 --expectSignal=%f --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,iToy,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.injectSingalStrenght);                     
                              else:  
-                                 runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveToys --saveWithUncertainties --toysNoSystematics -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin_%d -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t 1 --expectSignal=%d --robustFit=1 -S 0 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,iToy,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.injectSingalStrenght);                     
+                                 runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveToys --saveWithUncertainties --toysNoSystematics -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin_%d -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t 1 --expectSignal=%f --robustFit=1 -S 0 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,iToy,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.injectSingalStrenght);                     
                              print "runCmmd ",runCmmd;
                              if options.batchMode:
                               fn = "combineScript_%s_%03d%s_HP_iToy%d"%(options.channel,mass[i],SIGCH,iToy);
@@ -2871,7 +3078,7 @@ if __name__ == '__main__':
                               os.system(runCmmd);
                            continue ;
                           else:
-                             runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties  --toysNoSystematics --saveToys -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t %d --expectSignal=%d --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.nToys,options.injectSingalStrenght);                     
+                             runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties  --toysNoSystematics --saveToys -s -1 -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2 -t %d --expectSignal=%f --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.nToys,options.injectSingalStrenght);                     
                              print "runCmmd ",runCmmd;
                              if options.batchMode:
                               fn = "combineScript_%s_%03d%s_HP_iToy%d"%(options.channel,mass[i],SIGCH,options.nToys);
@@ -2885,9 +3092,10 @@ if __name__ == '__main__':
                        ###### Make the crossed toys ##### 
                        ##################################  
 
-                       elif options.nToys != 0 and options.crossedToys == 1 :
+                       elif options.nToys != 0 and options.crossedToys == 1  and not options.asymptotic==1:
 
-                          command = "ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep BulkGraviton_newxsec"+str(mass[i])+" > list_temp.txt";
+                          command = "ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep GenerateOnly | grep BulkGraviton_newxsec"+str(mass[i])+" > list_temp.txt";
+#                          command = "ls "+os.getcwd()+" | grep root | grep higgsCombine | grep BulkGraviton_newxsec"+str(mass[i])+" > list_temp.txt";
                           os.system(command);
                           print command;
 #                          os.system("ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep BulkGraviton_newxsec"+str(mass[i])+" > list_temp.txt"); 
@@ -2925,10 +3133,69 @@ if __name__ == '__main__':
 #                          os.system("rm list_temp.txt")
                           continue ;
 
+
+
+                       elif options.nToys != 0 and options.crossedToys == 1 and options.asymptotic==1:
+
+                          command = "ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep GenerateOnly | grep BulkGraviton_newxsec"+str(mass[i])+" > list_temp.txt";
+#                          command = "ls "+os.getcwd()+" | grep root | grep higgsCombine | grep BulkGraviton_newxsec"+str(mass[i])+" > list_temp.txt";
+                          os.system(command);
+                          print command;
+#                          os.system("ls "+options.inputGeneratedDataset+" | grep root | grep higgsCombine | grep BulkGraviton_newxsec"+str(mass[i])+" > list_temp.txt"); 
+                          iToy = 0 ;
+                          if options.outputTree == 0:  
+                           with open("list_temp.txt") as input_list:
+                            print "qui";   
+                            for line in input_list:
+                             print line;   
+                             for name in line.split():
+                                if iToy >= options.nToys: continue ; 
+                                runCmmd =  "combine -M Asymptotic --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin_%d -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -s -1 -t 1  --toysFile %s/%s"%(rMin,rMax,mass[i],options.channel,SIGCH,iToy,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.inputGeneratedDataset,name);
+                                iToy = iToy + 1 ;
+                                print "runCmmd ",runCmmd;                                
+                                if options.batchMode:
+                                  fn = "combineScript_%s_%03d%s_HP_iToy%d"%(options.channel,mass[i],SIGCH,iToy);
+                                  cardStem = "wwlvj_BulkGraviton_newxsec%03d_em%s_HP"%(mass[i],SIGCH);
+                                  submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
+                                else: 
+                                  os.system(runCmmd);
+
+                          else:
+                           with open("list_temp.txt") as input_list:
+                              for line in input_list:
+                               for name in line.split():                                                                       
+                                runCmmd =  "combine -M MaxLikelihoodFit --minimizerAlgo Minuit2 --minimizerStrategy 2 --rMin %d --rMax %d --saveNormalizations --saveWithUncertainties -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -s -1 -t %d --toysFile %s/%s --robustFit=1 --do95=1"%(rMin,rMax,mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts,options.nToys,options.inputGeneratedDataset,name);                     
+                                print "runCmmd ",runCmmd;                                
+                                if options.batchMode:
+                                  fn = "combineScript_%s_%03d%s_HP_iToy%d"%(options.channel,mass[i],SIGCH,iToy);
+                                  cardStem = "wwlvj_BulkGraviton_newxsec%03d_em%s_HP"%(mass[i],SIGCH);
+                                  submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
+                                else: 
+                                  os.system(runCmmd);
+
+#                          os.system("rm list_temp.txt")
+                          continue ;
+
+                    #full CLs part    
+
+                    elif options.systematics == 1 and not options.computePvalue == 1 and not options.computeSignif == 1 and not options.makeLikelihoodScan == 1 and options.fullCLs == 1:
+
+                       for p in range(len(points)):
+                          point = points[p];
+                          runCmmd = "combine -M HybridNew --frequentist --clsAcc 0 -T 50 -i 30 -s -1 --saveHybridResult --saveToys --singlePoint %0.2f -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2"%(point,mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts);
+                          print "runCmmd ",runCmmd ;
+
+                          if options.batchMode:
+                             fn = "combineScript_%s_%03d%s_HP"%(options.channel,mass[i],SIGCH);
+                             cardStem = "wwlvj_BulkGraviton_newxsec%03d_em%s_HP"%(mass[i],SIGCH);
+                             submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
+                          else: 
+                             os.system(runCmmd);
+
                     ###############################
                     #### Asymptotic Limit part  ###
                     ###############################
-                      
+
                     elif options.systematics == 1 and not options.computePvalue == 1 and not options.computeSignif == 1 and not options.makeLikelihoodScan == 1:
                        runCmmd = "combine -M Asymptotic --minimizerAlgo Minuit2 --minosAlgo stepping -n wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin -m %03d -d wwlvj_BulkGraviton_newxsec%03d_%s%s_HP_unbin.txt %s -v 2"%(mass[i],options.channel,SIGCH,mass[i],mass[i],options.channel,SIGCH,moreCombineOpts);
                        print "runCmmd ",runCmmd ;
@@ -2950,7 +3217,7 @@ if __name__ == '__main__':
                         submitBatchJobCombine( runCmmd, fn, mass[i], cprime[j], BRnew[k] );
                        else: 
                         os.system(runCmmd);
-
+                      
 
                     elif not options.computePvalue == 1 and not options.computeSignif == 1 and not options.makeLikelihoodScan == 1:
 
