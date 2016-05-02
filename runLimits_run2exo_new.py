@@ -1007,7 +1007,8 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
 #    banner.AddText(leftText);
 #    banner.Draw();
 
-    label_sqrt = TPaveText(0.5,0.953,0.96,0.975, "brNDC");
+    label_sqrt = TPaveText(0.23,0.253,0.33,0.275, "brNDC");
+#    label_sqrt = TPaveText(0.2,0.803,0.3,0.825, "brNDC");
     label_sqrt.SetFillColor(ROOT.kWhite);
     label_sqrt.SetBorderSize(0);
     label_sqrt.SetTextSize(0.03);
@@ -1015,13 +1016,13 @@ def makeSMXsecPlot(SIGCH,cprime = 10, brnew = 00):
     label_sqrt.SetTextAlign(31); # align right                                                                                                                   
 
     if (options.channel=="el"):
-        label_sqrt.AddText("W #rightarrow e#nu, L = 2.3 fb^{-1} at #sqrt{s} = 13 TeV");
+        label_sqrt.AddText("W #rightarrow e#nu");
     elif (options.channel=="mu"):
-        label_sqrt.AddText("W #rightarrow #mu#nu, L = 2.3 fb^{-1} at #sqrt{s} = 13 TeV");
+        label_sqrt.AddText("W #rightarrow #mu#nu");
     else:
-        label_sqrt.AddText("W #rightarrow l#nu, L = 2.3 fb^{-1} at #sqrt{s} = 13 TeV");
+        label_sqrt.AddText("W #rightarrow l#nu");
 
-#    label_sqrt.Draw();
+    label_sqrt.Draw();
 
     os.system("mkdir -p %s/limitFigs/"%(os.getcwd()));
     
