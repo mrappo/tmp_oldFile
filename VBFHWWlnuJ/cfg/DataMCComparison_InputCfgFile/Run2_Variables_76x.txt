@@ -72,8 +72,8 @@ vbf_maxpt_j1_pt                 50      0       300        pT_{j1}_(GeV)
 vbf_maxpt_j2_eta                50      -5      5          #eta_{j2}
 vbf_maxpt_j2_pt                 50      0       300        pT_{j2}_(GeV)
 #vbf_maxpt_j2_QGLikelihood       50      0       1          j2_QGLikelihood
-abs(vbf_maxpt_j1_eta-vbf_maxpt_j2_eta) 35    0       3     #Delta#eta_{jj}
-vbf_maxpt_jj_m                  40      0       800        M_{jj}_(GeV/c^{2})
+abs(vbf_maxpt_j1_eta-vbf_maxpt_j2_eta) 35    0       9     #Delta#eta_{jj}
+vbf_maxpt_jj_m                  40      0       1500        M_{jj}_(GeV/c^{2})
 #vbf_maxpt_jj_phi                50      -3.14   3.14       #phi_{jj}
 #vbf_maxpt_jj_eta                30      -4.7       4.7     #eta_{jj}
 #mass_ungroomedjet_closerjet      30      80     400         M_{top}^{had}

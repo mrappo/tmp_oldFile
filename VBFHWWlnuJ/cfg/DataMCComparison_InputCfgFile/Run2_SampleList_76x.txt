@@ -1,7 +1,7 @@
 #####################################################################################################################
 #  Sample Name 					            Reduced Name      Color     XSec (pb)    NumEntriesBefore
 ######################################################################################################################
-#WWTree_data_golden_2p1                                                 DATA             1                  1               1
+WWTree_data_golden_2p1                                                 DATA             1                  1               1
 #WWTree_WJets                                               W+Jets           2                  61526.7         24156124
 WWTree_WJets100                                             W+Jets           2                  1347            10205377
 WWTree_WJets200                                             W+Jets           2                  360.           4949568
@@ -22,11 +22,13 @@ WWTree_tch_bar                                              STop             7  
 WWTree_tch                                                  STop             7                  43.79844        3299200
 WWTree_tWch                                                 STop             7                  35.6            1000000
 WWTree_tWch_bar                                             STop             7                  35.6             999400
-WWTree_TTbar_amcatnlo                                       tt_bar           210                831.76          38475776
+#WWTree_TTbar_amcatnlo                                       tt_bar           210                831.76          38475776
 #WWTree_TTbar_madgraph                                      tt_bar           210                831.76          10215131
-#WWTree_TTbar                                        	    tt_bar           210                831.76          187626200
-WWTree_Higgs750					     	     ggHx750	      1			 0.6398		 96200
-WWTree_VBFHiggs750					     qqHx750	      1			 0.1915		 100000
+WWTree_TTbar                                        	    tt_bar           210                831.76          187626200
+WWTree_Higgs750					     	    ggHx750	      1			 0.6398		96200
+WWTree_VBFHiggs750					     qqHx750	      12		 0.1915		100000
+#WWTree_Higgs1000					      ggHx1000	      1			 0.1233		400000
+#WWTree_VBFHiggs1000					     qqHx1000	      12		 0.08732	399634
 #WWTree_RSGraviton800                                       RSGrav800GeV       1                  1.16691        31906
 #WWTree_BulkGraviton1400                                       RSGrav1000       1                 0.000045798         50000
 #WWTree_WprimeToWZ1400                                       Wprime1000       1                  0.031283         50000

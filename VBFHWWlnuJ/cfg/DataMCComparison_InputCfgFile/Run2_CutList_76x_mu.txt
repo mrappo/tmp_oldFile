@@ -4,9 +4,10 @@
 
 ## SB + SR
 
-#issignal==1 && v_pt>200 && pfMET>40 && l_pt>40 && ungroomed_jet_pt>200 && nBTagJet_medium <1 && ((jet_mass_pr > 40 && jet_mass_pr < 105) || (jet_mass_pr>135 && jet_mass_pr<150)) && jet_tau2tau1<0.45 
+#issignal==1 && v_pt>200 && pfMET>40 && l_pt>40 && ungroomed_jet_pt>200 && nBTagJet_medium <1 && ((jet_mass_pr > 40 && jet_mass_pr < 105) || (jet_mass_pr>135 && jet_mass_pr<150)) && jet_tau2tau1<0.45
 
-issignal==1 && v_pt>200 && pfMET>40 && l_pt>40 && ungroomed_jet_pt>200 && nBTagJet_medium <1 && ((jet_mass_pr > 40 && jet_mass_pr<150)) 
+issignal==1 && v_pt>200 && pfMET>40 && l_pt>40 && ungroomed_jet_pt>200 && nBTagJet_medium <1 && ((jet_mass_pr > 40 && jet_mass_pr<150)) && jet_tau2tau1<0.45
+# && njets>1 && abs(vbf_maxpt_j1_eta-vbf_maxpt_j2_eta)>5.0 && vbf_maxpt_jj_m>700
 #&& jet_tau2tau1<0.45 
 #&& mass_lvj_type2 > 600 && mass_lvj_type2 < 1500
 
