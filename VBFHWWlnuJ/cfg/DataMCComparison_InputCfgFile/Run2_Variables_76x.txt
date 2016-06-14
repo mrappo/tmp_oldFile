@@ -10,8 +10,9 @@ l_phi                            30   -3.14      3.14     #phi_{l}
 v_pt                             25    200       700      pT^{W}_{l}_(GeV)
 v_mt                             20      0       400      mT^{W}_{l}_(GeV)
 pfMET                            28      0       560      MET[GeV]
+pfMETpuppi                       28      0       560      Puppi MET[GeV]
 #pfMET                            50      0       1000      MET[GeV]
-pfMET_Phi                        20   -3.15      3.15	  #phi_{MET} 
+pfMETpuppi_Phi                    20   -3.15      3.15	  #phi_{Puppi MET} 
 #pfMET_Phi                        30   -3.14      3.14	  #phi_{MET} 
 ungroomed_jet_pt                 32    100       740      pT^{AK8}_(GeV)
 ungroomed_jet_eta                25    -2.5      2.5        #eta^{AK8}
@@ -26,6 +27,8 @@ PuppiAK8_jet_mass_pr                      22      40       150    puppiAK8_Jet_P
 PuppiAK8_jet_mass_so                      22      40       150    puppiAK8_Jet_Softdrop_Mass_(GeV/c^{2})
 mass_lvj_type0                   40    0       3000    M_{WW}_(GeV/c^{2})
 mass_lvj_type2                   40    0       3000    M_{WW}_(GeV/c^{2})
+mass_lvj_type0_PuppiAK8                   40    0       3000    Puppi M_{WW}_(GeV/c^{2})
+mass_lvj_type2_PuppiAK8                   40    0       3000    Puppi M_{WW}_(GeV/c^{2})
 #mass_lvj_type0_met                   56    200       3000    M_{WW}_(GeV/c^{2})
 #mass_lvj_type2_met                   56    200       3000    M_{WW}_(GeV/c^{2})
 nu_pz_type0                   30   -500      500        pZ^{#nu}[GeV]
