@@ -1077,7 +1077,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	            if(!NormalizeSignalToData)  Name = Form("%s x %d",NameReducedSample.at(iSampleggH).c_str(),int(SignalScaleFactor));
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleggH).c_str());
 
-                    Name = Form("ggH x %d, 600GeV",int(SignalScaleFactor));
+                    Name = Form("ggH x %d, 1000GeV",int(SignalScaleFactor));
 
                     histos_overflow[iCut][iVar][iSampleggH]->SetLineWidth(3);
                     histos_overflow[iCut][iVar][iSampleggH]->SetFillStyle(0);
@@ -1098,7 +1098,7 @@ std::cout<<" Signal ggH Entries "<<histos[iCut][iVar][iSample]->GetEntries()<< "
 	            else                        Name = Form("%s",NameReducedSample.at(iSampleqqH).c_str());
 
 
-                    Name = Form("qqH x %d, 600GeV",int(SignalScaleFactor));
+                    Name = Form("qqH x %d, 1000GeV",int(SignalScaleFactor));
 
                     histos_overflow[iCut][iVar][iSampleqqH]->SetLineWidth(3);
                     histos_overflow[iCut][iVar][iSampleqqH]->SetFillStyle(0);
